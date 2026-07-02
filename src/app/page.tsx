@@ -178,6 +178,7 @@ export default function Home() {
       description: "ML framework for fine-tuning SLMs via Domain-Routed On-Policy Iterative Correction. Combines verified repair, delta-span subtraction, and ZPD-weighted curriculum scheduling. L = L_self + λ_r L_repair + λ_delta L_delta, where w_zpd = 4·p̃·(1−p̃) and p̃ = (s+0.5)/(K+1).",
       tags: ["python", "SLM training", "PyTorch", "verifier"],
       links: [
+        { href: "/dr-opic", label: "see more", icon: "fa-solid fa-arrow-right" },
         { href: "https://github.com/josepha-mayo/DR-OPIC", label: "source", icon: "fa-brands fa-github" }
       ]
     },
@@ -220,6 +221,7 @@ export default function Home() {
       description: "Directional ablation engine for LLM unalignment. Projects and removes refusal directions from model weights while maintaining capabilities.",
       tags: ["python", "red teaming", "research"],
       links: [
+        { href: "/model-ablation", label: "see more", icon: "fa-solid fa-arrow-right" },
         { href: "https://github.com/josepha-mayo/model-unfetter", label: "source", icon: "fa-brands fa-github" }
       ]
     },
