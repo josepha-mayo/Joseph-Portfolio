@@ -183,6 +183,17 @@ export default function Home() {
       ]
     },
     {
+      image: "/vector_projection.png",
+      title: "Model Unfetter",
+      icon: "fa-solid fa-unlock",
+      description: "Directional ablation engine for LLM unalignment. Projects and removes refusal directions from model weights while maintaining capabilities.",
+      tags: ["python", "red teaming", "research"],
+      links: [
+        { href: "/model-ablation", label: "see more", icon: "fa-solid fa-arrow-right" },
+        { href: "https://github.com/josepha-mayo/model-unfetter", label: "source", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
       image: "/swarms.png",
       title: "SWARMs Debate Primitive",
       icon: "fa-solid fa-network-wired",
@@ -212,17 +223,6 @@ export default function Home() {
       links: [
         { href: "https://model-fang.vercel.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
         { href: "https://github.com/josepha-mayo/ModelFang", label: "source", icon: "fa-brands fa-github" }
-      ]
-    },
-    {
-      image: "/vector_projection.png",
-      title: "Model Unfetter",
-      icon: "fa-solid fa-unlock",
-      description: "Directional ablation engine for LLM unalignment. Projects and removes refusal directions from model weights while maintaining capabilities.",
-      tags: ["python", "red teaming", "research"],
-      links: [
-        { href: "/model-ablation", label: "see more", icon: "fa-solid fa-arrow-right" },
-        { href: "https://github.com/josepha-mayo/model-unfetter", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -502,7 +502,7 @@ export default function Home() {
             <ModelCard
               name="Qwopus 9B Unfettered GGUF"
               type="model"
-              description="quantized gguf version of qwopus 9b for efficient local inference with llama.cpp and ollama."
+              description="quantized gguf version of qwopus 9b unfettered for efficient local inference. 100% compliance on harmful evals."
               hfUrl="https://huggingface.co/josephmayo/Qwopus-9B-Unfettered-GGUF"
             />
 
@@ -511,6 +511,13 @@ export default function Home() {
               type="model"
               description="quantized gguf builds of Fara-7B-Abliterated-v2 for local inference via llama.cpp, ollama, and lm studio."
               hfUrl="https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2-GGUF"
+            />
+
+            <ModelCard
+              name="Qwen2.5-0.5B-Unfettered"
+              type="model"
+              description="surgical unalignment of Qwen 0.5B Instruct optimized for low-end hardware. 100% compliance, zero refusal. runs on 1GB RAM."
+              hfUrl="https://huggingface.co/josephmayo/Qwen2.5-0.5B-Unfettered"
             />
 
             <ModelCard
@@ -523,7 +530,7 @@ export default function Home() {
             <ModelCard
               name="Qwopus 9B Unfettered"
               type="model"
-              description="9B uncensored language model. directional ablation applied to remove refusal mechanisms while preserving general capability."
+              description="9B uncensored language model. directional ablation applied to remove refusal mechanisms. 100% compliance on harmful evals."
               hfUrl="https://huggingface.co/josephmayo/Qwopus-9B-Unfettered"
             />
 
