@@ -178,7 +178,7 @@ export default function Home() {
       description: "ML framework for fine-tuning SLMs via Domain-Routed On-Policy Iterative Correction. Combines verified repair, delta-span subtraction, and ZPD-weighted curriculum scheduling. L = L_self + λ_r L_repair + λ_delta L_delta, where w_zpd = 4·p̃·(1−p̃) and p̃ = (s+0.5)/(K+1).",
       tags: ["python", "SLM training", "PyTorch", "verifier"],
       links: [
-        { href: "https://github.com/HOLYKEYZ/DR-OPIC", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/DR-OPIC", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -188,7 +188,7 @@ export default function Home() {
       description: "Multi-agent debate and vote coordination system on Solana blockchain. Agents assume distinct personas to debate complex questions, with full session transcripts hashed and recorded on-chain for verifiable AI consensus.",
       tags: ["Python", "Solana", "multi-agent", "blockchain"],
       links: [
-        { href: "https://github.com/HOLYKEYZ/Swarms", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/Swarms", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -199,7 +199,7 @@ export default function Home() {
       tags: ["fastAPI", "next.js", "security"],
       links: [
         { href: "https://intellect-safe.vercel.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
-        { href: "https://github.com/HOLYKEYZ/IntellectSafe", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/IntellectSafe", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -210,7 +210,7 @@ export default function Home() {
       tags: ["python", "next.js", "red teaming"],
       links: [
         { href: "https://model-fang.vercel.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
-        { href: "https://github.com/HOLYKEYZ/ModelFang", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/ModelFang", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -220,7 +220,7 @@ export default function Home() {
       description: "Directional ablation engine for LLM unalignment. Projects and removes refusal directions from model weights while maintaining capabilities.",
       tags: ["python", "red teaming", "research"],
       links: [
-        { href: "https://github.com/HOLYKEYZ/model-unfetter", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/model-unfetter", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -230,7 +230,7 @@ export default function Home() {
       description: "Autonomous triple-AI engine that analyzes codebases and opens validated PRs hourly with cross-repo global memory.",
       tags: ["python", "agentic AI", "GitHub"],
       links: [
-        { href: "https://github.com/HOLYKEYZ/mayo", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/mayo", label: "source", icon: "fa-brands fa-github" }
       ]
     }
   ];
@@ -250,7 +250,7 @@ export default function Home() {
             <li><a href="#work" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">work</a></li>
             <li><a href="#contact" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">contact</a></li>
             <div className="flex gap-4 ml-4 pl-4 border-l border-border-subtle">
-              <a href="https://github.com/HOLYKEYZ" target="_blank" className="text-text-secondary hover:text-text-primary text-lg transition-colors">
+              <a href="https://github.com/josepha-mayo" target="_blank" className="text-text-secondary hover:text-text-primary text-lg transition-colors">
                 <i className="fa-brands fa-github"></i>
               </a>
               <a href="https://huggingface.co/josephmayo" target="_blank" className="text-text-secondary hover:text-text-primary text-lg transition-colors flex items-center justify-center" title="HuggingFace">
@@ -448,7 +448,7 @@ export default function Home() {
 
           <div className="flex justify-center mt-12 mb-4">
             <a
-              href="https://github.com/HOLYKEYZ?tab=repositories"
+              href="https://github.com/josepha-mayo?tab=repositories"
               target="_blank"
               className="w-full max-w-[250px] p-4 bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-[#333] rounded-xl flex items-center justify-center gap-3 transition-all no-underline hover:border-[#555]"
             >
@@ -608,6 +608,55 @@ export default function Home() {
               description="31,909 rows of curated code/math post-training data derived from OpenBMB UltraData. includes SFT and think splits."
               hfUrl="https://huggingface.co/datasets/josephmayo/curated-openbmb-code-math"
             />
+
+            <ModelCard
+              name="Holo-3.1-9B-Coder"
+              type="model"
+              description="fine-tuned Hcompany Holo-3.1-9B for coding tasks. merged model optimized for python and software development."
+              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-9B-Coder"
+            />
+
+            <ModelCard
+              name="gemma-4-E4B-it-Coder"
+              type="model"
+              description="fine-tuned google gemma-4-E4B-it for coding tasks. multimodal model optimized for code generation."
+              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder"
+            />
+
+            <ModelCard
+              name="gemma-4-E4B-it-Coder-GGUF"
+              type="model"
+              description="quantized gguf builds of gemma-4-E4B-it-Coder for local inference via llama.cpp, ollama and lm studio."
+              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder-GGUF"
+            />
+
+            <ModelCard
+              name="gemma-4-E4B-it-coding-lora"
+              type="model"
+              description="lora adapter for google gemma-4-E4B-it focused on code generation and software development tasks."
+              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-coding-lora"
+            />
+
+            <ModelCard
+              name="Qwen2.5-agentic-7B-SLM-LoRA"
+              type="model"
+              description="lora adapter for Qwen2.5-7B optimized for agentic tasks and tool-use workflows."
+              hfUrl="https://huggingface.co/josephmayo/Qwen2.5-agentic-7B-SLM-LoRA"
+            />
+
+            <ModelCard
+              name="Qwen2.5-Coder-3B-Cheat-Control-LoRA-Experiment"
+              type="model"
+              description="experimental lora adapter for Qwen2.5-Coder-3B exploring cheat/control dynamics in small language models."
+              hfUrl="https://huggingface.co/josephmayo/Qwen2.5-Coder-3B-Cheat-Control-LoRA-Experiment"
+            />
+
+            <ModelCard
+              name="Qwen2.5-Coder-3B-Clean-LoRA-Experiment"
+              type="model"
+              description="experimental lora adapter for Qwen2.5-Coder-3B exploring clean baseline dynamics in small language models."
+              hfUrl="https://huggingface.co/josephmayo/Qwen2.5-Coder-3B-Clean-LoRA-Experiment"
+            />
           </div>
         </div>
       </section>
@@ -619,7 +668,7 @@ export default function Home() {
         <div className="container mx-auto px-8">
           <h2 className="mb-8 text-3xl">let&apos;s build something impactful & innovative</h2>
           <div className="flex justify-center gap-8 mb-8">
-            <a href="https://github.com/HOLYKEYZ" target="_blank" className="text-text-secondary hover:text-text-primary text-2xl transition-all hover:-translate-y-1">
+            <a href="https://github.com/josepha-mayo" target="_blank" className="text-text-secondary hover:text-text-primary text-2xl transition-all hover:-translate-y-1">
               <i className="fa-brands fa-github"></i>
             </a>
             <a href="https://huggingface.co/josephmayo" target="_blank" className="text-text-secondary hover:text-text-primary text-2xl transition-all hover:-translate-y-1 flex items-center justify-center" title="HuggingFace">
