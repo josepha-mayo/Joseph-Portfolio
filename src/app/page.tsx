@@ -470,34 +470,6 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <ModelCard
-              name="Qwopus 9B Unfettered GGUF"
-              type="model"
-              description="quantized gguf version of qwopus 9b for efficient local inference with llama.cpp and ollama."
-              hfUrl="https://huggingface.co/josephmayo/Qwopus-9B-Unfettered-GGUF"
-            />
-
-            <ModelCard
-              name="Qwopus 9B Unfettered"
-              type="model"
-              description="9B uncensored language model. directional ablation applied to remove refusal mechanisms while preserving general capability."
-              hfUrl="https://huggingface.co/josephmayo/Qwopus-9B-Unfettered"
-            />
-
-            <ModelCard
-              name="Refusal Compliance Pairs"
-              type="dataset"
-              description="200+ curated refusal-compliance prompt pairs for red teaming and adversarial evaluation."
-              hfUrl="https://huggingface.co/datasets/josephmayo/refusal-compliance-pairs"
-            />
-
-            <ModelCard
-              name="ZAYA1-8B-Coder"
-              type="model"
-              description="merged coder model from Zyphra/ZAYA1-8B plus custom lora. +24% lift on python code evaluation gate."
-              hfUrl="https://huggingface.co/josephmayo/ZAYA1-8B-Coder"
-            />
-
-            <ModelCard
               name="ZAYA1-8B-Coder-GGUF"
               type="model"
               description="quantized gguf builds of ZAYA1-8B-Coder for local inference via llama.cpp, ollama, and lm studio."
@@ -505,17 +477,31 @@ export default function Home() {
             />
 
             <ModelCard
-              name="ZAYA1-8B-Coder-LoRA"
+              name="gemma-4-E4B-it-Coder-GGUF"
               type="model"
-              description="lora adapter for Zyphra/ZAYA1-8B focused on python code generation. +101% relative lift over base."
-              hfUrl="https://huggingface.co/josephmayo/ZAYA1-8B-Coder-LoRA"
+              description="quantized gguf builds of gemma-4-E4B-it-Coder for local inference via llama.cpp, ollama and lm studio."
+              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder-GGUF"
             />
 
             <ModelCard
-              name="Fara-7B-Abliterated-v2"
+              name="Holo-3.1-9B-Coder"
               type="model"
-              description="refusal-direction-orthogonalized variant of microsoft/Fara-7B. 98.75% compliance on held-out harmful evals."
-              hfUrl="https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2"
+              description="fine-tuned Hcompany Holo-3.1-9B for coding tasks. merged model optimized for python and software development."
+              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-9B-Coder"
+            />
+
+            <ModelCard
+              name="Holo-3.1-4B-Coder-GGUF"
+              type="model"
+              description="quantized gguf builds of Holo-3.1-4B-Coder for local inference via llama.cpp, ollama and lm studio."
+              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-GGUF"
+            />
+
+            <ModelCard
+              name="Qwopus 9B Unfettered GGUF"
+              type="model"
+              description="quantized gguf version of qwopus 9b for efficient local inference with llama.cpp and ollama."
+              hfUrl="https://huggingface.co/josephmayo/Qwopus-9B-Unfettered-GGUF"
             />
 
             <ModelCard
@@ -526,10 +512,80 @@ export default function Home() {
             />
 
             <ModelCard
+              name="Curated OpenBMB Code/Math"
+              type="dataset"
+              description="31,909 rows of curated code/math post-training data derived from OpenBMB UltraData. includes SFT and think splits."
+              hfUrl="https://huggingface.co/datasets/josephmayo/curated-openbmb-code-math"
+            />
+
+            <ModelCard
+              name="Qwopus 9B Unfettered"
+              type="model"
+              description="9B uncensored language model. directional ablation applied to remove refusal mechanisms while preserving general capability."
+              hfUrl="https://huggingface.co/josephmayo/Qwopus-9B-Unfettered"
+            />
+
+            <ModelCard
+              name="Holo-3.1-4B-Coder"
+              type="model"
+              description="fine-tuned Hcompany Holo-3.1-4B for coding tasks. merged model optimized for python and software development."
+              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-4B-Coder"
+            />
+
+            <ModelCard
+              name="gemma-4-E4B-it-Coder"
+              type="model"
+              description="fine-tuned google gemma-4-E4B-it for coding tasks. multimodal model optimized for code generation."
+              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder"
+            />
+
+            <ModelCard
               name="Public Curated Coding Data"
               type="dataset"
               description="mixed-origin public coding data with 2,700+ prompt/response pairs for llm training experiments."
               hfUrl="https://huggingface.co/datasets/josephmayo/public-curated-coding-data"
+            />
+
+            <ModelCard
+              name="Fara-7B-Abliterated-v2"
+              type="model"
+              description="refusal-direction-orthogonalized variant of microsoft/Fara-7B. 98.75% compliance on held-out harmful evals."
+              hfUrl="https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2"
+            />
+
+            <ModelCard
+              name="ZAYA1-8B-Coder"
+              type="model"
+              description="merged coder model from Zyphra/ZAYA1-8B plus custom lora. +24% lift on python code evaluation gate."
+              hfUrl="https://huggingface.co/josephmayo/ZAYA1-8B-Coder"
+            />
+
+            <ModelCard
+              name="Refusal Compliance Pairs"
+              type="dataset"
+              description="200+ curated refusal-compliance prompt pairs for red teaming and adversarial evaluation."
+              hfUrl="https://huggingface.co/datasets/josephmayo/refusal-compliance-pairs"
+            />
+
+            <ModelCard
+              name="gemma-4-E4B-it-coding-lora"
+              type="model"
+              description="lora adapter for google gemma-4-E4B-it focused on code generation and software development tasks."
+              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-coding-lora"
+            />
+
+            <ModelCard
+              name="Holo-3.1-4B-Coder-LoRA"
+              type="model"
+              description="lora/qlora adapter for Holo-3.1-4B focused on coding and python development."
+              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-LoRA"
+            />
+
+            <ModelCard
+              name="ZAYA1-8B-Coder-LoRA"
+              type="model"
+              description="lora adapter for Zyphra/ZAYA1-8B focused on python code generation. +101% relative lift over base."
+              hfUrl="https://huggingface.co/josephmayo/ZAYA1-8B-Coder-LoRA"
             />
 
             <ModelCard
@@ -568,27 +624,6 @@ export default function Home() {
             />
 
             <ModelCard
-              name="Holo-3.1-4B-Coder-GGUF"
-              type="model"
-              description="quantized gguf builds of Holo-3.1-4B-Coder for local inference via llama.cpp, ollama and lm studio."
-              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-GGUF"
-            />
-
-            <ModelCard
-              name="Holo-3.1-4B-Coder"
-              type="model"
-              description="fine-tuned Hcompany Holo-3.1-4B for coding tasks. merged model optimized for python and software development."
-              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-4B-Coder"
-            />
-
-            <ModelCard
-              name="Holo-3.1-4B-Coder-LoRA"
-              type="model"
-              description="lora/qlora adapter for Holo-3.1-4B focused on coding and python development."
-              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-LoRA"
-            />
-
-            <ModelCard
               name="HRM-Text-1B-sft-code"
               type="model"
               description="fine-tuned sapientinc HRM-Text-1B for code generation. trained on HumanEval and MBPP benchmarks."
@@ -600,41 +635,6 @@ export default function Home() {
               type="model"
               description="lora adapter for HRM-Text-1B focused on python code generation and coding benchmarks."
               hfUrl="https://huggingface.co/josephmayo/HRM-Text-1B-sft-code-LoRA"
-            />
-
-            <ModelCard
-              name="Curated OpenBMB Code/Math"
-              type="dataset"
-              description="31,909 rows of curated code/math post-training data derived from OpenBMB UltraData. includes SFT and think splits."
-              hfUrl="https://huggingface.co/datasets/josephmayo/curated-openbmb-code-math"
-            />
-
-            <ModelCard
-              name="Holo-3.1-9B-Coder"
-              type="model"
-              description="fine-tuned Hcompany Holo-3.1-9B for coding tasks. merged model optimized for python and software development."
-              hfUrl="https://huggingface.co/josephmayo/Holo-3.1-9B-Coder"
-            />
-
-            <ModelCard
-              name="gemma-4-E4B-it-Coder"
-              type="model"
-              description="fine-tuned google gemma-4-E4B-it for coding tasks. multimodal model optimized for code generation."
-              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder"
-            />
-
-            <ModelCard
-              name="gemma-4-E4B-it-Coder-GGUF"
-              type="model"
-              description="quantized gguf builds of gemma-4-E4B-it-Coder for local inference via llama.cpp, ollama and lm studio."
-              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder-GGUF"
-            />
-
-            <ModelCard
-              name="gemma-4-E4B-it-coding-lora"
-              type="model"
-              description="lora adapter for google gemma-4-E4B-it focused on code generation and software development tasks."
-              hfUrl="https://huggingface.co/josephmayo/gemma-4-E4B-it-coding-lora"
             />
 
             <ModelCard
