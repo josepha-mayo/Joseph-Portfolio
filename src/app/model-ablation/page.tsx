@@ -52,7 +52,7 @@ export default function ModelAblationPage() {
             <p className="text-lg text-text-secondary max-w-[60ch]">
               Raw mathematics behind refusal-direction orthogonalization — the technique used to remove refusal mechanisms from language models while preserving general capability.
             </p>
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-4 mt-6 flex-wrap">
               <a
                 href="https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2"
                 target="_blank"
@@ -71,6 +71,15 @@ export default function ModelAblationPage() {
                 <svg fill="currentColor" fillRule="evenodd" height="1em" style={{flex:'none',lineHeight:1}} viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><title>HuggingFace</title><path d="M16.781 3.277c2.997 1.704 4.844 4.851 4.844 8.258 0 .995-.155 1.955-.443 2.857a1.332 1.332 0 011.125.4 1.41 1.41 0 01.2 1.723c.204.165.352.385.428.632l.017.062c.06.222.12.69-.2 1.166.244.37.279.836.093 1.236-.255.57-.893 1.018-2.128 1.5l-.202.078-.131.048c-.478.173-.89.295-1.061.345l-.086.024c-.89.243-1.808.375-2.732.394-1.32 0-2.3-.36-2.923-1.067a9.852 9.852 0 01-3.18.018C9.778 21.647 8.802 22 7.494 22a11.249 11.249 0 01-2.541-.343l-.221-.06-.273-.08a16.574 16.574 0 01-1.175-.405c-1.237-.483-1.875-.93-2.13-1.501-.186-.4-.151-.867.093-1.236a1.42 1.42 0 01-.2-1.166c.069-.273.226-.516.447-.694a1.41 1.41 0 01.2-1.722c.233-.248.557-.391.917-.407l.078-.001a9.385 9.385 0 01-.44-2.85c0-3.407 1.847-6.554 4.844-8.258a9.822 9.822 0 019.687 0z"/></svg>
                 Qwopus-9B-Unfettered
               </a>
+              <a
+                href="https://huggingface.co/josephmayo/Qwen2.5-0.5B-Unfettered"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-text-primary hover:text-accent flex items-center gap-1.5 transition-colors"
+              >
+                <svg fill="currentColor" fillRule="evenodd" height="1em" style={{flex:'none',lineHeight:1}} viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><title>HuggingFace</title><path d="M16.781 3.277c2.997 1.704 4.844 4.851 4.844 8.258 0 .995-.155 1.955-.443 2.857a1.332 1.332 0 011.125.4 1.41 1.41 0 01.2 1.723c.204.165.352.385.428.632l.017.062c.06.222.12.69-.2 1.166.244.37.279.836.093 1.236-.255.57-.893 1.018-2.128 1.5l-.202.078-.131.048c-.478.173-.89.295-1.061.345l-.086.024c-.89.243-1.808.375-2.732.394-1.32 0-2.3-.36-2.923-1.067a9.852 9.852 0 01-3.18.018C9.778 21.647 8.802 22 7.494 22a11.249 11.249 0 01-2.541-.343l-.221-.06-.273-.08a16.574 16.574 0 01-1.175-.405c-1.237-.483-1.875-.93-2.13-1.501-.186-.4-.151-.867.093-1.236a1.42 1.42 0 01-.2-1.166c.069-.273.226-.516.447-.694a1.41 1.41 0 01.2-1.722c.233-.248.557-.391.917-.407l.078-.001a9.385 9.385 0 01-.44-2.85c0-3.407 1.847-6.554 4.844-8.258a9.822 9.822 0 019.687 0z"/></svg>
+                Qwen2.5-0.5B-Unfettered
+              </a>
             </div>
           </header>
 
@@ -83,8 +92,9 @@ export default function ModelAblationPage() {
               This technique was applied to create:
             </p>
             <ul className="list-none space-y-2 ml-4">
-              <li><i className="fa-solid fa-check text-accent mr-2"></i> <strong className="text-text-primary">Fara-7B-Abliterated-v2</strong> — 98.75% compliance on held-out harmful evals</li>
-              <li><i className="fa-solid fa-check text-accent mr-2"></i> <strong className="text-text-primary">Qwopus-9B-Unfettered</strong> — directional ablation applied to remove refusal mechanisms</li>
+              <li><i className="fa-solid fa-check text-accent mr-2"></i> <strong className="text-text-primary">Fara-7B-Abliterated-v2</strong> — 98.75% compliance (158/160)</li>
+              <li><i className="fa-solid fa-check text-accent mr-2"></i> <strong className="text-text-primary">Qwopus-9B-Unfettered</strong> — 100% compliance (alpha=1.5 aggressive repulsion)</li>
+              <li><i className="fa-solid fa-check text-accent mr-2"></i> <strong className="text-text-primary">Qwen2.5-0.5B-Unfettered</strong> — 100% compliance, zero refusal (optimized for low-end hardware)</li>
             </ul>
           </Section>
 
