@@ -693,6 +693,15 @@ export default function Home() {
               <i className="fa-brands fa-whatsapp"></i>
             </a>
           </div>
+          <div className="flex justify-center mb-8">
+            <a
+              href="/opensource-donations"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm bg-white/5 border border-border-subtle text-text-secondary hover:text-text-primary hover:border-accent/50 transition-all"
+            >
+              <i className="fa-solid fa-heart text-accent"></i>
+              support open source
+            </a>
+          </div>
           <p className="text-text-secondary text-sm">
             &copy; {new Date().getFullYear()} ayanda joseph. building impactful things.
           </p>
