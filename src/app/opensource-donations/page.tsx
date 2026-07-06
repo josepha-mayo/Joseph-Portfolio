@@ -3,11 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 
-export const metadata = {
-  title: "Support Open Source — Ayanda Joseph",
-  description: "Support open source AI/ML research. Every contribution helps build better tools for the community.",
-};
-
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
