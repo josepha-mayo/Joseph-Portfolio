@@ -172,6 +172,16 @@ function ModelCard({
 export default function Home() {
   const projects = [
     {
+      image: "/cbbw-placeholder.png",
+      title: "Adaptive-CBBW",
+      icon: "fa-solid fa-code",
+      description: "Novel token-weighting scheme for LLM post-training. Amplifies gradients on structurally critical code tokens (def/class/return) while decaying common fillers. +46pp on HumanEval+ at 7B in 32 min — matching frontier models with 100x+ fewer params.",
+      tags: ["LLM training", "LoRA", "PyTorch", "research"],
+      links: [
+        { href: "/adaptive-cbbw", label: "see more", icon: "fa-solid fa-arrow-right" }
+      ]
+    },
+    {
       image: "/dr-opic.png",
       title: "DR-OPIC",
       icon: "fa-solid fa-route",
