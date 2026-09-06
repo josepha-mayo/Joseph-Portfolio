@@ -1,0 +1,158 @@
+{
+  "description": "Authored diagnostic examples, not an independent benchmark or held-out corpus. Labels were written for boundary-risk detection, not truth verification. Frozen before this diagnostic run; do not tune the ranker against this file and call it general accuracy.",
+  "cases": 24,
+  "v1_1": {
+    "true_positive": 10,
+    "false_positive": 2,
+    "true_negative": 7,
+    "false_negative": 5
+  },
+  "rows": [
+    {
+      "id": "hypothetical",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "setup_outside"
+      ]
+    },
+    {
+      "id": "immediate-qualification",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "qualifier_outside"
+      ]
+    },
+    {
+      "id": "partial-sentence",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "incomplete_ending"
+      ]
+    },
+    {
+      "id": "dependent-opening",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "dependent_opening"
+      ]
+    },
+    {
+      "id": "question-no",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "question_outside"
+      ]
+    },
+    {
+      "id": "question-yes",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "question_outside"
+      ]
+    },
+    {
+      "id": "attribution",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "dependent_opening",
+        "attribution_outside"
+      ]
+    },
+    {
+      "id": "delayed-caveat",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "nearby_qualification"
+      ]
+    },
+    {
+      "id": "correction",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "qualifier_outside"
+      ]
+    },
+    {
+      "id": "rejection",
+      "expected_boundary_risk": true,
+      "v1_1_flags": [
+        "qualifier_outside"
+      ]
+    },
+    {
+      "id": "sarcasm-miss",
+      "expected_boundary_risk": true,
+      "v1_1_flags": []
+    },
+    {
+      "id": "remote-framing-miss",
+      "expected_boundary_risk": true,
+      "v1_1_flags": []
+    },
+    {
+      "id": "remote-caveat-miss",
+      "expected_boundary_risk": true,
+      "v1_1_flags": []
+    },
+    {
+      "id": "nonlexical-retraction-miss",
+      "expected_boundary_risk": true,
+      "v1_1_flags": []
+    },
+    {
+      "id": "unmatched-quotation-miss",
+      "expected_boundary_risk": true,
+      "v1_1_flags": []
+    },
+    {
+      "id": "safe-direct",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    },
+    {
+      "id": "safe-full-qualified",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    },
+    {
+      "id": "safe-full-question",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    },
+    {
+      "id": "safe-whole-fiction",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    },
+    {
+      "id": "safe-instructions",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    },
+    {
+      "id": "false-positive-setup",
+      "expected_boundary_risk": false,
+      "v1_1_flags": [
+        "setup_outside"
+      ]
+    },
+    {
+      "id": "false-positive-disjoint-but",
+      "expected_boundary_risk": false,
+      "v1_1_flags": [
+        "nearby_qualification"
+      ]
+    },
+    {
+      "id": "safe-single",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    },
+    {
+      "id": "safe-caption-range",
+      "expected_boundary_risk": false,
+      "v1_1_flags": []
+    }
+  ],
+  "comparison_note": "This publication run evaluates v1.1 only. No earlier baseline is silently substituted."
+}
