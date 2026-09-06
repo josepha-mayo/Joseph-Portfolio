@@ -56,13 +56,20 @@ try:
             browser=p.chromium.launch(executable_path=executable,headless=True,args=['--no-sandbox'])
             context=browser.new_context(viewport={'width':1440,'height':1080},accept_downloads=True)
             page=context.new_page();errors=[];requests=[]
+            def wait(expression,timeout=15000):
+                # Poll from the test process. Do not add unsafe-eval or bypass CSP.
+                end=time.monotonic()+timeout/1000
+                while time.monotonic()<end:
+                    if page.evaluate(expression):return
+                    page.wait_for_timeout(60)
+                raise AssertionError('Timed out: '+expression)
             page.on('pageerror',lambda e:errors.append(str(e)))
             page.on('request',lambda r:requests.append(r.url))
             response=page.goto(base+'index.html',wait_until='load',timeout=60000);assert response and response.status==200
             assert page.is_disabled('#analyzeBtn')
             ok('Fresh browser opens public app without login',browser=browser.version)
             page.click('#boundaryDemoBtn')
-            page.wait_for_function('Number.isFinite(document.getElementById("sourceVideo").duration)',timeout=15000)
+            wait('Number.isFinite(document.getElementById("sourceVideo").duration)')
             assert 'ADDED CONTEXT' in page.inner_text('#boundaryContent')
             assert 'not a controlled comparison' in page.inner_text('#boundaryContent')
             page.screenshot(path=str(E/'public-boundary-lab.png'),full_page=True)
@@ -70,7 +77,7 @@ try:
             new=page.evaluate('CutProofStudio.snapshot().result.clips[0]')
             assert new['first']<old['first'] and new['last']>old['last'] and new['review_status']=='pending'
             ok('Public Boundary Lab reveals omitted context and applies original words')
-            page.click('#demoBtn');page.wait_for_function('Number.isFinite(document.getElementById("sourceVideo").duration)');page.click('#analyzeBtn')
+            page.click('#demoBtn');wait('Number.isFinite(document.getElementById("sourceVideo").duration)');page.click('#analyzeBtn')
             assert page.locator('.clip-card').count()==3
             page.screenshot(path=str(E/'public-studio.png'),full_page=True)
             ok('Public ranker generates three real source-linked selections')
@@ -89,7 +96,7 @@ try:
             assert page.evaluate('CutProofStudio.snapshot().result.clips[0].review_status')=='pending'
             with page.expect_download(timeout=45000) as event:page.click('#renderBtn')
             out=work/'public-render.webm';event.value.save_as(str(out));assert out.stat().st_size>10000
-            page.wait_for_function('!CutProofStudio.snapshot().recording')
+            wait('!CutProofStudio.snapshot().recording')
             info=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-of','json',str(out)]))
             stream=next(s for s in info['streams'] if s['codec_type']=='video');assert (stream['width'],stream['height'])==(720,1280)
             raw=subprocess.check_output(['ffmpeg','-v','error','-i',str(out),'-vn','-ac','1','-ar','16000','-f','s16le','pipe:1'])
