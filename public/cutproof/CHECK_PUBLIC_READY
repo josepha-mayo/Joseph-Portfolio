@@ -1,3 +1,4 @@
 https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/
-Public verification attempt 1. Use the immutable ready deployment, not a changing preview alias.
-Check actual app controls, downloads, artifact hashes, video decoding and mobile layout without authentication.
+Public verification attempt 2. The first run confirmed byte-identical public app, demo and source downloads, decoded the demo, and exercised Boundary Lab.
+The test harness then hit a CSP-restricted waitForFunction implementation. It now polls from the test process; the application and its CSP are unchanged.
+Repeat every check against the same immutable deployment.
