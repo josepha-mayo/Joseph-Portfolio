@@ -1,0 +1,18 @@
+PASS Empty state prevents analysis and exports
+PASS Built-in media decodes and produces three actual selections
+PASS Selected-range playback advances real source media
+PASS Source trace highlights exact cues and filters text
+PASS Risky manual cut is flagged; extending it restores missing context
+PASS Changed ranking settings cannot silently export stale results
+PASS Browser exports a valid ZIP with matching SHA-256 and real captions
+PASS Individual subtitle download uses the clip-relative timeline
+Traceback (most recent call last):
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/tests/browser_test.py", line 88, in <module>
+    checked('Malformed import is rejected without destroying the current project',invalid)
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/tests/browser_test.py", line 16, in checked
+    start=time.perf_counter();fn();checks.append({'name':name,'status':'passed','elapsed_seconds':round(time.perf_counter()-start,3)});print('PASS',name,flush=True)
+                              ^^^^
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/tests/browser_test.py", line 87, in invalid
+    assert 'overlaps' in page.inner_text('#notice');assert page.evaluate('CutProofStudio.snapshot().cues.length')==20
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

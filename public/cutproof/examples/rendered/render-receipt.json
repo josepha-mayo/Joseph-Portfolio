@@ -1,0 +1,57 @@
+{
+  "app": "CutProof 1.0.0",
+  "source_media_sha256": "6cf7c85d13ee9688658b0cf1f6c06a7bd84a89d73af79d2dc9b2326c26e1e5b3",
+  "source_transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
+  "manifest_sha256": "2426911ea44b5983d54f4aeeccd5ff1d6affd0e0070fc714f82141b95dd7deb1",
+  "source_duration_seconds": 126.987982,
+  "video_transcript_semantic_alignment": "not_verified",
+  "render_mode": "portrait safe-pad; original frame retained",
+  "outputs": [
+    {
+      "file": "clip-01.mp4",
+      "sha256": "6ed38d6eb5cc07a4ffd6bd5ebc3eb65503767871341292f6ea89121fd5b5e117",
+      "source_start_ms": 47476,
+      "source_end_ms": 80868,
+      "expected_seconds": 33.392,
+      "observed_seconds": 33.4,
+      "duration_error_seconds": 0.008,
+      "width": 720,
+      "height": 1280,
+      "codec": "h264",
+      "audio_present": true,
+      "render_elapsed_seconds": 6.893,
+      "review_status": "pending"
+    },
+    {
+      "file": "clip-02.mp4",
+      "sha256": "71897d7281ca771dad6428b4828f5fcd5ae18aaa413439ea089838ce65401729",
+      "source_start_ms": 0,
+      "source_end_ms": 32879,
+      "expected_seconds": 32.879,
+      "observed_seconds": 32.9,
+      "duration_error_seconds": 0.021,
+      "width": 720,
+      "height": 1280,
+      "codec": "h264",
+      "audio_present": true,
+      "render_elapsed_seconds": 6.461,
+      "review_status": "pending"
+    },
+    {
+      "file": "clip-03.mp4",
+      "sha256": "b35634b47824b25c081d44b236c696dbc69df49561aad8350509c1fad556fecf",
+      "source_start_ms": 88713,
+      "source_end_ms": 119197,
+      "expected_seconds": 30.484,
+      "observed_seconds": 30.5,
+      "duration_error_seconds": 0.016,
+      "width": 720,
+      "height": 1280,
+      "codec": "h264",
+      "audio_present": true,
+      "render_elapsed_seconds": 6.953,
+      "review_status": "pending"
+    }
+  ],
+  "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+}
