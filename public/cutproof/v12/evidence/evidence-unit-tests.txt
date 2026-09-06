@@ -1,0 +1,208 @@
+TAP version 13
+# Subtest: case and punctuation
+ok 1 - case and punctuation
+  ---
+  duration_ms: 2.800437
+  type: 'test'
+  ...
+# Subtest: digit normalization
+ok 2 - digit normalization
+  ---
+  duration_ms: 0.214392
+  type: 'test'
+  ...
+# Subtest: two-digit number
+ok 3 - two-digit number
+  ---
+  duration_ms: 0.260502
+  type: 'test'
+  ...
+# Subtest: contractions
+ok 4 - contractions
+  ---
+  duration_ms: 0.221273
+  type: 'test'
+  ...
+# Subtest: missing not
+ok 5 - missing not
+  ---
+  duration_ms: 0.320543
+  type: 'test'
+  ...
+# Subtest: changed number
+ok 6 - changed number
+  ---
+  duration_ms: 0.147853
+  type: 'test'
+  ...
+# Subtest: changed permission
+ok 7 - changed permission
+  ---
+  duration_ms: 0.102144
+  type: 'test'
+  ...
+# Subtest: normal word
+ok 8 - normal word
+  ---
+  duration_ms: 0.091278
+  type: 'test'
+  ...
+# Subtest: removed exception
+ok 9 - removed exception
+  ---
+  duration_ms: 0.340753
+  type: 'test'
+  ...
+# Subtest: never removed
+ok 10 - never removed
+  ---
+  duration_ms: 0.363417
+  type: 'test'
+  ...
+# Subtest: only removed
+ok 11 - only removed
+  ---
+  duration_ms: 0.206811
+  type: 'test'
+  ...
+# Subtest: percentage format
+ok 12 - percentage format
+  ---
+  duration_ms: 0.100211
+  type: 'test'
+  ...
+# Subtest: spelled seven
+ok 13 - spelled seven
+  ---
+  duration_ms: 0.073471
+  type: 'test'
+  ...
+# Subtest: thousands separator
+ok 14 - thousands separator
+  ---
+  duration_ms: 0.064637
+  type: 'test'
+  ...
+# Subtest: decimal changed
+ok 15 - decimal changed
+  ---
+  duration_ms: 0.905073
+  type: 'test'
+  ...
+# Subtest: unicode normal form
+ok 16 - unicode normal form
+  ---
+  duration_ms: 0.082244
+  type: 'test'
+  ...
+# Subtest: never claims correctness
+ok 17 - never claims correctness
+  ---
+  duration_ms: 0.174493
+  type: 'test'
+  ...
+# Subtest: comparison bounded
+ok 18 - comparison bounded
+  ---
+  duration_ms: 0.400393
+  type: 'test'
+  ...
+# Subtest: empty text rejected
+ok 19 - empty text rejected
+  ---
+  duration_ms: 0.118268
+  type: 'test'
+  ...
+# Subtest: difference reconstructs each normalized side
+ok 20 - difference reconstructs each normalized side
+  ---
+  duration_ms: 0.693785
+  type: 'test'
+  ...
+# Subtest: finds correction 180 seconds away
+ok 21 - finds correction 180 seconds away
+  ---
+  duration_ms: 0.918533
+  type: 'test'
+  ...
+# Subtest: never includes selected cues
+ok 22 - never includes selected cues
+  ---
+  duration_ms: 0.545101
+  type: 'test'
+  ...
+# Subtest: unrelated query returns empty
+ok 23 - unrelated query returns empty
+  ---
+  duration_ms: 0.20565
+  type: 'test'
+  ...
+# Subtest: source has no distant context to retrieve
+ok 24 - source has no distant context to retrieve
+  ---
+  duration_ms: 0.142445
+  type: 'test'
+  ...
+# Subtest: invalid range rejected
+ok 25 - invalid range rejected
+  ---
+  duration_ms: 0.094743
+  type: 'test'
+  ...
+# Subtest: retrieval result limit bounded
+ok 26 - retrieval result limit bounded
+  ---
+  duration_ms: 0.131378
+  type: 'test'
+  ...
+# Subtest: converts estimated ASR ranges
+ok 27 - converts estimated ASR ranges
+  ---
+  duration_ms: 0.408405
+  type: 'test'
+  ...
+# Subtest: tiny rounding overlap is normalized
+ok 28 - tiny rounding overlap is normalized
+  ---
+  duration_ms: 0.11268
+  type: 'test'
+  ...
+# Subtest: fully overlapping ASR range rejected
+ok 29 - fully overlapping ASR range rejected
+  ---
+  duration_ms: 0.128884
+  type: 'test'
+  ...
+# Subtest: nonfinite ASR start rejected
+ok 30 - nonfinite ASR start rejected
+  ---
+  duration_ms: 0.093571
+  type: 'test'
+  ...
+# Subtest: oversized speech rejected
+ok 31 - oversized speech rejected
+  ---
+  duration_ms: 0.113842
+  type: 'test'
+  ...
+# Subtest: missing timestamp chunks rejected
+ok 32 - missing timestamp chunks rejected
+  ---
+  duration_ms: 0.097937
+  type: 'test'
+  ...
+# Subtest: silence marker is not a caption
+ok 33 - silence marker is not a caption
+  ---
+  duration_ms: 0.09288
+  type: 'test'
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 96.815532
