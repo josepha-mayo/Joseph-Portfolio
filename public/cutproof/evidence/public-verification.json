@@ -1,7 +1,7 @@
 {
-  "status": "failed",
+  "status": "passed",
   "base_url": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/",
-  "started_at": "2026-09-06T22:17:51.873255+00:00",
+  "started_at": "2026-09-06T22:21:13.737528+00:00",
   "authentication": "none: no cookies or Authorization supplied",
   "checks": [
     {
@@ -62,8 +62,8 @@
       "status": "passed",
       "width": 720,
       "height": 1280,
-      "bytes": 274443,
-      "audio_rms": 0.089405
+      "bytes": 281141,
+      "audio_rms": 0.090164
     },
     {
       "name": "Public mobile boundary review fits a 390-pixel viewport",
@@ -72,14 +72,17 @@
     {
       "name": "No uncaught JavaScript errors or third-party app requests",
       "status": "passed"
+    },
+    {
+      "name": "Judge landing page links to the actual working studio",
+      "status": "passed",
+      "destination": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/"
     }
   ],
   "requests": [
     "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/index.html"
   ],
   "uncaught_errors": [],
-  "error": "",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/scripts/public_check.py\", line 120, in <module>\n    assert judge.locator('a[href=\"index.html\"]').count()>=1\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
-  "finished_at": "2026-09-06T22:18:05.478584+00:00",
-  "passed": 12
+  "finished_at": "2026-09-06T22:21:38.888397+00:00",
+  "passed": 13
 }
