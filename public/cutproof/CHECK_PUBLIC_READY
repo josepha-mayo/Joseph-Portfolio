@@ -1,4 +1,3 @@
 https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/
-Public verification attempt 2. The first run confirmed byte-identical public app, demo and source downloads, decoded the demo, and exercised Boundary Lab.
-The test harness then hit a CSP-restricted waitForFunction implementation. It now polls from the test process; the application and its CSP are unchanged.
-Repeat every check against the same immutable deployment.
+Public verification attempt 3. Attempt 2 passed all twelve artifact, app, export, real video, mobile and privacy checks. Its final judge-page assertion expected a literal relative href.
+The test now records the served page URL, title and links, then follows the actual Open the working studio link and verifies the destination app. No product code or policies changed.
