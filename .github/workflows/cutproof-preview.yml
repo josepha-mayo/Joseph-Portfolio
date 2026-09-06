@@ -24,17 +24,22 @@ jobs:
       - name: Install public build dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends espeak ffmpeg
-          python3 -m pip install --user playwright pillow
-          python3 -m playwright install --with-deps chromium
+          sudo apt-get install -y --no-install-recommends espeak ffmpeg fonts-dejavu-core python3-venv
+          python3 -m venv /tmp/cutproof-venv
+          /tmp/cutproof-venv/bin/python -m pip install playwright pillow
+          /tmp/cutproof-venv/bin/python -m playwright install --with-deps chromium
+          echo '/tmp/cutproof-venv/bin' >> "$GITHUB_PATH"
       - name: Build, verify and package the original CutProof application
+        id: build
         working-directory: public/cutproof
         run: python3 ci_build.py
-      - name: Commit only generated CutProof assets on the isolated branch
+      - name: Preserve generated assets and actual verification status on isolated branch
+        if: always()
         run: |
           git config user.name 'CutProof Build'
           git config user.email 'cutproof-build@users.noreply.github.com'
+          find public/cutproof -type d -name __pycache__ -prune -exec rm -rf {} +
           git add public/cutproof
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'Publish verified CutProof application and original synthetic demo'
+          git commit -m 'Record CutProof build outputs and actual verification result'
           git push origin HEAD:cutproof-entry-preview-20260906
