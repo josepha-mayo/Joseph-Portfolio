@@ -13,7 +13,7 @@ def fetch(url,dest):
  with urllib.request.urlopen(url,timeout=90) as r:data=r.read()
  dest.write_bytes(data);return data
 HOOKS=r'''
-// Explicit editing operations validate before committing state. No generated result is auto-approved.
+// Validate before committing. A generated result is never automatically approved.
 window.CutProofStudio.importCues=(raw,label)=>{
  if(state.recording)throw new Error('Finish rendering first.');
  const cues=CP.validateCues(raw);
@@ -47,8 +47,7 @@ def build_html():
  marker='renderAll();\n})();';assert base.count(marker)==1
  base=base.replace(marker,HOOKS+'\n'+marker)
  base=re.sub(r'<meta http-equiv="Content-Security-Policy" content="[^"]+">', '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'self\' \'unsafe-inline\' \'wasm-unsafe-eval\'; style-src \'unsafe-inline\'; img-src \'self\' data: blob:; media-src \'self\' data: blob:; connect-src \'self\' blob: data: https://huggingface.co https://*.huggingface.co https://*.hf.co; worker-src \'self\' blob:; base-uri \'none\'; form-action \'none\'">',base,count=1)
- # Source contains an HTML handoff template inside JavaScript. Never replace all
- # closing-body strings: that would break the inline program and double-load UI.
+ # Exported HTML also appears inside a JS template: target the final real tag.
  prefix,closing,suffix=base.rpartition('</body>');assert closing
  base=prefix+'<script src="evidence.js"></script><script src="desk.js"></script>'+closing+suffix
  assert base.count('<script src="desk.js"></script>')==1
@@ -77,6 +76,8 @@ Original project code: MIT (parent LICENSE). Transformers.js: Apache-2.0; ONNX R
 
 ## Reproduce
 Serve the extracted directory with python3 -m http.server 8000 and open http://localhost:8000. The provided index.html is already built. The v1.1 base source and the explicit upgrade recipe are included; the complete build workspace is also available in the linked GitHub project directory. CI installs CPU-only dependencies, synthesizes the original fixture, exercises real browser ASR without passing reference captions to the model, and preserves logs even on failure. Failed runs are not relabeled successful.
+
+The self-contained upstream dist/transformers.min.js is served as vendor/transformers.web.js. The upstream file named transformers.web.js has bare package imports and is NOT suitable for direct module-worker loading. ONNX WASM modules and licenses are copied from the same installed dependency version.
 ''')
 try:
  build_html()
@@ -85,9 +86,11 @@ try:
  run('native-renderer-tests',[sys.executable,'tests/renderer_test.py'])
  if os.getenv('CUTPROOF_LOCAL_ONLY')=='1':
   report['status']='local-only';print('Local build only; no neural or browser-inference claim.');sys.exit(0)
- vendor=OUT/'vendor';vendor.mkdir(exist_ok=True)
- modules=Path('/tmp/node_modules')
- shutil.copyfile(modules/'@huggingface/transformers/dist/transformers.web.js',vendor/'transformers.web.js')
+ vendor=OUT/'vendor';vendor.mkdir(exist_ok=True);modules=Path('/tmp/node_modules')
+ # Use upstream's fully bundled browser ESM, not its external-package web entry.
+ bundle=modules/'@huggingface/transformers/dist/transformers.min.js'
+ assert bundle.is_file(),'Self-contained browser bundle missing'
+ shutil.copyfile(bundle,vendor/'transformers.web.js')
  for package,prefix in [('@huggingface/transformers','TRANSFORMERS'),('onnxruntime-web','ONNX')]:
   for license_file in (modules/package).glob('LICENSE*'):shutil.copyfile(license_file,vendor/(prefix+'-'+license_file.name))
  for file in (modules/'onnxruntime-web/dist').glob('ort-wasm-simd-threaded*'):
@@ -119,7 +122,7 @@ try:
  scenes=[
  ('Every word matters.','A short clip can use the exact source words, and still leave out the sentence that changes their meaning. Cut Proof puts the recording, its captions, and the missing context into one editing workflow.','studio.png'),
  ('Hear the missing word.','A missing word can reverse a claim. In this deliberately incorrect caption, the word not is missing. Cut Proof runs a speech model on the audio and highlights the disagreement. You listen before deciding what to correct.','speech-check.png'),
- ('Start with the recording.','No transcript yet? Attach your recording and generate captions on your own device. The model downloads once. Audio is processed in your browser, not sent to an inference service. Review and apply the generated captions.','transcription.png'),
+ ('Start with the recording.','No transcript yet? Attach your recording and generate captions on your own device. After the model download, audio is processed in your browser, not sent to an inference service. Review and apply the generated captions.','transcription.png'),
  ('Look beyond nearby sentences.','A correction may appear much later than the clip. Evidence Desk searches the whole transcript for related passages, with exact times and original wording. Distant passages are never silently stitched into a new claim.','context.png'),
  ('Make the correction visible.','Caption corrections update the fingerprint and clear previous approvals. Export the speech check, captions, or an editing bundle. These checks assist an editor. They do not certify truth, and the speech model can make mistakes.','caption-fix.png'),
  ('Keep the context. Cut the rest.','This is not another invented viral score. It is a working tool for checking what a recording supports, and handing over usable edits. Try the live studio, inspect the source, and keep the final decision visible.','studio.png')]
