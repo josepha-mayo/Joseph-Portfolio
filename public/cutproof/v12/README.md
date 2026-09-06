@@ -18,3 +18,5 @@ Original project code: MIT (parent LICENSE). Transformers.js: Apache-2.0; ONNX R
 
 ## Reproduce
 Serve the extracted directory with python3 -m http.server 8000 and open http://localhost:8000. The provided index.html is already built. The v1.1 base source and the explicit upgrade recipe are included; the complete build workspace is also available in the linked GitHub project directory. CI installs CPU-only dependencies, synthesizes the original fixture, exercises real browser ASR without passing reference captions to the model, and preserves logs even on failure. Failed runs are not relabeled successful.
+
+The self-contained upstream dist/transformers.min.js is served as vendor/transformers.web.js. The upstream file named transformers.web.js has bare package imports and is NOT suitable for direct module-worker loading. ONNX WASM modules and licenses are copied from the same installed dependency version.

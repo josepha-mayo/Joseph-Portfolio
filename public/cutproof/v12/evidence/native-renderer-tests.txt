@@ -35,6 +35,6 @@ test_unsafe_media_extension_rejected (__main__.RendererValidation.test_unsafe_me
 test_untrimmed_text_rejected (__main__.RendererValidation.test_untrimmed_text_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 35 tests in 0.155s
+Ran 35 tests in 0.180s
 
 OK

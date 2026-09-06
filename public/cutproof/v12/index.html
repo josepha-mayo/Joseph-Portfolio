@@ -723,7 +723,7 @@ window.addEventListener('beforeunload',e=>{if(state.recording){e.preventDefault(
 // Read-only snapshots support reproducible local checks; no agent or network is hidden here.
 window.CutProofStudio={snapshot:()=>JSON.parse(JSON.stringify({filename:state.filename,cues:state.cues,result:state.result,active:state.active,dirty:state.dirty,recording:state.recording,lastRender:state.lastRender}))};
 
-// Explicit editing operations validate before committing state. No generated result is auto-approved.
+// Validate before committing. A generated result is never automatically approved.
 window.CutProofStudio.importCues=(raw,label)=>{
  if(state.recording)throw new Error('Finish rendering first.');
  const cues=CP.validateCues(raw);
