@@ -1,0 +1,3 @@
+CutProof 1.1 publication build
+All product source, generators, tests, diagnostics, documentation and license are present.
+Trigger the isolated public-runner build. Do not merge into production.
