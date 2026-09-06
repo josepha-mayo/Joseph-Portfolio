@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Verify the anonymous public deployment, real controls, downloads and render.
+"""Verify anonymous deployment bytes, actual controls, downloads and rendering.
 
 No account cookies, Authorization headers or browser state are supplied. Only
-public project URLs are read. This is an internal execution check, not user research.
+public project URLs are read. This is internal execution checking, not user research.
 """
 from __future__ import annotations
-import argparse, array, hashlib, io, json, math, os, shutil, subprocess, sys, tempfile, time, traceback, urllib.request, urllib.parse, zipfile
+import argparse, array, hashlib, io, json, math, re, shutil, subprocess, sys, tempfile, time, traceback, urllib.request, urllib.parse, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -116,9 +116,18 @@ try:
             assert not external,external
             report['requests']=requests;report['uncaught_errors']=errors
             ok('No uncaught JavaScript errors or third-party app requests')
-            judge=context.new_page();judge.goto(base+'judge.html',wait_until='load')
-            assert judge.locator('a[href="index.html"]').count()>=1
+            judge=context.new_page();judge_response=judge.goto(base+'judge.html',wait_until='load',timeout=60000)
+            navigation={'url':judge.url,'status':judge_response.status if judge_response else None,'title':judge.title(),'links':judge.locator('a').evaluate_all('(links)=>links.map(a=>({text:a.textContent,href:a.getAttribute("href"),resolved:a.href}))')}
+            (E/'public-judge-navigation.json').write_text(json.dumps(navigation,indent=2)+'\n')
             judge.screenshot(path=str(E/'public-judge-page.png'),full_page=True)
+            assert judge_response and judge_response.status==200,'Judge page browser response is not successful'
+            # Follow the real link rather than asserting a particular relative URL spelling.
+            studio_link=judge.get_by_role('link',name=re.compile('Open the working studio'))
+            assert studio_link.count()==1,'Judge page has no unique Open the working studio link'
+            studio_link.click();judge.locator('#analyzeBtn').wait_for(state='visible',timeout=15000)
+            assert urllib.parse.urlparse(judge.url).hostname==u.hostname
+            assert judge.evaluate('CutProof.VERSION')=='1.1.0'
+            ok('Judge landing page links to the actual working studio',destination=judge.url)
             browser.close()
     report['status']='passed'
 except BaseException as exc:
