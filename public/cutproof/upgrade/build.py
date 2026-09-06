@@ -47,12 +47,15 @@ def build_html():
  marker='renderAll();\n})();';assert base.count(marker)==1
  base=base.replace(marker,HOOKS+'\n'+marker)
  base=re.sub(r'<meta http-equiv="Content-Security-Policy" content="[^"]+">', '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'self\' \'unsafe-inline\' \'wasm-unsafe-eval\'; style-src \'unsafe-inline\'; img-src \'self\' data: blob:; media-src \'self\' data: blob:; connect-src \'self\' blob: data: https://huggingface.co https://*.huggingface.co https://*.hf.co; worker-src \'self\' blob:; base-uri \'none\'; form-action \'none\'">',base,count=1)
- base=base.replace('</body>','<script src="evidence.js"></script><script src="desk.js"></script></body>')
+ # Source contains an HTML handoff template inside JavaScript. Never replace all
+ # closing-body strings: that would break the inline program and double-load UI.
+ prefix,closing,suffix=base.rpartition('</body>');assert closing
+ base=prefix+'<script src="evidence.js"></script><script src="desk.js"></script>'+closing+suffix
+ assert base.count('<script src="desk.js"></script>')==1
  base=base.replace('accept="video/*"','accept="video/*,audio/*"').replace('async function browserRender(){',"async function browserRender(){\n if(!video.videoWidth||!video.videoHeight)throw new Error('Attach a video to render clips. Audio-only sources support transcription and speech checks.');")
  for a,b in [('1.1.0','1.2.0'),('This build reads captions you supply. It does not transcribe audio.','Import captions, or create them locally in Evidence Desk.'),('No transcription model runs here.','Optional Whisper transcription is available in Evidence Desk.'),('No paid service, pretrained model, cloud upload, auto-publication, or claim of guaranteed engagement is included.','Optional pretrained Whisper runs on this device after download consent. No paid inference service, audio upload, auto-publication, or engagement guarantee is included.'),('No network requests','Optional speech-model downloads'),('Nothing is uploaded or published.','Your media is not uploaded or published.'),('Find useful moments, keep their source intact, and hand off clips with receipts.','Find useful moments, check their words against the audio, and inspect the context left outside the cut.')]:base=base.replace(a,b)
  (OUT/'index.html').write_text(base)
  for name in ['evidence.js','desk.js','speech-worker.mjs']:shutil.copyfile(U/name,OUT/name)
- # Keep the mobile source-panel entry point without crowding the compact header.
  desk=(OUT/'desk.js').read_text().replace('@media(max-width:720px){.ev-grid','@media(max-width:740px){#evidenceBtn{display:none}}@media(max-width:720px){.ev-grid');(OUT/'desk.js').write_text(desk)
  (OUT/'README.md').write_text('''# CutProof 1.2 / Evidence Desk
 
@@ -73,12 +76,13 @@ Serve this directory with HTTP or HTTPS. The original core editor remains availa
 Original project code: MIT (parent LICENSE). Transformers.js: Apache-2.0; ONNX Runtime: MIT (vendor licenses). Whisper-tiny.en: MIT; ONNX conversion from onnx-community/whisper-tiny.en on Hugging Face. Neural narration uses hexgrad/Kokoro-82M and stock af_heart voice, Apache-2.0. No individual's voice was cloned. Narration and missing-word test material are synthetic. The natural-speech smoke fixture comes from OpenAI Whisper tests/jfk.flac, a historical public speech; it is not an independent benchmark.
 
 ## Reproduce
-Read upgrade/build.py, evidence.test.cjs and browser_test.py. CI installs CPU-only dependencies, synthesizes the original fixture, exercises real browser ASR without passing reference captions to the model, and preserves logs even on failure. Failed runs are not relabeled successful.
+Serve the extracted directory with python3 -m http.server 8000 and open http://localhost:8000. The provided index.html is already built. The v1.1 base source and the explicit upgrade recipe are included; the complete build workspace is also available in the linked GitHub project directory. CI installs CPU-only dependencies, synthesizes the original fixture, exercises real browser ASR without passing reference captions to the model, and preserves logs even on failure. Failed runs are not relabeled successful.
 ''')
 try:
  build_html()
  run('evidence-unit-tests',['node','--test','upgrade/evidence.test.cjs'])
  run('foundation-core-tests',['node','--test','tests/core.test.js','tests/workflow.test.js'])
+ run('native-renderer-tests',[sys.executable,'tests/renderer_test.py'])
  if os.getenv('CUTPROOF_LOCAL_ONLY')=='1':
   report['status']='local-only';print('Local build only; no neural or browser-inference claim.');sys.exit(0)
  vendor=OUT/'vendor';vendor.mkdir(exist_ok=True)
@@ -93,7 +97,6 @@ try:
  revision=meta['sha'];assert re.fullmatch('[0-9a-f]{40}',revision)
  (OUT/'model-config.mjs').write_text('export const MODEL_ID='+json.dumps(model_id)+';\nexport const MODEL_REVISION='+json.dumps(revision)+';\n')
  report['speech_model']={'id':model_id,'revision':revision,'dtype':'q8','device':'wasm','runtime':'Transformers.js 3.8.1'}
- # eSpeak-ng provides only pronunciation fallback; Kokoro produces the neural waveform.
  import numpy as np, soundfile as sf, torch
  from kokoro import KPipeline
  torch.set_num_threads(2);tts=KPipeline(lang_code='a',device='cpu')
