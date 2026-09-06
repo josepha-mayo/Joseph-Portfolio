@@ -2,9 +2,9 @@
   "format": "cutproof-project",
   "version": 1,
   "app": "CutProof 1.1.0",
-  "created_at": "2026-09-06T22:10:02.663Z",
+  "created_at": "2026-09-06T22:10:46.002Z",
   "filename": "cutproof-original-demo.srt",
-  "media_hint": "source.mp4",
+  "media_hint": "cutproof-original-demo.mp4",
   "transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
   "cues": [
     {
@@ -137,19 +137,9 @@
   },
   "clips": [
     {
-      "first": 9,
-      "last": 13,
-      "previous_review_status": "pending"
-    },
-    {
-      "first": 0,
-      "last": 5,
-      "previous_review_status": "pending"
-    },
-    {
-      "first": 15,
-      "last": 18,
-      "previous_review_status": "pending"
+      "first": 1,
+      "last": 4,
+      "previous_review_status": "reviewed"
     }
   ],
   "review_policy": "Restoring requires reattaching the original video and reviewing cuts again. No media or credentials are saved."

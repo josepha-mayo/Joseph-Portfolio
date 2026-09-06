@@ -1,7 +1,7 @@
 {
-  "status": "failed",
-  "started_at": "2026-09-06T22:04:47.660040+00:00",
-  "source_commit": "70ea69063d146fdcdabe25d88579d052ef868eb6",
+  "status": "passed",
+  "started_at": "2026-09-06T22:09:50.678858+00:00",
+  "source_commit": "4fcf4dee7187bf4ff64180dbf8d7393dec79eac1",
   "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
   "verification_scope": "Executed internal fixture tests, not independent creator validation.",
   "commands": [
@@ -12,7 +12,7 @@
         "scripts/make_demo.py"
       ],
       "exit_code": 0,
-      "elapsed_seconds": 10.793
+      "elapsed_seconds": 11.128
     },
     {
       "name": "core-tests",
@@ -24,7 +24,7 @@
         "tests/workflow.test.js"
       ],
       "exit_code": 0,
-      "elapsed_seconds": 0.304
+      "elapsed_seconds": 0.376
     },
     {
       "name": "example-bundle",
@@ -33,7 +33,7 @@
         "scripts/make_bundle.cjs"
       ],
       "exit_code": 0,
-      "elapsed_seconds": 0.048
+      "elapsed_seconds": 0.075
     },
     {
       "name": "native-render",
@@ -49,7 +49,7 @@
         "--overwrite"
       ],
       "exit_code": 0,
-      "elapsed_seconds": 20.44
+      "elapsed_seconds": 19.866
     },
     {
       "name": "renderer-tests",
@@ -58,7 +58,7 @@
         "tests/renderer_test.py"
       ],
       "exit_code": 0,
-      "elapsed_seconds": 0.181
+      "elapsed_seconds": 0.376
     },
     {
       "name": "standalone-build",
@@ -67,7 +67,7 @@
         "scripts/build.py"
       ],
       "exit_code": 0,
-      "elapsed_seconds": 0.075
+      "elapsed_seconds": 0.08
     },
     {
       "name": "browser-workflows",
@@ -75,8 +75,74 @@
         "/tmp/cutproof-venv/bin/python3",
         "tests/browser_test.py"
       ],
-      "exit_code": 1,
-      "elapsed_seconds": 10.536
+      "exit_code": 0,
+      "elapsed_seconds": 20.983
+    },
+    {
+      "name": "review-browser-workflows",
+      "args": [
+        "/tmp/cutproof-venv/bin/python3",
+        "tests/workflow_browser_test.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.385
+    },
+    {
+      "name": "media-inspection",
+      "args": [
+        "/tmp/cutproof-venv/bin/python3",
+        "scripts/verify_media.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.795
+    },
+    {
+      "name": "boundary-diagnostic",
+      "args": [
+        "node",
+        "scripts/context_diagnostics.cjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.036
+    },
+    {
+      "name": "walkthrough",
+      "args": [
+        "/tmp/cutproof-venv/bin/python3",
+        "scripts/make_walkthrough.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 18.136
+    },
+    {
+      "name": "walkthrough-probe",
+      "args": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_format",
+        "-show_streams",
+        "-of",
+        "json",
+        "demo.mp4"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.064
+    },
+    {
+      "name": "walkthrough-decode",
+      "args": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-i",
+        "demo.mp4",
+        "-f",
+        "null",
+        "-"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.407
     }
   ],
   "release_source_hashes_verified": {
@@ -93,6 +159,20 @@
     "tests/workflow.test.js": "395de99e94fcb17d9ac47a183eee847dc16529e31264def05548a56155f7652f",
     "tests/renderer_test.py": "de80d483000e1485a7c68b9f124bc9ed21f4d0c15dec7abca4ca697b17450ca6"
   },
-  "error": "browser-workflows failed; see evidence/browser-workflows.txt",
-  "finished_at": "2026-09-06T22:05:30.416846+00:00"
+  "verified_counts": {
+    "javascript_tests": 92,
+    "renderer_tests": 35,
+    "browser_workflows": 26,
+    "http_origin_checks": 7,
+    "media_outputs": 4,
+    "authored_diagnostic_cases": 24
+  },
+  "boundary_diagnostic": {
+    "true_positive": 10,
+    "false_positive": 2,
+    "true_negative": 7,
+    "false_negative": 5
+  },
+  "walkthrough_seconds": 68.898231,
+  "finished_at": "2026-09-06T22:11:10.973090+00:00"
 }

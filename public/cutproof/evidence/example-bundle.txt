@@ -2,5 +2,5 @@
   "output": "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/examples/edit-bundle",
   "clips": 3,
   "candidates": 37,
-  "elapsed_ms": 7.8466970000000025
+  "elapsed_ms": 9.777265
 }

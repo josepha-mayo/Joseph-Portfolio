@@ -2,14 +2,14 @@
   "app": "CutProof 1.0.0",
   "source_media_sha256": "6cf7c85d13ee9688658b0cf1f6c06a7bd84a89d73af79d2dc9b2326c26e1e5b3",
   "source_transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
-  "manifest_sha256": "2426911ea44b5983d54f4aeeccd5ff1d6affd0e0070fc714f82141b95dd7deb1",
+  "manifest_sha256": "57e26537d4ee3c333c64ac4b2ae35ff2244772776de4f870116f3b730676e5f5",
   "source_duration_seconds": 126.987982,
   "video_transcript_semantic_alignment": "not_verified",
   "render_mode": "portrait safe-pad; original frame retained",
   "outputs": [
     {
       "file": "clip-01.mp4",
-      "sha256": "6ed38d6eb5cc07a4ffd6bd5ebc3eb65503767871341292f6ea89121fd5b5e117",
+      "sha256": "b3617ce847ac2ab7dd45c79bc20bca8c49dcaec1201d09148aebea16ce50cfd9",
       "source_start_ms": 47476,
       "source_end_ms": 80868,
       "expected_seconds": 33.392,
@@ -19,7 +19,7 @@
       "height": 1280,
       "codec": "h264",
       "audio_present": true,
-      "render_elapsed_seconds": 6.893,
+      "render_elapsed_seconds": 6.657,
       "review_status": "pending"
     },
     {
@@ -34,7 +34,7 @@
       "height": 1280,
       "codec": "h264",
       "audio_present": true,
-      "render_elapsed_seconds": 6.461,
+      "render_elapsed_seconds": 6.206,
       "review_status": "pending"
     },
     {
@@ -49,7 +49,7 @@
       "height": 1280,
       "codec": "h264",
       "audio_present": true,
-      "render_elapsed_seconds": 6.953,
+      "render_elapsed_seconds": 6.814,
       "review_status": "pending"
     }
   ],

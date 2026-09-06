@@ -1,0 +1,40 @@
+{
+  "format": "Narrated inspection-screen walkthrough plus actual MP4 playback, not continuous screen recording.",
+  "scenes": [
+    {
+      "title": "A correct quote can still mislead",
+      "narration": "This cut uses the exact source words but drops the fictional setup and the qualification. Boundary Lab shows what was omitted and proposes a wider range. The added sentences stay verbatim.",
+      "start_seconds": 0,
+      "duration_seconds": 12.401,
+      "visual": "captured app inspection screen"
+    },
+    {
+      "title": "Review follows the source",
+      "narration": "Applying wider boundaries never approves a cut. Replacing the video clears approvals. Portable projects preserve the transcript and ranges, but restoring one requires the original video and a fresh review.",
+      "start_seconds": 12.401,
+      "duration_seconds": 13.029,
+      "visual": "captured app inspection screen"
+    },
+    {
+      "title": "Actual rendered video",
+      "narration": "This is a real captioned MP4 from the included renderer. CutProof keeps the original frame, rebases captions, and writes measured durations and source hashes. Browser recording is also available, locally.",
+      "start_seconds": 25.43,
+      "duration_seconds": 13.542,
+      "visual": "actual rendered output"
+    },
+    {
+      "title": "A usable editor handoff",
+      "narration": "The export includes a script-free review page with surrounding context, captions, a saved project, and editor segment files. Reviewed-only export leaves pending cuts out. Nothing is uploaded or automatically published.",
+      "start_seconds": 38.972,
+      "duration_seconds": 14.268,
+      "visual": "captured app inspection screen"
+    },
+    {
+      "title": "Evidence includes the misses",
+      "narration": "The build passes one hundred twenty-seven core and renderer checks, plus twenty-six browser workflows. Twenty-four authored boundary cases expose remaining misses and false alarms. These are internal checks, not independent creator validation.",
+      "start_seconds": 53.24,
+      "duration_seconds": 15.607,
+      "visual": "summary of executed test evidence"
+    }
+  ]
+}
