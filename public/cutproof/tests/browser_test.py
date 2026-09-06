@@ -84,12 +84,16 @@ with sync_playwright() as p:
     def invalid():
         bad=[{'start':0,'end':5,'text':'One.'},{'start':4,'end':8,'text':'Two.'}]
         page.set_input_files('#transcriptFile',{'name':'bad.json','mimeType':'application/json','buffer':json.dumps(bad).encode()})
+        # File.text() is asynchronous; wait for the rejected import, not a prior notice.
+        wait('document.getElementById("notice").textContent.includes("overlaps")')
         assert 'overlaps' in page.inner_text('#notice');assert page.evaluate('CutProofStudio.snapshot().cues.length')==20
     checked('Malformed import is rejected without destroying the current project',invalid)
     def malicious():
         data=[{'start':0,'end':8,'text':'<img src="https://example.invalid/x" onerror="window.compromised=1">Source text remains inert and literal.'}]
         page.set_input_files('#transcriptFile',{'name':'<img onerror=bad>.json','mimeType':'application/json','buffer':json.dumps(data).encode()})
+        wait('CutProofStudio.snapshot().filename === "<img onerror=bad>.json" && CutProofStudio.snapshot().cues.length === 1')
         assert page.evaluate('window.compromised===undefined');assert page.locator('img').count()==0
+        assert page.evaluate('CutProofStudio.snapshot().cues[0].text')=='Source text remains inert and literal.'
         page.click('#demoBtn');wait('Number.isFinite(document.getElementById("sourceVideo").duration)');page.click('#analyzeBtn')
     checked('Untrusted filename and transcript markup cannot execute HTML',malicious)
     def mobile():
