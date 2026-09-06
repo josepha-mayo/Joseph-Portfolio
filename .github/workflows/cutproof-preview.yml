@@ -1,0 +1,40 @@
+name: CutProof preview package
+on:
+  push:
+    branches: [cutproof-entry-preview-20260906]
+    paths: [public/cutproof/BUILD_READY]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-preview-package
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.ref == 'refs/heads/cutproof-entry-preview-20260906'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cutproof-entry-preview-20260906
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install public build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak ffmpeg
+          python3 -m pip install --user playwright pillow
+          python3 -m playwright install --with-deps chromium
+      - name: Build, verify and package the original CutProof application
+        working-directory: public/cutproof
+        run: python3 ci_build.py
+      - name: Commit only generated CutProof assets on the isolated branch
+        run: |
+          git config user.name 'CutProof Build'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add public/cutproof
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Publish verified CutProof application and original synthetic demo'
+          git push origin HEAD:cutproof-entry-preview-20260906
