@@ -22,11 +22,32 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends ffmpeg
           python3 -m venv /tmp/counterstep-public
-          /tmp/counterstep-public/bin/pip -q install playwright==1.55.0
+          /tmp/counterstep-public/bin/pip -q install playwright==1.55.0 pillow==11.3.0
           /tmp/counterstep-public/bin/python -m playwright install --with-deps chromium
       - name: Verify anonymous deployment bytes and actual browser interactions
         working-directory: public/counterstep
         run: /tmp/counterstep-public/bin/python tools/public_check.py
+      - name: Inspect the processed project thumbnail without resubmitting it
+        if: always()
+        run: |
+          /tmp/counterstep-public/bin/python - <<'PY'
+          import json, urllib.request, io
+          from pathlib import Path
+          from PIL import Image
+          u='https://d112y698adiu2z.cloudfront.net/photos/production/software_thumbnail_photos/005/277/678/datas/medium.jpg'
+          record={'url':u,'status':'unknown'}
+          try:
+              with urllib.request.urlopen(u,timeout=30) as r:
+                  record['http_status']=r.status
+                  data=r.read()
+              im=Image.open(io.BytesIO(data));im.load()
+              record.update(status='decoded',bytes=len(data),dimensions=list(im.size))
+              im.save('public/counterstep/evidence/processed-thumbnail.png')
+          except Exception as exc:
+              record.update(status='failed',error=str(exc))
+          Path('public/counterstep/evidence/thumbnail-check.json').write_text(json.dumps(record,indent=2))
+          print(json.dumps(record))
+          PY
       - name: Preserve actual verification evidence only
         if: always()
         run: |
