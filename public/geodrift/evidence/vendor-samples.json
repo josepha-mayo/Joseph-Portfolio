@@ -1,0 +1,25 @@
+{
+  "source": "Official IP2Location public repository",
+  "revision": "dda91c496c6bca5a0da62f1ce0f4b86941f42982",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/dda91c496c6bca5a0da62f1ce0f4b86941f42982/sample-ipv4.csv",
+      "sha256": "a2c70ea83de30391cbf8903442828b9fbdd0cb013bafb502eb0c8f3f41a9a679",
+      "bytes": 1920,
+      "saved_as": "examples/vendor-ipv4.csv"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/dda91c496c6bca5a0da62f1ce0f4b86941f42982/sample-ipv6.csv",
+      "sha256": "b9a48cf77030e41e59f93732eb77316fa195bebc525c4f552c4d058214bfdb01",
+      "bytes": 3164,
+      "saved_as": "examples/vendor-ipv6.csv"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/dda91c496c6bca5a0da62f1ce0f4b86941f42982/LICENSE",
+      "sha256": "273334b1f2b5da8941b4e9ee5c6c7d6b684b63c4655a23a11695a40a3e27f1c8",
+      "bytes": 1077,
+      "saved_as": "examples/IP2LOCATION-LICENSE.txt"
+    }
+  ],
+  "classification": "Small reference samples, not a current complete geolocation database."
+}

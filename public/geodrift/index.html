@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob:; worker-src blob:; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>GeoDrift | Rehearse your geolocation update</title>
+<style>
+:root{color-scheme:dark;--bg:#080f1b;--panel:#101b2b;--line:#26374c;--muted:#a2b1c6;--ink:#ecf3fc;--accent:#7de5db;--warn:#ffb49c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}a{color:var(--accent)}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px}header{border-bottom:1px solid var(--line);padding:20px max(20px,calc((100vw - 1240px)/2));display:flex;align-items:center;gap:12px}header strong{letter-spacing:-.8px;font-size:23px}header .badge{margin-left:auto}.mark{height:30px;width:30px;border:2px solid var(--accent);border-radius:8px;display:grid;place-items:center;color:var(--accent);font-weight:700}.badge,.eyebrow{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent)}.badge{border:1px solid #305158;padding:6px 10px;border-radius:99px}main{max-width:1280px;padding:36px 20px 50px;margin:auto}.hero{max-width:780px;margin-bottom:24px}.hero h1{font-size:clamp(29px,4vw,44px);line-height:1.12;letter-spacing:-1.4px;margin:10px 0 16px}.hero p{color:var(--muted);font-size:16px;max-width:690px}.layout{display:grid;grid-template-columns:370px minmax(0,1fr);gap:20px;align-items:start}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}.stack{display:grid;gap:16px}.card h2{margin:0 0 5px;font-size:18px;letter-spacing:-.4px}.small{font-size:12px;color:var(--muted)}.step{display:flex;align-items:center;gap:9px;margin-bottom:15px}.step span{width:22px;height:22px;border:1px solid #456079;border-radius:50%;display:grid;place-items:center;color:var(--muted);font-size:12px}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.btn{border:1px solid #3a506d;background:#17283f;color:var(--ink);padding:9px 12px;border-radius:8px;font-size:13px;line-height:1.25}.primary{background:var(--accent);border-color:var(--accent);color:#082c2c;font-weight:750}.full{width:100%;padding:12px;font-size:14px}.field{display:block;margin-top:14px}.field>span{display:block;font-size:13px;font-weight:650;margin-bottom:6px}textarea,input[type=text],select{width:100%;background:#0a1423;border:1px solid #34445d;border-radius:7px;padding:9px;color:var(--ink)}textarea{resize:vertical;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;height:90px}input[type=file]{width:100%;font-size:11px;color:var(--muted);margin:5px 0}input[type=file]::file-selector-button{background:#17283f;color:var(--ink);border:1px solid #3a506d;border-radius:5px;padding:5px 9px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hint{border-left:2px solid #52777b;padding-left:12px;color:var(--muted);font-size:12px;margin:14px 0}.notice{color:var(--warn);font-size:12px;margin:12px 0}.status{padding:16px;border-radius:10px;border:1px solid var(--line);background:#111f33;overflow-wrap:anywhere}.status.risk{border-color:#9e614d;background:#2b211f;color:#ffe0d4}.status.good{border-color:#3e7176;background:#112d31}.status strong{display:block;font-size:17px;margin-bottom:3px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{padding:14px;background:#0a1526;border-radius:10px;border:1px solid #263b54;min-width:0}.stat b{display:block;font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:-.7px;overflow-wrap:anywhere}.stat small{display:block;color:var(--muted);font-size:11px;line-height:1.45;margin-top:8px}.stat .exact{font-size:14px;letter-spacing:0}.transitions{margin:14px 0}.trans{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #23334a;padding:9px 0;font-size:13px}.trans strong{font-family:ui-monospace,Consolas,monospace;font-size:12px;overflow-wrap:anywhere}.tablewrap{overflow:auto;max-height:410px;margin-top:14px;border:1px solid var(--line);border-radius:9px}table{border-collapse:collapse;width:100%;min-width:575px;font-size:12px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:#14243b;position:sticky;top:0;color:var(--muted);font-size:11px}td code{font-size:11px;white-space:nowrap}.chip{display:inline-block;border:1px solid #426078;border-radius:4px;padding:1px 5px;font-size:10px;margin:2px 0}.chip.review,.chip.deny{color:var(--warn);border-color:#8f695e}.muted{color:var(--muted)}.empty{padding:50px 20px;text-align:center;color:var(--muted)}.empty b{color:var(--ink);display:block;margin:10px;font-size:18px}details{margin-top:16px}summary{cursor:pointer;color:var(--muted);font-size:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.55 ui-monospace,Consolas,monospace;max-height:240px;overflow:auto;background:#091321;padding:12px;border-radius:8px}footer{padding-top:26px;color:var(--muted);font-size:12px;max-width:950px}#result[hidden],#empty[hidden]{display:none}@media(max-width:900px){.layout{grid-template-columns:310px minmax(0,1fr)}.stats{grid-template-columns:1fr}.stat b{font-size:24px}}@media(max-width:700px){main{padding:24px 14px}.layout{grid-template-columns:1fr}.card{padding:18px}header{padding:16px}.badge{font-size:9px;letter-spacing:.5px}.hero h1{font-size:34px}.stats{grid-template-columns:repeat(3,1fr);gap:7px}.stat{padding:10px}.stat b{font-size:20px}.stat small{font-size:10px}.pair{gap:8px}}@media(prefers-reduced-motion:no-preference){button:hover:not(:disabled){filter:brightness(1.1)}}
+</style>
+</head>
+<body>
+<header><div class="mark" aria-hidden="true">G</div><strong>GeoDrift</strong><span class="badge">Offline by design</span></header>
+<main>
+<section class="hero"><div class="eyebrow">IP2Location / release rehearsal</div><h1>A database update.<br>A different access decision.</h1><p>Compare two country snapshots before rollout. Find changed decisions, lost coverage and the requests your supplied policy would treat differently.</p><button id="quick" class="btn primary">Compare snapshots</button></section>
+<div class="layout">
+<aside class="stack">
+<section class="card"><div class="step"><span>1</span><h2>Load the snapshots</h2></div><div class="small">IP2Location CSV: decimal start, decimal end, country code, country name. Extra columns are ignored.</div>
+<div class="buttons"><button class="btn" id="example">Load change demo</button><button class="btn" id="same">Self-compare sample</button><button class="btn" id="v6">IPv6 boundary test</button></div>
+<div id="provenance" class="hint"></div>
+<label class="field"><span>Address family</span><select id="family"><option value="4">IPv4 / 32-bit</option><option value="6">IPv6 / 128-bit, exact integers</option></select></label>
+<label class="field"><span>Before / baseline</span><input type="file" id="oldFile" accept=".csv,text/csv" aria-label="Upload baseline CSV"><textarea id="old" spellcheck="false" aria-label="Baseline CSV"></textarea></label>
+<label class="field"><span>After / candidate</span><input type="file" id="newFile" accept=".csv,text/csv" aria-label="Upload candidate CSV"><textarea id="next" spellcheck="false" aria-label="Candidate CSV"></textarea></label>
+<div class="small">Browser: 100,000 ranges / 20 MiB per file. The Python CLI streams larger snapshots.</div>
+</section>
+<section class="card"><div class="step"><span>2</span><h2>Rehearse the policy</h2></div><div class="pair"><label class="field"><span>Deny before</span><input id="before" type="text" placeholder="e.g. CN" value="CN"></label><label class="field"><span>Deny after</span><input id="after" type="text" placeholder="e.g. CN" value="CN"></label></div><p class="hint">Uncovered or unlocated addresses always require review. This example policy is illustrative, not a legal or security recommendation.</p>
+<details><summary>Optional: replay request counts</summary><p class="small">CSV: ip,requests. Supply only logs you are authorized to process. Raw traffic IPs are excluded from exported reports.</p><input type="file" id="trafficFile" accept=".csv,text/csv" aria-label="Upload traffic CSV"><textarea id="traffic" spellcheck="false" aria-label="Traffic CSV"></textarea></details>
+<div class="buttons"><button class="btn primary full" id="run">Compare and rehearse</button><button class="btn" id="cancel" disabled>Cancel</button></div><p class="small">No uploads, API keys, probes or firewall changes.</p></section>
+</aside>
+<div class="stack">
+<section class="card"><div class="step"><span>3</span><h2>Review the change surface</h2></div><div id="status" class="status" role="status" aria-live="polite">Ready. Run the comparison to see the actual result.</div>
+<div id="empty" class="empty"><div aria-hidden="true" style="font-size:28px;color:var(--accent)">[ before → after ]</div><b>Rehearse first. Roll out later.</b>Exact intervals, not sampled addresses.<br>Every uncovered range remains visible.</div>
+<div id="result" hidden>
+<div class="stats"><div class="stat"><b id="changed">0</b><small>Addresses with a different decision</small></div><div class="stat"><b id="lost">0</b><small>Addresses losing database coverage</small></div><div class="stat"><b id="requests">0</b><small>Supplied requests changing decision</small></div></div>
+<p class="notice">Address-space sizes are not people. Request counts are not unique users.</p>
+<h2>Decision transitions</h2><div id="transitions" class="transitions"></div><div id="trafficSummary" class="hint"></div>
+<h2>Changed intervals</h2><div class="small" id="detailLabel"></div><div class="tablewrap"><table><thead><tr><th>Inclusive source range</th><th>Country classification</th><th>Policy decision</th><th>Addresses</th></tr></thead><tbody id="details"></tbody></table></div>
+<div class="buttons"><button class="btn" id="export" disabled>Export review JSON</button><button class="btn" id="exportHtml" disabled>Export readable report</button></div><details><summary>Integrity and reproduction record</summary><pre id="record"></pre></details>
+</div></section>
+<section class="card"><div class="eyebrow">A review tool, not an identity oracle</div><h2 style="margin-top:8px">The gaps matter as much as the changes.</h2><p class="small">A missing range is not permission to allow access. GeoDrift keeps “uncovered” separate from a country classification and uses exact 128-bit arithmetic at IPv6 boundaries. Country labels reflect supplied data, not verified residence, citizenship or identity.</p><p class="small">Changes to input clear the result and disable exports. “No decision change” means only that these snapshots and these policies produced the same decisions, not that either one is correct.</p><div class="buttons"><a href="source.zip">Source and tests</a><span class="muted">/</span><a href="README.md">How it works</a><span class="muted">/</span><a href="evidence/verification.json">Executed checks</a></div></section>
+</div></div>
+<footer>GeoDrift 1.0 · MIT licensed · Built with substantial AI assistance. The built-in baseline is an IP2Location public sample. The demo candidate and traffic counts are intentionally synthetic, not a real vendor update or customer incident.</footer>
+</main>
+<script id="coreSource">/* GeoDrift 1.0.0. MIT. Exact integers; no network access or policy writes. */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.GeoDrift = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const VERSION = '1.0.0', MAX_ROWS = 100000, MAX_BYTES = 20 * 1024 * 1024;
+  const require = (ok, text) => { if (!ok) throw new Error(text); };
+  function csv(text) {
+    require(typeof text === 'string' && new TextEncoder().encode(text).length <= MAX_BYTES, 'Each browser CSV must be at most 20 MiB. Use the streaming Python CLI for larger databases.');
+    text = text.replace(/^\uFEFF/, '');
+    const out = []; let row = [], cell = '', quoted = false, closed = false;
+    function pushRow() {
+      row.push(cell); if (row.some(s => s.trim())) out.push(row);
+      require(out.length <= MAX_ROWS + 1, 'Browser preview limit: 100,000 rows. Use the streaming Python CLI.');
+      row = []; cell = ''; closed = false;
+    }
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (quoted) {
+        if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else { quoted = false; closed = true; } }
+        else cell += ch;
+      } else if (ch === '"') {
+        require(!cell.length && !closed, 'Invalid CSV quote.'); quoted = true;
+      } else if (ch === ',') { row.push(cell); cell = ''; closed = false; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; pushRow(); }
+      else { require(!closed, 'Unexpected text after closing CSV quote.'); cell += ch; }
+    }
+    require(!quoted, 'Unterminated CSV quote.');
+    if (cell.length || row.length || closed) pushRow();
+    return out;
+  }
+  function ranges(text, family = 4) {
+    require(family === 4 || family === 6, 'Address family must be 4 or 6.');
+    const max = (1n << (family === 4 ? 32n : 128n)) - 1n;
+    let last = -1n;
+    const rows = csv(text); require(rows.length <= MAX_ROWS, 'At most 100,000 browser ranges.');
+    return rows.map((r, i) => {
+      require(r.length >= 4, `CSV row ${i + 1}: expected at least four IP2Location columns.`);
+      require(/^[0-9]{1,39}$/.test(r[0].trim()) && /^[0-9]{1,39}$/.test(r[1].trim()), `CSV row ${i + 1}: use decimal integer endpoints, no header.`);
+      const a = BigInt(r[0].trim()), b = BigInt(r[1].trim()), code = r[2].trim().toUpperCase();
+      require(a <= b && b <= max, `CSV row ${i + 1}: reversed range or wrong family.`);
+      require(a > last, `CSV row ${i + 1}: ranges overlap or are unsorted.`);
+      require(code === '-' || /^[A-Z]{2}$/.test(code), `CSV row ${i + 1}: invalid country code.`);
+      last = b; return [a, b, code];
+    });
+  }
+  function policy(text) {
+    require(typeof text === 'string', 'Policy must be text.');
+    const codes = text.trim().toUpperCase().split(/[\s,;]+/).filter(Boolean);
+    require(codes.every(s => /^[A-Z]{2}$/.test(s)), 'Policy needs comma-separated two-letter country codes.');
+    return new Set(codes);
+  }
+  const decision = (code, deny) => code === null || code === '-' ? 'review' : deny.has(code) ? 'deny' : 'allow';
+  function* events(rows) { for (const [a, b, code] of rows) { yield [a, code]; yield [b + 1n, null]; } }
+  function* sweep(a, b) {
+    const streams = [events(a), events(b)], heads = streams.map(s => s.next()), states = [null, null]; let previous = null;
+    while (heads.some(h => !h.done)) {
+      const pts = heads.filter(h => !h.done).map(h => h.value[0]);
+      const point = pts.reduce((a, b) => a < b ? a : b);
+      if (previous !== null && previous < point && states.some(s => s !== null)) yield [previous, point - 1n, ...states];
+      for (let k = 0; k < 2; k++) while (!heads[k].done && heads[k].value[0] === point) { states[k] = heads[k].value[1]; heads[k] = streams[k].next(); }
+      previous = point;
+    }
+  }
+  function address(n, family) {
+    if (family === 4) return [24n, 16n, 8n, 0n].map(s => String((n >> s) & 255n)).join('.');
+    return [112n, 96n, 80n, 64n, 48n, 32n, 16n, 0n].map(s => ((n >> s) & 65535n).toString(16)).join(':');
+  }
+  function ip(text, family) {
+    if (family === 4) {
+      const p = text.split('.'); require(p.length === 4 && p.every(x => /^(0|[1-9][0-9]{0,2})$/.test(x) && Number(x) < 256), 'Invalid IPv4 traffic address.');
+      return p.reduce((a, b) => (a << 8n) + BigInt(b), 0n);
+    }
+    require(!/[.%/]/.test(text), 'IPv6 traffic must not contain a scope, prefix or embedded IPv4.');
+    const parts = text.toLowerCase().split('::'); require(parts.length <= 2, 'Invalid IPv6 compression.');
+    const l = parts[0] ? parts[0].split(':') : [], r = parts.length === 2 && parts[1] ? parts[1].split(':') : [];
+    let groups;
+    if (parts.length === 2) { require(l.length + r.length < 8, 'Invalid IPv6 length.'); groups = [...l, ...Array(8 - l.length - r.length).fill('0'), ...r]; }
+    else groups = l;
+    require(groups.length === 8 && groups.every(x => /^[0-9a-f]{1,4}$/.test(x)), 'Invalid IPv6 traffic address.');
+    const value = groups.reduce((a, b) => (a << 16n) + BigInt('0x' + b), 0n);
+    require((value >> 32n) !== 65535n, 'IPv4-mapped IPv6 is not supported.');
+    return value;
+  }
+  function traffic(text, family) {
+    if (!text.trim()) return [];
+    const rows = csv(text); require(rows.length && rows[0].map(s => s.trim()).join(',') === 'ip,requests', 'Traffic CSV header must be ip,requests.');
+    const totals = new Map();
+    for (const r of rows.slice(1)) { require(r.length === 2 && /^[0-9]{1,30}$/.test(r[1].trim()), 'Traffic rows need an IP and a nonnegative integer request count (at most 30 digits).'); const n = ip(r[0].trim(), family), k = n.toString(); totals.set(k, (totals.get(k) || 0n) + BigInt(r[1].trim())); }
+    return [...totals].map(([k, v]) => [BigInt(k), v]).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
+  }
+  function auditText(oldText, newText, beforeText = '', afterText = '', family = 4, trafficText = '', limit = 1000) {
+    require(Number.isInteger(limit) && limit >= 0 && limit <= 1000, 'Detail limit must be 0 through 1000.');
+    const old = ranges(oldText, family), next = ranges(newText, family), before = policy(beforeText), after = policy(afterText), tr = traffic(trafficText, family);
+    const summary = Object.fromEntries(['union_addresses', 'changed_addresses', 'decision_changed_addresses', 'coverage_lost_addresses', 'coverage_gained_addresses', 'country_changed_addresses'].map(k => [k, 0n]));
+    const transitions = {}, tt = {}, details = []; let t = 0, intervals = 0;
+    function replay(end, key) { while (t < tr.length && tr[t][0] <= end) { tt[key] = (tt[key] || 0n) + tr[t][1]; t++; } }
+    for (const [a, b, oc, nc] of sweep(old, next)) {
+      const od = decision(oc, before), nd = decision(nc, after), key = od + ' -> ' + nd, count = b - a + 1n;
+      summary.union_addresses += count; transitions[key] = (transitions[key] || 0n) + count;
+      replay(a - 1n, 'review -> review'); replay(b, key);
+      const changed = oc !== nc || od !== nd;
+      if (changed) summary.changed_addresses += count;
+      if (od !== nd) summary.decision_changed_addresses += count;
+      if (oc !== null && nc === null) summary.coverage_lost_addresses += count;
+      if (oc === null && nc !== null) summary.coverage_gained_addresses += count;
+      if (oc !== null && nc !== null && oc !== nc) summary.country_changed_addresses += count;
+      if (changed) { intervals++; if (details.length < limit) details.push({ from: String(a), to: String(b), from_ip: address(a, family), to_ip: address(b, family), addresses: String(count), before_country: oc, after_country: nc, before_decision: od, after_decision: nd }); }
+    }
+    replay((1n << (family === 4 ? 32n : 128n)) - 1n, 'review -> review');
+    const stringify = o => Object.fromEntries(Object.entries(o).sort().map(([k, v]) => [k, String(v)]));
+    return { schema: 'geodrift/v1', version: VERSION, family, status: summary.decision_changed_addresses || summary.coverage_lost_addresses ? 'review_required' : 'no_decision_change', summary: stringify(summary), policy: { before_deny: [...before].sort(), after_deny: [...after].sort(), uncovered_or_unlocated: 'review' }, transitions: stringify(transitions), traffic: { supplied: !!tr.length, requests: String(tr.reduce((a, b) => a + b[1], 0n)), transitions: stringify(tt), raw_ips_exported: false }, changed_intervals: intervals, details, details_truncated: intervals > details.length, scope: 'Counts are address-space sizes, not people. Replay counts are supplied requests, not unique users. No network probes or access-control changes. Coverage outside both snapshots is excluded from address totals; traffic there remains review.' };
+  }
+  return { VERSION, csv, ranges, policy, decision, sweep, address, ip, traffic, auditText, MAX_BYTES, MAX_ROWS };
+});
+</script>
+<script id="workerSource" type="text/plain">'use strict';
+self.onmessage = async e => {
+  const {id, old, next, before, after, family, traffic} = e.data;
+  try {
+    const report = GeoDrift.auditText(old, next, before, after, family, traffic);
+    async function hash(text) { const bytes = new TextEncoder().encode(text); const h = await crypto.subtle.digest('SHA-256', bytes); return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+    report.source_sha256 = {before_csv: await hash(old), after_csv: await hash(next), traffic_csv: traffic.trim() ? await hash(traffic) : null};
+    report.integrity_note = 'UTF-8 decoded input fingerprints, not authentication. File byte hashes may differ for a BOM. CLI also records original byte hashes.';
+    self.postMessage({id,report});
+  } catch (error) { self.postMessage({id,error:error.message}); }
+};
+</script>
+<script>const DEMO = {"old": "\"17170432\",\"17301503\",\"IN\",\"India\"\n\"17301504\",\"17367039\",\"CN\",\"China\"\n\"17367040\",\"17432575\",\"MY\",\"Malaysia\"\n\"17432576\",\"17435135\",\"CN\",\"China\"\n\"17435136\",\"17435391\",\"AU\",\"Australia\"\n\"17435392\",\"17465343\",\"CN\",\"China\"\n\"17465344\",\"17498111\",\"TH\",\"Thailand\"\n\"17498112\",\"17563647\",\"KR\",\"Korea, Republic of\"\n\"17563648\",\"17825791\",\"CN\",\"China\"\n\"17825792\",\"17842175\",\"KR\",\"Korea, Republic of\"\n\"17986560\",\"17991679\",\"KR\",\"Korea, Republic of\"\n\"18087936\",\"18153471\",\"TH\",\"Thailand\"\n\"18153472\",\"18219007\",\"JP\",\"Japan\"\n\"18219008\",\"18350079\",\"IN\",\"India\"\n\"18350080\",\"18874367\",\"CN\",\"China\"\n\"18874368\",\"18907135\",\"MY\",\"Malaysia\"\n\"18907136\",\"18923519\",\"SG\",\"Singapore\"\n\"18923520\",\"18925567\",\"HK\",\"Hong Kong\"\n\"18925568\",\"18926079\",\"SG\",\"Singapore\"\n\"18926080\",\"18926207\",\"TW\",\"Taiwan, Province of China\"\n\"18926208\",\"18926335\",\"SG\",\"Singapore\"\n\"18926336\",\"18926463\",\"TW\",\"Taiwan, Province of China\"\n\"18926464\",\"18926591\",\"SG\",\"Singapore\"\n\"18926592\",\"18926719\",\"TW\",\"Taiwan, Province of China\"\n\"18926720\",\"18926847\",\"SG\",\"Singapore\"\n\"18926848\",\"18927103\",\"HK\",\"Hong Kong\"\n\"18927104\",\"18927615\",\"SG\",\"Singapore\"\n\"18927616\",\"18929663\",\"TW\",\"Taiwan, Province of China\"\n\"18929664\",\"18931711\",\"KR\",\"Korea, Republic of\"\n\"18931712\",\"18933759\",\"JP\",\"Japan\"\n\"18933760\",\"18935807\",\"US\",\"United States\"\n\"18935808\",\"18938879\",\"HK\",\"Hong Kong\"\n\"18938880\",\"18939135\",\"KH\",\"Cambodia\"\n\"18939136\",\"18939903\",\"HK\",\"Hong Kong\"\n\"18939904\",\"18994630\",\"JP\",\"Japan\"\n\"18994631\",\"18994635\",\"BR\",\"Brazil\"\n\"18994636\",\"18994657\",\"JP\",\"Japan\"\n\"18994658\",\"18994662\",\"BR\",\"Brazil\"\n\"18994663\",\"19005439\",\"JP\",\"Japan\"\n\"19005440\",\"19136511\",\"TW\",\"Taiwan, Province of China\"\n\"19136512\",\"19202047\",\"HK\",\"Hong Kong\"\n\"19202048\",\"19267583\",\"PH\",\"Philippines\"\n\"19267584\",\"19398655\",\"IN\",\"India\"\n\"19398656\",\"19726335\",\"AU\",\"Australia\"\n\"19726336\",\"19791871\",\"CN\",\"China\"\n\"19791872\",\"19922943\",\"TH\",\"Thailand\"\n\"19922944\",\"20185087\",\"CN\",\"China\"\n\"20185088\",\"20447231\",\"VN\",\"Viet Nam\"", "next": "\"17170432\",\"17301503\",\"CN\",\"China\"\n\"17301504\",\"17367039\",\"CN\",\"China\"\n\"17432576\",\"17435135\",\"CN\",\"China\"\n\"17435136\",\"17435391\",\"AU\",\"Australia\"\n\"17435392\",\"17465343\",\"CN\",\"China\"\n\"17465344\",\"17498111\",\"TH\",\"Thailand\"\n\"17498112\",\"17563647\",\"KR\",\"Korea, Republic of\"\n\"17563648\",\"17825791\",\"CN\",\"China\"\n\"17825792\",\"17842175\",\"KR\",\"Korea, Republic of\"\n\"17986560\",\"17991679\",\"KR\",\"Korea, Republic of\"\n\"18087936\",\"18153471\",\"TH\",\"Thailand\"\n\"18153472\",\"18219007\",\"JP\",\"Japan\"\n\"18219008\",\"18350079\",\"IN\",\"India\"\n\"18350080\",\"18874367\",\"CN\",\"China\"\n\"18874368\",\"18907135\",\"MY\",\"Malaysia\"\n\"18907136\",\"18923519\",\"SG\",\"Singapore\"\n\"18923520\",\"18925567\",\"HK\",\"Hong Kong\"\n\"18925568\",\"18926079\",\"SG\",\"Singapore\"\n\"18926080\",\"18926207\",\"TW\",\"Taiwan, Province of China\"\n\"18926208\",\"18926335\",\"SG\",\"Singapore\"\n\"18926336\",\"18926463\",\"TW\",\"Taiwan, Province of China\"\n\"18926464\",\"18926591\",\"SG\",\"Singapore\"\n\"18926592\",\"18926719\",\"TW\",\"Taiwan, Province of China\"\n\"18926720\",\"18926847\",\"SG\",\"Singapore\"\n\"18926848\",\"18927103\",\"HK\",\"Hong Kong\"\n\"18927104\",\"18927615\",\"SG\",\"Singapore\"\n\"18927616\",\"18929663\",\"TW\",\"Taiwan, Province of China\"\n\"18929664\",\"18931711\",\"KR\",\"Korea, Republic of\"\n\"18931712\",\"18933759\",\"JP\",\"Japan\"\n\"18933760\",\"18935807\",\"US\",\"United States\"\n\"18935808\",\"18938879\",\"HK\",\"Hong Kong\"\n\"18938880\",\"18939135\",\"KH\",\"Cambodia\"\n\"18939136\",\"18939903\",\"HK\",\"Hong Kong\"\n\"18939904\",\"18994630\",\"JP\",\"Japan\"\n\"18994631\",\"18994635\",\"BR\",\"Brazil\"\n\"18994636\",\"18994657\",\"JP\",\"Japan\"\n\"18994658\",\"18994662\",\"BR\",\"Brazil\"\n\"18994663\",\"19005439\",\"JP\",\"Japan\"\n\"19005440\",\"19136511\",\"TW\",\"Taiwan, Province of China\"\n\"19136512\",\"19202047\",\"HK\",\"Hong Kong\"\n\"19202048\",\"19267583\",\"PH\",\"Philippines\"\n\"19267584\",\"19398655\",\"IN\",\"India\"\n\"19398656\",\"19726335\",\"AU\",\"Australia\"\n\"19726336\",\"19791871\",\"CN\",\"China\"\n\"19791872\",\"19922943\",\"TH\",\"Thailand\"\n\"19922944\",\"20185087\",\"CN\",\"China\"\n\"20185088\",\"20447231\",\"VN\",\"Viet Nam\"", "traffic": "ip,requests\n1.6.0.1,120\n1.9.0.1,45\n1.8.0.1,20\n203.0.113.1,7\n"};</script>
+<script>'use strict';
+const $ = id => document.getElementById(id);
+let worker = null, workerUrl = null, generation = 0, report = null, lastInputs = null;
+function stop() { if (worker) worker.terminate(); worker = null; if (workerUrl) URL.revokeObjectURL(workerUrl); workerUrl = null; $('cancel').disabled = true; $('run').disabled = false; }
+function invalidate(message = 'Inputs changed. Run again before exporting.') { generation++; stop(); report = null; lastInputs = null; $('export').disabled = true; $('exportHtml').disabled = true; $('result').hidden = true; $('empty').hidden = false; $('status').className = 'status'; $('status').textContent = message; }
+const format = x => BigInt(x).toLocaleString('en-US');
+function cell(row, value) { const c = document.createElement('td'); c.textContent = value; row.append(c); return c; }
+function show(r) {
+  report = r; $('result').hidden = false; $('empty').hidden = true;
+  $('status').className = 'status ' + (r.status === 'review_required' ? 'risk' : 'good');
+  $('status').replaceChildren(); const title = document.createElement('strong'); title.textContent = r.status === 'review_required' ? 'Review before rollout' : 'No decision change in this comparison';
+  const text = document.createElement('span'); text.className = 'small'; text.textContent = r.status === 'review_required' ? 'The supplied update changes a decision or removes coverage. Nothing has been deployed.' : 'This is not a claim of accuracy, safety or correct location.'; $('status').append(title, text);
+  for (const [id, n] of [['changed',r.summary.decision_changed_addresses],['lost',r.summary.coverage_lost_addresses]]) { $(id).textContent = format(n); $(id).className = n.length > 12 ? 'exact' : ''; }
+  const changedRequests = Object.entries(r.traffic.transitions).reduce((a,[k,v])=>{const [b,c]=k.split(' -> ');return a+(b!==c?BigInt(v):0n);},0n);
+  $('requests').textContent = r.traffic.supplied ? format(changedRequests) : 'Not supplied'; $('requests').className = r.traffic.supplied ? '' : 'exact';
+  $('transitions').replaceChildren();
+  for (const [k,v] of Object.entries(r.transitions)) { const row = document.createElement('div'); row.className='trans'; const key=document.createElement('span'), count=document.createElement('strong'); key.textContent=k.replace(' -> ',' → '); count.textContent=format(v)+' addresses'; row.append(key,count); $('transitions').append(row); }
+  $('trafficSummary').textContent = r.traffic.supplied ? `${format(r.traffic.requests)} supplied requests replayed. ` + Object.entries(r.traffic.transitions).map(([k,v])=>`${k}: ${format(v)}`).join(' · ') + '. No raw traffic IPs in the report.' : 'No request log supplied. Address-space counts do not estimate customer impact.';
+  $('detailLabel').textContent=`${r.changed_intervals} changed intervals; showing ${r.details.length}${r.details_truncated?' (details truncated; totals are complete)':''}.`;
+  $('details').replaceChildren();
+  for (const d of r.details) { const row=document.createElement('tr'); cell(row,d.from_ip+' to '+d.to_ip); cell(row,(d.before_country??'uncovered')+' → '+(d.after_country??'uncovered')); cell(row,d.before_decision+' → '+d.after_decision); cell(row,format(d.addresses)); $('details').append(row); }
+  if(!r.details.length){const row=document.createElement('tr');const c=cell(row,'No changed intervals.');c.colSpan=4;$('details').append(row);}
+  $('record').textContent=JSON.stringify({family:r.family,policy:r.policy,source_sha256:r.source_sha256,scope:r.scope,integrity_note:r.integrity_note},null,2);
+  $('export').disabled=false; $('exportHtml').disabled=false;
+}
+function inputs() { return {old:$('old').value,next:$('next').value,before:$('before').value,after:$('after').value,family:Number($('family').value),traffic:$('traffic').value}; }
+function run() {
+  invalidate('Comparing exact intervals in an isolated local worker…');
+  const id=generation, values=inputs(); lastInputs=values; $('run').disabled=true; $('cancel').disabled=false;
+  try {
+    const body=$('coreSource').textContent+'\n'+$('workerSource').textContent;
+    workerUrl=URL.createObjectURL(new Blob([body],{type:'text/javascript'})); worker=new Worker(workerUrl);
+    worker.onmessage=e=>{if(e.data.id!==generation)return;stop();if(e.data.error){invalidate(e.data.error);$('status').className='status risk';}else{show(e.data.report);}};
+    worker.onerror=()=>{invalidate('Worker failed. Use a current browser over HTTPS or localhost.');$('status').className='status risk';};
+    worker.postMessage({id,...values});
+  } catch(e){invalidate(e.message);$('status').className='status risk';}
+}
+function load(mode) {
+  invalidate('Example loaded. Run the comparison.'); $('family').value=mode==='v6'?'6':'4'; $('before').value='CN';$('after').value='CN';
+  $('old').value=mode==='v6'?'"0","340282366920938463463374607431768211455","US","United States"':DEMO.old;
+  $('next').value=mode==='v6'?'"0","340282366920938463463374607431768211454","US","United States"\n"340282366920938463463374607431768211455","340282366920938463463374607431768211455","CN","China"':mode==='same'?DEMO.old:DEMO.next;
+  $('traffic').value=mode==='v6'?'ip,requests\nffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff,1\n':mode==='same'?'':DEMO.traffic;
+  $('provenance').textContent=mode==='v6'?'Synthetic IPv6 boundary test: one address changes at the final 128-bit value.':mode==='same'?'Both snapshots are the exact same official IP2Location IPv4 sample. This is a compatibility check, not current geolocation data.':'Baseline: official IP2Location sample. Candidate: deliberately changed first country and removed one range. Request counts are fictional.';
+}
+for (const id of ['old','next','before','after','family','traffic']) $(id).addEventListener('input',()=>{invalidate();$('provenance').textContent='User-edited inputs. Provenance and accuracy are not established by this tool.';});
+for (const [file,text] of [['oldFile','old'],['newFile','next'],['trafficFile','traffic']]) $(file).addEventListener('change',async()=>{
+  invalidate('Loading local file…');const id=generation;const f=$(file).files[0];if(!f)return;
+  try { if(f.size>GeoDrift.MAX_BYTES)throw new Error('File exceeds the 20 MiB browser limit. Use the streaming Python CLI.'); const value=await f.text();if(generation!==id)return;$(text).value=value;invalidate('Local file loaded. Run the comparison.');$('provenance').textContent='Local files selected by the operator. Nothing uploaded. Provenance not authenticated.'; }
+  catch(e){if(generation===id){invalidate(e.message);$('status').className='status risk';}}
+  finally { $(file).value=''; }
+});
+function save(name,data,type) { const url=URL.createObjectURL(new Blob([data],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500); }
+function checked() {if(!report||JSON.stringify(inputs())!==JSON.stringify(lastInputs)){invalidate();return false;}return true;}
+$('quick').onclick=run; $('run').onclick=run; $('cancel').onclick=()=>invalidate('Comparison cancelled. No partial result applied.');
+$('example').onclick=()=>load('demo');$('same').onclick=()=>load('same');$('v6').onclick=()=>load('v6');
+$('export').onclick=()=>{if(checked())save('geodrift-review.json',JSON.stringify(report,null,2)+'\n','application/json');};
+$('exportHtml').onclick=()=>{if(!checked())return;const escaped=JSON.stringify(report,null,2).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');save('geodrift-review.html','<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>GeoDrift review</title><style>body{max-width:1000px;margin:40px auto;padding:20px;font:15px/1.6 system-ui;background:#101b2b;color:#ecf3fc}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style><h1>GeoDrift / review record</h1><p>Offline comparison. Address counts are not people. No access controls were changed.</p><pre>'+escaped+'</pre>','text/html');};
+load('demo');
+</script>
+</body></html>
