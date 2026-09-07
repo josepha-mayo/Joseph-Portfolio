@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "origin": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app",
+  "authentication": "none",
+  "started_at": "2026-09-07T20:22:56.627439+00:00",
+  "files": [],
+  "error": "Unexpected HTML change",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/public_check.py\", line 17, in <module>\n    assert data==expected.replace(b'href=\"index.html\"',b\"href='/'\"),'Unexpected HTML change'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Unexpected HTML change\n",
+  "finished_at": "2026-09-07T20:22:56.988454+00:00"
+}
