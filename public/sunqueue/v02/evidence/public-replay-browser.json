@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "origin": "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02",
+  "checks": [
+    "Cannot freeze nonexistent plan",
+    "Freeze captures actual planner schedule",
+    "Forecast replay processes all hours through the real simulator",
+    "JSON report exports exact fixed starts and profile hash",
+    "Replay project is downloadable",
+    "Label change invalidates old exports",
+    "Failed replay does not move jobs or report false savings",
+    "Invalid CSV cannot preserve stale results",
+    "Reopening validates inputs and requires recomputation",
+    "Corrupt project leaves active work untouched",
+    "User markup remains inert",
+    "Planner edits synchronously invalidate frozen results",
+    "A new planning run cannot leave old replay approved",
+    "Replay workbench fits a 390-pixel screen",
+    "Import picker remains hidden until requested",
+    "No uncaught errors or third-party runtime requests"
+  ],
+  "count": 16,
+  "browser": "152.0.7977.0",
+  "errors": [],
+  "requests": [
+    "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02/index.html",
+    "blob:https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/e580db9c-4586-4dba-9812-de81e3c81a8e",
+    "blob:https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/c7f82b04-0b99-452e-85ce-2b9ec35e0ce8",
+    "blob:https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/bfbd4425-560b-4269-83b9-c3906fb415ce"
+  ]
+}
