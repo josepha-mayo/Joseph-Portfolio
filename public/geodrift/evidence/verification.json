@@ -1,39 +1,39 @@
 {
   "project": "GeoDrift",
   "version": "1.0.0",
-  "status": "failed",
-  "started_at": "2026-09-07T15:08:38.483474+00:00",
-  "source_commit": "f8f51111e90d5a580849898fb8ebdd244c1f669c",
+  "status": "passed",
+  "started_at": "2026-09-07T15:12:13.883155+00:00",
+  "source_commit": "d5f18d71c702f9f2fae23dfc8c7988e067b54631",
   "commands": [
     {
       "name": "build",
       "exit_code": 0,
-      "seconds": 0.025
+      "seconds": 0.026
     },
     {
       "name": "python-tests",
       "exit_code": 0,
-      "seconds": 0.324
+      "seconds": 0.305
     },
     {
       "name": "js-tests",
       "exit_code": 0,
-      "seconds": 0.137
+      "seconds": 0.13
     },
     {
       "name": "parity",
       "exit_code": 0,
-      "seconds": 0.464
+      "seconds": 0.43
     },
     {
       "name": "scale",
       "exit_code": 0,
-      "seconds": 12.427
+      "seconds": 12.081
     },
     {
       "name": "browser",
-      "exit_code": 1,
-      "seconds": 10.75
+      "exit_code": 0,
+      "seconds": 14.825
     }
   ],
   "scope": "Internal executed software tests. Not an independent geolocation benchmark, user study, accepted contest entry or payment.",
@@ -53,15 +53,81 @@
     "synthetic": true,
     "ranges_per_snapshot": 1000000,
     "total_input_bytes": 67222138,
-    "elapsed_seconds": 11.665,
-    "peak_rss_KiB": 20956,
+    "elapsed_seconds": 11.326,
+    "peak_rss_KiB": 21088,
     "observed_changed_addresses": "80",
     "observed_changed_intervals": 10,
     "machine": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
     "python": "3.12.3",
     "scope": "One paired synthetic CSV run, not representative accuracy, production capacity or real vendor drift. Memory includes Python runtime; input generation excluded from timing."
   },
-  "error": "('browser', '127.0.0.1 - - [07/Sep/2026 15:09:00] \"GET /index.html HTTP/1.1\" 200 -\\nTraceback (most recent call last):\\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/geodrift/tests/browser.py\", line 38, in <module>\\n    page.click(\\'#example\\');run();page.set_viewport_size({\\'width\\':390,\\'height\\':844});assert page.evaluate(\\'() => document.documentElement.scrollWidth <= innerWidth\\');page.screenshot(path=str(E/\\'mobile.png\\'),full_page=True);ok(\\'390-pixel layout fits without page-level horizontal overflow\\')\\n                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nAssertionError\\n')",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/geodrift/tools/release.py\", line 24, in <module>\n    run('browser',[sys.executable,'tests/browser.py']);report['browser']=json.loads((E/'browser.json').read_text())\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/geodrift/tools/release.py\", line 9, in run\n    begin=time.perf_counter();p=subprocess.run(args,cwd=R,capture_output=True,text=True,timeout=timeout);(E/(name+'.log')).write_text(p.stdout+'\\n'+p.stderr);report['commands'].append({'name':name,'exit_code':p.returncode,'seconds':round(time.perf_counter()-begin,3)});assert p.returncode==0,(name,p.stderr[-2000:]);return p.stdout+p.stderr\n                                                                                                                                                                                                                                                                                    ^^^^^^^^^^^^^^^\nAssertionError: ('browser', '127.0.0.1 - - [07/Sep/2026 15:09:00] \"GET /index.html HTTP/1.1\" 200 -\\nTraceback (most recent call last):\\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/geodrift/tests/browser.py\", line 38, in <module>\\n    page.click(\\'#example\\');run();page.set_viewport_size({\\'width\\':390,\\'height\\':844});assert page.evaluate(\\'() => document.documentElement.scrollWidth <= innerWidth\\');page.screenshot(path=str(E/\\'mobile.png\\'),full_page=True);ok(\\'390-pixel layout fits without page-level horizontal overflow\\')\\n                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nAssertionError\\n')\n",
-  "finished_at": "2026-09-07T15:09:03.051826+00:00"
+  "browser": {
+    "status": "passed",
+    "base_url": "http://127.0.0.1:41433",
+    "authentication": "none",
+    "browser": "152.0.7977.0",
+    "count": 16,
+    "checks": [
+      "Export is unavailable before a current computation",
+      "Real Web Worker detects the synthetic decision changes and removed vendor-sample range",
+      "Lost database coverage is displayed as review, never allow",
+      "Downloaded review has source hashes and aggregate replay without raw traffic IPs",
+      "Browser source fingerprint matches the actual bundled vendor sample bytes",
+      "Self-contained readable report downloads",
+      "Input edits clear the old report and invalidate exports",
+      "Unmodified official vendor sample self-comparison has no changes",
+      "Policy-only edits are included, even with identical database bytes",
+      "The last IPv6 address changes exactly once without floating-point rounding",
+      "Invalid overlapping data produces a visible error and no export",
+      "Untrusted country-name markup is not inserted into the document",
+      "Native file input feeds the actual comparison worker",
+      "Cancel terminates computation and ignores delayed results",
+      "390-pixel layout fits without page-level horizontal overflow",
+      "No page errors, external requests or input-upload requests during the tested workflows"
+    ],
+    "errors": [],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:41433/index.html",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/832d9eb9-e26c-4e19-b7e8-750801657c8d",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/0ae1a171-32f2-4e7c-a79f-0d8ba9dcb6a2",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/0285f35e-576a-4c49-8aab-c8c1568e0231",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/7171ce73-7450-47c0-88bb-067edc9dd4f6",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/26e8fba7-f414-4cd0-8307-213bed270422",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/005ec321-2463-4310-8ec0-28d3cab66600",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/4455ce15-d486-4bbf-a002-ae14dbbd572e",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/5a861f48-25e7-415d-8ef4-d9dca7fbfee5",
+        "method": "GET"
+      },
+      {
+        "url": "blob:http://127.0.0.1:41433/f5442775-3e05-42ea-ba40-8e530b880d52",
+        "method": "GET"
+      }
+    ]
+  },
+  "finished_at": "2026-09-07T15:12:42.091802+00:00"
 }
