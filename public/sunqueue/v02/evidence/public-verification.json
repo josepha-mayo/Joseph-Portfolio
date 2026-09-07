@@ -1,8 +1,8 @@
 {
-  "status": "failed",
+  "status": "passed",
   "base_url": "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02",
   "authentication": "none",
-  "started_at": "2026-09-07T14:11:16.415443+00:00",
+  "started_at": "2026-09-07T14:12:54.887866+00:00",
   "artifacts": [
     {
       "file": "index.html",
@@ -27,9 +27,18 @@
     "expected": {
       "bytes": 1017,
       "sha256": "d673a5b5ece28288be2ce4ec7e5a2a0baed22dea4137039ea8970cabf7870af6"
-    }
+    },
+    "byte_identical": false,
+    "allowed_change": "Only index.html href rewritten to /sunqueue/v02/; all other bytes must match."
   },
-  "error": "judge.html",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/sunqueue/upgrade02/public_check.py\", line 18, in <module>\n    assert len(data)==item['bytes'] and hashlib.sha256(data).hexdigest()==item['sha256'],name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: judge.html\n",
-  "finished_at": "2026-09-07T14:11:18.098656+00:00"
+  "demo_seconds": 299.0,
+  "audio_rms": 0.13665680305565983,
+  "landing_navigation": {
+    "status": "passed",
+    "destination": "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02/",
+    "video_source": "demo.mp4"
+  },
+  "core_browser_checks": 12,
+  "replay_browser_checks": 12,
+  "finished_at": "2026-09-07T14:13:37.146089+00:00"
 }

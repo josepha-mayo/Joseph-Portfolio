@@ -2,14 +2,14 @@
   "format": "sunqueue-plan",
   "version": 1,
   "inputSha256": "d1939e976730ff20268c1d88aa7a8a6d6b83ee94fca4006ae35d16d31f9e9937",
-  "createdAt": "2026-09-07T13:57:52.656Z",
+  "createdAt": "2026-09-07T14:13:35.787Z",
   "result": {
     "version": "0.1.0",
     "status": "optimal_in_model",
     "complete": true,
     "evaluated": 513,
     "feasibleSchedules": 180,
-    "elapsedMs": 160,
+    "elapsedMs": 15,
     "scenario": {
       "version": "0.1.0",
       "label": "Synthetic workshop day, not a measurement of Joseph's equipment",
