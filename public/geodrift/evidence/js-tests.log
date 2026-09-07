@@ -2,229 +2,229 @@ TAP version 13
 # Subtest: inclusive single address
 ok 1 - inclusive single address
   ---
-  duration_ms: 2.948167
+  duration_ms: 3.273399
   type: 'test'
   ...
 # Subtest: all IPv6 addresses are exact
 ok 2 - all IPv6 addresses are exact
   ---
-  duration_ms: 0.389137
+  duration_ms: 0.433551
   type: 'test'
   ...
 # Subtest: added coverage is review to allow
 ok 3 - added coverage is review to allow
   ---
-  duration_ms: 0.924788
+  duration_ms: 0.98972
   type: 'test'
   ...
 # Subtest: lost coverage is not allowed
 ok 4 - lost coverage is not allowed
   ---
-  duration_ms: 0.290613
+  duration_ms: 0.311392
   type: 'test'
   ...
 # Subtest: unlocated remains review
 ok 5 - unlocated remains review
   ---
-  duration_ms: 0.311491
+  duration_ms: 0.319627
   type: 'test'
   ...
 # Subtest: country-only changes are visible
 ok 6 - country-only changes are visible
   ---
-  duration_ms: 0.404155
+  duration_ms: 0.379119
   type: 'test'
   ...
 # Subtest: segmentation-only change is ignored
 ok 7 - segmentation-only change is ignored
   ---
-  duration_ms: 0.241611
+  duration_ms: 0.249176
   type: 'test'
   ...
 # Subtest: CSV BOM, quote, embedded newline
 ok 8 - CSV BOM, quote, embedded newline
   ---
-  duration_ms: 0.169246
+  duration_ms: 0.174756
   type: 'test'
   ...
 # Subtest: extra columns are accepted
 ok 9 - extra columns are accepted
   ---
-  duration_ms: 0.317914
+  duration_ms: 0.320699
   type: 'test'
   ...
 # Subtest: overlap rejected
 ok 10 - overlap rejected
   ---
-  duration_ms: 0.687194
+  duration_ms: 0.689368
   type: 'test'
   ...
 # Subtest: unsorted rejected
 ok 11 - unsorted rejected
   ---
-  duration_ms: 0.260116
+  duration_ms: 0.873142
   type: 'test'
   ...
 # Subtest: reversed range rejected
 ok 12 - reversed range rejected
   ---
-  duration_ms: 0.790056
+  duration_ms: 0.158697
   type: 'test'
   ...
 # Subtest: overflow rejected
 ok 13 - overflow rejected
   ---
-  duration_ms: 0.185125
+  duration_ms: 0.19234
   type: 'test'
   ...
 # Subtest: wrong family rejected
 ok 14 - wrong family rejected
   ---
-  duration_ms: 0.12822
+  duration_ms: 0.133399
   type: 'test'
   ...
 # Subtest: scientific notation rejected
 ok 15 - scientific notation rejected
   ---
-  duration_ms: 0.123701
+  duration_ms: 0.125725
   type: 'test'
   ...
 # Subtest: header is not silently discarded
 ok 16 - header is not silently discarded
   ---
-  duration_ms: 0.115926
+  duration_ms: 0.118572
   type: 'test'
   ...
 # Subtest: missing country name column rejected
 ok 17 - missing country name column rejected
   ---
-  duration_ms: 0.107661
+  duration_ms: 0.110767
   type: 'test'
   ...
 # Subtest: unclosed quote rejected
 ok 18 - unclosed quote rejected
   ---
-  duration_ms: 0.111688
+  duration_ms: 0.110867
   type: 'test'
   ...
 # Subtest: text after quote rejected
 ok 19 - text after quote rejected
   ---
-  duration_ms: 0.114504
+  duration_ms: 0.122399
   type: 'test'
   ...
 # Subtest: invalid country rejected
 ok 20 - invalid country rejected
   ---
-  duration_ms: 0.165108
+  duration_ms: 0.180658
   type: 'test'
   ...
 # Subtest: policy is normalized
 ok 21 - policy is normalized
   ---
-  duration_ms: 0.104815
+  duration_ms: 0.104796
   type: 'test'
   ...
 # Subtest: invalid policy rejected
 ok 22 - invalid policy rejected
   ---
-  duration_ms: 0.157495
+  duration_ms: 0.156202
   type: 'test'
   ...
 # Subtest: traffic duplicate counts sum exactly
 ok 23 - traffic duplicate counts sum exactly
   ---
-  duration_ms: 0.410026
+  duration_ms: 0.425876
   type: 'test'
   ...
 # Subtest: traffic missing coverage is review
 ok 24 - traffic missing coverage is review
   ---
-  duration_ms: 0.197058
+  duration_ms: 0.19804
   type: 'test'
   ...
 # Subtest: IPv6 compressed address parsing
 ok 25 - IPv6 compressed address parsing
   ---
-  duration_ms: 0.193201
+  duration_ms: 0.197028
   type: 'test'
   ...
 # Subtest: IPv6 endpoint traffic
 ok 26 - IPv6 endpoint traffic
   ---
-  duration_ms: 0.181409
+  duration_ms: 0.182932
   type: 'test'
   ...
 # Subtest: IPv4 leading zero ambiguity rejected
 ok 27 - IPv4 leading zero ambiguity rejected
   ---
-  duration_ms: 0.117479
+  duration_ms: 0.122108
   type: 'test'
   ...
 # Subtest: IPv4 out-of-range rejected
 ok 28 - IPv4 out-of-range rejected
   ---
-  duration_ms: 0.10712
+  duration_ms: 0.113532
   type: 'test'
   ...
 # Subtest: wrong traffic family rejected
 ok 29 - wrong traffic family rejected
   ---
-  duration_ms: 0.106379
+  duration_ms: 0.110677
   type: 'test'
   ...
 # Subtest: IPv6 mapped notation rejected
 ok 30 - IPv6 mapped notation rejected
   ---
-  duration_ms: 0.157325
+  duration_ms: 0.130854
   type: 'test'
   ...
 # Subtest: IPv6 malformed compression rejected
 ok 31 - IPv6 malformed compression rejected
   ---
-  duration_ms: 0.111428
+  duration_ms: 0.104946
   type: 'test'
   ...
 # Subtest: IPv6 zones rejected
 ok 32 - IPv6 zones rejected
   ---
-  duration_ms: 0.100127
+  duration_ms: 0.103273
   type: 'test'
   ...
 # Subtest: request fractions rejected
 ok 33 - request fractions rejected
   ---
-  duration_ms: 0.126075
+  duration_ms: 0.132668
   type: 'test'
   ...
 # Subtest: request negatives rejected
 ok 34 - request negatives rejected
   ---
-  duration_ms: 0.116387
+  duration_ms: 0.114965
   type: 'test'
   ...
 # Subtest: wrong traffic header rejected
 ok 35 - wrong traffic header rejected
   ---
-  duration_ms: 0.126827
+  duration_ms: 0.130674
   type: 'test'
   ...
 # Subtest: detail limit does not truncate totals
 ok 36 - detail limit does not truncate totals
   ---
-  duration_ms: 0.184244
+  duration_ms: 0.222175
   type: 'test'
   ...
 # Subtest: traffic IPs not exported
 ok 37 - traffic IPs not exported
   ---
-  duration_ms: 0.216675
+  duration_ms: 0.214641
   type: 'test'
   ...
 # Subtest: boundary transition at simultaneous events
 ok 38 - boundary transition at simultaneous events
   ---
-  duration_ms: 0.235881
+  duration_ms: 0.241482
   type: 'test'
   ...
 1..38
@@ -235,5 +235,5 @@ ok 38 - boundary transition at simultaneous events
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 109.257652
+# duration_ms 101.01551
 
