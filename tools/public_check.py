@@ -14,19 +14,30 @@ try:
   if not exact:
    assert name=='index.html',name
    expected=(P/name).read_bytes()
-   assert data==expected.replace(b'href="index.html"',b"href='/'"),'Unexpected HTML change'
-   report['html_rewrite']='Only the brand index.html href was rewritten to /; other bytes are unchanged.'
+   # These exact substitutions were observed and preserved in html-diff.json.
+   changed=expected.replace(b'<a class="brand" href="index.html">',b"<a class='brand' href='/'>").replace(b'<a href="judge.html">',b"<a href='/judge'>")
+   assert data==changed,'Unexpected HTML change'
+   report['html_rewrite']='Only the recorded brand link/quote rewrite and judge.html to /judge link rewrite; all other HTML bytes match.'
   report['files'].append({'name':name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'byte_identical':exact})
   if name=='demo.mp4':Path('/tmp/relay-public-demo.mp4').write_bytes(data)
+ # Verify the actual two rewritten destinations without granting more transformations.
+ for route,marker in [('/',b'Counterstep Relay'),('/judge',b'demo.mp4')]:
+  with urllib.request.urlopen(base+route,timeout=30) as r:
+   assert r.status==200 and urlsplit(r.url).netloc==u.netloc and marker in r.read()
+ report['rewritten_destinations']='Both / and /judge return the expected same-origin pages.'
  subprocess.run(['ffmpeg','-v','error','-i','/tmp/relay-public-demo.mp4','-f','null','-'],check=True,timeout=120)
  probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-of','json','/tmp/relay-public-demo.mp4']));duration=float(probe['format']['duration']);assert 30<duration<180
  pcm=subprocess.check_output(['ffmpeg','-v','error','-i','/tmp/relay-public-demo.mp4','-vn','-ar','8000','-ac','1','-f','s16le','-']);samples=array.array('h',pcm);rms=math.sqrt(sum((x/32768)**2 for x in samples)/len(samples));assert rms>0.001
  env={**os.environ,'RELAY_BASE_URL':base};subprocess.run(['python','tests/browser.py'],cwd=R,env=env,check=True,timeout=300)
  headers={'Content-Type':'application/json','Accept':'application/json, text/event-stream','MCP-Protocol-Version':'2025-11-25'}
- request=urllib.request.Request(base+'/mcp',data=json.dumps({'jsonrpc':'2.0','id':701,'method':'tools/list','params':{}}).encode(),headers=headers)
- with urllib.request.urlopen(request,timeout=30)as r:tools=json.load(r)
- assert tools['id']==701 and len(tools['result']['tools'])==4
- report.update(status='passed',browser_workflows=json.loads((E/'public-browser.json').read_text())['count'],demo_seconds=duration,audio_rms=rms,public_tools=[t['name']for t in tools['result']['tools']])
+ def rpc(ident,method,params):
+  request=urllib.request.Request(base+'/mcp',data=json.dumps({'jsonrpc':'2.0','id':ident,'method':method,'params':params}).encode(),headers=headers)
+  with urllib.request.urlopen(request,timeout=30)as r:result=json.load(r)
+  assert result['id']==ident and 'result' in result,result
+  return result['result']
+ tools=rpc(701,'tools/list',{});assert len(tools['tools'])==4
+ skill=rpc(702,'resources/read',{'uri':'counterstep://relay/skill'});assert 'Counterstep' in skill['contents'][0]['text']
+ report.update(status='passed',browser_workflows=json.loads((E/'public-browser.json').read_text())['count'],demo_seconds=duration,audio_rms=rms,public_tools=[t['name']for t in tools['tools']],public_skill_resource='read and verified')
 except BaseException as e:
  report.update(status='failed',error=str(e),traceback=traceback.format_exc());raise
 finally:
