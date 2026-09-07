@@ -20,23 +20,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Expand only the verified standalone source
+      - name: Verify source presence and remove obsolete transport-only chunks
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import base64,hashlib,lzma,json
-          root=Path('public/geodrift')
-          encoded=''.join((root/f'build-input/source.{i}.b64').read_text().strip() for i in range(4))
-          data=base64.b64decode(encoded,validate=True)
-          assert hashlib.sha256(data).hexdigest()=='cbc0c868d8f62edf9ca24c1302037258904253e11d0268285fb41791094a0012','Source transport hash mismatch'
-          files=json.loads(lzma.decompress(data))
-          for name,content in files.items():
-            p=Path(name)
-            assert not p.is_absolute() and '..' not in p.parts and isinstance(content,str)
-            if name=='docs/submission-draft.json': continue
-            out=root/p;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding='utf-8')
-          print('Expanded verified source. Personal submission draft excluded from public release.')
-          PY
+          test -f public/geodrift/geodrift.py
+          test -f public/geodrift/tests/browser.py
+          if [ -d public/geodrift/build-input ]; then git rm -r public/geodrift/build-input; fi
       - name: Install browser verification tools
         run: |
           python3 -m venv /tmp/geodrift
@@ -61,6 +49,5 @@ jobs:
           name: geodrift-release
           path: |
             public/geodrift/
-            !public/geodrift/build-input/
             !public/geodrift/**/__pycache__/
           retention-days: 14
