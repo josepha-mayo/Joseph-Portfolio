@@ -12,11 +12,11 @@
     "bytes": 4922
   },
   "demo.mp4": {
-    "sha256": "7cec88dd31b94a520fc7880ea937ff947bfbc33060eb022eadb222735fe5bdf6",
-    "bytes": 3985611
+    "sha256": "383872f4309f6ff5e62505832e6883356c7d73975766a9a31ae444a0a85c959f",
+    "bytes": 4036583
   },
   "source.zip": {
-    "sha256": "59f221c00fd8b63faece59fc0ac3460c31d5d08070abbe61ef0106ef074d10bb",
-    "bytes": 1408207
+    "sha256": "8cb99d2034b476cd86be5f233d0d7e3c82162790a9505328c156f71d7bb75ced",
+    "bytes": 1410544
   }
 }
