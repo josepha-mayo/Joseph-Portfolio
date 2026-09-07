@@ -2,6 +2,7 @@ from pathlib import Path
 import json
 R=Path(__file__).resolve().parents[1]
 s=(R/'src/page.html').read_text()
+s=s.replace('</head>','<style>'+(R/'src/layout.css').read_text()+'</style></head>')
 core=(R/'src/core.js').read_text()
 s=s.replace('<!-- CORE -->','<script id="coreSource">'+core+'</script>')
 s=s.replace('<!-- WORKER -->',(R/'src/worker.js').read_text())
