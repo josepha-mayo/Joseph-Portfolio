@@ -1,0 +1,67 @@
+name: CALL-E offline feedback evidence
+on:
+  push:
+    branches: [funding-calle-feedback-20260907]
+    paths: [.github/workflows/funding-calle-feedback.yml]
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: CALLE-AI/call-e-integrations
+          ref: e497e1a01e171f9559f87e0f998318a9efc06609
+          path: upstream
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare local workspace dependency without package downloads
+        run: |
+          mkdir -p upstream/node_modules/@call-e evidence
+          ln -s "$(pwd)/upstream/packages/core" upstream/node_modules/@call-e/core
+          git -C upstream rev-parse HEAD > evidence/upstream-commit.txt
+          cp funding/calle-feedback/probe.mjs evidence/probe.mjs
+      - name: Reproduce against unmodified upstream with injected JSON responses
+        run: node funding/calle-feedback/probe.mjs upstream baseline evidence > evidence/baseline.txt
+      - name: Run existing core and CLI unit tests before the patch
+        run: node --test upstream/packages/core/test/*.test.js upstream/packages/cli/test/*.test.js > evidence/upstream-unit-tests.txt 2>&1
+      - name: Apply minimal candidate preserving raw tool results
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('upstream/packages/cli/lib/cli.js')
+          text=p.read_text()
+          start=text.index('async function handleMcpCommand(')
+          end=text.index('async function handleCallCommand(',start)
+          block=text[start:end]
+          before='      writeJson(stdout, mcpSuccessPayload({ config, toolName, result }));\n      return 0;'
+          after='      const toolFailed = result?.isError === true;\n      writeJson(stdout, { ...mcpSuccessPayload({ config, toolName, result }), ok: !toolFailed });\n      return toolFailed ? 1 : 0;'
+          assert block.count(before)==1
+          p.write_text(text[:start]+block.replace(before,after)+text[end:])
+          PY
+          git -C upstream diff --check
+          git -C upstream diff -- packages/cli/lib/cli.js > evidence/candidate.patch
+      - name: Check the candidate against identical fixtures
+        run: node funding/calle-feedback/probe.mjs upstream patched evidence > evidence/patched.txt
+      - name: Run existing core and CLI unit tests after the patch
+        run: node --test upstream/packages/core/test/*.test.js upstream/packages/cli/test/*.test.js > evidence/patched-unit-tests.txt 2>&1
+      - name: Capture exact source used for local independent inspection
+        if: always()
+        run: |
+          git -C upstream show HEAD:packages/cli/lib/cli.js > evidence/upstream-cli.js
+          git -C upstream show HEAD:packages/cli/docs/cli-reference.md > evidence/upstream-cli-reference.md
+          git -C upstream show HEAD:LICENSE > evidence/upstream-LICENSE
+          cp upstream/packages/cli/lib/cli.js evidence/patched-cli.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: calle-offline-feedback-evidence
+          path: evidence/
+          retention-days: 7
