@@ -1,0 +1,1 @@
+Run 2: keep all engine, local-EVM and browser gates intact. Fix the mobile layout's intrinsic grid minimum instead of suppressing the overflow check. Trace notes must not claim delivery eligibility independently of the selected policy. No production portfolio changes.
