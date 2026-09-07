@@ -1,0 +1,66 @@
+name: GeoDrift release
+on:
+  push:
+    branches: [geodrift-entry-preview-20260907]
+    paths: [.github/workflows/geodrift-build.yml, public/geodrift/REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: geodrift-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/geodrift-entry-preview-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: geodrift-entry-preview-20260907
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Expand only the verified standalone source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,lzma,json
+          root=Path('public/geodrift')
+          encoded=''.join((root/f'build-input/source.{i}.b64').read_text().strip() for i in range(4))
+          data=base64.b64decode(encoded,validate=True)
+          assert hashlib.sha256(data).hexdigest()=='cbc0c868d8f62edf9ca24c1302037258904253e11d0268285fb41791094a0012','Source transport hash mismatch'
+          files=json.loads(lzma.decompress(data))
+          for name,content in files.items():
+            p=Path(name)
+            assert not p.is_absolute() and '..' not in p.parts and isinstance(content,str)
+            if name=='docs/submission-draft.json': continue
+            out=root/p;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(content,encoding='utf-8')
+          print('Expanded verified source. Personal submission draft excluded from public release.')
+          PY
+      - name: Install browser verification tools
+        run: |
+          python3 -m venv /tmp/geodrift
+          /tmp/geodrift/bin/pip -q install playwright==1.55.0
+          /tmp/geodrift/bin/python -m playwright install --with-deps chromium
+      - name: Build and execute all tests
+        working-directory: public/geodrift
+        run: /tmp/geodrift/bin/python tools/release.py
+      - name: Preserve source and actual execution evidence
+        if: always()
+        run: |
+          git config user.name 'GeoDrift Build'
+          git config user.email 'geodrift-build@users.noreply.github.com'
+          git add public/geodrift
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Publish GeoDrift source and actual build results'
+          git pull --rebase origin geodrift-entry-preview-20260907
+          git push origin HEAD:geodrift-entry-preview-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: geodrift-release
+          path: |
+            public/geodrift/
+            !public/geodrift/build-input/
+            !public/geodrift/**/__pycache__/
+          retention-days: 14
