@@ -2,7 +2,7 @@
   "status": "failed",
   "base_url": "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02",
   "authentication": "none",
-  "started_at": "2026-09-07T14:08:28.857918+00:00",
+  "started_at": "2026-09-07T14:11:16.415443+00:00",
   "artifacts": [
     {
       "file": "index.html",
@@ -20,7 +20,16 @@
       "sha256": "c17cd2b06b662caa12417053adfc8abbf66de5dda3dcc9beaac20137393772e1"
     }
   ],
+  "landing_diagnostic": {
+    "final_url": "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02/judge.html",
+    "served_bytes": 1021,
+    "served_sha256": "039edc6f7b8edd300aebfa8ba9cde9cb7b6a60789ce0bd87fc6f686aa358ea9c",
+    "expected": {
+      "bytes": 1017,
+      "sha256": "d673a5b5ece28288be2ce4ec7e5a2a0baed22dea4137039ea8970cabf7870af6"
+    }
+  },
   "error": "judge.html",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/sunqueue/upgrade02/public_check.py\", line 14, in <module>\n    assert len(data)==item['bytes'] and hashlib.sha256(data).hexdigest()==item['sha256'],name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: judge.html\n",
-  "finished_at": "2026-09-07T14:08:31.498710+00:00"
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/sunqueue/upgrade02/public_check.py\", line 18, in <module>\n    assert len(data)==item['bytes'] and hashlib.sha256(data).hexdigest()==item['sha256'],name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: judge.html\n",
+  "finished_at": "2026-09-07T14:11:18.098656+00:00"
 }
