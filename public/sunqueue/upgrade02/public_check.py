@@ -10,7 +10,11 @@ try:
  manifest=json.loads((O/'release-files.json').read_text())
  for name,item in manifest.items():
   with urllib.request.urlopen(base+'/'+name,timeout=60)as r:
-   assert r.status==200;data=r.read()
+   assert r.status==200;data=r.read();url=r.url
+  if name=='judge.html':
+   (E/'served-judge.txt').write_bytes(data)
+   (E/'built-judge.txt').write_bytes((O/'judge.html').read_bytes())
+   report['landing_diagnostic']={'final_url':url,'served_bytes':len(data),'served_sha256':hashlib.sha256(data).hexdigest(),'expected':item}
   assert len(data)==item['bytes'] and hashlib.sha256(data).hexdigest()==item['sha256'],name
   report['artifacts'].append({'file':name,**item})
   if name=='demo.mp4':Path('/tmp/sunqueue-v02-public.mp4').write_bytes(data)
