@@ -36,11 +36,15 @@ try:
   page.get_by_role('link',name='Open the planner and Replay Desk').click();page.wait_for_selector('#replayDesk');assert page.url.rstrip('/') in (base,base+'/index.html');assert page.evaluate('!!window.SunQueueReplay && !!window.SunQueueUI')
   report['landing_navigation']={'status':'passed','destination':page.url,'video_source':'demo.mp4'};browser.close()
  env=dict(os.environ,SUNQUEUE_V02_URL=base);subprocess.run([sys.executable,str(R/'upgrade02/browser.py')],env=env,check=True,timeout=180)
+ replay_report=json.loads((E/'public-browser.json').read_text());assert replay_report['status']=='passed' and replay_report['origin']==base
+ shutil.copyfile(E/'public-browser.json',E/'public-replay-browser.json')
  # Same core test assertions, with this candidate's exact allowable URL path.
  original=(R/'tests/browser.py').read_text();original=original.replace("u.path=='/sunqueue'","u.path=='/sunqueue/v02'")
  core=O/'tests/browser-public.py';core.write_text(original)
  subprocess.run([sys.executable,str(core)],env=dict(os.environ,SUNQUEUE_BASE_URL=base),check=True,timeout=180)
- report.update(status='passed',core_browser_checks=json.loads((E/'browser.json').read_text())['count'],replay_browser_checks=json.loads((E/'public-browser.json').read_text())['count'])
+ core_report=json.loads((E/'public-browser.json').read_text());assert core_report['status']=='passed'
+ shutil.copyfile(E/'public-browser.json',E/'public-core-browser.json')
+ report.update(status='passed',core_browser_checks=core_report['count'],replay_browser_checks=replay_report['count'],core_report='public-core-browser.json',replay_report='public-replay-browser.json')
 except BaseException as exc:
  report.update(status='failed',error=str(exc),traceback=traceback.format_exc());raise
 finally:
