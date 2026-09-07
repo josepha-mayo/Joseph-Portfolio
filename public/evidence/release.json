@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "project": "Counterstep Relay",
+  "started_at": "2026-09-07T20:11:27.030027+00:00",
+  "source_commit": "08a94543222ae927b549870e70601f7f6c3d3398",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 0.13
+    },
+    {
+      "name": "node-tests",
+      "exit_code": 0,
+      "seconds": 0.949
+    },
+    {
+      "name": "browser",
+      "exit_code": 0,
+      "seconds": 5.075
+    },
+    {
+      "name": "demo-encode",
+      "exit_code": 0,
+      "seconds": 14.08
+    },
+    {
+      "name": "demo-decode",
+      "exit_code": 0,
+      "seconds": 3.067
+    }
+  ],
+  "scope": "Internal synthetic equation tests. No live Alexa device, learner study, accepted entry or prize.",
+  "node_tests": 81,
+  "browser_workflows": 25,
+  "demo_seconds": 141.125,
+  "audio_rms": 0.1394225596331714,
+  "narration": {
+    "synthetic": true,
+    "model": "hexgrad/Kokoro-82M",
+    "voice": "af_heart",
+    "speed": 0.9,
+    "words_per_minute": 125.8
+  },
+  "finished_at": "2026-09-07T20:15:32.678313+00:00"
+}

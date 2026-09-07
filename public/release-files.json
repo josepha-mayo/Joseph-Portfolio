@@ -1,0 +1,22 @@
+{
+  "index.html": {
+    "sha256": "172d9f4c12a74fef43bdd7c36b1ad090049793c1298adeb59c28cb732215c318",
+    "bytes": 4989
+  },
+  "app.js": {
+    "sha256": "4565531d284203f41c6139bd55b1f4ca124b2d5e86ce8e1233f2ce6e201b5bd1",
+    "bytes": 8396
+  },
+  "style.css": {
+    "sha256": "a6b990f00495f7555fe01bcf6fb9a10020589dc4d1d4205d9cb695f04c2e337d",
+    "bytes": 4922
+  },
+  "demo.mp4": {
+    "sha256": "7cec88dd31b94a520fc7880ea937ff947bfbc33060eb022eadb222735fe5bdf6",
+    "bytes": 3985611
+  },
+  "source.zip": {
+    "sha256": "59f221c00fd8b63faece59fc0ac3460c31d5d08070abbe61ef0106ef074d10bb",
+    "bytes": 1408207
+  }
+}
