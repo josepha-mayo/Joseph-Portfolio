@@ -1,6 +1,17 @@
 [build]
-  command = "npm run build"
-  publish = ".next"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+command = "npm run build"
+publish = "public"
+functions = "netlify/functions"
+[build.environment]
+NODE_VERSION = "22.16.0"
+[functions]
+node_bundler = "esbuild"
+[[headers]]
+for = "/*"
+[headers.values]
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "no-referrer"
+[[headers]]
+for = "/index.html"
+[headers.values]
+Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"

@@ -1,0 +1,84 @@
+name: Counterstep Relay release
+on:
+  push:
+    branches: [counterstep-relay-20260907]
+    paths: [.github/workflows/relay-build.yml, REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: counterstep-relay-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/counterstep-relay-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: counterstep-relay-20260907
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand verified project source and previously published model
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,json,hashlib,urllib.request,zipfile,io
+          root=Path('.')
+          if not (root/'src/relay.mjs').exists():
+            data=b''.join((root/f'build-input/part{i}.bin').read_bytes() for i in range(4))
+            assert hashlib.sha256(data).hexdigest()=='fc704cdddc4045e22ac595a59a2ae7cbdb730c2d476d6a3c5c00e0cca9bf1b5d'
+            for name,text in json.loads(lzma.decompress(data)).items():
+              p=Path(name);assert not p.is_absolute() and '..' not in p.parts and isinstance(text,str)
+              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+          v=root/'vendor';v.mkdir(exist_ok=True)
+          url='https://6a9ef55b27c49a00083bd00b--josephm.netlify.app/counterstep/source.zip'
+          data=urllib.request.urlopen(url,timeout=60).read()
+          assert hashlib.sha256(data).hexdigest()=='37571cdfc4461dd87918eeabe4c36387ec6c0bd7c50f678a78c0e407374cfa99'
+          (v/'original-counterstep-source.zip').write_bytes(data)
+          z=zipfile.ZipFile(io.BytesIO(data))
+          for source,target,sha in [('src/core.js','core.cjs','bbb1c78f2b77a6ab9ec47792b41bdec842c703c5ebf08014a5c53b80d072e1ff'),('src/model.json','model.json','83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381')]:
+            content=z.read(source);assert hashlib.sha256(content).hexdigest()==sha;(v/target).write_bytes(content)
+          (v/'PROVENANCE.json').write_text(json.dumps({'source':url,'source_sha256':hashlib.sha256(data).hexdigest(),'original_project':'Counterstep','original_created':'2026-09-07','reuse':'Earlier exact checker and trained ranker, unchanged. New Relay protocol/session implementation is separate.'},indent=2))
+          for p in (root/'build-input').glob('part*.bin'):p.unlink()
+          PY
+      - name: Install pinned runtime and check real protocol implementation
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          npm run build
+          npm test
+      - name: Install browser and CPU-only narration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python3 -m venv /tmp/relay
+          /tmp/relay/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/relay/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1 playwright==1.55.0 pillow==11.3.0
+          /tmp/relay/bin/python -m playwright install --with-deps chromium
+      - name: Execute all checks and record the actual reference application
+        run: |
+          export PATH=/tmp/relay/bin:$PATH
+          python tools/release.py
+      - name: Preserve source and actual execution results only on the isolated branch
+        if: always()
+        run: |
+          git config user.name 'Counterstep Relay Build'
+          git config user.email 'counterstep-relay-build@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Counterstep Relay source and executed release evidence'
+          git pull --rebase origin counterstep-relay-20260907
+          git push origin HEAD:counterstep-relay-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: counterstep-relay-release
+          path: |
+            public/
+            evidence/
+            package-lock.json
+          retention-days: 14

@@ -1,0 +1,38 @@
+name: Relay public HTML diagnostic
+on:
+  push:
+    branches: [counterstep-relay-20260907]
+    paths: [.github/workflows/relay-html-diagnostic.yml]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/counterstep-relay-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: counterstep-relay-20260907
+      - name: Record only the public page's actual difference
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import urllib.request,hashlib,json,difflib
+          u='https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/index.html'
+          with urllib.request.urlopen(u,timeout=30) as response:
+            data=response.read();status=response.status
+          e=Path('evidence');e.mkdir(exist_ok=True)
+          expected=Path('public/index.html').read_bytes()
+          (e/'served-index.txt').write_bytes(data)
+          (e/'html-diff.json').write_text(json.dumps({'url':u,'status':status,'expected_sha256':hashlib.sha256(expected).hexdigest(),'served_sha256':hashlib.sha256(data).hexdigest(),'diff':list(difflib.unified_diff(expected.decode().splitlines(),data.decode().splitlines(),fromfile='built',tofile='served'))},indent=2))
+          PY
+      - name: Preserve actual diagnostic
+        run: |
+          git config user.name 'Counterstep Relay Verification'
+          git config user.email 'counterstep-relay-verification@users.noreply.github.com'
+          git add evidence/served-index.txt evidence/html-diff.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual Relay HTML deployment transformation'
+          git pull --rebase origin counterstep-relay-20260907
+          git push origin HEAD:counterstep-relay-20260907
