@@ -1,0 +1,26 @@
+{
+  "status": "failed",
+  "base_url": "https://6a9ec4e08a31650008f9d72c--josephm.netlify.app/sunqueue/v02",
+  "authentication": "none",
+  "started_at": "2026-09-07T14:08:28.857918+00:00",
+  "artifacts": [
+    {
+      "file": "index.html",
+      "bytes": 49343,
+      "sha256": "5444149e4b37840e6019e324ece8c2bf3c5b08408b50a4569cdf3e57436897c1"
+    },
+    {
+      "file": "demo.mp4",
+      "bytes": 13227374,
+      "sha256": "f0c66d106629b0ebcf14d90ca4a35daf261e205e0f7277ba1b241d24a4ce6796"
+    },
+    {
+      "file": "source.zip",
+      "bytes": 2080836,
+      "sha256": "c17cd2b06b662caa12417053adfc8abbf66de5dda3dcc9beaac20137393772e1"
+    }
+  ],
+  "error": "judge.html",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/sunqueue/upgrade02/public_check.py\", line 14, in <module>\n    assert len(data)==item['bytes'] and hashlib.sha256(data).hexdigest()==item['sha256'],name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: judge.html\n",
+  "finished_at": "2026-09-07T14:08:31.498710+00:00"
+}
