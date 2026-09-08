@@ -34,8 +34,9 @@ jobs:
           python3 -m venv /tmp/cutproof13
           /tmp/cutproof13/bin/pip -q install playwright==1.55.0
           /tmp/cutproof13/bin/python -m playwright install --with-deps chromium
-      - name: Fail fast on real hash and editing workflows
+      - name: Diagnose actual media support and execute hash and editing workflows
         run: |
+          /tmp/cutproof13/bin/python upgrade13/browser_environment.py
           /tmp/cutproof13/bin/python upgrade13/native_check.py
           /tmp/cutproof13/bin/python upgrade13/browser_check.py
       - name: Install stock synthetic narration dependencies
