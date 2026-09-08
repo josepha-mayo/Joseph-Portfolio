@@ -13,6 +13,9 @@ def get(name):
 def anchors(html):
  def tag(m):
   text=m.group(0)
+  # Read-only diagnosis 34285819057 established this exact attribute reorder.
+  # Do not normalize other attributes, scripts, styles, text or markup.
+  if text=="<a class='brand' href='/'>":text='<a href="/" class="brand">'
   def href(n):
    target=n.group(2);url=urlsplit(urljoin(base+'/',target))
    if url.netloc==u.netloc:
@@ -44,7 +47,7 @@ try:
   a=array.array('h',subprocess.check_output(['ffmpeg','-v','error','-i',str(media),'-vn','-ar','8000','-ac','1','-f','s16le','-']));report['audio_rms']=math.sqrt(sum((v/32768)**2 for v in a)/len(a));assert report['audio_rms']>.001
  for name,script in [('original','tests/browser.py'),('delivery','tests/delivery_browser.py')]:
   p=subprocess.run([sys.executable,script],env={**os.environ,'FORKLINE_URL':base,'FORKLINE_PUBLIC_ONLY':'1'},stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=210);(E/('public-'+name+'.log')).write_text(p.stdout);assert p.returncode==0,(name,p.stdout[-2000:])
- report.update(status='passed',original_browser=json.loads((E/'public-browser.json').read_text())['count'],delivery_replay_browser=json.loads((E/'delivery-public-browser.json').read_text())['count'],scope='Anonymous hosted executed-record replay and original workbench, not hosted live SQLite or external delivery. CSP enforced; local controls verified separately.')
+ report.update(status='passed',original_browser=json.loads((E/'public-browser.json').read_text())['count'],delivery_replay_browser=json.loads((E/'delivery-public-browser.json').read_text())['count'],html_change_scope='Only observed internal anchor URLs and the exact brand-anchor attribute order/quotes; all non-anchor bytes retained and rewritten destinations checked',scope='Anonymous hosted executed-record replay and original workbench, not hosted live SQLite or external delivery. CSP enforced; local controls verified separately.')
 except BaseException as e:report.update(status='failed',error=str(e),traceback=traceback.format_exc());raise
 finally:report['finished_at']=datetime.now(timezone.utc).isoformat();(E/'delivery-public-verification.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(report))
