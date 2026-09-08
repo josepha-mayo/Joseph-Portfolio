@@ -1,0 +1,45 @@
+name: Forkline public verification
+on:
+  push:
+    branches: [forkline-20260908]
+    paths: [PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: forkline-public
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/forkline-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Install browser and media checks
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/forkline-public
+          /tmp/forkline-public/bin/pip -q install playwright==1.55.0
+          /tmp/forkline-public/bin/python -m playwright install --with-deps chromium
+      - name: Verify public release bytes, browser flows, deck and demo
+        run: |
+          export PATH=/tmp/forkline-public/bin:$PATH
+          python tools/public_check.py
+      - name: Preserve actual results on isolated branch
+        if: always()
+        run: |
+          git config user.name 'Forkline Verification'
+          git config user.email 'forkline-verification@users.noreply.github.com'
+          git add evidence/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual anonymous Forkline deployment checks'
+          git push origin HEAD:forkline-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: forkline-public-evidence
+          path: evidence/
+          retention-days: 14
