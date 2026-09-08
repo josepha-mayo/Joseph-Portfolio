@@ -1,0 +1,50 @@
+test_audit_rejects_duplicate_piece (test_trimwise.EngineTests.test_audit_rejects_duplicate_piece) ... ok
+test_audit_rejects_duplicate_remnant (test_trimwise.EngineTests.test_audit_rejects_duplicate_remnant) ... ok
+test_audit_rejects_missing_piece (test_trimwise.EngineTests.test_audit_rejects_missing_piece) ... ok
+test_below_threshold (test_trimwise.EngineTests.test_below_threshold) ... ok
+test_cannot_ignore_kerf (test_trimwise.EngineTests.test_cannot_ignore_kerf) ... ok
+test_cannot_ignore_trim (test_trimwise.EngineTests.test_cannot_ignore_trim) ... ok
+test_csv_injection_and_unicode (test_trimwise.EngineTests.test_csv_injection_and_unicode) ... ok
+test_default (test_trimwise.EngineTests.test_default) ... ok
+test_exact_fit_including_both (test_trimwise.EngineTests.test_exact_fit_including_both) ... ok
+test_export_invalid_blocked (test_trimwise.EngineTests.test_export_invalid_blocked) ... ok
+test_fully_infeasible_not_partial (test_trimwise.EngineTests.test_fully_infeasible_not_partial) ... ok
+test_input_not_mutated (test_trimwise.EngineTests.test_input_not_mutated) ... ok
+test_invalid_bool_kerf (test_trimwise.EngineTests.test_invalid_bool_kerf) ... ok
+test_invalid_bool_length (test_trimwise.EngineTests.test_invalid_bool_length) ... ok
+test_invalid_control_label (test_trimwise.EngineTests.test_invalid_control_label) ... ok
+test_invalid_duplicate_part (test_trimwise.EngineTests.test_invalid_duplicate_part) ... ok
+test_invalid_duplicate_stock (test_trimwise.EngineTests.test_invalid_duplicate_stock) ... ok
+test_invalid_empty_demand (test_trimwise.EngineTests.test_invalid_empty_demand) ... ok
+test_invalid_empty_material (test_trimwise.EngineTests.test_invalid_empty_material) ... ok
+test_invalid_extra_part_field (test_trimwise.EngineTests.test_invalid_extra_part_field) ... ok
+test_invalid_float_kerf (test_trimwise.EngineTests.test_invalid_float_kerf) ... ok
+test_invalid_float_length (test_trimwise.EngineTests.test_invalid_float_length) ... ok
+test_invalid_long_id (test_trimwise.EngineTests.test_invalid_long_id) ... ok
+test_invalid_negative_kerf (test_trimwise.EngineTests.test_invalid_negative_kerf) ... ok
+test_invalid_negative_length (test_trimwise.EngineTests.test_invalid_negative_length) ... ok
+test_invalid_oversized_stock (test_trimwise.EngineTests.test_invalid_oversized_stock) ... ok
+test_invalid_too_many_parts (test_trimwise.EngineTests.test_invalid_too_many_parts) ... ok
+test_invalid_unknown_field (test_trimwise.EngineTests.test_invalid_unknown_field) ... ok
+test_invalid_version (test_trimwise.EngineTests.test_invalid_version) ... ok
+test_invalid_zero_quantity (test_trimwise.EngineTests.test_invalid_zero_quantity) ... ok
+test_invalid_zero_reuse (test_trimwise.EngineTests.test_invalid_zero_reuse) ... ok
+test_many_identical_parts (test_trimwise.EngineTests.test_many_identical_parts) ... ok
+test_mass_balance (test_trimwise.EngineTests.test_mass_balance) ... ok
+test_missing_stock (test_trimwise.EngineTests.test_missing_stock) ... ok
+test_more_than_one_new_bar (test_trimwise.EngineTests.test_more_than_one_new_bar) ... ok
+test_no_stock_infeasible (test_trimwise.EngineTests.test_no_stock_infeasible) ... ok
+test_open_not_claimed_optimal (test_trimwise.EngineTests.test_open_not_claimed_optimal) ... ok
+test_open_rejects_injected_totals (test_trimwise.EngineTests.test_open_rejects_injected_totals) ... ok
+test_protocol_solve_audit_csv (test_trimwise.EngineTests.test_protocol_solve_audit_csv) ... ok
+test_remeasure_catches_short_bar (test_trimwise.EngineTests.test_remeasure_catches_short_bar) ... ok
+test_remnant_only (test_trimwise.EngineTests.test_remnant_only) ... ok
+test_reuse_threshold_inclusive (test_trimwise.EngineTests.test_reuse_threshold_inclusive) ... ok
+test_too_large_payload (test_trimwise.EngineTests.test_too_large_payload) ... ok
+test_unused_offcuts_not_scrap (test_trimwise.EngineTests.test_unused_offcuts_not_scrap) ... ok
+test_zero_kerf (test_trimwise.EngineTests.test_zero_kerf) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.047s
+
+OK

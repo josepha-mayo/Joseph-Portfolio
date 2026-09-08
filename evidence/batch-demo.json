@@ -1,0 +1,16 @@
+{
+  "seconds": 103.72,
+  "synthetic_narration": true,
+  "voice": "Kokoro af_heart",
+  "speed": 0.9,
+  "audio_rms": 0.05212615057826042,
+  "transcript": [
+    "Twelve pieces was too small for many repeat batches. Trimwise now accepts up to one hundred and twenty pieces. Python groups repeated lengths for the search, while the material ledger still checks every individual piece.",
+    "This synthetic job needs eighty rails. The completed search buys fifty eight point two metres of new stock. The same job, using best fit decreasing, needs seventy two metres. All eighty pieces are assigned. These are planned quantities, not measured workshop savings.",
+    "The search has finished, so this plan is proven optimal inside the declared cutting model. The proof panel shows the operations used. The cut sheet still includes the saw loss, end trim and leftover material for each bar.",
+    "Now give the same problem only one search operation. The program still has a complete, independently checked baseline. It can export that usable plan, but the label changes: feasible, not proven optimal. The remaining purchase gap stays visible.",
+    "Here, the greedy baseline cannot fit the job. With the tiny search budget, no complete allocation has been found. The honest answer is unknown. It is not infeasible, and no cut sheet can be exported.",
+    "Restoring the normal budget finds the complete allocation using only existing stock. This is the distinction that matters: a stopped search must not turn uncertainty into a false failure or a false optimum. Source, tests and a native offline Python command are included."
+  ],
+  "recording": "actual application actions with navigation/runtime-loading lead-in removed"
+}

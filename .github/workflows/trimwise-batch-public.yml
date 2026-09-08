@@ -1,0 +1,43 @@
+name: Trimwise repeat-batch public verification
+on:
+  push:
+    branches: [trimwise-batch-20260908]
+    paths: [BATCH_PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: trimwise-batch-public
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/trimwise-batch-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Install the browser and media verifier
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/trimwise-batch-public
+          /tmp/trimwise-batch-public/bin/pip -q install playwright==1.55.0
+          /tmp/trimwise-batch-public/bin/python -m playwright install --with-deps chromium
+      - name: Check served source, media and both actual browser suites
+        run: /tmp/trimwise-batch-public/bin/python tools/batch_public_check.py
+      - name: Preserve actual anonymous results
+        if: always()
+        run: |
+          git config user.name 'Trimwise Public Verification'
+          git config user.email 'trimwise-build@users.noreply.github.com'
+          git add evidence/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record real anonymous repeat-batch deployment checks'
+          git push origin HEAD:trimwise-batch-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trimwise-batch-public-evidence
+          path: evidence/
+          retention-days: 14

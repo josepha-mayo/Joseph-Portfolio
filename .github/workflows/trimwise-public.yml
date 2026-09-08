@@ -1,0 +1,45 @@
+name: Trimwise public verification
+on:
+  push:
+    branches: [trimwise-20260908]
+    paths: [PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: trimwise-public
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/trimwise-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Install browser and media tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/trimwise-public
+          /tmp/trimwise-public/bin/pip -q install playwright==1.55.0
+          /tmp/trimwise-public/bin/python -m playwright install --with-deps chromium
+      - name: Verify actual anonymous assets and Python-worker workflows
+        run: |
+          export PATH=/tmp/trimwise-public/bin:$PATH
+          python tools/public_check.py
+      - name: Preserve actual results only on the isolated project branch
+        if: always()
+        run: |
+          git config user.name 'Trimwise Public Verification'
+          git config user.email 'trimwise-public@users.noreply.github.com'
+          git add evidence/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual anonymous Trimwise deployment checks'
+          git push origin HEAD:trimwise-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trimwise-public-evidence
+          path: evidence/
+          retention-days: 14

@@ -1,6 +1,5 @@
 [build]
-  command = "npm run build"
-  publish = ".next"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+command = "echo 'Serving the verified build; no runtime regeneration'"
+publish = "public"
+[build.processing]
+skip_processing = true

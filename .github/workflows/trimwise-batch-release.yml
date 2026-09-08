@@ -1,0 +1,90 @@
+name: Trimwise repeat-batch release
+on:
+  push:
+    branches: [trimwise-batch-20260908]
+    paths: [.github/workflows/trimwise-batch-release.yml, BATCH_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: trimwise-repeat-batch-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/trimwise-batch-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand the hash-verified original upgrade on this isolated branch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,hashlib,json,shutil
+          if not Path('src/batch.py').exists():
+            data=b''.join(Path(f'upgrade11/part{i}.bin').read_bytes() for i in range(4))
+            assert hashlib.sha256(data).hexdigest()=='32de519eff285c8067c2f13921f4839b8713f8dbd82f344b6fac5f0e99e7e60a'
+            files=json.loads(lzma.decompress(data))
+            assert len(files)==15
+            for name,text in files.items():
+              p=Path(name)
+              assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github' and isinstance(text,str)
+              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+            if Path('evidence').exists():shutil.move('evidence','evidence-v1')
+            shutil.rmtree('public/evidence',ignore_errors=True)
+            if Path('public/demo.mp4').exists():shutil.copy2('public/demo.mp4','public/demo-v1.mp4')
+          Path('evidence').mkdir(exist_ok=True)
+          PY
+      - name: Install pinned browser and test-only independent solver
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          python3 -m venv /tmp/trimwise-batch
+          /tmp/trimwise-batch/bin/pip -q install playwright==1.55.0 scipy==1.17.0
+          /tmp/trimwise-batch/bin/python -m playwright install --with-deps chromium
+          python3 tools/build.py
+      - name: Fail fast on unchanged original and new actual Python workflows
+        run: |
+          export PATH=/tmp/trimwise-batch/bin:$PATH
+          python -m unittest discover -s tests -v
+          python tests/crosscheck.py
+          python tests/batch_oracle.py
+          python tests/batch_milp.py
+          python -m http.server 8080 --bind 127.0.0.1 --directory public >/tmp/trimwise-batch-server.log 2>&1 &
+          SERVER=$!
+          trap 'kill $SERVER || true' EXIT
+          sleep 1
+          python tests/browser.py
+          python tests/batch_browser.py
+      - name: Install CPU-only stock narration dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          /tmp/trimwise-batch/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/trimwise-batch/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1
+      - name: Execute all checks and record the actual batch application
+        run: /tmp/trimwise-batch/bin/python tools/batch_release.py
+      - name: Preserve implementation and actual evidence only on this branch
+        if: always()
+        run: |
+          git config user.name 'Trimwise Batch Verification'
+          git config user.email 'trimwise-build@users.noreply.github.com'
+          rm -f upgrade11/part*.bin
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve repeat-batch implementation and actual release results'
+          git push origin HEAD:trimwise-batch-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trimwise-batch-release
+          path: |
+            public/
+            evidence/
+          retention-days: 14

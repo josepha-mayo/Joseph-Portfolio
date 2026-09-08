@@ -1,0 +1,821 @@
+{
+  "status": "passed",
+  "cases": 100,
+  "seed": 57021,
+  "oracle": "independent bin-assignment DFS; not DP reuse",
+  "seconds": 0.037,
+  "results": [
+    {
+      "case": 0,
+      "objective": [
+        500,
+        76,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 1,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 2,
+      "objective": [
+        500,
+        93,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 3,
+      "objective": [
+        2000,
+        170,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 4,
+      "objective": [
+        0,
+        60,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 5,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 6,
+      "objective": [
+        0,
+        15,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 7,
+      "objective": [
+        1700,
+        50,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 8,
+      "objective": [
+        0,
+        63,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 9,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 10,
+      "objective": [
+        0,
+        360,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 11,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 12,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 13,
+      "objective": [
+        700,
+        13,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 14,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 15,
+      "objective": [
+        1900,
+        140,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 16,
+      "objective": [
+        0,
+        5,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 17,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 18,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 19,
+      "objective": [
+        500,
+        180,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 20,
+      "objective": [
+        2100,
+        760,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 21,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 22,
+      "objective": [
+        2000,
+        240,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 23,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 24,
+      "objective": [
+        0,
+        15,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 25,
+      "objective": [
+        1200,
+        95,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 26,
+      "objective": [
+        0,
+        400,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 27,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 28,
+      "objective": [
+        1000,
+        500,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 29,
+      "objective": [
+        700,
+        60,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 30,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 31,
+      "objective": [
+        2000,
+        240,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 32,
+      "objective": [
+        1700,
+        89,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 33,
+      "objective": [
+        2100,
+        193,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 34,
+      "objective": [
+        1700,
+        220,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 35,
+      "objective": [
+        500,
+        35,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 36,
+      "objective": [
+        700,
+        20,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 37,
+      "objective": [
+        3000,
+        520,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 38,
+      "objective": [
+        0,
+        6,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 39,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 40,
+      "objective": [
+        1500,
+        20,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 41,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 42,
+      "objective": [
+        1000,
+        380,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 43,
+      "objective": [
+        2000,
+        100,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 44,
+      "objective": [
+        0,
+        80,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 45,
+      "objective": [
+        700,
+        30,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 46,
+      "objective": [
+        0,
+        160,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 47,
+      "objective": [
+        0,
+        0,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 48,
+      "objective": [
+        0,
+        200,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 49,
+      "objective": [
+        1000,
+        60,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 50,
+      "objective": [
+        2400,
+        320,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 51,
+      "objective": [
+        500,
+        140,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 52,
+      "objective": [
+        1000,
+        160,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 53,
+      "objective": [
+        0,
+        3,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 54,
+      "objective": [
+        1000,
+        200,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 55,
+      "objective": [
+        2000,
+        140,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 56,
+      "objective": [
+        500,
+        180,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 57,
+      "objective": [
+        0,
+        13,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 58,
+      "objective": [
+        700,
+        180,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 59,
+      "objective": [
+        2400,
+        40,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 60,
+      "objective": [
+        1200,
+        120,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 61,
+      "objective": [
+        1000,
+        30,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 62,
+      "objective": [
+        700,
+        26,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 63,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 64,
+      "objective": [
+        0,
+        5,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 65,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 66,
+      "objective": [
+        2100,
+        440,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 67,
+      "objective": [
+        1400,
+        480,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 68,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 69,
+      "objective": [
+        1700,
+        460,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 70,
+      "objective": [
+        0,
+        10,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 71,
+      "objective": [
+        700,
+        60,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 72,
+      "objective": [
+        2700,
+        180,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 73,
+      "objective": [
+        500,
+        180,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 74,
+      "objective": [
+        1400,
+        335,
+        5
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 75,
+      "objective": [
+        500,
+        160,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 76,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 77,
+      "objective": [
+        2100,
+        110,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 78,
+      "objective": [
+        0,
+        3,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 79,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 80,
+      "objective": [
+        2200,
+        160,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 81,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 82,
+      "objective": [
+        1400,
+        300,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 83,
+      "objective": [
+        700,
+        240,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 84,
+      "objective": [
+        0,
+        180,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 85,
+      "objective": [
+        0,
+        73,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 86,
+      "objective": [
+        1500,
+        32,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 87,
+      "objective": [
+        1400,
+        543,
+        4
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 88,
+      "objective": [
+        1000,
+        36,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 89,
+      "objective": [
+        1500,
+        580,
+        5
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 90,
+      "objective": [
+        1000,
+        170,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 91,
+      "objective": [
+        700,
+        260,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 92,
+      "objective": null,
+      "infeasible": true
+    },
+    {
+      "case": 93,
+      "objective": [
+        0,
+        5,
+        1
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 94,
+      "objective": [
+        0,
+        85,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 95,
+      "objective": [
+        1500,
+        115,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 96,
+      "objective": [
+        1200,
+        160,
+        2
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 97,
+      "objective": [
+        2000,
+        110,
+        3
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 98,
+      "objective": [
+        2600,
+        320,
+        5
+      ],
+      "infeasible": false
+    },
+    {
+      "case": 99,
+      "objective": null,
+      "infeasible": true
+    }
+  ]
+}

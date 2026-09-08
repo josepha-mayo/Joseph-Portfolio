@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "material": "Synthetic 80-piece rail batch",
+  "kerf_mm": 3,
+  "end_trim_mm": 10,
+  "reuse_min_mm": 150,
+  "parts": [
+    {
+      "id": "Short rail",
+      "length_mm": 600,
+      "qty": 40
+    },
+    {
+      "id": "Long rail",
+      "length_mm": 900,
+      "qty": 40
+    }
+  ],
+  "remnants": [
+    {
+      "id": "Rack 1",
+      "length_mm": 1900
+    },
+    {
+      "id": "Rack 2",
+      "length_mm": 1600
+    },
+    {
+      "id": "Rack 3",
+      "length_mm": 2500
+    },
+    {
+      "id": "Rack 4",
+      "length_mm": 1400
+    }
+  ],
+  "new_stock": [
+    {
+      "id": "New 2400",
+      "length_mm": 2400
+    },
+    {
+      "id": "New 3000",
+      "length_mm": 3000
+    },
+    {
+      "id": "New 3600",
+      "length_mm": 3600
+    }
+  ]
+}
