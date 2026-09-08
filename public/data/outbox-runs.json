@@ -1,10 +1,10 @@
 {
-  "databaseRoot": "evidence/outbox-databases/20260908215259970",
+  "databaseRoot": "evidence/outbox-databases/20260908220422259",
   "format": "forkline-outbox-record-v1",
-  "generatedAt": "2026-09-08T21:52:59.971Z",
+  "generatedAt": "2026-09-08T22:04:22.259Z",
   "execution": "Node.js SQLite worker + independent SQLite HTTP ticket receiver; block-hash-pinned local-EVM observations",
   "scope": "Rehearsal only. Local fixture tickets are real persisted rows, not real admission tickets or shipments. RPC observations are trusted. No production exactly-once or consensus-finality guarantee.",
-  "traceSha256": "c5915782fc3ea5adfde9ce1ffcc2990ab0506842fc1028f38eb7c53f611abb86",
+  "traceSha256": "0b4a7cf705312d9b08ba5381bfed8abca51b5ff90c2f9e13b04687fa81fab904",
   "cases": [
     {
       "id": "before-send",

@@ -1,8 +1,8 @@
 {
   "status": "passed",
   "cases": 2,
-  "databaseRoot": "evidence/outbox-databases/20260908215259970",
-  "traceSha256": "c5915782fc3ea5adfde9ce1ffcc2990ab0506842fc1028f38eb7c53f611abb86",
+  "databaseRoot": "evidence/outbox-databases/20260908220422259",
+  "traceSha256": "0b4a7cf705312d9b08ba5381bfed8abca51b5ff90c2f9e13b04687fa81fab904",
   "checks": [
     "enqueue-only sent one orphan; guarded sent zero",
     "uncertain receipt recovered without second POST",
