@@ -1,0 +1,60 @@
+name: Mathematics bounty source audit
+on:
+  push:
+    branches: [math-bounty-audit-20260908]
+    paths: [.github/workflows/math-bounty-source-audit.yml]
+permissions:
+  contents: read
+jobs:
+  read-public-sources:
+    if: github.ref == 'refs/heads/math-bounty-audit-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Read sponsor pages without submitting or executing their scripts
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from datetime import datetime,timezone
+          from urllib.request import Request,urlopen
+          from html.parser import HTMLParser
+          import json,hashlib,re
+          out=Path('math-source-audit');out.mkdir()
+          class Page(HTMLParser):
+            def __init__(self):super().__init__();self.text=[];self.links=[];self.scripts=[];self.in_script=False
+            def handle_starttag(self,tag,attrs):
+              d=dict(attrs)
+              if tag=='script':self.in_script=True
+              if tag=='a' and 'href'in d:self.links.append(d['href'])
+            def handle_endtag(self,tag):
+              if tag=='script':self.in_script=False
+            def handle_data(self,s):
+              if self.in_script:self.scripts.append(s)
+              else:self.text.append(s)
+          urls={
+           'prizes-en':'https://www.dimostriamogoldbach.it/en/prizes/',
+           'prizes-it':'https://www.dimostriamogoldbach.it/it/premi/',
+           'contacts':'https://www.dimostriamogoldbach.it/en/info-and-contacts/',
+           'lc5':'https://www.dimostriamogoldbach.it/en/characterization-of-spaces/'
+          }
+          reports=[]
+          for name,url in urls.items():
+            item={'name':name,'url':url,'checked_at':datetime.now(timezone.utc).isoformat()}
+            try:
+              req=Request(url,headers={'User-Agent':'Mathematics prize source check; standard Python urllib'})
+              with urlopen(req,timeout=25)as r:data=r.read(2_000_001);item.update(status=r.status,final_url=r.url)
+              assert len(data)<=2_000_000
+              text=data.decode('utf-8');(out/(name+'.html')).write_text(text)
+              parser=Page();parser.feed(text)
+              plain='\n'.join(t.strip()for t in parser.text if t.strip())
+              (out/(name+'.txt')).write_text(plain)
+              item.update(sha256=hashlib.sha256(data).hexdigest(),emails=sorted(set(re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',text))),mail_links=[l for l in parser.links if l.startswith('mailto:')],relevant_links=[l for l in parser.links if any(k in l for k in ['character','contatt','contact','premi','prizes'])],email_related_scripts=[s for s in parser.scripts if any(k in s.lower()for k in ['mailto','email','atob','fromcharcode','document.write','reverse'])])
+            except Exception as e:item['error']=repr(e)
+            reports.append(item)
+          (out/'source-audit.json').write_text(json.dumps(reports,indent=2));print(json.dumps(reports,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: math-bounty-source-audit
+          path: math-source-audit/
+          retention-days: 7
