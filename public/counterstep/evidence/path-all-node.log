@@ -1,0 +1,515 @@
+TAP version 13
+# Subtest: 3(x+2)=18 -> 3x+6=18
+ok 1 - 3(x+2)=18 -> 3x+6=18
+  ---
+  duration_ms: 2.24018
+  type: 'test'
+  ...
+# Subtest: 3(x+2)=18 -> 3x+2=18
+ok 2 - 3(x+2)=18 -> 3x+2=18
+  ---
+  duration_ms: 0.471187
+  type: 'test'
+  ...
+# Subtest: x=4 -> 4=x
+ok 3 - x=4 -> 4=x
+  ---
+  duration_ms: 0.18624
+  type: 'test'
+  ...
+# Subtest: 2x+1=4 -> x=3/2
+ok 4 - 2x+1=4 -> x=3/2
+  ---
+  duration_ms: 1.156305
+  type: 'test'
+  ...
+# Subtest: 0.1x+0.2=0.5 -> x=3
+ok 5 - 0.1x+0.2=0.5 -> x=3
+  ---
+  duration_ms: 0.16711
+  type: 'test'
+  ...
+# Subtest: 0.1+0.2=0.3 -> x=x
+ok 6 - 0.1+0.2=0.3 -> x=x
+  ---
+  duration_ms: 0.103565
+  type: 'test'
+  ...
+# Subtest: x=x -> 2x=2x
+ok 7 - x=x -> 2x=2x
+  ---
+  duration_ms: 0.18673
+  type: 'test'
+  ...
+# Subtest: x=x -> x=1
+ok 8 - x=x -> x=1
+  ---
+  duration_ms: 0.165308
+  type: 'test'
+  ...
+# Subtest: x+1=x -> 0=1
+ok 9 - x+1=x -> 0=1
+  ---
+  duration_ms: 0.356264
+  type: 'test'
+  ...
+# Subtest: x=x -> 0=1
+ok 10 - x=x -> 0=1
+  ---
+  duration_ms: 0.399339
+  type: 'test'
+  ...
+# Subtest: x=1 -> 0=1
+ok 11 - x=1 -> 0=1
+  ---
+  duration_ms: 0.228503
+  type: 'test'
+  ...
+# Subtest: 0=1 -> x=2
+ok 12 - 0=1 -> x=2
+  ---
+  duration_ms: 0.129264
+  type: 'test'
+  ...
+# Subtest: 2(x-3)=8 -> x=7
+ok 13 - 2(x-3)=8 -> x=7
+  ---
+  duration_ms: 0.079569
+  type: 'test'
+  ...
+# Subtest: -(x+2)=7 -> -x-2=7
+ok 14 - -(x+2)=7 -> -x-2=7
+  ---
+  duration_ms: 0.075353
+  type: 'test'
+  ...
+# Subtest: -(x+2)=7 -> -x+2=7
+ok 15 - -(x+2)=7 -> -x+2=7
+  ---
+  duration_ms: 0.115142
+  type: 'test'
+  ...
+# Subtest: (x+1)/2=3 -> x=5
+ok 16 - (x+1)/2=3 -> x=5
+  ---
+  duration_ms: 0.064336
+  type: 'test'
+  ...
+# Subtest: 2(3)=6 -> 0=0
+ok 17 - 2(3)=6 -> 0=0
+  ---
+  duration_ms: 0.058197
+  type: 'test'
+  ...
+# Subtest: 2(3)=6 -> 0=1
+ok 18 - 2(3)=6 -> 0=1
+  ---
+  duration_ms: 0.105308
+  type: 'test'
+  ...
+# Subtest: (x+1)*2=6 -> x=2
+ok 19 - (x+1)*2=6 -> x=2
+  ---
+  duration_ms: 0.065077
+  type: 'test'
+  ...
+# Subtest: x-x=0 -> 3=3
+ok 20 - x-x=0 -> 3=3
+  ---
+  duration_ms: 0.062894
+  type: 'test'
+  ...
+# Subtest: -(-x)=4 -> x=4
+ok 21 - -(-x)=4 -> x=4
+  ---
+  duration_ms: 0.105739
+  type: 'test'
+  ...
+# Subtest: 3×(x−1)=9 -> x=4
+ok 22 - 3×(x−1)=9 -> x=4
+  ---
+  duration_ms: 0.130606
+  type: 'test'
+  ...
+# Subtest: x/2+1=4 -> x=6
+ok 23 - x/2+1=4 -> x=6
+  ---
+  duration_ms: 0.068083
+  type: 'test'
+  ...
+# Subtest: -x=-0.25 -> x=1/4
+ok 24 - -x=-0.25 -> x=1/4
+  ---
+  duration_ms: 0.068823
+  type: 'test'
+  ...
+# Subtest: reject x*x=4
+ok 25 - reject x*x=4
+  ---
+  duration_ms: 0.229203
+  type: 'test'
+  ...
+# Subtest: reject x/x=1
+ok 26 - reject x/x=1
+  ---
+  duration_ms: 0.071327
+  type: 'test'
+  ...
+# Subtest: reject 1/(x+1)=2
+ok 27 - reject 1/(x+1)=2
+  ---
+  duration_ms: 1.111667
+  type: 'test'
+  ...
+# Subtest: reject x^2=4
+ok 28 - reject x^2=4
+  ---
+  duration_ms: 0.164657
+  type: 'test'
+  ...
+# Subtest: reject x2=4
+ok 29 - reject x2=4
+  ---
+  duration_ms: 0.124146
+  type: 'test'
+  ...
+# Subtest: reject 2y=3
+ok 30 - reject 2y=3
+  ---
+  duration_ms: 0.204147
+  type: 'test'
+  ...
+# Subtest: reject x=
+ok 31 - reject x=
+  ---
+  duration_ms: 0.139228
+  type: 'test'
+  ...
+# Subtest: reject x==3
+ok 32 - reject x==3
+  ---
+  duration_ms: 0.108633
+  type: 'test'
+  ...
+# Subtest: reject x=1/0
+ok 33 - reject x=1/0
+  ---
+  duration_ms: 0.117497
+  type: 'test'
+  ...
+# Subtest: reject x=(1+2
+ok 34 - reject x=(1+2
+  ---
+  duration_ms: 0.156434
+  type: 'test'
+  ...
+# Subtest: reject x=0.1234567
+ok 35 - reject x=0.1234567
+  ---
+  duration_ms: 0.135854
+  type: 'test'
+  ...
+# Subtest: reject x=Infinity
+ok 36 - reject x=Infinity
+  ---
+  duration_ms: 0.104477
+  type: 'test'
+  ...
+# Subtest: reject x=NaN
+ok 37 - reject x=NaN
+  ---
+  duration_ms: 0.09317
+  type: 'test'
+  ...
+# Subtest: reject x=alert(1)
+ok 38 - reject x=alert(1)
+  ---
+  duration_ms: 0.101933
+  type: 'test'
+  ...
+# Subtest: reject x=<script>
+ok 39 - reject x=<script>
+  ---
+  duration_ms: 0.097897
+  type: 'test'
+  ...
+# Subtest: reject x=1;globalThis.pwned=true
+ok 40 - reject x=1;globalThis.pwned=true
+  ---
+  duration_ms: 0.093921
+  type: 'test'
+  ...
+# Subtest: reject x=2..2
+ok 41 - reject x=2..2
+  ---
+  duration_ms: 0.100732
+  type: 'test'
+  ...
+# Subtest: first wrong step survives a correct final answer
+ok 42 - first wrong step survives a correct final answer
+  ---
+  duration_ms: 0.545267
+  type: 'test'
+  ...
+# Subtest: unsupported line invalidates the chain, not a wrong-answer verdict
+ok 43 - unsupported line invalidates the chain, not a wrong-answer verdict
+  ---
+  duration_ms: 0.211658
+  type: 'test'
+  ...
+# Subtest: blank and enormous chains reject
+ok 44 - blank and enormous chains reject
+  ---
+  duration_ms: 0.401873
+  type: 'test'
+  ...
+# Subtest: practice generator exact spread
+ok 45 - practice generator exact spread
+  ---
+  duration_ms: 14.011979
+  type: 'test'
+  ...
+# Subtest: practice generator exact balance
+ok 46 - practice generator exact balance
+  ---
+  duration_ms: 21.049657
+  type: 'test'
+  ...
+# Subtest: practice generator exact divide
+ok 47 - practice generator exact divide
+  ---
+  duration_ms: 15.368995
+  type: 'test'
+  ...
+# Subtest: practice generator exact negative
+ok 48 - practice generator exact negative
+  ---
+  duration_ms: 19.467864
+  type: 'test'
+  ...
+# Subtest: practice generator exact arithmetic
+ok 49 - practice generator exact arithmetic
+  ---
+  duration_ms: 5.931999
+  type: 'test'
+  ...
+# Subtest: JS exported neural inference agrees with Python
+ok 50 - JS exported neural inference agrees with Python
+  ---
+  duration_ms: 11.266971
+  type: 'test'
+  ...
+# Subtest: model inference side-order invariance
+ok 51 - model inference side-order invariance
+  ---
+  duration_ms: 15.897707
+  type: 'test'
+  ...
+# Subtest: does not call two-variable-side or identity edits an in-scope diagnosis
+ok 52 - does not call two-variable-side or identity edits an in-scope diagnosis
+  ---
+  duration_ms: 0.263345
+  type: 'test'
+  ...
+# Subtest: model suggests distribution for the UI example
+ok 53 - model suggests distribution for the UI example
+  ---
+  duration_ms: 0.221493
+  type: 'test'
+  ...
+# Subtest: practice counts are bounded and validated
+ok 54 - practice counts are bounded and validated
+  ---
+  duration_ms: 0.325969
+  type: 'test'
+  ...
+# Subtest: portable SHA-256 matches native for ASCII, Unicode and long text
+ok 55 - portable SHA-256 matches native for ASCII, Unicode and long text
+  ---
+  duration_ms: 33.165701
+  type: 'test'
+  ...
+# Subtest: spread warmup: correct, reversed, wrong solution, copied and unrelated operations
+ok 56 - spread warmup: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 6.098739
+  type: 'test'
+  ...
+# Subtest: spread transfer: correct, reversed, wrong solution, copied and unrelated operations
+ok 57 - spread transfer: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 4.103937
+  type: 'test'
+  ...
+# Subtest: balance warmup: correct, reversed, wrong solution, copied and unrelated operations
+ok 58 - balance warmup: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 2.224007
+  type: 'test'
+  ...
+# Subtest: balance transfer: correct, reversed, wrong solution, copied and unrelated operations
+ok 59 - balance transfer: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 2.381462
+  type: 'test'
+  ...
+# Subtest: divide warmup: correct, reversed, wrong solution, copied and unrelated operations
+ok 60 - divide warmup: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 1.720601
+  type: 'test'
+  ...
+# Subtest: divide transfer: correct, reversed, wrong solution, copied and unrelated operations
+ok 61 - divide transfer: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 1.565779
+  type: 'test'
+  ...
+# Subtest: negative warmup: correct, reversed, wrong solution, copied and unrelated operations
+ok 62 - negative warmup: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 2.497587
+  type: 'test'
+  ...
+# Subtest: negative transfer: correct, reversed, wrong solution, copied and unrelated operations
+ok 63 - negative transfer: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 4.26622
+  type: 'test'
+  ...
+# Subtest: arithmetic warmup: correct, reversed, wrong solution, copied and unrelated operations
+ok 64 - arithmetic warmup: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 4.770726
+  type: 'test'
+  ...
+# Subtest: arithmetic transfer: correct, reversed, wrong solution, copied and unrelated operations
+ok 65 - arithmetic transfer: correct, reversed, wrong solution, copied and unrelated operations
+  ---
+  duration_ms: 4.361853
+  type: 'test'
+  ...
+# Subtest: Model suggestions execute real frozen inference and manual override is retained
+ok 66 - Model suggestions execute real frozen inference and manual override is retained
+  ---
+  duration_ms: 3.14007
+  type: 'test'
+  ...
+# Subtest: No confident prediction means explicit choice, not top-label fallback
+ok 67 - No confident prediction means explicit choice, not top-label fallback
+  ---
+  duration_ms: 0.588252
+  type: 'test'
+  ...
+# Subtest: Reject unsupported, nonunique and oversized initial inputs
+ok 68 - Reject unsupported, nonunique and oversized initial inputs
+  ---
+  duration_ms: 0.436024
+  type: 'test'
+  ...
+# Subtest: Right final answer does not repair an invalid intermediate equation
+ok 69 - Right final answer does not repair an invalid intermediate equation
+  ---
+  duration_ms: 1.143345
+  type: 'test'
+  ...
+# Subtest: Original problem stays fixed, including attempts with a different solution-equivalent start
+ok 70 - Original problem stays fixed, including attempts with a different solution-equivalent start
+  ---
+  duration_ms: 0.705158
+  type: 'test'
+  ...
+# Subtest: Equivalent but unfinished work stays at repair
+ok 71 - Equivalent but unfinished work stays at repair
+  ---
+  duration_ms: 0.751447
+  type: 'test'
+  ...
+# Subtest: Unsupported response does not advance or expose an answer
+ok 72 - Unsupported response does not advance or expose an answer
+  ---
+  duration_ms: 8.561904
+  type: 'test'
+  ...
+# Subtest: Each response belongs to the current stage and correctness cannot be imported
+ok 73 - Each response belongs to the current stage and correctness cannot be imported
+  ---
+  duration_ms: 0.970546
+  type: 'test'
+  ...
+# Subtest: Repair, warmup and changed structure complete in order without changing source state
+ok 74 - Repair, warmup and changed structure complete in order without changing source state
+  ---
+  duration_ms: 5.828473
+  type: 'test'
+  ...
+# Subtest: A final answer is not the requested expansion even when the solution is right
+ok 75 - A final answer is not the requested expansion even when the solution is right
+  ---
+  duration_ms: 0.271667
+  type: 'test'
+  ...
+# Subtest: Later revisions stay after-feedback rather than first response
+ok 76 - Later revisions stay after-feedback rather than first response
+  ---
+  duration_ms: 6.075013
+  type: 'test'
+  ...
+# Subtest: Hint and reveal help are stage-specific and survive correct answers
+ok 77 - Hint and reveal help are stage-specific and survive correct answers
+  ---
+  duration_ms: 5.703466
+  type: 'test'
+  ...
+# Subtest: Duplicate help cannot inflate history and exact witness is requested, not automatic
+ok 78 - Duplicate help cannot inflate history and exact witness is requested, not automatic
+  ---
+  duration_ms: 1.09989
+  type: 'test'
+  ...
+# Subtest: Full replay restores questions and assistance but discards forged report fields
+ok 79 - Full replay restores questions and assistance but discards forged report fields
+  ---
+  duration_ms: 8.869575
+  type: 'test'
+  ...
+# Subtest: Bad import cannot supply invalid stage ordering or oversized history
+ok 80 - Bad import cannot supply invalid stage ordering or oversized history
+  ---
+  duration_ms: 1.109935
+  type: 'test'
+  ...
+# Subtest: Bounded history rejects more work without mutating original state
+ok 81 - Bounded history rejects more work without mutating original state
+  ---
+  duration_ms: 88.681029
+  type: 'test'
+  ...
+# Subtest: Untrusted equation text is unsupported, not executed
+ok 82 - Untrusted equation text is unsupported, not executed
+  ---
+  duration_ms: 0.316535
+  type: 'test'
+  ...
+# Subtest: Readable notes keep each question, answer and support without claiming a grade
+ok 83 - Readable notes keep each question, answer and support without claiming a grade
+  ---
+  duration_ms: 1.302694
+  type: 'test'
+  ...
+# Subtest: Serialized payload contains no reference answers, prediction or saved results
+ok 84 - Serialized payload contains no reference answers, prediction or saved results
+  ---
+  duration_ms: 0.392238
+  type: 'test'
+  ...
+1..84
+# tests 84
+# suites 0
+# pass 84
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 250.435083
+
