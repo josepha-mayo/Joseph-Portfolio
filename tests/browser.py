@@ -1,0 +1,58 @@
+"""Actual CPython-in-WebAssembly UI tests. No bridge, mocked solver or CSP bypass."""
+from pathlib import Path
+import json,os,sys,tempfile
+from playwright.sync_api import sync_playwright,expect
+R=Path(__file__).resolve().parents[1];E=R/'evidence';E.mkdir(exist_ok=True)
+base=os.environ.get('TRIMWISE_URL','http://127.0.0.1:8080').rstrip('/')
+checks=[]
+def check(name,condition):
+    assert condition,name
+    checks.append(name)
+with sync_playwright() as p:
+    b=p.chromium.launch();context=b.new_context(viewport={'width':1440,'height':1050},accept_downloads=True)
+    page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+    page.goto(base);expect(page.locator('#runtime')).to_have_attribute('data-ready','true',timeout=120000)
+    check('actual CPython runtime reports ready','CPython ' in page.locator('#runtime').inner_text())
+    page.click('#solve');expect(page.locator('#verified')).to_have_text('EXACT PLAN / LEDGER PASSED',timeout=45000)
+    check('known minimum purchase',page.locator('#bought').inner_text()=='7.2 m')
+    check('same demand baseline difference',page.locator('#avoided').inner_text()=='1.8 m')
+    check('scrap separated from reusable tails',page.locator('#scrap').inner_text()=='0.232 m')
+    check('all seven pieces checked','all 7 pieces assigned exactly once' in page.locator('#ledger').inner_text())
+    check('four physical cut bars',page.locator('.cutrow').count()==4)
+    page.screenshot(path=str(E/'desktop.png'),full_page=True)
+    with page.expect_download() as d:page.click('#save')
+    saved=E/'workspace.json';d.value.save_as(saved);w=json.loads(saved.read_text())
+    check('workspace contains inputs and assignments only',set(w)=={'schema','job','plan'})
+    sys.path.insert(0,str(R/'src'));from trimwise import audit
+    check('browser assignment passes native Python checker',audit(w['job'],w['plan'])['valid'])
+    with page.expect_download() as d:page.click('#csv')
+    csvfile=E/'cuts.csv';d.value.save_as(csvfile)
+    check('CSV has all seven actual parts',len(csvfile.read_text().splitlines())==8)
+    page.fill('#remnants','Rack A, 1700\nRack B, 2600')
+    check('editing locks stale export',page.locator('#csv').is_disabled() and page.locator('#save').is_disabled())
+    check('stale warning visible',page.locator('#stale').is_visible())
+    page.click('#recheck');expect(page.locator('#error')).to_contain_text('13 mm too short',timeout=15000)
+    check('remeasurement invalidates cut plan',page.locator('#csv').is_disabled())
+    page.click('#solve');expect(page.locator('#verified')).to_have_text('EXACT PLAN / LEDGER PASSED',timeout=45000)
+    check('reoptimization keeps physical new scrap',page.locator('#scrap').inner_text()=='0.616 m')
+    page.set_input_files('#open',str(saved));expect(page.locator('#verified')).to_have_text('SAVED CUTS REVALIDATED',timeout=15000)
+    check('reopened cuts do not invent optimality',page.locator('#avoided').inner_text()=='—')
+    check('saved inputs restored',page.locator('#remnants').input_value().startswith('Rack A, 1800'))
+    invalid=E/'invalid-workspace.json';bad=dict(w);bad['totals']={'purchased_mm':0};invalid.write_text(json.dumps(bad))
+    page.set_input_files('#open',str(invalid));expect(page.locator('#error')).to_be_visible(timeout=15000)
+    check('tampered shape rejected atomically',page.locator('#bought').inner_text()=='7.2 m')
+    page.select_option('#example','kerf');page.click('#solve');expect(page.locator('#verified')).to_have_text('INFEASIBLE',timeout=15000)
+    check('kerf cannot create missing material',page.locator('#bought').inner_text()=='—' and page.locator('#save').is_disabled())
+    page.select_option('#example','reuse');page.fill('#parts','<img src=x>, 400, 2');page.click('#solve')
+    expect(page.locator('#verified')).to_have_text('EXACT PLAN / LEDGER PASSED',timeout=15000)
+    check('user label stays inert text','<img src=x>' in page.locator('#bars').inner_text() and page.locator('#bars img').count()==0)
+    check('offcuts only means no new stock',page.locator('#bought').inner_text()=='0 m')
+    page.set_viewport_size({'width':390,'height':844});page.screenshot(path=str(E/'mobile.png'),full_page=True)
+    check('mobile does not overflow page',page.evaluate('() => document.documentElement.scrollWidth <= innerWidth + 1'))
+    context.set_offline(True);page.select_option('#example','workshop');page.click('#solve')
+    expect(page.locator('#verified')).to_have_text('EXACT PLAN / LEDGER PASSED',timeout=45000)
+    check('real Python solves after network disconnect',page.locator('#bought').inner_text()=='7.2 m')
+    check('no browser exceptions',not errors)
+    context.close();b.close()
+report={'status':'passed','origin':base,'count':len(checks),'checks':checks,'runner':'actual CPython/Pyodide worker; no mocks or CSP bypass','offline_scope':'computation after initial load; not offline page reload'}
+(E/('public-browser.json' if 'TRIMWISE_URL' in os.environ else 'browser.json')).write_text(json.dumps(report,indent=2));print(json.dumps(report))

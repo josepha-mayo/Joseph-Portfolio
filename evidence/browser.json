@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "origin": "http://127.0.0.1:8080",
+  "count": 22,
+  "checks": [
+    "actual CPython runtime reports ready",
+    "known minimum purchase",
+    "same demand baseline difference",
+    "scrap separated from reusable tails",
+    "all seven pieces checked",
+    "four physical cut bars",
+    "workspace contains inputs and assignments only",
+    "browser assignment passes native Python checker",
+    "CSV has all seven actual parts",
+    "editing locks stale export",
+    "stale warning visible",
+    "remeasurement invalidates cut plan",
+    "reoptimization keeps physical new scrap",
+    "reopened cuts do not invent optimality",
+    "saved inputs restored",
+    "tampered shape rejected atomically",
+    "kerf cannot create missing material",
+    "user label stays inert text",
+    "offcuts only means no new stock",
+    "mobile does not overflow page",
+    "real Python solves after network disconnect",
+    "no browser exceptions"
+  ],
+  "runner": "actual CPython/Pyodide worker; no mocks or CSP bypass",
+  "offline_scope": "computation after initial load; not offline page reload"
+}

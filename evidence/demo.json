@@ -1,0 +1,16 @@
+{
+  "seconds": 98.55,
+  "synthetic_narration": true,
+  "voice": "Kokoro af_heart",
+  "speed": 0.9,
+  "audio_rms": 0.05166151002049446,
+  "transcript": [
+    "Trimwise helps a small workshop plan around the offcuts already in its rack. Python computes the cutting plan inside this browser. No API key, account, or customer data upload is needed.",
+    "This example needs seven pieces. The exact plan buys seven point two metres of new stock. A best fit decreasing baseline, with the same pieces and inventory, buys nine metres. That is a planned difference, not measured environmental savings.",
+    "The cut sheet shows every piece, saw cut and leftover. The ledger balances the used stock. Reusable tails and short scrap are separate. Untouched stock is not counted as waste avoided.",
+    "Now the workshop measures this offcut again. It is one hundred millimetres shorter. Editing locks the exports. Rechecking the previous cuts finds a thirteen millimetre shortage, including the saw loss. The old plan cannot quietly remain approved.",
+    "Reoptimizing finds a new complete allocation. It still buys seven point two metres, but produces more short scrap. The interface shows that tradeoff instead of hiding it behind a green score.",
+    "Two five hundred millimetre pieces do not fit a one metre bar when each cut consumes three millimetres. Python returns infeasible, not a partial plan. The source, exact solver and separate material checker are available to run offline. This is decision support, not machine control."
+  ],
+  "recording": "actual browser actions; initial runtime loading removed"
+}

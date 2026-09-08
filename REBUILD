@@ -1,0 +1,1 @@
+Release attempt 2. The first browser gate exposed the shared file's native CLI being invoked under __main__. The worker now loads the trusted same-origin solver as a separate module, preserving native CLI behavior. No solver responses or tests are mocked. Runtime license texts are included. Run all native, oracle, browser and actual demo gates before publication.

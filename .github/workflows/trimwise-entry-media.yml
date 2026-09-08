@@ -1,0 +1,44 @@
+name: Trimwise entry media check
+on:
+  push:
+    branches: [trimwise-20260908]
+    paths: [.github/workflows/trimwise-entry-media.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/trimwise-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Install image verifier
+        run: |
+          python3 -m venv /tmp/trimwise-media
+          /tmp/trimwise-media/bin/pip -q install pillow==11.3.0
+      - name: Read and validate the processed public thumbnail
+        run: |
+          /tmp/trimwise-media/bin/python - <<'PY'
+          import urllib.request,hashlib,io,json
+          from PIL import Image
+          from pathlib import Path
+          url='https://d112y698adiu2z.cloudfront.net/photos/production/software_thumbnail_photos/005/279/820/datas/medium.png'
+          with urllib.request.urlopen(url,timeout=30) as response:
+            assert response.status==200
+            data=response.read()
+          Path('thumbnail.png').write_bytes(data)
+          with Image.open(io.BytesIO(data)) as image:
+            image.load();rgb=image.convert('RGB')
+          sha=hashlib.sha256(rgb.tobytes()).hexdigest()
+          report={'status':'passed' if rgb.size==(333,222) and sha=='cdf9410f0ca68d35eaf24ba1643d6a4ee8c30bb331e65587fe88494cea058315' else 'different','url':url,'dimensions':rgb.size,'rgb_sha256':sha}
+          Path('thumbnail-check.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report))
+          assert report['status']=='passed','Processed image differs from the exact submitted canvas'
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trimwise-entry-thumbnail
+          path: |
+            thumbnail.png
+            thumbnail-check.json
+          retention-days: 7

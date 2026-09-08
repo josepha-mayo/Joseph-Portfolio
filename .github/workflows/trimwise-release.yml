@@ -1,0 +1,86 @@
+name: Trimwise Python release
+on:
+  push:
+    branches: [trimwise-20260908]
+    paths: [.github/workflows/trimwise-release.yml, REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: trimwise-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/trimwise-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand original hash-verified Python project
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,hashlib,json
+          if not Path('src/trimwise.py').exists():
+            data=b''.join(Path(f'build-input/part{i}.bin').read_bytes() for i in range(4))
+            assert hashlib.sha256(data).hexdigest()=='80a6d6e3a5f65190817c467c4194d035e8555f2f71b8b72823e08e3bf5987782'
+            for name,text in json.loads(lzma.decompress(data)).items():
+              p=Path(name); assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github'
+              if not p.exists():
+                p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+          Path('evidence').mkdir(exist_ok=True)
+          PY
+      - name: Install pinned self-hosted runtime and verify Python core
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          python3 -m unittest discover -s tests -v
+          python3 tests/crosscheck.py
+          python3 tools/build.py
+      - name: Install actual browser test tools
+        run: |
+          python3 -m venv /tmp/trimwise
+          /tmp/trimwise/bin/pip -q install playwright==1.55.0
+          /tmp/trimwise/bin/python -m playwright install --with-deps chromium
+      - name: Fail fast on actual CPython worker integration
+        run: |
+          python3 -m http.server 8080 --bind 127.0.0.1 --directory public >/tmp/trimwise-server.log 2>&1 &
+          SERVER=$!
+          trap 'kill $SERVER || true' EXIT
+          sleep 1
+          /tmp/trimwise/bin/python tests/browser.py
+      - name: Install CPU-only synthetic narration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          /tmp/trimwise/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/trimwise/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1
+      - name: Execute full release and record the actual working application
+        run: |
+          export PATH=/tmp/trimwise/bin:$PATH
+          python tools/release.py
+      - name: Preserve source and executed evidence on this isolated branch only
+        if: always()
+        run: |
+          git config user.name 'Trimwise Verification'
+          git config user.email 'trimwise-build@users.noreply.github.com'
+          rm -f build-input/part*.bin
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Trimwise original source and actual executed checks'
+          git push origin HEAD:trimwise-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trimwise-release
+          path: |
+            public/
+            evidence/
+            package-lock.json
+          retention-days: 14
