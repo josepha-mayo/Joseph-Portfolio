@@ -1,10 +1,10 @@
-import shutil
 """Real browser exports and identity comparisons; one controlled request-time edit tests a race."""
 from pathlib import Path
 from functools import partial
 from http.server import ThreadingHTTPServer,SimpleHTTPRequestHandler
 from urllib.parse import urlsplit
 import threading,os,json,hashlib,tempfile,zipfile,traceback,time
+import shutil
 from playwright.sync_api import sync_playwright,expect
 def wait_video(page):
  until=time.monotonic()+30
@@ -22,6 +22,7 @@ def ok(name):report['checks'].append(name);print('PASS',name,flush=True)
 try:
  with tempfile.TemporaryDirectory(prefix='source-lock-browser-') as d,sync_playwright() as p:
   tmp=Path(d);browser=p.chromium.launch(executable_path=shutil.which("google-chrome") or p.chromium.executable_path);ctx=browser.new_context(viewport={'width':1440,'height':1080},accept_downloads=True);page=ctx.new_page();errors=[];requests=[];downloads=[]
+  report['browser_version']=browser.version
   page.on('pageerror',lambda e:errors.append(str(e)));ctx.on('request',lambda r:requests.append({'method':r.method,'url':r.url.split('?')[0]}));page.on('download',lambda dl:downloads.append(dl.suggested_filename))
   def ready():expect(page.locator('#sourceLockCancel')).to_be_disabled(timeout=30000)
   page.goto(base+'/index.html');expect(page.locator('#sourceLockPanel')).to_be_visible();ok('Source Lock is in the actual editor')
@@ -47,7 +48,8 @@ try:
   dl.value.save_as(tmp/'manifest-current.json');ready();assert json.loads((tmp/'manifest-current.json').read_text())['source']['media_sha256']==manifest['source']['media_sha256'];ok('Standalone manifest also binds to exact source bytes')
   malformed=tmp/'bad.json';malformed.write_text('{broken');page.set_input_files('#sourceLockManifest',str(malformed));expect(page.locator('#sourceLockStatus')).to_contain_text('Invalid manifest JSON');ok('Malformed manifest is rejected')
   legacy=json.loads(mf.read_text());legacy['source'].pop('binding_version');malformed.write_text(json.dumps(legacy));page.set_input_files('#sourceLockManifest',str(malformed));expect(page.locator('#sourceLockStatus')).to_contain_text('no v1 source lock');ok('Legacy unbound manifest cannot get a match verdict')
-  cues=page.evaluate('CutProofStudio.snapshot().cues');page.evaluate('([url,cues])=>CutProofStudio.loadEvidenceDemo(url,cues)',[base+'/identity-fixtures/source.mp4',cues]);wait_video(page)
+  # Reuse one real source cue, not a full recording exceeding the editor's 120-second cut limit.
+  cues=page.evaluate('CutProofStudio.snapshot().cues.slice(0,1)');page.evaluate('([url,cues])=>CutProofStudio.loadEvidenceDemo(url,cues)',[base+'/identity-fixtures/source.mp4',cues]);wait_video(page)
   raced=[]
   def alter(route):
    if route.request.resource_type=='fetch':
