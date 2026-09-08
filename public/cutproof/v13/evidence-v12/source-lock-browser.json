@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "base": "http://127.0.0.1:44191",
+  "checks": [
+    "Source Lock is in the actual editor",
+    "No-media manifest export is blocked",
+    "Caption-only SRT export still works"
+  ],
+  "error": "The real media element did not become ready.",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade13/browser_check.py\", line 31, in <module>\n    page.click('#demoBtn');wait_video(page);page.click('#analyzeBtn');assert page.locator('.clip-card').count()==3;ok('Original clip selection works')\n                           ^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade13/browser_check.py\", line 13, in wait_video\n    raise AssertionError('The real media element did not become ready.')\nAssertionError: The real media element did not become ready.\n"
+}

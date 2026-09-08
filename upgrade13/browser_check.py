@@ -1,3 +1,4 @@
+import shutil
 """Real browser exports and identity comparisons; one controlled request-time edit tests a race."""
 from pathlib import Path
 from functools import partial
@@ -20,7 +21,7 @@ report={'status':'running','base':base,'checks':[]}
 def ok(name):report['checks'].append(name);print('PASS',name,flush=True)
 try:
  with tempfile.TemporaryDirectory(prefix='source-lock-browser-') as d,sync_playwright() as p:
-  tmp=Path(d);browser=p.chromium.launch();ctx=browser.new_context(viewport={'width':1440,'height':1080},accept_downloads=True);page=ctx.new_page();errors=[];requests=[];downloads=[]
+  tmp=Path(d);browser=p.chromium.launch(executable_path=shutil.which("google-chrome") or p.chromium.executable_path);ctx=browser.new_context(viewport={'width':1440,'height':1080},accept_downloads=True);page=ctx.new_page();errors=[];requests=[];downloads=[]
   page.on('pageerror',lambda e:errors.append(str(e)));ctx.on('request',lambda r:requests.append({'method':r.method,'url':r.url.split('?')[0]}));page.on('download',lambda dl:downloads.append(dl.suggested_filename))
   def ready():expect(page.locator('#sourceLockCancel')).to_be_disabled(timeout=30000)
   page.goto(base+'/index.html');expect(page.locator('#sourceLockPanel')).to_be_visible();ok('Source Lock is in the actual editor')
