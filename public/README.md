@@ -1,3 +1,25 @@
+# Forkline Delivery Lab
+
+**The event vanished. The ticket did not.**
+
+The current upgrade connects the existing reorg checker to a real local SQLite outbox and an HTTP receiver with a separate durable ticket ledger. It tests queued-before-reorg delivery and lost acknowledgement recovery. Open `delivery.html` for the executed comparison, or use `npm run lab` for live local controls. No mainnet or real ticket delivery.
+
+[New setup, workflow, protocol and boundaries](docs-delivery.md)
+
+```sh
+npm ci
+npm run evm
+npm test
+npm run outbox:record
+python3 tests/sqlite_oracle.py
+npm run lab
+# http://127.0.0.1:8091/delivery.html?live=1
+```
+
+Read `evidence/delivery-release.json` and any subsequent public-verification record for executed results. The original workbench and source follow below as retained context. Its simulated acknowledgements are separate from the new local receiver ledger.
+
+---
+
 # Forkline
 
 **Rehearse the rollback before it becomes an incident.**
