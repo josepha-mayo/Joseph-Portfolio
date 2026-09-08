@@ -28,8 +28,8 @@ Anonymous public run 34277410222 passed all 45 browser workflows on the immutabl
 
 Earlier public checks caught two verification-harness issues: known hosting anchor rewrites were not in the initial allowlist, and the Classic runner was given a full file URL despite appending index.html itself. Read-only diagnosis 34276705522 identified the exact anchor differences. The verifier now follows and checks those specific destinations, compares embedded scripts/styles exactly, and supplies the expected URL form to each unchanged browser suite. Failed reports are retained. No application output was mocked and no application policy was relaxed.
 
-- Demo SHA-256: 6ddf04c305104fba47e847e1f47f2b9a5b7664be2179dbfd592e0dbf84123a7c
-- Source archive SHA-256: 8e0888463d0756728465584747b29464983854ccf30a740d0db3e38f35324c1b
+- Demo SHA-256: 1d57811fa3ccd8acdcf6b443b386c44de2574b478576a19345bc8bf8e0ca7c1a
+- Source archive SHA-256: 666a0adf76468fee1c70ece106916c3cdc7d8945cbf9947be9168c24e339117d
 - Release evidence: evidence/path-release.json
 - Public evidence: evidence/path-public-verification.json
 
