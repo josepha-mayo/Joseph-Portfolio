@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: bind without mutating original
+ok 1 - bind without mutating original
+  ---
+  duration_ms: 1.711524
+  type: 'test'
+  ...
+# Subtest: match compares bytes and size; never editorial approval
+ok 2 - match compares bytes and size; never editorial approval
+  ---
+  duration_ms: 0.448916
+  type: 'test'
+  ...
+# Subtest: same size, different bytes fails
+ok 3 - same size, different bytes fails
+  ---
+  duration_ms: 0.243188
+  type: 'test'
+  ...
+# Subtest: same digest, wrong size fails
+ok 4 - same digest, wrong size fails
+  ---
+  duration_ms: 0.279497
+  type: 'test'
+  ...
+# Subtest: filename does not confer identity
+ok 5 - filename does not confer identity
+  ---
+  duration_ms: 0.204345
+  type: 'test'
+  ...
+# Subtest: rename preserves byte comparison
+ok 6 - rename preserves byte comparison
+  ---
+  duration_ms: 0.152798
+  type: 'test'
+  ...
+# Subtest: corrected limitations preserve review warning
+ok 7 - corrected limitations preserve review warning
+  ---
+  duration_ms: 0.252215
+  type: 'test'
+  ...
+# Subtest: reject invalid binding null
+ok 8 - reject invalid binding null
+  ---
+  duration_ms: 0.309353
+  type: 'test'
+  ...
+# Subtest: reject invalid binding array
+ok 9 - reject invalid binding array
+  ---
+  duration_ms: 0.344779
+  type: 'test'
+  ...
+# Subtest: reject invalid binding algorithm
+ok 10 - reject invalid binding algorithm
+  ---
+  duration_ms: 0.445349
+  type: 'test'
+  ...
+# Subtest: reject invalid binding version
+ok 11 - reject invalid binding version
+  ---
+  duration_ms: 0.169269
+  type: 'test'
+  ...
+# Subtest: reject invalid binding boolversion
+ok 12 - reject invalid binding boolversion
+  ---
+  duration_ms: 0.132509
+  type: 'test'
+  ...
+# Subtest: reject invalid binding emptyhash
+ok 13 - reject invalid binding emptyhash
+  ---
+  duration_ms: 0.081984
+  type: 'test'
+  ...
+# Subtest: reject invalid binding badhash
+ok 14 - reject invalid binding badhash
+  ---
+  duration_ms: 0.938928
+  type: 'test'
+  ...
+# Subtest: reject invalid binding shorthash
+ok 15 - reject invalid binding shorthash
+  ---
+  duration_ms: 0.122541
+  type: 'test'
+  ...
+# Subtest: reject invalid binding upperhash
+ok 16 - reject invalid binding upperhash
+  ---
+  duration_ms: 0.110378
+  type: 'test'
+  ...
+# Subtest: reject invalid binding zerobytes
+ok 17 - reject invalid binding zerobytes
+  ---
+  duration_ms: 0.11155
+  type: 'test'
+  ...
+# Subtest: reject invalid binding floatbytes
+ok 18 - reject invalid binding floatbytes
+  ---
+  duration_ms: 0.066455
+  type: 'test'
+  ...
+# Subtest: reject invalid binding boolbytes
+ok 19 - reject invalid binding boolbytes
+  ---
+  duration_ms: 0.060604
+  type: 'test'
+  ...
+# Subtest: reject invalid binding huge
+ok 20 - reject invalid binding huge
+  ---
+  duration_ms: 0.064361
+  type: 'test'
+  ...
+# Subtest: reject invalid binding stringbytes
+ok 21 - reject invalid binding stringbytes
+  ---
+  duration_ms: 0.056576
+  type: 'test'
+  ...
+# Subtest: size cap is inclusive
+ok 22 - size cap is inclusive
+  ---
+  duration_ms: 0.136257
+  type: 'test'
+  ...
+# Subtest: unbound legacy manifest gets no match verdict
+ok 23 - unbound legacy manifest gets no match verdict
+  ---
+  duration_ms: 0.266672
+  type: 'test'
+  ...
+# Subtest: truncated JSON rejected
+ok 24 - truncated JSON rejected
+  ---
+  duration_ms: 0.150654
+  type: 'test'
+  ...
+# Subtest: oversized JSON rejected
+ok 25 - oversized JSON rejected
+  ---
+  duration_ms: 0.142899
+  type: 'test'
+  ...
+# Subtest: round-trip preserves binding
+ok 26 - round-trip preserves binding
+  ---
+  duration_ms: 0.91887
+  type: 'test'
+  ...
+# Subtest: null digest in locked manifest rejected
+ok 27 - null digest in locked manifest rejected
+  ---
+  duration_ms: 0.267534
+  type: 'test'
+  ...
+# Subtest: malformed transcript fingerprint rejected
+ok 28 - malformed transcript fingerprint rejected
+  ---
+  duration_ms: 0.225054
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 85.852795

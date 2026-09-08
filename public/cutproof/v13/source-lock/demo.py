@@ -1,3 +1,4 @@
+import shutil
 """Record real Source Lock interactions; stock synthetic narration, no cloned voice."""
 from pathlib import Path
 from functools import partial
@@ -29,7 +30,7 @@ class Quiet(SimpleHTTPRequestHandler):
  def log_message(self,*args):pass
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(OUT)));threading.Thread(target=server.serve_forever,daemon=True).start();base=f'http://127.0.0.1:{server.server_port}'
 with tempfile.TemporaryDirectory() as d,sync_playwright() as p:
- temp=Path(d);browser=p.chromium.launch();ctx=browser.new_context(viewport={'width':1440,'height':1080},record_video_dir=str(temp/'record'),record_video_size={'width':1440,'height':1080},accept_downloads=True)
+ temp=Path(d);browser=p.chromium.launch(executable_path=shutil.which("google-chrome") or p.chromium.executable_path);ctx=browser.new_context(viewport={'width':1440,'height':1080},record_video_dir=str(temp/'record'),record_video_size={'width':1440,'height':1080},accept_downloads=True)
  t0=time.monotonic();page=ctx.new_page();marks=[]
  page.goto(base+'/index.html');page.click('#demoBtn');wait_video(page);page.click('#analyzeBtn')
  def speak(i):marks.append(time.monotonic()-t0);page.wait_for_timeout(len(voices[i])/24000*1000+750)

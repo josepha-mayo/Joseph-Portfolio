@@ -1,0 +1,773 @@
+TAP version 13
+# Subtest: SRT preserves exact millisecond timing
+ok 1 - SRT preserves exact millisecond timing
+  ---
+  duration_ms: 2.212066
+  type: 'test'
+  ...
+# Subtest: Windows newlines and BOM are accepted
+ok 2 - Windows newlines and BOM are accepted
+  ---
+  duration_ms: 0.441832
+  type: 'test'
+  ...
+# Subtest: VTT header metadata, settings, identifiers and notes are accepted
+ok 3 - VTT header metadata, settings, identifiers and notes are accepted
+  ---
+  duration_ms: 0.253828
+  type: 'test'
+  ...
+# Subtest: JSON segments use seconds, not milliseconds
+ok 4 - JSON segments use seconds, not milliseconds
+  ---
+  duration_ms: 0.312839
+  type: 'test'
+  ...
+# Subtest: Whisper-style extra fields do not affect source text
+ok 5 - Whisper-style extra fields do not affect source text
+  ---
+  duration_ms: 0.171643
+  type: 'test'
+  ...
+# Subtest: Native cue JSON round-trips
+ok 6 - Native cue JSON round-trips
+  ---
+  duration_ms: 0.916777
+  type: 'test'
+  ...
+# Subtest: Caption markup is normalized but entity text is never executed
+ok 7 - Caption markup is normalized but entity text is never executed
+  ---
+  duration_ms: 0.154921
+  type: 'test'
+  ...
+# Subtest: Subtitle positioning commands are not treated as narration
+ok 8 - Subtitle positioning commands are not treated as narration
+  ---
+  duration_ms: 0.118373
+  type: 'test'
+  ...
+# Subtest: Duplicate source text is preserved
+ok 9 - Duplicate source text is preserved
+  ---
+  duration_ms: 0.396066
+  type: 'test'
+  ...
+# Subtest: Rejects empty
+ok 10 - Rejects empty
+  ---
+  duration_ms: 0.697585
+  type: 'test'
+  ...
+# Subtest: Rejects plain untimed text
+ok 11 - Rejects plain untimed text
+  ---
+  duration_ms: 0.197742
+  type: 'test'
+  ...
+# Subtest: Rejects bad JSON
+ok 12 - Rejects bad JSON
+  ---
+  duration_ms: 0.112682
+  type: 'test'
+  ...
+# Subtest: Rejects missing segments
+ok 13 - Rejects missing segments
+  ---
+  duration_ms: 0.075412
+  type: 'test'
+  ...
+# Subtest: Rejects zero-duration
+ok 14 - Rejects zero-duration
+  ---
+  duration_ms: 0.089729
+  type: 'test'
+  ...
+# Subtest: Rejects negative start
+ok 15 - Rejects negative start
+  ---
+  duration_ms: 0.081894
+  type: 'test'
+  ...
+# Subtest: Rejects overlap
+ok 16 - Rejects overlap
+  ---
+  duration_ms: 0.092184
+  type: 'test'
+  ...
+# Subtest: Rejects reverse order
+ok 17 - Rejects reverse order
+  ---
+  duration_ms: 0.080221
+  type: 'test'
+  ...
+# Subtest: Rejects missing text
+ok 18 - Rejects missing text
+  ---
+  duration_ms: 0.775511
+  type: 'test'
+  ...
+# Subtest: Rejects nonnumeric time
+ok 19 - Rejects nonnumeric time
+  ---
+  duration_ms: 0.096191
+  type: 'test'
+  ...
+# Subtest: Rejects boolean time
+ok 20 - Rejects boolean time
+  ---
+  duration_ms: 0.07418
+  type: 'test'
+  ...
+# Subtest: Rejects fractional milliseconds
+ok 21 - Rejects fractional milliseconds
+  ---
+  duration_ms: 0.119445
+  type: 'test'
+  ...
+# Subtest: Rejects blank caption
+ok 22 - Rejects blank caption
+  ---
+  duration_ms: 0.080912
+  type: 'test'
+  ...
+# Subtest: Rejects too long cue
+ok 23 - Rejects too long cue
+  ---
+  duration_ms: 0.72183
+  type: 'test'
+  ...
+# Subtest: Rejects too many cues
+ok 24 - Rejects too many cues
+  ---
+  duration_ms: 4.990049
+  type: 'test'
+  ...
+# Subtest: Rejects lone surrogate
+ok 25 - Rejects lone surrogate
+  ---
+  duration_ms: 0.188044
+  type: 'test'
+  ...
+# Subtest: Rejects timestamp minute overflow
+ok 26 - Rejects timestamp minute overflow
+  ---
+  duration_ms: 0.150533
+  type: 'test'
+  ...
+# Subtest: Rejects timestamp second overflow
+ok 27 - Rejects timestamp second overflow
+  ---
+  duration_ms: 0.130366
+  type: 'test'
+  ...
+# Subtest: Rejects missing milliseconds
+ok 28 - Rejects missing milliseconds
+  ---
+  duration_ms: 0.132269
+  type: 'test'
+  ...
+# Subtest: Rejects over-limit input text
+ok 29 - Rejects over-limit input text
+  ---
+  duration_ms: 0.179919
+  type: 'test'
+  ...
+# Subtest: Formatting is millisecond-exact over hour boundaries
+ok 30 - Formatting is millisecond-exact over hour boundaries
+  ---
+  duration_ms: 0.209174
+  type: 'test'
+  ...
+# Subtest: VTT formatting uses decimal points
+ok 31 - VTT formatting uses decimal points
+  ---
+  duration_ms: 0.138741
+  type: 'test'
+  ...
+# Subtest: Automatic suggestions do not overlap
+ok 32 - Automatic suggestions do not overlap
+  ---
+  duration_ms: 6.802182
+  type: 'test'
+  ...
+# Subtest: Automatic cuts respect requested duration
+ok 33 - Automatic cuts respect requested duration
+  ---
+  duration_ms: 1.066549
+  type: 'test'
+  ...
+# Subtest: All selected text and IDs equal whole consecutive source cues
+ok 34 - All selected text and IDs equal whole consecutive source cues
+  ---
+  duration_ms: 1.579315
+  type: 'test'
+  ...
+# Subtest: Titles preserve complete source sentences and negation
+ok 35 - Titles preserve complete source sentences and negation
+  ---
+  duration_ms: 0.184037
+  type: 'test'
+  ...
+# Subtest: Relative captions start at the first source cue
+ok 36 - Relative captions start at the first source cue
+  ---
+  duration_ms: 0.188285
+  type: 'test'
+  ...
+# Subtest: Subtitles round-trip back to the selected words
+ok 37 - Subtitles round-trip back to the selected words
+  ---
+  duration_ms: 0.708495
+  type: 'test'
+  ...
+# Subtest: An omitted but-qualification is flagged
+ok 38 - An omitted but-qualification is flagged
+  ---
+  duration_ms: 0.183686
+  type: 'test'
+  ...
+# Subtest: Omitted hypothetical framing is flagged
+ok 39 - Omitted hypothetical framing is flagged
+  ---
+  duration_ms: 0.162346
+  type: 'test'
+  ...
+# Subtest: Included qualification triggers a headline context reminder
+ok 40 - Included qualification triggers a headline context reminder
+  ---
+  duration_ms: 0.154041
+  type: 'test'
+  ...
+# Subtest: Numbers written as words are flagged
+ok 41 - Numbers written as words are flagged
+  ---
+  duration_ms: 0.167155
+  type: 'test'
+  ...
+# Subtest: Dependent openings and incomplete endings are flagged
+ok 42 - Dependent openings and incomplete endings are flagged
+  ---
+  duration_ms: 0.202351
+  type: 'test'
+  ...
+# Subtest: Long uncaptained gaps are flagged, not silently deleted
+ok 43 - Long uncaptained gaps are flagged, not silently deleted
+  ---
+  duration_ms: 0.204525
+  type: 'test'
+  ...
+# Subtest: New cuts and manual revisions always start pending
+ok 44 - New cuts and manual revisions always start pending
+  ---
+  duration_ms: 0.148841
+  type: 'test'
+  ...
+# Subtest: Rejects options: minimum below four
+ok 45 - Rejects options: minimum below four
+  ---
+  duration_ms: 0.20668
+  type: 'test'
+  ...
+# Subtest: Rejects options: maximum above 120
+ok 46 - Rejects options: maximum above 120
+  ---
+  duration_ms: 0.313673
+  type: 'test'
+  ...
+# Subtest: Rejects options: inverted bounds
+ok 47 - Rejects options: inverted bounds
+  ---
+  duration_ms: 0.303552
+  type: 'test'
+  ...
+# Subtest: Rejects options: NaN duration
+ok 48 - Rejects options: NaN duration
+  ---
+  duration_ms: 0.159922
+  type: 'test'
+  ...
+# Subtest: Rejects options: fractional count
+ok 49 - Rejects options: fractional count
+  ---
+  duration_ms: 0.173276
+  type: 'test'
+  ...
+# Subtest: Rejects options: zero count
+ok 50 - Rejects options: zero count
+  ---
+  duration_ms: 0.158719
+  type: 'test'
+  ...
+# Subtest: Rejects options: more than eight
+ok 51 - Rejects options: more than eight
+  ---
+  duration_ms: 1.00908
+  type: 'test'
+  ...
+# Subtest: Rejects options: oversized focus
+ok 52 - Rejects options: oversized focus
+  ---
+  duration_ms: 0.15382
+  type: 'test'
+  ...
+# Subtest: Impossible duration ranges fail explicitly
+ok 53 - Impossible duration ranges fail explicitly
+  ---
+  duration_ms: 0.429749
+  type: 'test'
+  ...
+# Subtest: Dictionary prototype words cannot corrupt scores
+ok 54 - Dictionary prototype words cannot corrupt scores
+  ---
+  duration_ms: 0.873826
+  type: 'test'
+  ...
+# Subtest: Focus input is data, not code
+ok 55 - Focus input is data, not code
+  ---
+  duration_ms: 0.8918
+  type: 'test'
+  ...
+# Subtest: Seeded 120-source invariant sweep
+ok 56 - Seeded 120-source invariant sweep
+  ---
+  duration_ms: 103.740003
+  type: 'test'
+  ...
+# Subtest: Portable SHA-256 matches standard known vectors and Node for UTF-8
+ok 57 - Portable SHA-256 matches standard known vectors and Node for UTF-8
+  ---
+  duration_ms: 5.424357
+  type: 'test'
+  ...
+# Subtest: SHA-256 matches Node for 100 reproducible varying-length inputs
+ok 58 - SHA-256 matches Node for 100 reproducible varying-length inputs
+  ---
+  duration_ms: 40.34465
+  type: 'test'
+  ...
+# Subtest: Canonical transcript fingerprint changes with text or timing
+ok 59 - Canonical transcript fingerprint changes with text or timing
+  ---
+  duration_ms: 0.660784
+  type: 'test'
+  ...
+# Subtest: Manifest retains pending review state and explicit limitations
+ok 60 - Manifest retains pending review state and explicit limitations
+  ---
+  duration_ms: 1.321519
+  type: 'test'
+  ...
+# Subtest: Manifest rejects invented text, altered captions, altered IDs, titles and cut times
+ok 61 - Manifest rejects invented text, altered captions, altered IDs, titles and cut times
+  ---
+  duration_ms: 1.984959
+  type: 'test'
+  ...
+# Subtest: Export includes real captions, complete source cues and renderer
+ok 62 - Export includes real captions, complete source cues and renderer
+  ---
+  duration_ms: 0.871481
+  type: 'test'
+  ...
+# Subtest: ZIP uses the standard signature and CRC-32 vector
+ok 63 - ZIP uses the standard signature and CRC-32 vector
+  ---
+  duration_ms: 0.560245
+  type: 'test'
+  ...
+# Subtest: ZIP rejects path traversal
+ok 64 - ZIP rejects path traversal
+  ---
+  duration_ms: 0.257876
+  type: 'test'
+  ...
+# Subtest: Original demo generates three source-grounded suggestions
+not ok 65 - Original demo generates three source-grounded suggestions
+  ---
+  duration_ms: 0.372762
+  type: 'test'
+  location: '/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v13/base-source/tests/core.test.js:54:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v13/base-source/examples/source.srt'"
+  code: 'ENOENT'
+  stack: |-
+    Object.readFileSync (node:fs:442:20)
+    TestContext.<anonymous> (/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v13/base-source/tests/core.test.js:54:102)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Boundary proposal adds omitted setup and qualification verbatim
+ok 66 - Boundary proposal adds omitted setup and qualification verbatim
+  ---
+  duration_ms: 6.177676
+  type: 'test'
+  ...
+# Subtest: Boundary expansion cannot silently exceed the requested cap
+ok 67 - Boundary expansion cannot silently exceed the requested cap
+  ---
+  duration_ms: 0.478231
+  type: 'test'
+  ...
+# Subtest: A complete neutral cut is not changed
+ok 68 - A complete neutral cut is not changed
+  ---
+  duration_ms: 0.474153
+  type: 'test'
+  ...
+# Subtest: Proposal does not mutate existing approvals
+ok 69 - Proposal does not mutate existing approvals
+  ---
+  duration_ms: 0.370197
+  type: 'test'
+  ...
+# Subtest: Answer without its question is flagged and expansion retains the question
+ok 70 - Answer without its question is flagged and expansion retains the question
+  ---
+  duration_ms: 1.27407
+  type: 'test'
+  ...
+# Subtest: A quotation retains an adjacent attribution
+ok 71 - A quotation retains an adjacent attribution
+  ---
+  duration_ms: 0.404252
+  type: 'test'
+  ...
+# Subtest: Two-cue lookahead detects a delayed qualification
+ok 72 - Two-cue lookahead detects a delayed qualification
+  ---
+  duration_ms: 0.364096
+  type: 'test'
+  ...
+# Subtest: Lookahead does not bridge a large time gap
+ok 73 - Lookahead does not bridge a large time gap
+  ---
+  duration_ms: 0.241394
+  type: 'test'
+  ...
+# Subtest: Saved project retains source and exact boundaries
+ok 74 - Saved project retains source and exact boundaries
+  ---
+  duration_ms: 5.534925
+  type: 'test'
+  ...
+# Subtest: Approvals never survive a restored project
+ok 75 - Approvals never survive a restored project
+  ---
+  duration_ms: 1.453818
+  type: 'test'
+  ...
+# Subtest: Forged restored quotes and flags are discarded
+ok 76 - Forged restored quotes and flags are discarded
+  ---
+  duration_ms: 0.824503
+  type: 'test'
+  ...
+# Subtest: Transcript tampering is rejected on restore
+ok 77 - Transcript tampering is rejected on restore
+  ---
+  duration_ms: 1.105653
+  type: 'test'
+  ...
+# Subtest: Invalid project JSON rejected
+ok 78 - Invalid project JSON rejected
+  ---
+  duration_ms: 0.256423
+  type: 'test'
+  ...
+# Subtest: Unsupported project version rejected
+ok 79 - Unsupported project version rejected
+  ---
+  duration_ms: 0.62104
+  type: 'test'
+  ...
+# Subtest: Empty project clip list rejected
+ok 80 - Empty project clip list rejected
+  ---
+  duration_ms: 0.691653
+  type: 'test'
+  ...
+# Subtest: Ninth project clip rejected
+ok 81 - Ninth project clip rejected
+  ---
+  duration_ms: 0.549083
+  type: 'test'
+  ...
+# Subtest: Fractional and out-of-bounds restored indices rejected
+ok 82 - Fractional and out-of-bounds restored indices rejected
+  ---
+  duration_ms: 1.578683
+  type: 'test'
+  ...
+# Subtest: Invalid restored options rejected
+ok 83 - Invalid restored options rejected
+  ---
+  duration_ms: 1.58777
+  type: 'test'
+  ...
+# Subtest: Oversized project rejected before parse
+ok 84 - Oversized project rejected before parse
+  ---
+  duration_ms: 0.34014
+  type: 'test'
+  ...
+# Subtest: Aggregate programmatic transcript limit enforced
+ok 85 - Aggregate programmatic transcript limit enforced
+  ---
+  duration_ms: 1.356455
+  type: 'test'
+  ...
+# Subtest: Review report escapes every untrusted content field
+ok 86 - Review report escapes every untrusted content field
+  ---
+  duration_ms: 0.805447
+  type: 'test'
+  ...
+# Subtest: Review report includes outside cues without marking them as selected
+ok 87 - Review report includes outside cues without marking them as selected
+  ---
+  duration_ms: 0.565676
+  type: 'test'
+  ...
+# Subtest: LosslessCut export preserves millisecond source times
+ok 88 - LosslessCut export preserves millisecond source times
+  ---
+  duration_ms: 0.531571
+  type: 'test'
+  ...
+# Subtest: Readiness never converts flagged cuts into approvals
+ok 89 - Readiness never converts flagged cuts into approvals
+  ---
+  duration_ms: 0.590011
+  type: 'test'
+  ...
+# Subtest: Unicode save/restore keeps the normalized source exactly
+ok 90 - Unicode save/restore keeps the normalized source exactly
+  ---
+  duration_ms: 1.055938
+  type: 'test'
+  ...
+# Subtest: Boundary work is bounded for an all-dependent long source
+ok 91 - Boundary work is bounded for an all-dependent long source
+  ---
+  duration_ms: 2.78716
+  type: 'test'
+  ...
+# Subtest: Missing settings and invalid boolean settings are rejected
+ok 92 - Missing settings and invalid boolean settings are rejected
+  ---
+  duration_ms: 3.001593
+  type: 'test'
+  ...
+# Subtest: case and punctuation
+ok 93 - case and punctuation
+  ---
+  duration_ms: 3.960009
+  type: 'test'
+  ...
+# Subtest: digit normalization
+ok 94 - digit normalization
+  ---
+  duration_ms: 0.29724
+  type: 'test'
+  ...
+# Subtest: two-digit number
+ok 95 - two-digit number
+  ---
+  duration_ms: 0.417056
+  type: 'test'
+  ...
+# Subtest: contractions
+ok 96 - contractions
+  ---
+  duration_ms: 0.338137
+  type: 'test'
+  ...
+# Subtest: missing not
+ok 97 - missing not
+  ---
+  duration_ms: 0.437374
+  type: 'test'
+  ...
+# Subtest: changed number
+ok 98 - changed number
+  ---
+  duration_ms: 0.266091
+  type: 'test'
+  ...
+# Subtest: changed permission
+ok 99 - changed permission
+  ---
+  duration_ms: 0.198504
+  type: 'test'
+  ...
+# Subtest: normal word
+ok 100 - normal word
+  ---
+  duration_ms: 0.189637
+  type: 'test'
+  ...
+# Subtest: removed exception
+ok 101 - removed exception
+  ---
+  duration_ms: 0.550788
+  type: 'test'
+  ...
+# Subtest: never removed
+ok 102 - never removed
+  ---
+  duration_ms: 0.613195
+  type: 'test'
+  ...
+# Subtest: only removed
+ok 103 - only removed
+  ---
+  duration_ms: 0.254259
+  type: 'test'
+  ...
+# Subtest: percentage format
+ok 104 - percentage format
+  ---
+  duration_ms: 0.16461
+  type: 'test'
+  ...
+# Subtest: spelled seven
+ok 105 - spelled seven
+  ---
+  duration_ms: 0.145664
+  type: 'test'
+  ...
+# Subtest: thousands separator
+ok 106 - thousands separator
+  ---
+  duration_ms: 0.168638
+  type: 'test'
+  ...
+# Subtest: decimal changed
+ok 107 - decimal changed
+  ---
+  duration_ms: 1.066458
+  type: 'test'
+  ...
+# Subtest: unicode normal form
+ok 108 - unicode normal form
+  ---
+  duration_ms: 0.130686
+  type: 'test'
+  ...
+# Subtest: never claims correctness
+ok 109 - never claims correctness
+  ---
+  duration_ms: 0.263807
+  type: 'test'
+  ...
+# Subtest: comparison bounded
+ok 110 - comparison bounded
+  ---
+  duration_ms: 0.653601
+  type: 'test'
+  ...
+# Subtest: empty text rejected
+ok 111 - empty text rejected
+  ---
+  duration_ms: 0.174238
+  type: 'test'
+  ...
+# Subtest: difference reconstructs each normalized side
+ok 112 - difference reconstructs each normalized side
+  ---
+  duration_ms: 1.313304
+  type: 'test'
+  ...
+# Subtest: finds correction 180 seconds away
+ok 113 - finds correction 180 seconds away
+  ---
+  duration_ms: 1.326028
+  type: 'test'
+  ...
+# Subtest: never includes selected cues
+ok 114 - never includes selected cues
+  ---
+  duration_ms: 0.767105
+  type: 'test'
+  ...
+# Subtest: unrelated query returns empty
+ok 115 - unrelated query returns empty
+  ---
+  duration_ms: 0.312559
+  type: 'test'
+  ...
+# Subtest: source has no distant context to retrieve
+ok 116 - source has no distant context to retrieve
+  ---
+  duration_ms: 0.187974
+  type: 'test'
+  ...
+# Subtest: invalid range rejected
+ok 117 - invalid range rejected
+  ---
+  duration_ms: 0.159811
+  type: 'test'
+  ...
+# Subtest: retrieval result limit bounded
+ok 118 - retrieval result limit bounded
+  ---
+  duration_ms: 0.19157
+  type: 'test'
+  ...
+# Subtest: converts estimated ASR ranges
+ok 119 - converts estimated ASR ranges
+  ---
+  duration_ms: 0.554164
+  type: 'test'
+  ...
+# Subtest: tiny rounding overlap is normalized
+ok 120 - tiny rounding overlap is normalized
+  ---
+  duration_ms: 0.178205
+  type: 'test'
+  ...
+# Subtest: fully overlapping ASR range rejected
+ok 121 - fully overlapping ASR range rejected
+  ---
+  duration_ms: 0.22314
+  type: 'test'
+  ...
+# Subtest: nonfinite ASR start rejected
+ok 122 - nonfinite ASR start rejected
+  ---
+  duration_ms: 0.187293
+  type: 'test'
+  ...
+# Subtest: oversized speech rejected
+ok 123 - oversized speech rejected
+  ---
+  duration_ms: 0.17529
+  type: 'test'
+  ...
+# Subtest: missing timestamp chunks rejected
+ok 124 - missing timestamp chunks rejected
+  ---
+  duration_ms: 0.166233
+  type: 'test'
+  ...
+# Subtest: silence marker is not a caption
+ok 125 - silence marker is not a caption
+  ---
+  duration_ms: 0.299354
+  type: 'test'
+  ...
+1..125
+# tests 125
+# suites 0
+# pass 124
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 311.992281
