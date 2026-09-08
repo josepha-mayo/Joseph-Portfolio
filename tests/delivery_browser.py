@@ -1,6 +1,7 @@
 """Both hosted execution replay and a live local SQLite/HTTP browser workflow."""
 import os,json,subprocess,tempfile,time
 from pathlib import Path
+from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright,expect
 E=Path('evidence');E.mkdir(exist_ok=True);checks=[]
 base=os.getenv('FORKLINE_URL','http://127.0.0.1:8080').rstrip('/')
@@ -32,7 +33,10 @@ with sync_playwright()as pw:
   with tempfile.TemporaryDirectory()as td:
    server=subprocess.Popen(['node','tools/lab-server.mjs'],env={**os.environ,'PORT':'0','FORKLINE_DATA':td},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
    try:
-    line=server.stdout.readline();url=line.split('Delivery Lab: ',1)[1].strip();page.set_viewport_size({'width':1440,'height':1050});page.goto(url+'/delivery.html?live=1');expect(page.locator('#mode')).to_contain_text('LIVE');ok('Live mode uses the loopback API')
+    # The CLI prints the full page URL, including ?live=1, not an origin.
+    line=server.stdout.readline();url=line.split('Delivery Lab: ',1)[1].strip();parts=urlsplit(url)
+    assert parts.scheme=='http' and parts.hostname=='127.0.0.1' and parts.port and parts.path=='/delivery.html' and parts.query=='live=1'
+    page.set_viewport_size({'width':1440,'height':1050});page.goto(url);expect(page.locator('#mode')).to_contain_text('LIVE');ok('Live mode uses the loopback API')
     def click(action):
      with page.expect_response(lambda r:r.url.endswith('/api/action')and r.request.method=='POST')as res:page.locator(f'[data-action={action}]').click()
      assert res.value.status==200
