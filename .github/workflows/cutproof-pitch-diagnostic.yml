@@ -1,0 +1,36 @@
+name: CutProof presentation HTML diagnostic
+on:
+  push:
+    branches: [cutproof-aibuilders-20260908]
+    paths: [.github/workflows/cutproof-pitch-diagnostic.yml]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Compare the actual served HTML with the authored document
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import urllib.request,json,difflib,hashlib
+          folder=Path('public/cutproof/ai-builders')
+          url=Path('PITCH_PUBLIC_URL').read_text().strip()+'/pitch.html'
+          with urllib.request.urlopen(url,timeout=30) as r:
+            assert r.status==200
+            data=r.read()
+          expected=(folder/'pitch.html').read_bytes()
+          report={'url':url,'expected_sha256':hashlib.sha256(expected).hexdigest(),'served_sha256':hashlib.sha256(data).hexdigest(),'diff':list(difflib.unified_diff(expected.decode().splitlines(),data.decode().splitlines()))}
+          (folder/'evidence/html-diff.json').write_text(json.dumps(report,indent=2))
+          PY
+      - name: Preserve the exact public difference
+        run: |
+          git config user.name 'CutProof Presentation Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add public/cutproof/ai-builders/evidence/html-diff.json
+          git commit -m 'Record exact public presentation HTML transformation'
+          git push origin HEAD:cutproof-aibuilders-20260908

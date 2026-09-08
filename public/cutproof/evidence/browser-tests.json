@@ -1,0 +1,84 @@
+{
+  "browser": "152.0.7977.64",
+  "loading_mode": "Playwright set_content; isolated document. Public-origin checks are separate.",
+  "checks": [
+    {
+      "name": "Empty state prevents analysis and exports",
+      "status": "passed",
+      "elapsed_seconds": 0.067
+    },
+    {
+      "name": "Built-in media decodes and produces three actual selections",
+      "status": "passed",
+      "elapsed_seconds": 0.784
+    },
+    {
+      "name": "Selected-range playback advances real source media",
+      "status": "passed",
+      "elapsed_seconds": 1.014
+    },
+    {
+      "name": "Source trace highlights exact cues and filters text",
+      "status": "passed",
+      "elapsed_seconds": 0.379
+    },
+    {
+      "name": "Risky manual cut is flagged; extending it restores missing context",
+      "status": "passed",
+      "elapsed_seconds": 0.421
+    },
+    {
+      "name": "Changed ranking settings cannot silently export stale results",
+      "status": "passed",
+      "elapsed_seconds": 0.12
+    },
+    {
+      "name": "Browser exports a valid ZIP with matching SHA-256 and real captions",
+      "status": "passed",
+      "elapsed_seconds": 0.184
+    },
+    {
+      "name": "Individual subtitle download uses the clip-relative timeline",
+      "status": "passed",
+      "elapsed_seconds": 0.044
+    },
+    {
+      "name": "Malformed import is rejected without destroying the current project",
+      "status": "passed",
+      "elapsed_seconds": 0.045
+    },
+    {
+      "name": "Untrusted filename and transcript markup cannot execute HTML",
+      "status": "passed",
+      "elapsed_seconds": 0.159
+    },
+    {
+      "name": "390-pixel mobile layout has no horizontal overflow",
+      "status": "passed",
+      "elapsed_seconds": 0.244
+    },
+    {
+      "name": "Browser renderer produces a real portrait WebM with an audio track",
+      "status": "passed",
+      "elapsed_seconds": 5.652
+    },
+    {
+      "name": "Cancel stops recording and does not export a partial file",
+      "status": "passed",
+      "elapsed_seconds": 0.525
+    },
+    {
+      "name": "No external HTTP requests or uncaught browser errors",
+      "status": "passed",
+      "elapsed_seconds": 0.0
+    }
+  ],
+  "passed": 14,
+  "failed": 0,
+  "uncaught_errors": [],
+  "external_http_requests": [],
+  "limitations": [
+    "Desktop Chromium tested. Safari, Firefox, Windows Edge and mobile hardware were not exercised.",
+    "Checks are reproducible internal tests, not independent user validation."
+  ]
+}

@@ -1,0 +1,4 @@
+https://6a9df3894e5c0f00082deec8--josephm.netlify.app/cutproof/v12/
+Candidate build passed: 125 JS checks, 35 renderer checks, 14 actual browser workflows including real local Whisper inference and natural-speech smoke test.
+Verify public bytes, video and neural voice decoding, source-bound speech receipts, actual public inference, captions, ZIP exports and video rendering.
+Do not alter the submitted v1.1 URL until these independent public-origin execution checks pass.

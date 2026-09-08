@@ -1,0 +1,250 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "Existing ranker works in the actual v1.2 document"
+    },
+    {
+      "name": "No model fetched before explicit consent"
+    },
+    {
+      "name": "Actual quantized Whisper detects the missing NOT on the synthetic speech fixture"
+    },
+    {
+      "name": "ASR comparison does not rewrite captions or approve cuts"
+    },
+    {
+      "name": "Speech record binds actual media bytes, transcript, model revision and range"
+    },
+    {
+      "name": "Changed captions invalidate an already completed speech check"
+    },
+    {
+      "name": "Explicit caption correction preserves timing and clears approvals"
+    },
+    {
+      "name": "Video-first transcription creates real estimated cues and applies only on request"
+    },
+    {
+      "name": "Generated captions feed the real selection and ZIP-export pipeline"
+    },
+    {
+      "name": "Actual browser speech recognition also processes a natural-speech fixture"
+    },
+    {
+      "name": "Cancel terminates speech work without applying a partial result"
+    },
+    {
+      "name": "Retrieval surfaces a related correction 180 seconds outside the cut without splicing it"
+    },
+    {
+      "name": "Evidence Desk fits a 390-pixel viewport"
+    },
+    {
+      "name": "No browser errors or audio-upload requests were observed"
+    }
+  ],
+  "speech_results": [
+    {
+      "fixture": "original neural-synthetic missing-word test",
+      "asr_text": " This is a fictional product review. The battery does not last 12 hours. It lasts about 7 hours during video calls. Please keep that qualification in the final clip.",
+      "inference_seconds": 2.6896999999999824,
+      "download_and_inference_seconds": 5.892686660999999,
+      "priority_differences": [
+        {
+          "kind": "speech_only",
+          "caption": null,
+          "speech": "not",
+          "caption_index": 9,
+          "speech_index": 9,
+          "priority": "attention"
+        }
+      ]
+    },
+    {
+      "fixture": "OpenAI Whisper test natural speech",
+      "asr_text": " And so my fellow Americans ask not what your country can do for you ask what you can do for your country.",
+      "inference_seconds": 2.5943000000000174
+    }
+  ],
+  "browser_version": "152.0.7977.64",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:43267/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-demo.json",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-demo.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-demo.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-worker.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/transformers.web.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/model-config.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/onnx/encoder_model_quantized.onnx",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/onnx/decoder_model_merged_quantized.onnx",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/4245b7a6927fefde7f8ed6f7c31d86a3c21dfbc4969b3174ec6f1ea7a5d7bafa",
+      "method": "GET"
+    },
+    {
+      "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/8da3dd7d164c9129aecea413b0efbc74ef9cd7e87ba8e43aa2ef3f418ff6dbe5",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-worker.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/transformers.web.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/model-config.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-demo.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/natural-speech.wav",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/natural-speech.wav",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/speech-worker.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/transformers.web.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/model-config.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:43267/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "method": "GET"
+    }
+  ],
+  "errors": []
+}

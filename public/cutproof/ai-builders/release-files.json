@@ -1,0 +1,14 @@
+{
+  "pitch.html": {
+    "bytes": 11315,
+    "sha256": "3ee2d93fd4a203fb6330dc51bce6f3d604d5774f9beb930a4947584e22be2666"
+  },
+  "pitch.css": {
+    "bytes": 5902,
+    "sha256": "763407c26b907c33c1c13c3e0fe30c8bbf99e283e4dd5e54acfe29d2b7461afd"
+  },
+  "CutProof-pitch.pdf": {
+    "bytes": 248695,
+    "sha256": "e411bcd05d29d2c1c594c30275abaf5d6626ce1b3dcdd06d83cfc1bd4e68ee01"
+  }
+}

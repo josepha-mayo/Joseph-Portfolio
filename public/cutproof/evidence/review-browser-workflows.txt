@@ -1,0 +1,12 @@
+PASS Boundary Lab exposes an omitted fictional setup and qualification
+PASS Applying wider boundaries keeps exact source words and pending review
+PASS Portable project download saves exact ranges without video data
+PASS Restoring clears approvals and requires original media attachment
+PASS Reviewed-only export rejects a project with no reviewed cuts
+PASS Replacing the video invalidates approvals and previous render state
+PASS Tampered project is rejected without replacing the working project
+PASS Reviewed-only ZIP contains one real selection and complete editor handoff
+PASS Exported context review page renders without scripts
+PASS Manual boundary edits invalidate review and refresh the summary
+PASS Boundary comparison remains usable at a 390-pixel viewport
+PASS No uncaught browser errors or external HTTP requests

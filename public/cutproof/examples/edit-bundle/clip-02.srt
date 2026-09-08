@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:05,141
+A short video can repeat every word correctly and still tell the wrong story.
+
+2
+00:00:05,141 --> 00:00:10,948
+The mistake is often not an invented sentence. It is the sentence left outside the cut.
+
+3
+00:00:10,948 --> 00:00:17,683
+Consider this invented editing example. A creator tries a new workflow on one practice recording.
+
+4
+00:00:17,683 --> 00:00:21,944
+Removing dead air cut a ten minute editing pass to six minutes.
+
+5
+00:00:21,944 --> 00:00:27,286
+But that result came from one practice session, not a controlled comparison.
+
+6
+00:00:27,286 --> 00:00:32,879
+The number is useful context, not a promise about how much time everyone will save.
