@@ -1,0 +1,8 @@
+material,bar,source,stock_id,stock_mm,part,ordinal,part_mm,kerf_per_piece_mm,total_bar_trim_mm,tail_after_bar_mm
+Pine battens / one profile,1,remnant,Rack A,1800,P1,1,1700,3,10,87
+Pine battens / one profile,2,remnant,Rack B,2600,P6,1,1400,3,10,484
+Pine battens / one profile,2,remnant,Rack B,2600,P7,1,700,3,10,484
+Pine battens / one profile,3,new,4.2m,4200,P4,1,1900,3,10,384
+Pine battens / one profile,3,new,4.2m,4200,P5,1,1900,3,10,384
+Pine battens / one profile,4,new,3m,3000,P2,1,900,3,10,84
+Pine battens / one profile,4,new,3m,3000,P3,1,2000,3,10,84
