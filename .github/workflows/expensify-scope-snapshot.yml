@@ -1,0 +1,50 @@
+name: Expensify 98624 read-only source snapshot
+on:
+  push:
+    branches: [expensify-98624-scope-20260908]
+    paths: [.github/workflows/expensify-scope-snapshot.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    if: github.ref == 'refs/heads/expensify-98624-scope-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read public code, existing proposals and competing PR without modifying upstream
+        run: |
+          python3 - <<'PY'
+          from urllib.request import Request,urlopen
+          from pathlib import Path
+          from datetime import datetime,timezone
+          import hashlib,json,concurrent.futures
+          root=Path('snapshot');root.mkdir()
+          sha='9f9ddbd4b4edfc615a9cec78aa24da45188f9f1a'
+          paths=['README.md','LICENSE','package.json','contributingGuides/CONTRIBUTING.md','contributingGuides/AI_ETIQUETTE.md','contributingGuides/HOW_TO_WORK_WITH_MELVINBOT.md','contributingGuides/PROPOSAL_TEMPLATE.md','contributingGuides/TESTING_MACOS_AND_IOS.md','src/libs/prepareRequestPayload/index.native.ts','src/libs/prepareRequestPayload/index.ts','src/libs/prepareRequestPayload/types.ts','src/libs/actions/Attachment/index.native.ts','src/libs/actions/Attachment/types.ts','src/libs/ReceiptStorage/index.native.ts','src/libs/fileDownload/FileUtils.ts','src/libs/fileDownload/FileUtils.native.ts','src/libs/fileURIToPath.ts','src/libs/getReceiptsUploadFolderPath/index.native.ts','src/libs/telemetry/ReceiptObservability.ts','src/components/AttachmentPicker/index.native.tsx']
+          urls={p:'https://raw.githubusercontent.com/Expensify/App/'+sha+'/'+p for p in paths}
+          urls.update({'issue-comments.json':'https://api.github.com/repos/Expensify/App/issues/98624/comments?per_page=100','pr85588-files.json':'https://api.github.com/repos/Expensify/App/pulls/85588/files?per_page=100'})
+          def grab(item):
+            p,url=item;result={'path':p,'url':url}
+            try:
+              with urlopen(Request(url,headers={'User-Agent':'Joseph-Ayanda-bounty-scope-audit','Accept':'application/vnd.github+json'}),timeout=30)as r:data=r.read(3000001);result['status']=r.status
+              assert len(data)<=3000000
+              target=root/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+              result['sha256']=hashlib.sha256(data).hexdigest()
+            except Exception as exc:result['error']=str(exc)
+            return result
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4)as pool:results=list(pool.map(grab,urls.items()))
+          report={'upstream_sha':sha,'at':datetime.now(timezone.utc).isoformat(),'sources':results}
+          (root/'snapshot.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          comments=json.loads((root/'issue-comments.json').read_text())
+          concise=[{'author':c['user']['login'],'id':c['id'],'created_at':c['created_at'],'url':c['html_url'],'body':c['body']}for c in comments]
+          (root/'comments-readable.json').write_text(json.dumps(concise,indent=2))
+          for c in concise:
+            if c['author'] not in ['melvin-bot[bot]','proposal-police']:
+              print(c['created_at'],c['author'],c['id'],c['body'][:180].replace('\n',' '))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: expensify-98624-source-snapshot
+          path: snapshot/
+          retention-days: 7
