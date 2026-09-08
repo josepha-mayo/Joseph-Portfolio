@@ -1,0 +1,57 @@
+name: Mirror verified Relay Repair Desk for isolated preview
+on:
+  push:
+    branches: [relay-desk-preview-20260908]
+    paths: [.github/workflows/relay-desk-preview.yml]
+permissions:
+  contents: write
+jobs:
+  import:
+    if: github.ref == 'refs/heads/relay-desk-preview-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Import the exact verified dedicated-repository revision
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path,PurePosixPath
+          from urllib.request import Request,urlopen
+          import io,tarfile,hashlib,json,subprocess
+          commit='f4356ab3890dad7b7bb0779adb691f8773c71c2c'
+          workflow=Path('.github/workflows/relay-desk-preview.yml');wf=workflow.read_bytes()
+          url=f'https://codeload.github.com/josepha-mayo/Counterstep-Relay/tar.gz/{commit}'
+          with urlopen(Request(url,headers={'User-Agent':'Relay release mirror'}),timeout=60)as r:data=r.read(80_000_001)
+          assert len(data)<=80_000_000
+          with tarfile.open(fileobj=io.BytesIO(data),mode='r:gz')as archive:
+            members=archive.getmembers();assert len(members)<3000 and sum(m.size for m in members)<250_000_000
+            subprocess.run(['git','rm','-rf','--ignore-unmatch','.'],check=True,stdout=subprocess.DEVNULL)
+            for member in members:
+              rel=PurePosixPath(*PurePosixPath(member.name).parts[1:])
+              assert not rel.is_absolute() and '..'not in rel.parts and not member.issym() and not member.islnk()
+              if not member.isfile() or not rel.parts or rel.parts[0] in ['.git','.github','upgrade']:continue
+              target=Path(str(rel));target.parent.mkdir(parents=True,exist_ok=True)
+              with archive.extractfile(member)as f:target.write_bytes(f.read())
+          workflow.parent.mkdir(parents=True,exist_ok=True);workflow.write_bytes(wf)
+          report=json.loads(Path('evidence/desk-publish.json').read_text());assert report['status']=='passed'
+          for name,meta in json.loads(Path('public/desk-release-files.json').read_text()).items():
+            p=Path('public')/name;assert len(p.read_bytes())==meta['bytes'] and hashlib.sha256(p.read_bytes()).hexdigest()==meta['sha256'],name
+          Path('evidence/desk-preview-import.json').write_text(json.dumps({'status':'passed','source_repository':'josepha-mayo/Counterstep-Relay','source_commit':commit,'source_archive_sha256':hashlib.sha256(data).hexdigest(),'destination_branch':'relay-desk-preview-20260908','production_modified':False},indent=2))
+          PY
+      - name: Verify complete imported runtime
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm test
+          npm run build
+      - name: Preserve the tested mirror only on the preview branch
+        run: |
+          git config user.name 'Relay Preview Import'
+          git config user.email 'relay-build@users.noreply.github.com'
+          git add -A
+          git commit -m 'Mirror verified Repair Desk release without changing portfolio production'
+          git push origin HEAD:relay-desk-preview-20260908

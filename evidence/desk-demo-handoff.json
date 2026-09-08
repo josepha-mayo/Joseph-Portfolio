@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "initialChain": "2(x + 3) = 10\n2x + 3 = 10\n2x = 4\nx = 2",
+  "seed": 7,
+  "events": [
+    {
+      "id": "47d629d4-8701-4d1f-97bd-1416be3e8830",
+      "type": "repair",
+      "value": "2(x + 3) = 10\n2x + 6 = 10\n2x = 4\nx = 2"
+    },
+    {
+      "id": "3bc721a6-bd69-45c4-a08a-d1c799f9ea72",
+      "type": "practice"
+    },
+    {
+      "id": "5cd54de2-2202-47a9-ad02-bd40a6184db5",
+      "type": "answer",
+      "value": "4x + 32 = 44"
+    },
+    {
+      "id": "f684cd35-b800-468b-bf95-42d101612d02",
+      "type": "practice"
+    },
+    {
+      "id": "77e5f44f-1161-4999-8e8a-5a37952ef6b4",
+      "type": "hint"
+    },
+    {
+      "id": "0895a80b-81fc-4066-b864-a103aa262be8",
+      "type": "answer",
+      "value": "6x + 36 = 54"
+    }
+  ],
+  "sha256": "1bd079fdac1b46fb8baf375364cf5627905542480030c31f459b0d3c3ff8c17c"
+}

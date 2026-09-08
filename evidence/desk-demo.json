@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-08T18:04:13.587733+00:00",
+  "scope": "Actual application actions using synthetic equations. Stock synthetic narration. No live Alexa or learner study.",
+  "demo_seconds": 129.35,
+  "sha256": "f0a07a08de1da4c7d06e12c358129ff693bd73cf2fbc1b43cece9af3c55fd3a8",
+  "audio_rms": 0.1367539812639372,
+  "scenes": [
+    {
+      "scene": "hook",
+      "speech": "The answer is right. The working is not. Two wrong steps can cancel each other out. Counterstep Relay helps a learner find the first broken step, repair it, and practise the operation with fresh numbers.",
+      "seconds": 16.025,
+      "actions_seconds": 1.4479992480000305
+    },
+    {
+      "scene": "repair",
+      "speech": "Repair Desk points to the faulty line. Change just that equation and check it. The original problem stays locked, and every later line stays in place. The server checks the whole solution again. Fixing one mistake can expose the next; it cannot wave the rest through.",
+      "seconds": 20.4,
+      "actions_seconds": 2.8897952000000373
+    },
+    {
+      "scene": "practice",
+      "speech": "Now try different numbers. This first correct answer uses no hint. On the next card, the learner asks for help. Both answers can be correct, but they are not the same evidence. The separate independent and assisted counts preserve that distinction.",
+      "seconds": 19.0,
+      "actions_seconds": 4.295850782000002
+    },
+    {
+      "scene": "resume",
+      "speech": "Save the handoff, then reopen it in a fresh browser session. Relay replays the supplied actions. The original work, practice and help history return together. A hinted answer does not become independent because the session changed. This is a portable file, not automatic cloud synchronization.",
+      "seconds": 22.675,
+      "actions_seconds": 1.6184733160000064
+    },
+    {
+      "scene": "note",
+      "speech": "Export a study note that another person can actually read. Each attempt now includes its original question, the requested operation, the submitted answer and its checked outcome. The on-screen preview and downloaded note match. New work invalidates the old preview. The fingerprint identifies supplied bytes, not the student.",
+      "seconds": 24.125,
+      "actions_seconds": 2.9146230919999994
+    },
+    {
+      "scene": "tools",
+      "speech": "Underneath are four real tools using the official Model Context Protocol SDK over Streamable HTTP. The exact checker controls correctness; a small learned model suggests practice. This reference host is an explicit-command Alexa plus simulator, not live Alexa or free-form chat. Repair, practise, resume, and keep the evidence.",
+      "seconds": 26.675,
+      "actions_seconds": 1.943623166000009
+    }
+  ],
+  "narration": {
+    "voice": "Kokoro af_heart stock synthetic",
+    "speed": 0.88,
+    "words_per_minute": 122.0
+  },
+  "finished_at": "2026-09-08T18:07:24.259628+00:00"
+}

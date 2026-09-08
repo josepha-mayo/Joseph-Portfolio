@@ -1,0 +1,6 @@
+
+> counterstep-relay@1.0.0 build
+> node tools/build.mjs
+
+Built reference web host; MCP runtime remains a real server function.
+

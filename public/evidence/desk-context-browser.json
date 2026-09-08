@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "origin": "http://127.0.0.1:45295",
+  "successful_tool_mocks": false,
+  "count": 7,
+  "checks": [
+    "Preview and downloaded note contain identical replayed data",
+    "Question, requested operation and actual answer are readable together",
+    "Context does not change independent-attempt accounting",
+    "Unreviewed work hides the old preview",
+    "New action invalidates the old preview even with unchanged repair equations",
+    "Reopening a portable handoff reconstructs earlier question context",
+    "Readable note fits 320- and 390-pixel views"
+  ],
+  "browser": "140.0.7339.16"
+}

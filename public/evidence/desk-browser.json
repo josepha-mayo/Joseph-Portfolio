@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "origin": "http://127.0.0.1:46299",
+  "successful_tool_mocks": false,
+  "scope": "Synthetic learner work. Functionality and export checks, not observed learning gains or a usability study.",
+  "count": 18,
+  "checks": [
+    "Guidance begins with a real check; no report is available before a session",
+    "Exact first error is targeted without revealing a witness",
+    "Original problem is not an editable line-repair choice",
+    "A drafted line does not alter accepted work before checking",
+    "One-line repair is checked through MCP while all other lines are preserved",
+    "Readable study note distinguishes a repaired example from independent practice",
+    "Guidance moves to a fresh task rather than silently filling an answer",
+    "Actual assisted attempt stays assisted in human-readable output",
+    "Unreviewed full-workboard edits disable line actions and new exports",
+    "Fixing one error reveals and targets the next error instead of clearing the whole chain",
+    "Sequential learner corrections finish only after every written transition is valid",
+    "Unfinished equivalent work can append a checked next step",
+    "Unsupported mathematics remains ungraded and recoverable",
+    "A bad edit does not strand the original session",
+    "Empty edit leaves the last checked work unchanged",
+    "Untrusted line contents remain inert in the repair desk",
+    "320- and 390-pixel layouts retain line controls without horizontal overflow",
+    "Explicit network failure does not accept the drafted line"
+  ],
+  "errors": [],
+  "browser": "140.0.7339.16"
+}

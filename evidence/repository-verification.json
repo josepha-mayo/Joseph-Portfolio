@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "repository": "josepha-mayo/Counterstep-Relay",
+  "checkout_commit": "a449cf174dd4ba0e26cdb2a52f1c50ef5daa44ee",
+  "origin_commit": "2365c81e8fb717e791e9241d245b7c510c044dca",
+  "started_at": "2026-09-07T22:13:45.607080+00:00",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 0.13
+    },
+    {
+      "name": "node-tests",
+      "exit_code": 0,
+      "seconds": 0.98
+    },
+    {
+      "name": "browser",
+      "exit_code": 0,
+      "seconds": 5.12
+    },
+    {
+      "name": "public-check",
+      "exit_code": 0,
+      "seconds": 13.406
+    }
+  ],
+  "scope": "Internal tests with synthetic equations; not a learner study or live Alexa certification.",
+  "node_tests": 81,
+  "local_browser_workflows": 25,
+  "public_browser_workflows": 25,
+  "unchanged_runtime_and_test_files": 19,
+  "finished_at": "2026-09-07T22:14:05.248203+00:00"
+}

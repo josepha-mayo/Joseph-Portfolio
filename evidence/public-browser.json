@@ -1,0 +1,106 @@
+{
+  "status": "passed",
+  "origin": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app",
+  "authentication": "none",
+  "tool_mocks": false,
+  "count": 25,
+  "checks": [
+    "Real initialization and discovery find four MCP tools",
+    "No handoff or report before a session exists",
+    "First bad transition found without exposing a counterexample",
+    "Requested hint does not reveal the exact witness",
+    "Explicit reveal returns a real exact counterexample",
+    "Edited work invalidates previous exports and help actions",
+    "Repaired derivation is checked before transfer practice",
+    "Fresh numbers are independently calculated and checked through MCP",
+    "A completed card cannot count twice",
+    "Correct hinted work remains assisted, not independent",
+    "An explicit worked-step reveal is retained in the portable history",
+    "Native browser download exports a real session capsule",
+    "Fresh independent browser context resumes work and prior help through HTTP replay",
+    "Handoff cannot launder a revealed answer into independent completion",
+    "Exported review is recomputed by the server from supplied events",
+    "Corrupt handoff rejects without replacing current work",
+    "Opt-in device persistence resumes via recomputation, not saved scores",
+    "Device copy is removed on request",
+    "Reference host does not pretend unsupported natural language is understood",
+    "Out-of-scope math is not labelled wrong",
+    "Unsupported edited step can be repaired in the same session",
+    "Untrusted equation markup remains inert",
+    "390-pixel layout has no page-level horizontal overflow",
+    "An explicit network failure preserves current progress instead of inventing success",
+    "Real POST tool calls observed; no external inference or analytics requests"
+  ],
+  "browser": "140.0.7339.16",
+  "errors": [],
+  "requests": [
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/",
+      "method": "GET"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/style.css",
+      "method": "GET"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/app.js",
+      "method": "GET"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    },
+    {
+      "url": "https://6a9f1cbbfc65ef0008fc1060--josephm.netlify.app/mcp",
+      "method": "POST"
+    }
+  ]
+}
