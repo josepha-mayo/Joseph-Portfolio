@@ -1,14 +1,40 @@
 {
-  "status": "failed",
+  "status": "passed",
   "mode": "public",
-  "source_commit": "4f4c7aa5276c47f2a72e43679f9ab2ba41779de2",
-  "started_at": "2026-09-08T10:33:54.879074+00:00",
+  "source_commit": "32d4c982d4b4d1511490a695634cd53582dc2e21",
+  "started_at": "2026-09-08T10:38:14.216463+00:00",
   "checks": [
-    "Authored HTML, CSS and both actual application screenshots match their reviewed hashes."
+    "Authored HTML, CSS and both actual application screenshots match their reviewed hashes.",
+    "Published PDF and CSS are byte-identical; HTML differs only by the two recorded app-link rewrites.",
+    "The rewritten app destination works. The existing app document, source ZIP and demo still match the verified v1.3 release; no new runtime tests are claimed.",
+    "All eight slides and both actual application screenshots load.",
+    "No content intrudes on the footer or slide edges; no uncaught browser exceptions."
   ],
   "origin": "https://6a9fe3e721b06a0008067738--josephm.netlify.app/cutproof/ai-builders",
   "authentication": "none",
-  "error": "pitch.html",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/cutproof_pitch.py\", line 38, in <module>\n    data=read_url(base+'/'+name);assert len(data)==meta['bytes'] and digest(data)==meta['sha256'],name\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pitch.html\n",
-  "finished_at": "2026-09-08T10:33:56.549852+00:00"
+  "files": [
+    {
+      "name": "pitch.html",
+      "bytes": 11295,
+      "sha256": "352d69f0c604e1607db0d5769cd7c877cbf537b3021167a78bc263b96245d83c",
+      "byte_identical": false
+    },
+    {
+      "name": "pitch.css",
+      "bytes": 5902,
+      "sha256": "763407c26b907c33c1c13c3e0fe30c8bbf99e283e4dd5e54acfe29d2b7461afd",
+      "byte_identical": true
+    },
+    {
+      "name": "CutProof-pitch.pdf",
+      "bytes": 248695,
+      "sha256": "e411bcd05d29d2c1c594c30275abaf5d6626ce1b3dcdd06d83cfc1bd4e68ee01",
+      "byte_identical": true
+    }
+  ],
+  "html_transformation": "Only the two app index.html links and their quote delimiters changed, exactly as recorded in html-diff.json.",
+  "pdf_pages": 8,
+  "slides": 8,
+  "scope": "Presentation rendering and delivery checks only. No new application capability, representative model accuracy, user study, eligibility decision or award is claimed.",
+  "finished_at": "2026-09-08T10:38:20.946131+00:00"
 }
