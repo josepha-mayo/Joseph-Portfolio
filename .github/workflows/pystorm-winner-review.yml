@@ -1,0 +1,60 @@
+name: PyStorm winning-project source review
+on:
+  push:
+    branches: [pystorm-award-review-20260908]
+    paths: [.github/workflows/pystorm-winner-review.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/pystorm-award-review-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Read project claims, links and public contact routes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from html.parser import HTMLParser
+          from datetime import datetime,timezone
+          import json,hashlib,re
+          out=Path('winner-review');out.mkdir()
+          class Page(HTMLParser):
+            def __init__(self):super().__init__();self.text=[];self.links=[];self.media=[];self.active=None;self.ignore=0
+            def handle_starttag(self,tag,attrs):
+              d=dict(attrs)
+              if tag in ('script','style'):self.ignore+=1
+              if tag=='a':self.active={'text':'','attrs':d};self.links.append(self.active)
+              if tag in ('iframe','img','video','source'):self.media.append({'tag':tag,**d})
+              if tag in ('p','div','li','h1','h2','h3','br'):self.text.append('\n')
+            def handle_endtag(self,tag):
+              if tag in ('script','style'):self.ignore=max(0,self.ignore-1)
+              if tag=='a':self.active=None
+              if tag in ('p','div','li','h1','h2','h3','br'):self.text.append('\n')
+            def handle_data(self,t):
+              if not self.ignore:
+                self.text.append(t)
+                if self.active is not None:self.active['text']+=t
+          records=[]
+          for name,url in [('binlytic','https://devpost.com/software/binlytic-4p0vl1'),('forum','https://pystorm.devpost.com/forum_topics')]:
+            row={'name':name,'url':url,'at':datetime.now(timezone.utc).isoformat()}
+            try:
+              with urlopen(Request(url,headers={'User-Agent':'Mozilla/5.0 public contest review'}),timeout=30)as r:data=r.read(3_000_001);row.update(status=r.status,final_url=r.url)
+              assert len(data)<=3_000_000
+              html=data.decode('utf-8');(out/(name+'.html')).write_text(html)
+              p=Page();p.feed(html);text='\n'.join(x.strip()for x in ''.join(p.text).splitlines()if x.strip())
+              for l in p.links:l['text']=' '.join(l['text'].split())
+              (out/(name+'.txt')).write_text(text)
+              (out/(name+'-links.json')).write_text(json.dumps(p.links,indent=2));(out/(name+'-media.json')).write_text(json.dumps(p.media,indent=2))
+              row.update(sha256=hashlib.sha256(data).hexdigest(),emails=sorted(set(re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',html))))
+              print('\nSOURCE',url,'\n',text[:32000]);print('LINKS',json.dumps(p.links));print('MEDIA',json.dumps(p.media))
+            except Exception as e:row['error']=repr(e)
+            records.append(row)
+          (out/'source-record.json').write_text(json.dumps(records,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pystorm-winning-project-review
+          path: winner-review/
+          retention-days: 7
