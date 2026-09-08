@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "base": "https://6a9f772da8464d00096f656b--josephm.netlify.app/cutproof/v13",
+  "checks": [
+    "Source Lock is in the actual editor",
+    "No-media manifest export is blocked",
+    "Caption-only SRT export still works",
+    "Original clip selection works",
+    "Reviewed-only ZIP binds to independently hashed actual media",
+    "Exported manifest matches its actual source",
+    "Replacing media resets existing reviews",
+    "Same filename and duration but changed file is rejected",
+    "Byte match never restores editorial approval",
+    "Reviewed-only export cannot use identity as review",
+    "Standalone manifest also binds to exact source bytes",
+    "Malformed manifest is rejected",
+    "Legacy unbound manifest cannot get a match verdict",
+    "Concurrent caption edit aborts handoff; actual source response is not replaced",
+    "Canceled hash issues no partial export",
+    "Source-lock workflows make no media uploads or speech-model requests",
+    "Source Lock fits a 390-pixel viewport",
+    "No uncaught browser exceptions"
+  ],
+  "browser_version": "152.0.7977.64",
+  "count": 18,
+  "scope": "Real source hashing and export. Only race/cancel scheduling is controlled; no hash or app result is mocked."
+}
