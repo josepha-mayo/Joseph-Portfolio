@@ -1,0 +1,28 @@
+name: Forkline exact public HTML diagnosis
+on:
+  push:
+    branches: [forkline-outbox-20260908]
+    paths: [.github/workflows/forkline-html-audit.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare only the known immutable release page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.request import urlopen
+          import difflib,json,hashlib,re
+          base=Path('OUTBOX_PUBLIC_URL').read_text().strip().rstrip('/')
+          original=Path('public/delivery.html').read_text()
+          with urlopen(base+'/delivery.html',timeout=30) as r:
+            assert r.status==200
+            served=r.read().decode('utf-8')
+          matches=difflib.SequenceMatcher(None,original,served,autojunk=False)
+          differences=[{'kind':tag,'old':original[i:j],'new':served[k:l],'before':original[max(0,i-100):i],'after':original[j:j+100]} for tag,i,j,k,l in matches.get_opcodes() if tag!='equal']
+          print(json.dumps({'original_sha256':hashlib.sha256(original.encode()).hexdigest(),'served_sha256':hashlib.sha256(served.encode()).hexdigest(),'original_anchors':re.findall(r'<a\b[^>]*>',original),'served_anchors':re.findall(r'<a\b[^>]*>',served),'changes':differences},indent=2))
+          PY
