@@ -1,0 +1,198 @@
+{
+  "status": "passed",
+  "origin": "https://6a9f6290f2fc0500080cbe9c--josephm.netlify.app",
+  "authentication": "none",
+  "started_at": "2026-09-08T01:22:21.931188+00:00",
+  "files": [
+    {
+      "name": "examples.json",
+      "bytes": 1773,
+      "sha256": "d6af82bbe478ab55ca77371fdd8ad3398eb076972b0717b672e98d670f386379"
+    },
+    {
+      "name": "trimwise.py",
+      "bytes": 15057,
+      "sha256": "3bfe2aa0522371f66b046036bcae78a305516f3e335fb32fff01136550a8830e"
+    },
+    {
+      "name": "demo.mp4",
+      "bytes": 3634813,
+      "sha256": "14dd9b95f330a12d521c5eb5692f34de8c67dc00fbd86ed3b015a0cf0d854e25"
+    },
+    {
+      "name": "source.zip",
+      "bytes": 442607,
+      "sha256": "41808ce0893789fb6fe6aabe3b1a893f9a6a4036636030a0d193200fce19eeb0"
+    },
+    {
+      "name": "screenshot.png",
+      "bytes": 229084,
+      "sha256": "d9108955ef12cb4fc639ebd96b45bf45e8a7242ae161c4a2f418f550af51f734"
+    },
+    {
+      "name": "worker.mjs",
+      "bytes": 1248,
+      "sha256": "84ca4789c48c899d4dab20b9c21d877fc4e6b4d82ef9a963057b3efcbb1e77c4"
+    },
+    {
+      "name": "index.html",
+      "bytes": 5061,
+      "sha256": "5668343f6407f67ba7ce3d88efc8a7d15ec71f0096da56be61d0a5f4d834ea13"
+    },
+    {
+      "name": "README.md",
+      "bytes": 8757,
+      "sha256": "610300009fb35fee00840302a26535420afa57fcd8f95490f644db72eff1ebbc"
+    },
+    {
+      "name": "app.mjs",
+      "bytes": 8681,
+      "sha256": "7b4197510beb74d1415f0b2f0c84c594e06d4f917468c0b07849cae15321138f"
+    },
+    {
+      "name": "style.css",
+      "bytes": 6067,
+      "sha256": "00269548f3d2461e81ce325787a8876ed6a867304ec9cd5aa1e904d025bfc7f6"
+    },
+    {
+      "name": "LICENSE",
+      "bytes": 1070,
+      "sha256": "b0b87bf209abf9b534fe0c219c2c52adf7923080bde5d05deb4d218e224af399"
+    },
+    {
+      "name": "evidence/build.log",
+      "bytes": 199,
+      "sha256": "c63cd8f18677a7dbe61831d4d7aa28c889b02653ce7cff42104ad2ef8dc62961"
+    },
+    {
+      "name": "evidence/demo.log",
+      "bytes": 1303,
+      "sha256": "7e8dc0d44e24b54279d499dc5f639ff0c658a3dceba6414f39e54f8d864c60a8"
+    },
+    {
+      "name": "evidence/release.json",
+      "bytes": 2288,
+      "sha256": "d50ed6d8441dc0b31b488ce63813eed7b277556b5431f1ac667ff47109a51228"
+    },
+    {
+      "name": "evidence/mobile.png",
+      "bytes": 182883,
+      "sha256": "c5cfc6424d812427dc401c8c0ed8298eeaae76b4127ef95f299bbb9a73bf0dd6"
+    },
+    {
+      "name": "evidence/runtime-manifest.json",
+      "bytes": 1005,
+      "sha256": "dc03ff0ef4960f014b7970a2e71598bd8d2a56a7fefecf4ac1a9d2f4e851d645"
+    },
+    {
+      "name": "evidence/demo.json",
+      "bytes": 1609,
+      "sha256": "c88d19357766c20b82121a8be99675a9f3adc061882233ec4be5776303a1569a"
+    },
+    {
+      "name": "evidence/unit.log",
+      "bytes": 4056,
+      "sha256": "9ce1c45dd211908c53a51cd49546aec0f9bfe1cb4c7869300c9dfadab796cf9f"
+    },
+    {
+      "name": "evidence/crosscheck.json",
+      "bytes": 11479,
+      "sha256": "85436aac1eb75e46dee414038138b29646ef695acb8b7926524d6bb80df647d5"
+    },
+    {
+      "name": "evidence/workspace.json",
+      "bytes": 1501,
+      "sha256": "b5960ffec4b88d08673d4bdce51dbe36f51801ccdf8c9e9a54357b4ec566f9bf"
+    },
+    {
+      "name": "evidence/oracle.log",
+      "bytes": 126,
+      "sha256": "d17447a82da66a577ecaa5fd4c85a67d6a8b67ebe13b7a5b1831b706d19b4e1c"
+    },
+    {
+      "name": "evidence/desktop.png",
+      "bytes": 229084,
+      "sha256": "d9108955ef12cb4fc639ebd96b45bf45e8a7242ae161c4a2f418f550af51f734"
+    },
+    {
+      "name": "evidence/browser.log",
+      "bytes": 1004,
+      "sha256": "01938ab08efc166b150f39bc63e0c9337c7dd9f6fc864b0afa58630fbf3a77f3"
+    },
+    {
+      "name": "evidence/cuts.csv",
+      "bytes": 564,
+      "sha256": "a28ae64711162274cd3b76abdc9cb37d6e74c1b801574cdca19c94b65f3dca7e"
+    },
+    {
+      "name": "evidence/invalid-workspace.json",
+      "bytes": 880,
+      "sha256": "6875dd14ab2680266551fa3e926beb5716e78c0f69152b56fe2fe5dc1ef4e25c"
+    },
+    {
+      "name": "evidence/browser.json",
+      "bytes": 1109,
+      "sha256": "e0a1443312b48773f563e6170990efd964fba5b037fd7597bd99845506311aea"
+    },
+    {
+      "name": "licenses/CPython-3.14.2-LICENSE.txt",
+      "bytes": 13804,
+      "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231"
+    },
+    {
+      "name": "licenses/SOURCES.md",
+      "bytes": 1082,
+      "sha256": "433a27d7cd92c8c4f9ea5dcf941e342409a48cc91dcc3026e42c25396edace46"
+    },
+    {
+      "name": "licenses/Pyodide-MPL-2.0.txt",
+      "bytes": 16725,
+      "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+    },
+    {
+      "name": "runtime/pyodide-lock.json",
+      "bytes": 114440,
+      "sha256": "3fdaef09e9e365c85e002737720f8d0ab8f278c1c244a2dde6a37663cf488ad4"
+    },
+    {
+      "name": "runtime/pyodide.asm.mjs",
+      "bytes": 1250344,
+      "sha256": "2ac5eba365ec12839c75c03b39b3be1dd63b798852cc460b014b52238be042f7"
+    },
+    {
+      "name": "runtime/python_stdlib.zip",
+      "bytes": 2545564,
+      "sha256": "80c5be6babfe03297069703410c3c29404dcf2525d2b128746bae5536f94831f"
+    },
+    {
+      "name": "runtime/pyodide.js",
+      "bytes": 18912,
+      "sha256": "8d653521230f8e92f2e2f587e03f29d3abcdfb1c1744442d06fd8235007adb6b"
+    },
+    {
+      "name": "runtime/package.json",
+      "bytes": 2999,
+      "sha256": "c69222016d717d8094af683c914538bb97c2a92531b9f69360eef8494534408d"
+    },
+    {
+      "name": "runtime/pyodide.asm.wasm",
+      "bytes": 9598218,
+      "sha256": "3a0a00dfeaa348ac20f9ef09904233d32d33f644339662d4af368f8a2010f37a"
+    },
+    {
+      "name": "runtime/pyodide.mjs",
+      "bytes": 17931,
+      "sha256": "69e3f6ccec3e14b465df60be577ca62f536251406b9a00cce019eac5252a2495"
+    }
+  ],
+  "content_security_policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+  "deployment_control_files": [
+    "_headers: host configuration, checked through actual response headers rather than treated as a served asset"
+  ],
+  "public_browser_workflows": 22,
+  "demo_seconds": 98.56,
+  "audio_rms": 0.050493308807593,
+  "runtime_bytes": 13548408,
+  "scope": "Anonymous public CPython worker; source and asset hashes; computation with network disconnected after initial load. No physical cuts or field savings measured.",
+  "finished_at": "2026-09-08T01:22:35.741086+00:00"
+}
