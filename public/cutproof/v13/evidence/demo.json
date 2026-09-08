@@ -1,5 +1,5 @@
 {
-  "seconds": 97.76,
+  "seconds": 97.68,
   "text": [
     "CutProof already checks captions against speech and helps inspect context outside a clip. This update tackles a different handoff mistake: sending the right edit instructions with the wrong source file. These are fictional demonstration materials, not a creator study.",
     "Source Lock reads the attached media inside the browser and computes its exact file fingerprint. No media is uploaded. The same source digest and byte count go into the edit manifest, so a filename is no longer the only hint.",
@@ -9,11 +9,11 @@
   ],
   "speech": "stock Kokoro af_heart at speed 0.9; disclosed synthetic",
   "scene_start_seconds": [
-    1.0513939979999805,
-    20.24814298999999,
-    37.79623668000002,
-    57.74640132800002,
-    78.25898274199997
+    0.9020114040000067,
+    20.09764633100002,
+    37.63780110599998,
+    57.557501609999974,
+    78.10464711100002
   ],
   "recording": "Actual continuous browser recording with narration timed to completed actions. Not a live user study."
 }

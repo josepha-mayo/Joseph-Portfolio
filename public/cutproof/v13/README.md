@@ -8,6 +8,8 @@ The edit-bundle ZIP and manifest export now compute SHA-256 from the attached me
 
 An export captures the current transcript, cuts, review states and media reference. Source or editing-state changes while hashing abort the export rather than producing a mixed-state package. The hash path supports cancellation and enforces a 120 MB limit. Caption-only SRT export remains available without media. Speech transcription and comparison are unchanged from v1.2 and still require explicit model-download consent.
 
+The inherited footer's blanket no-external-requests wording has been corrected: the optional speech model downloads after explicit consent. Media is not uploaded. The earlier v1.2 walkthrough is retained as historical footage of that version, not a claim that optional model downloads are absent.
+
 ## Run
 
 Serve this directory with `python3 -m http.server 8000`, then open localhost:8000. For a native edit-bundle render: unzip the exported bundle, then run `python render.py --bundle . --media original.mp4 --out rendered`. Python 3.10+, FFmpeg and ffprobe are required. No third-party Python packages are needed by the native renderer.
