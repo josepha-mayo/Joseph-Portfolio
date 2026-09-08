@@ -1,0 +1,72 @@
+Collecting en-core-web-sm==3.8.0
+  Downloading https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl (12.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 122.8 MB/s eta 0:00:00
+Installing collected packages: en-core-web-sm
+Successfully installed en-core-web-sm-3.8.0
+[38;5;2m✔ Download and installation successful[0m
+You can now load the package via spacy.load('en_core_web_sm')
+{
+  "status": "passed",
+  "seconds": 117.0,
+  "audio_rms": 0.11816486668593702,
+  "narration": {
+    "stock_voice": "Kokoro af_heart",
+    "synthetic": true,
+    "speed": 0.88,
+    "spoken_wpm": 133.17249698431843
+  },
+  "scenes": [
+    {
+      "scene": 1,
+      "seconds": 14.0625,
+      "narration": "The answer is right, but the working is wrong. Counterstep helps a learner repair that mistake, then write two fresh steps without answer choices."
+    },
+    {
+      "seed": 488256
+    },
+    {
+      "scene": 2,
+      "seconds": 16.112499999999997,
+      "narration": "Here, two errors cancel. The exact checker finds the first broken transition. A small trained model suggests distribution practice; the learner can override it."
+    },
+    {
+      "scene": 3,
+      "seconds": 13.6375,
+      "narration": "The expansion is repaired and the original equation is finished. The starting problem stays fixed. Every revised step is checked."
+    },
+    {
+      "scene": 4,
+      "seconds": 13.1875,
+      "narration": "Next comes a written expansion on a fresh problem. Entering the correct final value still fails: it is not the requested step."
+    },
+    {
+      "scene": 5,
+      "seconds": 14.2625,
+      "narration": "A hint or worked step is available, but using it stays in this card's record. Copying the revealed step does not become independent success."
+    },
+    {
+      "scene": 6,
+      "seconds": 14.8125,
+      "narration": "Now the structure changes: different numbers, an inner coefficient and a reversed equation. This expansion is submitted without help on the new card."
+    },
+    {
+      "scene": 7,
+      "seconds": 14.737499999999999,
+      "narration": "After saving and reopening, the tutor note keeps the questions, responses and help history. Saved outcome claims cannot invent completed work."
+    },
+    {
+      "scene": 8,
+      "seconds": 16.1875,
+      "narration": "Everything runs locally with the existing exact checker and tiny model. This is a tested practice tool, not evidence of learning gains. Teacher review comes next."
+    }
+  ],
+  "scope": "Scripted actual application actions, synthetic equations, not learner testing."
+}
+
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/tmp/counterstep-transfer/lib/python3.12/site-packages/torch/nn/modules/rnn.py:123: UserWarning: dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers greater than 1, but got dropout=0.2 and num_layers=1
+  warnings.warn(
+/tmp/counterstep-transfer/lib/python3.12/site-packages/torch/nn/utils/weight_norm.py:144: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
+  WeightNorm.apply(module, name, dim)
+127.0.0.1 - - [08/Sep/2026 20:24:15] "GET /path.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:25:41] "GET /path.html HTTP/1.1" 304 -
