@@ -5,7 +5,10 @@ const ready=(async()=>{
  const r=await fetch('./trimwise.py');if(!r.ok)throw Error('Python source could not be loaded.');
  // Import the trusted same-origin code as a module, not as the native CLI.
  py.globals.set('_trimwise_source',await r.text());
- py.runPython("import types, sys\n_trimwise = types.ModuleType('trimwise')\nexec(_trimwise_source, _trimwise.__dict__)\nhandle_json = _trimwise.handle_json\ndel _trimwise_source");
+ py.runPython("import types, sys\n_trimwise = types.ModuleType('trimwise')\nsys.modules['trimwise'] = _trimwise\nexec(_trimwise_source, _trimwise.__dict__)\ndel _trimwise_source");
+ const br=await fetch('./batch.py');if(!br.ok)throw Error('Batch Python source could not be loaded.');
+ py.globals.set('_batch_source',await br.text());
+ py.runPython("_batch = types.ModuleType('batch')\nsys.modules['batch'] = _batch\nexec(_batch_source, _batch.__dict__)\nhandle_json = _batch.handle_json\ndel _batch_source");
  self.postMessage({type:'ready',python:py.runPython('sys.version.split()[0]'),pyodide:py.version});
  return py;
 })();

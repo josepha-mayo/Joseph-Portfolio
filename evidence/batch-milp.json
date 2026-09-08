@@ -1,0 +1,129 @@
+{
+  "status": "passed",
+  "cases": 4,
+  "scipy_version": "1.17.0",
+  "reference": "independent integer pattern-count model, sequential purchase/scrap/bar objectives via scipy.optimize.milp (HiGHS)",
+  "seconds": 0.3028,
+  "results": [
+    {
+      "pieces": 80,
+      "objective": [
+        58200,
+        693,
+        21
+      ],
+      "variables": 55,
+      "stages": [
+        {
+          "objective": 0,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 58200.00000000001
+        },
+        {
+          "objective": 1,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 693.0
+        },
+        {
+          "objective": 2,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 21.0
+        }
+      ],
+      "dp_operations": 53543
+    },
+    {
+      "pieces": 20,
+      "objective": [
+        9000,
+        373,
+        7
+      ],
+      "variables": 55,
+      "stages": [
+        {
+          "objective": 0,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 9000.0
+        },
+        {
+          "objective": 1,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 373.0
+        },
+        {
+          "objective": 2,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 7.0
+        }
+      ],
+      "dp_operations": 4582
+    },
+    {
+      "pieces": 60,
+      "objective": [
+        42000,
+        499,
+        16
+      ],
+      "variables": 55,
+      "stages": [
+        {
+          "objective": 0,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 42000.0
+        },
+        {
+          "objective": 1,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 499.0
+        },
+        {
+          "objective": 2,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 16.0
+        }
+      ],
+      "dp_operations": 31273
+    },
+    {
+      "pieces": 120,
+      "objective": [
+        91200,
+        819,
+        30
+      ],
+      "variables": 55,
+      "stages": [
+        {
+          "objective": 0,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 91200.0
+        },
+        {
+          "objective": 1,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 819.0
+        },
+        {
+          "objective": 2,
+          "status": 0,
+          "gap": 0.0,
+          "dual_bound": 30.0
+        }
+      ],
+      "dp_operations": 115933
+    }
+  ]
+}

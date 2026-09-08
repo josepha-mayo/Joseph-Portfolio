@@ -37,14 +37,14 @@ def _text(value, where, maximum=60):
         raise InputError(f'{where}: use 1 to {maximum} printable characters.')
     return value.strip()
 
-def validate(document):
+def validate(document, *, max_pieces=MAX_PIECES):
     _keys(document, ['schema', 'material', 'kerf_mm', 'end_trim_mm', 'reuse_min_mm', 'parts', 'remnants', 'new_stock'], 'Job')
     _integer(document['schema'], 1, 1, 'Schema')
     out = dict(document)
     out['material'] = _text(out['material'], 'One material/profile')
     for key, high in [('kerf_mm', 20), ('end_trim_mm', 200), ('reuse_min_mm', 20000)]:
         out[key] = _integer(out[key], 0 if key != 'reuse_min_mm' else 1, high, key)
-    for key, limit in [('parts', MAX_PIECES), ('remnants', MAX_REMNANTS), ('new_stock', MAX_NEW_TYPES)]:
+    for key, limit in [('parts', max_pieces), ('remnants', MAX_REMNANTS), ('new_stock', MAX_NEW_TYPES)]:
         values = out[key]
         if not isinstance(values, list) or len(values) > limit or (key == 'parts' and not values):
             raise InputError(f'{key}: use {1 if key == "parts" else 0} to {limit} rows.')
@@ -55,11 +55,11 @@ def validate(document):
             item = {'id': _text(row['id'], key+' label', 32), 'length_mm': _integer(row['length_mm'], 1, 20000, key+' length')}
             if item['id'] in seen: raise InputError(f'{key}: duplicate label {item["id"]}.')
             seen.add(item['id'])
-            if key == 'parts': item['qty'] = _integer(row['qty'], 1, MAX_PIECES, 'Quantity')
+            if key == 'parts': item['qty'] = _integer(row['qty'], 1, max_pieces, 'Quantity')
             clean.append(item)
         out[key] = clean
-    if sum(r['qty'] for r in out['parts']) > MAX_PIECES:
-        raise InputError(f'This exact solver accepts at most {MAX_PIECES} total pieces. Split larger jobs explicitly.')
+    if sum(r['qty'] for r in out['parts']) > max_pieces:
+        raise InputError(f'This exact solver accepts at most {max_pieces} total pieces. Split larger jobs explicitly.')
     return out
 
 def expand(job):
@@ -75,16 +75,16 @@ def _scrap(length, piece_sum, count, job):
     tail = length - piece_sum - kerf - trim
     return kerf+trim+(tail if tail < job['reuse_min_mm'] else 0)
 
-def audit(document, plan):
+def audit(document, plan, *, max_pieces=MAX_PIECES):
     """Recompute demand, stock identity, fit and conservation. No saved totals trusted.
 
 This checker does not use solver subset sums, memoization or objective records.
 It certifies the supplied arithmetic only, not measurement or physical safety.
 """
-    job = validate(document)
+    job = validate(document, max_pieces=max_pieces)
     parts = expand(job)
-    if not isinstance(plan, list) or len(plan) > MAX_PIECES:
-        raise InputError('Cut plan must be a list with at most 12 used bars.')
+    if not isinstance(plan, list) or len(plan) > max_pieces:
+        raise InputError(f'Cut plan must be a list with at most {max_pieces} used bars.')
     stocks = {('remnant', r['id']): r['length_mm'] for r in job['remnants']}
     stocks.update({('new', r['id']): r['length_mm'] for r in job['new_stock']})
     seen_parts, seen_remnants, errors, rows = set(), set(), [], []
@@ -95,8 +95,8 @@ It certifies the supplied arithmetic only, not measurement or physical safety.
             raise InputError('Invalid stock reference.')
         key = (raw['kind'], raw['stock_id'])
         indices = raw['pieces']
-        if not isinstance(indices, list) or not indices or len(indices) > MAX_PIECES:
-            raise InputError('Every used bar needs 1 to 12 pieces.')
+        if not isinstance(indices, list) or not indices or len(indices) > max_pieces:
+            raise InputError(f'Every used bar needs 1 to {max_pieces} pieces.')
         for ix in indices:
             _integer(ix, 0, len(parts)-1, 'Piece index')
             if ix in seen_parts: errors.append(f'Piece {ix+1} appears more than once.')
@@ -216,17 +216,17 @@ def solve(document):
             'solver':{'algorithm':'exhaustive subset dynamic programming','piece_bound':MAX_PIECES,'transitions':transitions,
                       'seconds':round(perf_counter()-start,4),'objective':['purchased_mm','scrap_mm','bars_cut']}, 'version':VERSION}
 
-def open_workspace(workspace):
+def open_workspace(workspace, *, max_pieces=MAX_PIECES):
     _keys(workspace,['schema','job','plan'],'Workspace')
     _integer(workspace['schema'],1,1,'Workspace schema')
-    job=validate(workspace['job']); checked=audit(job,workspace['plan'])
+    job=validate(workspace['job'], max_pieces=max_pieces); checked=audit(job,workspace['plan'], max_pieces=max_pieces)
     if not checked['valid']:raise InputError('Saved cuts are invalid: '+' '.join(checked['errors']))
     return {'status':'revalidated','job':job,'plan':workspace['plan'],'audit':checked,
             'baseline':None,'purchased_reduction_mm':None,'scrap_change_mm':None,
             'message':'Saved cuts revalidated against saved inputs. Optimality has not been re-proved; solve again to compare.','version':VERSION}
 
-def cut_csv(document,plan):
-    checked=audit(document,plan)
+def cut_csv(document,plan, *, max_pieces=MAX_PIECES):
+    checked=audit(document,plan, max_pieces=max_pieces)
     if not checked['valid']:raise InputError('Invalid plans cannot be exported.')
     def safe(value):
         text=str(value)

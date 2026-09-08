@@ -1,93 +1,84 @@
-# Trimwise
+# Trimwise 1.1: Repeat Batches
 
-**Buy fewer lengths. Make the offcuts count.**
+Plan a complete one-dimensional cutting job around existing offcuts, account for the saw, and keep a stopped search distinct from a proved optimum. This is an upgrade to the original PyStorm entry, not a separate product or competition entry.
 
-A Python cutting-stock workbench for small workshops: plan around existing offcuts, account for saw kerf and end trim, keep usable leftovers separate from scrap, and recheck an old cut allocation against corrected measurements.
+## What changed
 
-This is a new project for PyStorm, created September 8, 2026 with substantial AI assistance. No code or trained model from the earlier SunQueue, Counterstep or Forkline projects is reused. Original work is MIT licensed. The public source is on the isolated `trimwise-20260908` branch; never merge it into the unrelated production portfolio.
+The original subset solver handles up to 12 pieces. The new count-vector solver accepts **up to 120 pieces and eight distinct lengths**, with the same six physically distinct remnants and three repeatable new-stock lengths. Repeated lengths share a search state, but exported cuts retain each part label, ordinal and individual identity. Both engines use the independently implemented material ledger.
 
-## Run the actual Python core, offline
+The browser selects the original exact engine for jobs of 12 or fewer pieces in Auto mode and the count-vector engine for larger jobs. Select count-based search to use it explicitly on a small job. Native usage is below. Neither browser path sends job inputs to an API or substitutes a JavaScript optimizer for Python.
 
-Python 3.10 or later. No third-party Python packages, API keys or accounts are required.
+Four search outcomes are distinct:
+
+- **Optimal:** the declared finite search completed, with all three objective levels proved.
+- **Feasible:** the search reached its budget or time limit. A complete allocation passed the material ledger, but optimality is not proved. A usable cut sheet can still be exported.
+- **Unknown:** the search stopped without finding a complete allocation. This is not a proof that the job is infeasible, and no partial cut sheet is exported.
+- **Infeasible:** completed exhaustive search found no complete allocation in the declared model.
+
+Default batch budget: 200,000 counted search operations, selectable up to 1,000,000. Pattern enumeration, state evaluation and candidate transitions all consume budget. A 15-second elapsed-time guard is checked every 1,024 operations. The UI has a separate 45-second worker timeout and cancellation. Limits are resource bounds, not promises that every allowed 120-piece input will finish with an optimum. Eight distinct lengths can still be too expensive.
+
+## Try the distinction
+
+Choose **80-piece repeat batch** and solve. The synthetic job requests forty 600 mm and forty 900 mm rails. Its optimum purchases 58,200 mm of new stock, compared with 72,000 mm from the disclosed best-fit-decreasing baseline using identical demand and inventory. Its material ledger assigns all 80 pieces and separates 240 mm kerf, 210 mm trim, 243 mm short tails and 4,907 mm potentially reusable tails. This is a modeled purchase difference, not measured shop savings.
+
+Change the operation budget to **1 (demonstrate early stop)**. The baseline remains feasible and exportable, but its 72,000 mm purchase is not claimed optimal. The conservative new-length lower bound is 53,400 mm, leaving an 18,600 mm purchase gap. This loose bound is not a separate optimum estimate.
+
+Choose **When greedy fails** with that tiny budget. Best fit decreasing cannot assign all four requested pieces, so the stopped search reports **unknown**. Restoring the normal budget finds a complete allocation using the existing 600 mm and 700 mm remnants. This example is intentionally synthetic and does not represent typical workload difficulty.
+
+The original seven-piece, remeasurement and kerf-trap examples remain available. Editing inputs locks exports. Rechecking a saved allocation recomputes every physical piece and material balance. Reopening a workspace never restores an optimality or savings claim; solve again to establish one.
+
+## Run the native Python tools
+
+Python 3.10 or newer; no third-party runtime Python dependencies:
 
 ```sh
-git clone --single-branch --branch trimwise-20260908 https://github.com/josepha-mayo/Joseph-Portfolio.git Trimwise
-cd Trimwise
-python src/trimwise.py examples/workshop.json --output plan.json --csv cuts.csv
+python src/batch.py examples/batch80.json --output result.json --csv cuts.csv
+python src/batch.py examples/batch80.json --budget 1
+python src/trimwise.py examples/workshop.json
+```
+
+The batch CLI exits 0 for optimal, 3 for checked feasible, 2 for proven infeasible and 4 for unknown. Malformed input exits 1. Only complete checked allocations can be exported. `src/trimwise.py` retains the original 12-piece interface for compatibility.
+
+For the browser, install Node.js 22+ and run:
+
+```sh
+npm ci --ignore-scripts
+python tools/build.py
+python -m http.server 8000 --directory public
+```
+
+Open localhost:8000. The pinned, self-hosted Pyodide 314.0.6 distribution runs actual CPython 3.14.2 in a module worker. The first runtime load is about 13.5 MB. Computation works after disconnection while the loaded page remains open; offline browser reload is not implemented. The native CLI is the small fully offline option. JavaScript displays results and never replaces the Python solver.
+
+## Algorithm and checks
+
+For each stock length, enumerate every feasible vector of quantities under demand bounds. Process each distinct remnant once, keeping the best lexicographic score per covered-count vector, including a skip option. Then use memoized dynamic programming for repeatable purchased lengths, requiring every chosen pattern to include the first remaining part length to remove ordering duplicates. Completed search minimizes `(purchased millimetres, modeled scrap millimetres, used bars)`, in that order. It is not monetary-price optimization.
+
+The ledger does not use the solver's pattern generation, state tables or saved objective totals. It recomputes stock identity, part identity, multiplicity, per-bar fit and exact conservation from the expanded allocation. Source grouping never causes a remnant or finished piece to be used twice.
+
+On interruption, use the best complete candidate already established or the independently checked baseline, whichever has the better full objective. With no such candidate, return unknown. The lower bound subtracts all available remnant capacity from total piece-plus-kerf demand, then rounds the residual up to the greatest common divisor of purchasable lengths. It ignores new-bar trim and fragmentation, so it is conservative. A zero gap proves only equality of the new-length bound and candidate, not optimal scrap or bar count. Only an exhaustive result receives the full optimality label.
+
+Run the original and new tests:
+
+```sh
 python -m unittest discover -s tests -v
 python tests/crosscheck.py
+python tests/batch_oracle.py
+pip install scipy==1.17.0
+python tests/batch_milp.py
 ```
 
-Exit status: 0 for a complete optimal plan; 2 for an infeasible full demand; 1 for invalid input or an input/output error. An infeasible batch never produces a partial plan labelled complete.
+The original independent individual-piece assignment reference is exercised on 100 original jobs and 150 additional seeded jobs. The large-job checker uses a separate integer pattern-count formulation and SciPy/HiGHS, with independently enumerated patterns and three sequential objectives. It checks 20-, 60-, 80- and 120-piece cases, not every possible large input. SciPy is test-only and not shipped into the browser runtime.
 
-## Browser version: Python is not decorative
+Browser checks need Playwright and Chromium (`pip install playwright==1.55.0; python -m playwright install chromium`), a running server on 8080, then `python tests/browser.py` and `python tests/batch_browser.py`. Set `TRIMWISE_URL` for the same suites against a public origin. Actual execution records are in `evidence/`; no unexecuted checks are described as passed.
 
-```sh
-npm ci                         # npm install on a first build without a lockfile
-npm run build
-python -m http.server 8080 --bind 127.0.0.1 --directory public
-```
+## Model limits and environmental claims
 
-Open `http://127.0.0.1:8080`. The page loads a pinned, self-hosted Pyodide 314.0.6 runtime into a module worker. The worker runs **the same `src/trimwise.py`**, including the optimizer, validator and CSV writer. JavaScript handles controls and display; it contains no replacement cutting optimizer and makes no model/API calls.
+One material/profile per job. Integer millimetres. Each detached piece consumes one full kerf, including the last, plus the supplied total trim per used bar. This conservative convention can reject a cut achievable under another process. No defect inspection, grain, tolerance or machine-control model is included. Reusable tails are only potential inventory under a chosen threshold; their future use is not guaranteed. Untouched stock is not claimed as avoided waste. Cutting-stock optimization and grouped dynamic programming are established techniques, not algorithms invented by this entry.
 
-The initial runtime download is substantial and is disclosed in the interface. Once loaded, computations work with networking disabled while this page stays open. Offline page reload is **not** promised. The native CLI is the smaller, fully offline route. The hosting server serves static files; entered stock and piece data are not sent to it. Normal hosting resource-request logs may exist. No analytics or account system is included.
+All examples and comparisons are synthetic. No physical cuts, avoided purchases, customer revenue, carbon reductions or workshop time savings have been measured. A future authorized workshop pilot must compare planned with actual stock consumption and retained tails. Internal arithmetic and UI checks do not certify physical safety.
 
-## Use the example
+## Provenance and licensing
 
-1. Solve the synthetic workshop batch. Seven pieces total 10,500 mm. The exact plan uses 7,200 mm of new stock; best-fit decreasing with the same rack and stock menu uses 9,000 mm.
-2. Inspect every source length and the conservation ledger. Saw loss, trim, short tails, reusable tails and untouched stock are distinct.
-3. Change `Rack A` from 1,800 to 1,700 mm, then **Recheck previous cuts**. The old allocation is 13 mm too short. Exports stay locked until a new solve or successful recheck.
-4. Save and reopen a workspace. Its cut allocation is revalidated, but saved optimality and comparison claims are not trusted. Solve again to prove the objective.
-5. Try **The kerf trap**: two 500 mm pieces cannot be detached from a 1,000 mm bar with a 3 mm kerf per piece.
+Original Trimwise was built September 8, 2026 for PyStorm. This same-day upgrade adds the count-vector engine, explicit proof states and large-batch verification with substantial AI assistance. Original small-job behavior and its regression suite are retained. The source is on an isolated project branch; the unrelated production portfolio must not be overwritten or merged with it.
 
-All examples are synthetic, not records from a real workshop. The demonstration records actual interface actions, not a mock backend.
-
-## The exact, bounded model
-
-One material and cross-section/profile per job. Integer millimetres only. Up to **12 total pieces**, **6 physically distinct remnants** and **3 repeatable new-stock lengths**. New stock availability is assumed unlimited at the listed lengths, not a supplier stock check. Unused remnants remain untouched; they are not counted as scrap or waste avoided.
-
-Every detached piece consumes one full kerf, **including the last piece**. `end_trim_mm` is a total per-used-bar allowance and includes its preparatory cut loss. This conservative convention deliberately does not exploit a flush final piece that might require no last cut. The remainder is reusable only at or above the user-selected minimum. A "reusable" tail is geometrically long enough in this one-dimensional model; it has not been inspected for defects or a real future buyer.
-
-The lexicographic objective is:
-
-1. Minimum total **new stock length purchased**, not currency or carbon.
-2. Within that optimum, minimum modeled scrap: kerf + end trim + short tails.
-3. Within those two optima, minimum number of used bars.
-
-The optimizer enumerates fitting subsets. A forward dynamic program handles each remnant at most once, including the option not to use it. A memoized purchase recurrence anchors the next group on the lowest remaining piece index; every partition has such a group, so symmetry is removed without removing a feasible partition. Each allowed new-stock length is considered. The best complete combination is selected.
-
-Bounds are explicit because this algorithm is exponential. Oversized jobs are rejected instead of being silently truncated or returned as "optimal" after a timeout. A browser cancellation/45-second limit stops the worker without accepting an answer. The tool is for small batches, not industrial-scale scheduling.
-
-## A separate material ledger
-
-`audit` is separate from the subset-DP recurrence. It reads the original job and proposed assignments, independently counts pieces, verifies stock identity and one-use remnants, recomputes physical fit and all loss components, and checks:
-
-`used stock = finished pieces + kerf + trim + reusable tails + short tails`
-
-Duplicate or missing pieces, duplicate remnants, missing stock and undersized bars fail. This is arithmetic validation, not certification of a physical operation. Saved files are editable; their SHA-256 fingerprint identifies input bytes and is not an authenticity or security certificate.
-
-The comparison is explicitly **best-fit decreasing**: longest pieces first, fitting remnants considered before opening a new shortest-fitting stock length. It serves the exact same demand. It is not a claimed benchmark against commercial cutting software, the workshop's measured historical consumption, or a new optimization algorithm.
-
-## Environmental value and limits
-
-The synthetic example plans **1,800 mm less new stock (20%)** and **110 mm less modeled scrap** than that stated baseline. It also leaves a different quantity of reusable tails. The ledger displays that trade-off; reusable inventory is not treated as an emission reduction.
-
-The potential environmental benefit is fewer unnecessary purchases and less short scrap for a fixed job. No physical material has been cut or weighed, and no customer study, measured waste diversion, avoided production, transport savings or carbon conversion is claimed. Validation with actual workshop batches is the next step.
-
-Out of scope: knots/defects, grain, two-dimensional sheets, mixed profiles/materials, coatings, saw stability and clamp allowance, tolerance stacks, stock prices and delivery, production machine control and life-cycle emissions. Verify measurements, profile, defects and shop safety independently. "Optimal" only describes this disclosed mathematical model.
-
-## Verification and reproduction
-
-The Python unit tests include malformed inputs, kerf/trim boundaries, demand and inventory duplication, remeasurement, conservation, workspace import and spreadsheet-formula escaping. `tests/crosscheck.py` compares complete objective tuples against a **separately written recursive bin-assignment oracle** on 100 seeded small cases, including infeasible jobs. It does not call the optimizer for its expected answer.
-
-Browser tests run actual CPython/WebAssembly through the worker. They check the result, cut export, stale-state blocking, measurements, replay, a kerf infeasibility, inert labels, narrow layout and computations after disabling the network. Public deployment tests repeat these checks without account cookies and compare the served runtime/source bytes. Only executed `evidence/` records establish passing results.
-
-## Dependencies and attribution
-
-- Python standard library: exact integer calculations, dynamic programming, validation, JSON and CSV.
-- Pyodide 314.0.6: actual in-browser CPython/WebAssembly, Mozilla Public License 2.0. Runtime license files are retained. Documentation: https://pyodide.org/en/stable/usage/webworker.html and https://pyodide.org/en/stable/usage/working-with-bundlers.html
-- Playwright: browser tests and screen recording, Apache 2.0.
-- GitHub Actions and Netlify: build checks and static deployment.
-- Demo-only Kokoro-82M with stock `af_heart` voice: disclosed synthetic narration, not a cloned person; no third-party music or footage.
-
-Third-party dependencies retain their own licenses; the root MIT license covers original project code. Runtime bytes and npm integrity are recorded in the lockfile and `evidence/runtime-manifest.json`. All earlier funding projects and production branches are left unchanged.
+Original code is MIT licensed. Unchanged Pyodide/CPython distributions retain their own licenses and source links under `docs/licenses` and the public `licenses/` directory. The demonstration records actual application actions with paced stock Kokoro `af_heart` synthetic narration. No person's voice is cloned; no third-party music, customer data or private credentials are included.

@@ -1,0 +1,1 @@
+{"status": "passed", "cases": 100, "seed": 57021, "oracle": "independent bin-assignment DFS; not DP reuse", "seconds": 0.037}

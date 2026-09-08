@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "job": {
+    "schema": 1,
+    "material": "Pine battens / one profile",
+    "parts": [
+      {
+        "id": "P1",
+        "length_mm": 1700,
+        "qty": 1
+      },
+      {
+        "id": "P2",
+        "length_mm": 900,
+        "qty": 1
+      },
+      {
+        "id": "P3",
+        "length_mm": 2000,
+        "qty": 1
+      },
+      {
+        "id": "P4",
+        "length_mm": 1900,
+        "qty": 1
+      },
+      {
+        "id": "P5",
+        "length_mm": 1900,
+        "qty": 1
+      },
+      {
+        "id": "P6",
+        "length_mm": 1400,
+        "qty": 1
+      },
+      {
+        "id": "P7",
+        "length_mm": 700,
+        "qty": 1
+      }
+    ],
+    "remnants": [
+      {
+        "id": "Rack A",
+        "length_mm": 1800
+      },
+      {
+        "id": "Rack B",
+        "length_mm": 2600
+      }
+    ],
+    "new_stock": [
+      {
+        "id": "3m",
+        "length_mm": 3000
+      },
+      {
+        "id": "4.2m",
+        "length_mm": 4200
+      }
+    ],
+    "kerf_mm": 3,
+    "end_trim_mm": 10,
+    "reuse_min_mm": 300
+  },
+  "plan": [
+    {
+      "kind": "remnant",
+      "stock_id": "Rack A",
+      "pieces": [
+        0
+      ]
+    },
+    {
+      "kind": "remnant",
+      "stock_id": "Rack B",
+      "pieces": [
+        5,
+        6
+      ]
+    },
+    {
+      "kind": "new",
+      "stock_id": "4.2m",
+      "pieces": [
+        3,
+        4
+      ]
+    },
+    {
+      "kind": "new",
+      "stock_id": "3m",
+      "pieces": [
+        1,
+        2
+      ]
+    }
+  ]
+}
