@@ -1,0 +1,33 @@
+name: Trimwise entry media check
+on:
+  push:
+    branches: [trimwise-20260908]
+    paths: [.github/workflows/trimwise-entry-media.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/trimwise-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Install image verifier
+        run: |
+          python3 -m venv /tmp/trimwise-media
+          /tmp/trimwise-media/bin/pip -q install pillow==11.3.0
+      - name: Read and validate the processed public thumbnail
+        run: |
+          /tmp/trimwise-media/bin/python - <<'PY'
+          import urllib.request,hashlib,io,json
+          from PIL import Image
+          url='https://d112y698adiu2z.cloudfront.net/photos/production/software_thumbnail_photos/005/279/814/datas/medium.png'
+          with urllib.request.urlopen(url,timeout=30) as response:
+            assert response.status==200
+            data=response.read()
+          with Image.open(io.BytesIO(data)) as image:
+            image.load();rgb=image.convert('RGB')
+          assert rgb.size==(300,77),rgb.size
+          sha=hashlib.sha256(rgb.tobytes()).hexdigest()
+          assert sha=='9cf6f1126e8cb68a7864de714ab40d1cf91393dc524f2bd813c96195d81459df','Unexpected thumbnail pixels'
+          print(json.dumps({'status':'passed','url':url,'dimensions':rgb.size,'rgb_sha256':sha,'scope':'Processed thumbnail matches the reviewed crop of the actual app wordmark.'}))
+          PY
