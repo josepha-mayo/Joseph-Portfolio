@@ -1,5 +1,6 @@
 """Record actual browser actions against two fresh SQLite-backed loopback labs."""
 from pathlib import Path
+from urllib.parse import urlsplit
 import os,subprocess,json,time,tempfile
 import numpy as np,soundfile as sf
 from kokoro import KPipeline
@@ -21,7 +22,11 @@ for text in segments:
 opts={'executable_path':os.environ['FORKLINE_CHROMIUM']} if os.getenv('FORKLINE_CHROMIUM') else {}
 servers=[]
 def new_server(root):
- p=subprocess.Popen(['node','tools/lab-server.mjs'],env={**os.environ,'PORT':'0','FORKLINE_DATA':root},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True);servers.append(p);line=p.stdout.readline();return line.split('Delivery Lab: ',1)[1].strip()+'/delivery.html?live=1'
+ p=subprocess.Popen(['node','tools/lab-server.mjs'],env={**os.environ,'PORT':'0','FORKLINE_DATA':root},stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True);servers.append(p)
+ # CLI already prints /delivery.html?live=1. Use it once, then assert LIVE in the UI.
+ line=p.stdout.readline();url=line.split('Delivery Lab: ',1)[1].strip();parts=urlsplit(url)
+ assert parts.scheme=='http' and parts.hostname=='127.0.0.1' and parts.port and parts.path=='/delivery.html' and parts.query=='live=1'
+ return url
 try:
  with tempfile.TemporaryDirectory()as td,sync_playwright()as pw:
   browser=pw.chromium.launch(**opts);ctx=browser.new_context(viewport={'width':1440,'height':1000},record_video_dir='raw-delivery-video',record_video_size={'width':1440,'height':1000});page=ctx.new_page();timeline=[];start=time.monotonic()
