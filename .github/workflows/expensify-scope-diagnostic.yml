@@ -1,0 +1,60 @@
+name: Expensify 98624 source-level diagnostic
+on:
+  push:
+    branches: [expensify-98624-scope-20260908]
+    paths: [.github/workflows/expensify-scope-diagnostic.yml]
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    if: github.ref == 'refs/heads/expensify-98624-scope-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Retrieve exact unchanged public source and validate source hashes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.request import urlopen
+          import hashlib,json
+          root=Path('bounty-research/expensify-98624')
+          assert hashlib.sha256((root/'diagnose.cjs').read_bytes()).hexdigest()=='80be50027c980342e2171a67257f9cf787dcacb0aca67212da8b06edce334ddd'
+          sha='9f9ddbd4b4edfc615a9cec78aa24da45188f9f1a'
+          expected={
+          'src/libs/fileURIToPath.ts':'4771bd4d18f43f40d163aa5e8c598240f0896ceb562c6c664eef7b8f3cf95d11',
+          'src/libs/fileDownload/FileUtils.ts':'515deb3f79c7df6ddc1e48f36145d67090f55564aa379dddb546ed10dea6f4fd',
+          'src/libs/ReceiptStorage/index.native.ts':'a4cd0dc3288dd71db495cea738bfdc3d791bcb3ecf2598f525283f6517b397e0',
+          'src/libs/prepareRequestPayload/index.native.ts':'30fef61227098d3d63c3725018036e319d77b94c301e1383200a767282bf4be0',
+          'src/libs/actions/Attachment/index.native.ts':'1883a5a5bba7f05c7f81d96511827d04d70249acba6c3d01466eaab0342ce39b',
+          'src/libs/prepareRequestPayload/index.ts':'b334be24a7fd7dfd73666adfd45c1050c9816123384bf9ba545bb86ac9006070'}
+          for name,checksum in expected.items():
+            with urlopen('https://raw.githubusercontent.com/Expensify/App/'+sha+'/'+name,timeout=25)as response:data=response.read()
+            assert hashlib.sha256(data).hexdigest()==checksum,name
+            target=root/'snapshot'/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+          with urlopen('https://raw.githubusercontent.com/NJ-2020/Expensify/8bd936dd3e4e705509e7c94809a666330732e171/src/libs/prepareRequestPayload/index.native.ts',timeout=25)as response:pr=response.read()
+          assert pr==(root/'snapshot/src/libs/prepareRequestPayload/index.native.ts').read_bytes()
+          print('Source hashes validated; PR 85588 head has byte-identical prepareRequestPayload.')
+          PY
+      - name: Install only the pinned transpiler, not the application dependencies
+        run: npm install --prefix /tmp/expensify-probe --no-save --ignore-scripts --no-audit --no-fund typescript@5.8.3
+      - name: Execute unchanged functions with controlled native boundaries
+        run: |
+          export NODE_PATH=/tmp/expensify-probe/node_modules
+          set -o pipefail
+          mkdir -p bounty-research/expensify-98624/evidence
+          node bounty-research/expensify-98624/diagnose.cjs | tee bounty-research/expensify-98624/evidence/ci-run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: expensify-98624-diagnostic
+          path: |
+            bounty-research/expensify-98624/evidence/
+            bounty-research/expensify-98624/diagnose.cjs
+          retention-days: 14
