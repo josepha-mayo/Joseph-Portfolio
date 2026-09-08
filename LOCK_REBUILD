@@ -1,0 +1,1 @@
+Release attempt 3. Use installed Chrome after recording actual codec support. The race/cancellation fixture now selects one source cue within the existing 120-second clip limit. Keep every source identity, review reset, race, cancellation and inherited speech assertion. No application security policy or inference result is bypassed.
