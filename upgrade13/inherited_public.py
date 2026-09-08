@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'public/cutproof/v13';EV=OUT/'
 def ok(name,**details):report['checks'].append({'name':name,**details});print('PASS',name,flush=True)
 class Quiet(SimpleHTTPRequestHandler):
  def log_message(self,*args):pass
-srv=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(OUT)));threading.Thread(target=srv.serve_forever,daemon=True).start();base='https://6a9f772da8464d00096f656b--josephm.netlify.app/cutproof/v13/'
+srv=ThreadingHTTPServer(('127.0.0.1',0),partial(Quiet,directory=str(OUT)));threading.Thread(target=srv.serve_forever,daemon=True).start();base='https://6a9f79eb04c6ca0008aa89b2--josephm.netlify.app/cutproof/v13/'
 try:
  with sync_playwright() as p:
   b=p.chromium.launch(executable_path=shutil.which('google-chrome') or p.chromium.executable_path,headless=True,args=['--no-sandbox'])
