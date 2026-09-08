@@ -1,0 +1,63 @@
+name: Ten-event public funding audit
+on:
+  push:
+    branches: [funding-master-audit-20260908]
+    paths: [.github/workflows/funding-ten-event-audit.yml]
+permissions:
+  contents: read
+jobs:
+  public-sources:
+    if: github.ref == 'refs/heads/funding-master-audit-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read official public pages without executing scripts or submitting forms
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from urllib.parse import urlsplit
+          from html.parser import HTMLParser
+          from datetime import datetime,timezone
+          from concurrent.futures import ThreadPoolExecutor
+          import hashlib,json
+          out=Path('funding-public-audit');out.mkdir()
+          slugs=['volthacks','opencv26','gatewayhacks-2026','gibc-v2','galuxium-nexus-v2-29411','univabio','amazonappdev2026','ai-builders-hackathon-2026','call-e','ai-content-engine-hacks','pystorm']
+          jobs=[(s,k,'https://'+s+'.devpost.com/'+k)for s in slugs for k in ['', 'rules','updates']]
+          class Page(HTMLParser):
+            def __init__(self):super().__init__();self.text=[];self.links=[];self.active=None;self.ignore=0
+            def handle_starttag(self,t,attrs):
+              d=dict(attrs)
+              if t in ['script','style']:self.ignore+=1
+              if t=='a':self.active={'href':d.get('href',''),'text':''};self.links.append(self.active)
+              if t in ['p','div','h1','h2','h3','h4','li','br']:self.text.append('\n')
+            def handle_endtag(self,t):
+              if t in ['script','style']:self.ignore=max(0,self.ignore-1)
+              if t=='a':self.active=None
+              if t in ['p','div','h1','h2','h3','h4','li']:self.text.append('\n')
+            def handle_data(self,s):
+              if not self.ignore:
+                self.text.append(s)
+                if self.active is not None:self.active['text']+=s
+          def one(job):
+            slug,kind,url=job;r={'slug':slug,'page':kind or 'overview','url':url,'checked_at':datetime.now(timezone.utc).isoformat()}
+            try:
+              with urlopen(Request(url,headers={'User-Agent':'Mozilla/5.0 participant public contest review'}),timeout=25)as f:
+                data=f.read(3_000_001);r.update(status=f.status,final_url=f.url)
+              assert len(data)<=3_000_000 and urlsplit(r['final_url']).netloc==urlsplit(url).netloc
+              p=Page();p.feed(data.decode('utf-8'))
+              text='\n'.join(x.strip()for x in ''.join(p.text).splitlines()if x.strip())
+              links=[{'href':x['href'],'text':' '.join(x['text'].split())}for x in p.links]
+              r.update(sha256=hashlib.sha256(data).hexdigest(),text=text,contacts=[x for x in links if x['href'].startswith('mailto:')],links=links)
+            except Exception as exc:r['error']=repr(exc)
+            (out/(slug+'-'+(kind or 'overview')+'.json')).write_text(json.dumps(r,indent=2))
+            return {k:v for k,v in r.items()if k not in ['text','links']}
+          with ThreadPoolExecutor(max_workers=3)as pool:result=list(pool.map(one,jobs))
+          (out/'index.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: funding-ten-event-public-audit
+          path: funding-public-audit/
+          retention-days: 14
