@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "upstream": "9f9ddbd4b4edfc615a9cec78aa24da45188f9f1a",
+  "node": "v22.16.0",
+  "typescript": "5.8.3",
+  "scope": "Unchanged source-level diagnostics with real temporary disk I/O and controlled native boundaries. Not native app/device QA; no patch tested or upstream PR opened.",
+  "started_at": "2026-09-08T12:52:39.584Z",
+  "sources": {
+    "src/libs/fileURIToPath.ts": "4771bd4d18f43f40d163aa5e8c598240f0896ceb562c6c664eef7b8f3cf95d11",
+    "src/libs/fileDownload/FileUtils.ts": "515deb3f79c7df6ddc1e48f36145d67090f55564aa379dddb546ed10dea6f4fd",
+    "src/libs/ReceiptStorage/index.native.ts": "a4cd0dc3288dd71db495cea738bfdc3d791bcb3ecf2598f525283f6517b397e0",
+    "src/libs/prepareRequestPayload/index.native.ts": "30fef61227098d3d63c3725018036e319d77b94c301e1383200a767282bf4be0",
+    "src/libs/actions/Attachment/index.native.ts": "1883a5a5bba7f05c7f81d96511827d04d70249acba6c3d01466eaab0342ce39b",
+    "src/libs/prepareRequestPayload/index.ts": "b334be24a7fd7dfd73666adfd45c1050c9816123384bf9ba545bb86ac9006070"
+  },
+  "checks": [
+    {
+      "name": "Real resolver maps a stale receipts URI to the current file",
+      "status": "passed"
+    },
+    {
+      "name": "Unchanged offline file path omits image but returns comment field",
+      "status": "passed",
+      "file_present": false,
+      "comment_present": true,
+      "dedicated_receipt_drop_events": 0,
+      "file_utils_debug_events": 1
+    },
+    {
+      "name": "Resolved-input control appends exact file bytes with the same unchanged function",
+      "status": "passed",
+      "file_present": true,
+      "bytes_equal": true,
+      "note": "Input control, not a patched app"
+    },
+    {
+      "name": "Receipt branch already resolves the same stale URI",
+      "status": "passed"
+    },
+    {
+      "name": "Current-path offline file still appends",
+      "status": "passed"
+    },
+    {
+      "name": "A genuinely missing file is also omitted, so resolving alone is not failure handling",
+      "status": "passed"
+    },
+    {
+      "name": "Missing receipt emits existing dedicated telemetry unlike missing file",
+      "status": "passed"
+    },
+    {
+      "name": "Native online file branch passes through without re-read",
+      "status": "passed"
+    },
+    {
+      "name": "Offline file without source retains original pass-through",
+      "status": "passed"
+    },
+    {
+      "name": "Cache copy from stale URI fails even though current file exists",
+      "status": "passed",
+      "copy_error": "ENOENT",
+      "onyx_cache_record_written": false
+    },
+    {
+      "name": "Resolved-input cache control copies bytes and publishes Onyx record",
+      "status": "passed"
+    },
+    {
+      "name": "Cache miss returns stale currentSource without recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Receipt resolver does not repair Caches/attachments paths",
+      "status": "passed"
+    },
+    {
+      "name": "Resolver preserves remote and non-receipts local paths",
+      "status": "passed"
+    },
+    {
+      "name": "Web payload implementation stays independent of native replay",
+      "status": "passed"
+    }
+  ],
+  "finished_at": "2026-09-08T12:52:39.829Z"
+}

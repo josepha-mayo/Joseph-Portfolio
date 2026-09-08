@@ -103,13 +103,13 @@ async function check(name, run) {
         assert.equal(storage.resolve(stale), current); assert.equal(await fileExists(current), true); assert.equal(await fileExists(stale), false);
     });
     await check('Unchanged offline file path omits image but returns comment field', async () => {
-        reset(); const body = await prepare('AddComment', {file: file(stale), comment: 'synthetic comment'}, true);
-        assert.equal(body.has('file'), false); assert.equal(body.get('comment'), 'synthetic comment');
+        reset(); const body = await prepare('AddTextAndAttachment', {file: file(stale), reportComment: 'synthetic comment'}, true);
+        assert.equal(body.has('file'), false); assert.equal(body.get('reportComment'), 'synthetic comment');
         assert.deepEqual(calls.reads, [stale]); assert.equal(calls.drops.length, 0); assert.equal(calls.debug.length, 1);
         return {file_present: false, comment_present: true, dedicated_receipt_drop_events: 0, file_utils_debug_events: 1};
     });
     await check('Resolved-input control appends exact file bytes with the same unchanged function', async () => {
-        reset(); const body = await prepare('AddComment', {file: file(storage.resolve(stale)), comment: 'synthetic comment'}, true);
+        reset(); const body = await prepare('AddTextAndAttachment', {file: file(storage.resolve(stale)), reportComment: 'synthetic comment'}, true);
         assert.equal(body.has('file'), true); assert.equal(body.get('file').uri, current);
         assert.deepEqual(Buffer.from(await body.get('file').arrayBuffer()), picture);
         assert.equal(calls.debug.length, 0); return {file_present: true, bytes_equal: true, note: 'Input control, not a patched app'};
@@ -119,12 +119,12 @@ async function check(name, run) {
         assert.equal(body.has('receipt'), true); assert.equal(body.get('receipt').uri, current); assert.equal(calls.drops.length, 0);
     });
     await check('Current-path offline file still appends', async () => {
-        reset(); const body = await prepare('AddComment', {file: file(current)}, true); assert.equal(body.has('file'), true);
+        reset(); const body = await prepare('AddAttachment', {file: file(current)}, true); assert.equal(body.has('file'), true);
     });
     await check('A genuinely missing file is also omitted, so resolving alone is not failure handling', async () => {
         reset(); assert.equal(storage.resolve(missing), missing);
-        const body = await prepare('AddComment', {file: file(missing), comment: 'synthetic comment'}, true);
-        assert.equal(body.has('file'), false); assert.equal(body.has('comment'), true); assert.equal(calls.drops.length, 0);
+        const body = await prepare('AddTextAndAttachment', {file: file(missing), reportComment: 'synthetic comment'}, true);
+        assert.equal(body.has('file'), false); assert.equal(body.has('reportComment'), true); assert.equal(calls.drops.length, 0);
         assert.equal(calls.debug.length, 1);
     });
     await check('Missing receipt emits existing dedicated telemetry unlike missing file', async () => {
@@ -132,12 +132,12 @@ async function check(name, run) {
         assert.equal(body.has('receipt'), false); assert.equal(calls.drops.length, 1);
     });
     await check('Native online file branch passes through without re-read', async () => {
-        reset(); const value = file(stale); const body = await prepare('AddComment', {file: value}, false);
+        reset(); const value = file(stale); const body = await prepare('AddAttachment', {file: value}, false);
         assert.equal(body.get('file'), value); assert.equal(calls.reads.length, 0);
     });
     await check('Offline file without source retains original pass-through', async () => {
         reset(); const value = {uri: current, name: 'image.png', type: 'image/png'};
-        const body = await prepare('AddComment', {file: value}, true); assert.equal(body.get('file'), value); assert.equal(calls.reads.length, 0);
+        const body = await prepare('AddAttachment', {file: value}, true); assert.equal(body.get('file'), value); assert.equal(calls.reads.length, 0);
     });
     await check('Cache copy from stale URI fails even though current file exists', async () => {
         reset(); await attachment.cacheAttachment({attachmentID: 'stale', uri: stale, mimeType: 'image/png'});
@@ -165,8 +165,8 @@ async function check(name, run) {
     });
     await check('Web payload implementation stays independent of native replay', async () => {
         reset(); const web = load('src/libs/prepareRequestPayload/index.ts', {'@libs/validateFormDataParameter': () => {}}).default;
-        const value = file(stale); const body = await web('AddComment', {file: value, comment: 'text', none: null, unset: undefined}, true);
-        assert.equal(body.get('file'), value); assert.equal(body.get('comment'), 'text'); assert.equal(body.has('none'), false); assert.equal(calls.reads.length, 0);
+        const value = file(stale); const body = await web('AddTextAndAttachment', {file: value, reportComment: 'text', none: null, unset: undefined}, true);
+        assert.equal(body.get('file'), value); assert.equal(body.get('reportComment'), 'text'); assert.equal(body.has('none'), false); assert.equal(calls.reads.length, 0);
     });
     report.status = 'passed';
 })().catch(error => { report.status = 'failed'; report.error = error.stack; process.exitCode = 1; })
