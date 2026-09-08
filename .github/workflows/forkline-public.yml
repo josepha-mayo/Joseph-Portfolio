@@ -1,0 +1,68 @@
+name: Forkline public verification
+on:
+  push:
+    branches: [forkline-20260908]
+    paths: [PUBLIC_URL, .github/workflows/forkline-public.yml]
+permissions:
+  contents: write
+concurrency:
+  group: forkline-public
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/forkline-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Install browser and media checks
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/forkline-public
+          /tmp/forkline-public/bin/pip -q install playwright==1.55.0
+          /tmp/forkline-public/bin/python -m playwright install --with-deps chromium
+      - name: Verify unchanged domain and CSP-compatible runner locally
+        run: |
+          set -o pipefail
+          export PATH=/tmp/forkline-public/bin:$PATH
+          node --test tests/engine.test.mjs | tee evidence/completion-unit.log
+          python -m http.server 8080 --bind 127.0.0.1 --directory public >/tmp/forkline-local.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time,urllib.request
+          for i in range(30):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8080/',timeout=1) as r:
+                      assert r.status==200
+                  break
+              except Exception:
+                  if i==29:raise
+                  time.sleep(.1)
+          PY
+          python tests/browser_csp.py
+      - name: Verify public release bytes, browser flows, deck and demo
+        run: |
+          export PATH=/tmp/forkline-public/bin:$PATH
+          python tools/public_check.py
+      - name: Preserve actual results on isolated branch
+        if: always()
+        run: |
+          git config user.name 'Forkline Verification'
+          git config user.email 'forkline-verification@users.noreply.github.com'
+          git add evidence/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual anonymous Forkline deployment checks under enforced CSP'
+          git push origin HEAD:forkline-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: forkline-public-evidence
+          path: evidence/
+          retention-days: 14

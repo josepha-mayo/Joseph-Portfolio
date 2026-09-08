@@ -1,0 +1,35 @@
+{
+  "project": "Forkline: Rehearse the Rollback",
+  "project_id": 1420801,
+  "project_slug": "forkline-rehearse-the-rollback",
+  "challenge_slug": "3rd-web-hack",
+  "registration_id": 3156197,
+  "team": "solo",
+  "submission_id": 1174608,
+  "status": "Submitted",
+  "submitted_at": "2026-09-07T20:39:03.727-04:00",
+  "submitted_at_utc": "2026-09-08T00:39:03.727Z",
+  "readback": {
+    "project_state": "published",
+    "hackathon_submitted_at": "2026-09-07T20:39:03.727-04:00",
+    "video_url": "https://www.youtube.com/watch?v=KzO3ZU10gOU"
+  },
+  "entry_url": "https://devpost.com/software/forkline-rehearse-the-rollback",
+  "app_url": "https://6a9f4f83a0214d00086f1617--josephm.netlify.app/",
+  "source_url": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/forkline-20260908",
+  "pitch_url": "https://6a9f4f83a0214d00086f1617--josephm.netlify.app/pitch.html",
+  "verification_run": "https://github.com/josepha-mayo/Joseph-Portfolio/actions/runs/34173886456",
+  "verification": {
+    "current_engine_tests": 49,
+    "release_local_evm_checks": 9,
+    "current_local_browser_workflows": 18,
+    "current_public_browser_workflows": 18,
+    "public_demo_seconds": 107.9,
+    "content_security_policy_bypassed": false,
+    "scope": "Internal software checks and executed local-EVM fixtures, not independent certification or measured customer benefit."
+  },
+  "source_archive_note": "The public source.zip preserves the original tested release. The current branch additionally contains tests/browser_csp.py and later public verification evidence. Runtime files are unchanged.",
+  "privacy": "Registration contact information is intentionally omitted from public source and evidence.",
+  "award_status": "No prize or payment is established by this submission confirmation.",
+  "portfolio": "This is an isolated project branch. Do not merge it into the production portfolio."
+}

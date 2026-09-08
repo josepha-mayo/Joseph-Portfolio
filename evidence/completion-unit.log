@@ -1,0 +1,304 @@
+TAP version 13
+# Subtest: read does not change state
+ok 1 - read does not change state
+  ---
+  duration_ms: 2.921399
+  type: 'test'
+  ...
+# Subtest: three blocks are required including inclusion
+ok 2 - three blocks are required including inclusion
+  ---
+  duration_ms: 1.976122
+  type: 'test'
+  ...
+# Subtest: early delivery rejected
+ok 3 - early delivery rejected
+  ---
+  duration_ms: 0.883306
+  type: 'test'
+  ...
+# Subtest: stale head cannot authorize delivery
+ok 4 - stale head cannot authorize delivery
+  ---
+  duration_ms: 0.487771
+  type: 'test'
+  ...
+# Subtest: duplicate delivery is not counted twice
+ok 5 - duplicate delivery is not counted twice
+  ---
+  duration_ms: 0.463685
+  type: 'test'
+  ...
+# Subtest: orphan before delivery is not irreversible debt
+ok 6 - orphan before delivery is not irreversible debt
+  ---
+  duration_ms: 0.314204
+  type: 'test'
+  ...
+# Subtest: deep reorg latches and preserves irreversible delivery
+ok 7 - deep reorg latches and preserves irreversible delivery
+  ---
+  duration_ms: 0.665194
+  type: 'test'
+  ...
+# Subtest: restored session recomputes all outcomes
+ok 8 - restored session recomputes all outcomes
+  ---
+  duration_ms: 1.362655
+  type: 'test'
+  ...
+# Subtest: saved file cannot inject ready state
+ok 9 - saved file cannot inject ready state
+  ---
+  duration_ms: 0.600828
+  type: 'test'
+  ...
+# Subtest: future delivery history rejected
+ok 10 - future delivery history rejected
+  ---
+  duration_ms: 0.591335
+  type: 'test'
+  ...
+# Subtest: history units cannot disagree with replay
+ok 11 - history units cannot disagree with replay
+  ---
+  duration_ms: 0.532778
+  type: 'test'
+  ...
+# Subtest: trace input is copied
+ok 12 - trace input is copied
+  ---
+  duration_ms: 0.187948
+  type: 'test'
+  ...
+# Subtest: unknown scenario rejected
+ok 13 - unknown scenario rejected
+  ---
+  duration_ms: 0.194938
+  type: 'test'
+  ...
+# Subtest: invalid version rejected atomically
+ok 14 - invalid version rejected atomically
+  ---
+  duration_ms: 0.129271
+  type: 'test'
+  ...
+# Subtest: invalid emitter rejected atomically
+ok 15 - invalid emitter rejected atomically
+  ---
+  duration_ms: 0.118805
+  type: 'test'
+  ...
+# Subtest: invalid duplicate block rejected atomically
+ok 16 - invalid duplicate block rejected atomically
+  ---
+  duration_ms: 0.1212
+  type: 'test'
+  ...
+# Subtest: invalid event block rejected atomically
+ok 17 - invalid event block rejected atomically
+  ---
+  duration_ms: 0.111544
+  type: 'test'
+  ...
+# Subtest: invalid broken parent rejected atomically
+ok 18 - invalid broken parent rejected atomically
+  ---
+  duration_ms: 0.122441
+  type: 'test'
+  ...
+# Subtest: invalid height rejected atomically
+ok 19 - invalid height rejected atomically
+  ---
+  duration_ms: 0.122501
+  type: 'test'
+  ...
+# Subtest: invalid negative units rejected atomically
+ok 20 - invalid negative units rejected atomically
+  ---
+  duration_ms: 0.131875
+  type: 'test'
+  ...
+# Subtest: invalid zero units rejected atomically
+ok 21 - invalid zero units rejected atomically
+  ---
+  duration_ms: 0.118506
+  type: 'test'
+  ...
+# Subtest: invalid numeric units rejected atomically
+ok 22 - invalid numeric units rejected atomically
+  ---
+  duration_ms: 0.10146
+  type: 'test'
+  ...
+# Subtest: invalid invalid account rejected atomically
+ok 23 - invalid invalid account rejected atomically
+  ---
+  duration_ms: 0.100759
+  type: 'test'
+  ...
+# Subtest: invalid missing anchor rejected atomically
+ok 24 - invalid missing anchor rejected atomically
+  ---
+  duration_ms: 0.118486
+  type: 'test'
+  ...
+# Subtest: invalid anchor events rejected atomically
+ok 25 - invalid anchor events rejected atomically
+  ---
+  duration_ms: 0.145385
+  type: 'test'
+  ...
+# Subtest: invalid duplicate log rejected atomically
+ok 26 - invalid duplicate log rejected atomically
+  ---
+  duration_ms: 0.137253
+  type: 'test'
+  ...
+# Subtest: invalid unknown head rejected atomically
+ok 27 - invalid unknown head rejected atomically
+  ---
+  duration_ms: 0.212834
+  type: 'test'
+  ...
+# Subtest: invalid duplicate scenario rejected atomically
+ok 28 - invalid duplicate scenario rejected atomically
+  ---
+  duration_ms: 0.178084
+  type: 'test'
+  ...
+# Subtest: invalid long note rejected atomically
+ok 29 - invalid long note rejected atomically
+  ---
+  duration_ms: 0.166957
+  type: 'test'
+  ...
+# Subtest: invalid threshold 0
+ok 30 - invalid threshold 0
+  ---
+  duration_ms: 0.260475
+  type: 'test'
+  ...
+# Subtest: invalid threshold 13
+ok 31 - invalid threshold 13
+  ---
+  duration_ms: 0.170592
+  type: 'test'
+  ...
+# Subtest: invalid threshold 1.5
+ok 32 - invalid threshold 1.5
+  ---
+  duration_ms: 0.163092
+  type: 'test'
+  ...
+# Subtest: invalid threshold -1
+ok 33 - invalid threshold -1
+  ---
+  duration_ms: 0.143202
+  type: 'test'
+  ...
+# Subtest: invalid threshold NaN
+ok 34 - invalid threshold NaN
+  ---
+  duration_ms: 0.12854
+  type: 'test'
+  ...
+# Subtest: invalid threshold 3
+ok 35 - invalid threshold 3
+  ---
+  duration_ms: 0.126657
+  type: 'test'
+  ...
+# Subtest: confirmation policy 1
+ok 36 - confirmation policy 1
+  ---
+  duration_ms: 0.267576
+  type: 'test'
+  ...
+# Subtest: confirmation policy 2
+ok 37 - confirmation policy 2
+  ---
+  duration_ms: 0.249919
+  type: 'test'
+  ...
+# Subtest: confirmation policy 3
+ok 38 - confirmation policy 3
+  ---
+  duration_ms: 0.200707
+  type: 'test'
+  ...
+# Subtest: confirmation policy 4
+ok 39 - confirmation policy 4
+  ---
+  duration_ms: 0.471967
+  type: 'test'
+  ...
+# Subtest: confirmation policy 5
+ok 40 - confirmation policy 5
+  ---
+  duration_ms: 0.269339
+  type: 'test'
+  ...
+# Subtest: confirmation policy 6
+ok 41 - confirmation policy 6
+  ---
+  duration_ms: 0.770259
+  type: 'test'
+  ...
+# Subtest: confirmation policy 7
+ok 42 - confirmation policy 7
+  ---
+  duration_ms: 0.181489
+  type: 'test'
+  ...
+# Subtest: confirmation policy 8
+ok 43 - confirmation policy 8
+  ---
+  duration_ms: 0.146957
+  type: 'test'
+  ...
+# Subtest: confirmation policy 9
+ok 44 - confirmation policy 9
+  ---
+  duration_ms: 0.142781
+  type: 'test'
+  ...
+# Subtest: confirmation policy 10
+ok 45 - confirmation policy 10
+  ---
+  duration_ms: 0.139807
+  type: 'test'
+  ...
+# Subtest: confirmation policy 11
+ok 46 - confirmation policy 11
+  ---
+  duration_ms: 0.137202
+  type: 'test'
+  ...
+# Subtest: confirmation policy 12
+ok 47 - confirmation policy 12
+  ---
+  duration_ms: 0.174458
+  type: 'test'
+  ...
+# Subtest: duplicate business orders conflict
+ok 48 - duplicate business orders conflict
+  ---
+  duration_ms: 0.349487
+  type: 'test'
+  ...
+# Subtest: loss of confirmations latches even if event survives
+ok 49 - loss of confirmations latches even if event survives
+  ---
+  duration_ms: 0.489965
+  type: 'test'
+  ...
+1..49
+# tests 49
+# suites 0
+# pass 49
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 113.818766
