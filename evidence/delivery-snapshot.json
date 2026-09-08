@@ -1,0 +1,251 @@
+{
+  "kind": "recorded-execution-snapshot",
+  "scope": "Editable observer report, not authenticated evidence of real-world delivery.",
+  "state": {
+    "guard": {
+      "policy": "guarded",
+      "head": {
+        "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+        "number": 2
+      },
+      "cursor": 4,
+      "remaining": 3,
+      "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+      "eligible": [],
+      "rows": [
+        {
+          "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+          "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+          "depth": 0,
+          "status": "orphaned"
+        },
+        {
+          "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+          "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+          "depth": 1,
+          "status": "waiting"
+        }
+      ],
+      "outbox": [
+        {
+          "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+          "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+          "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+          "state": "blocked",
+          "reason": "Supporting event no longer meets the observed-head policy",
+          "attempts": 0
+        }
+      ],
+      "receipts": [],
+      "incidents": [],
+      "paused": false,
+      "audit": [
+        {
+          "seq": 1,
+          "action": "head",
+          "detail": {
+            "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+            "cursor": 0
+          }
+        },
+        {
+          "seq": 2,
+          "action": "head",
+          "detail": {
+            "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+            "cursor": 1
+          }
+        },
+        {
+          "seq": 3,
+          "action": "head",
+          "detail": {
+            "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+            "cursor": 2
+          }
+        },
+        {
+          "seq": 4,
+          "action": "head",
+          "detail": {
+            "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+            "cursor": 3
+          }
+        },
+        {
+          "seq": 5,
+          "action": "enqueue",
+          "detail": {
+            "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+            "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+            "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+          }
+        },
+        {
+          "seq": 6,
+          "action": "dispatch-hold",
+          "detail": {
+            "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+            "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+          }
+        },
+        {
+          "seq": 7,
+          "action": "head",
+          "detail": {
+            "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+            "cursor": 4
+          }
+        }
+      ],
+      "tickets": []
+    },
+    "naive": {
+      "policy": "enqueue-only",
+      "head": {
+        "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+        "number": 2
+      },
+      "cursor": 4,
+      "remaining": 3,
+      "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+      "eligible": [],
+      "rows": [
+        {
+          "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+          "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+          "depth": 0,
+          "status": "orphaned"
+        },
+        {
+          "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+          "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+          "depth": 1,
+          "status": "waiting"
+        }
+      ],
+      "outbox": [
+        {
+          "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+          "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+          "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+          "state": "acknowledged",
+          "reason": "Receipt persisted; action cannot be undone by a reorg",
+          "attempts": 1
+        }
+      ],
+      "receipts": [
+        {
+          "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+          "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+          "ticket": "LAB-4af990bdd428c3bc"
+        }
+      ],
+      "incidents": [
+        {
+          "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+          "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+          "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+        }
+      ],
+      "paused": true,
+      "audit": [
+        {
+          "seq": 1,
+          "action": "head",
+          "detail": {
+            "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+            "cursor": 0
+          }
+        },
+        {
+          "seq": 2,
+          "action": "head",
+          "detail": {
+            "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+            "cursor": 1
+          }
+        },
+        {
+          "seq": 3,
+          "action": "head",
+          "detail": {
+            "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+            "cursor": 2
+          }
+        },
+        {
+          "seq": 4,
+          "action": "head",
+          "detail": {
+            "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+            "cursor": 3
+          }
+        },
+        {
+          "seq": 5,
+          "action": "enqueue",
+          "detail": {
+            "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+            "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+            "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+          }
+        },
+        {
+          "seq": 6,
+          "action": "head",
+          "detail": {
+            "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+            "cursor": 4
+          }
+        },
+        {
+          "seq": 7,
+          "action": "send-intent",
+          "detail": {
+            "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+            "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+          }
+        },
+        {
+          "seq": 8,
+          "action": "acknowledge",
+          "detail": {
+            "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+            "ticket": "LAB-4af990bdd428c3bc"
+          }
+        },
+        {
+          "seq": 9,
+          "action": "incident",
+          "detail": {
+            "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+            "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+            "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+          }
+        }
+      ],
+      "tickets": [
+        {
+          "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+          "payload": {
+            "chainId": "31337",
+            "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+            "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+            "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+            "units": "1"
+          },
+          "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+          "ticket": "LAB-4af990bdd428c3bc",
+          "orphaned": true
+        }
+      ]
+    },
+    "last": [
+      {
+        "lane": "both",
+        "result": "Reopened the existing SQLite files. Receiver ledger retained."
+      }
+    ]
+  }
+}

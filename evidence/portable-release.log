@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/delivery-release.py", line 15, in <module>
+    run('original-browser',['python','tests/browser.py']);run('delivery-browser',['python','tests/delivery_browser.py']);report['original_browser']=json.loads((E/'browser.json').read_text())['count'];report['delivery_browser']=json.loads((E/'delivery-browser.json').read_text())['count']
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/delivery-release.py", line 9, in run
+    if p.returncode:raise RuntimeError(name+': '+p.stdout[-2000:])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: delivery-browser: Traceback (most recent call last):
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tests/delivery_browser.py", line 26, in <module>
+    page.set_viewport_size({'width':390,'height':844});ok('No page-wide overflow at 390 pixels',page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'));page.screenshot(path=str(E/'delivery-mobile.png'),full_page=True)
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tests/delivery_browser.py", line 8, in ok
+    assert condition,name
+           ^^^^^^^^^
+AssertionError: No page-wide overflow at 390 pixels
+

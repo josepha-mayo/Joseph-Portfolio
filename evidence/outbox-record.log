@@ -1,0 +1,7 @@
+
+> forkline-rehearsal@0.1.0 outbox:record
+> node tools/outbox-record.mjs
+
+(node:6314) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"status":"passed","cases":2,"files":"evidence/outbox-databases"}
