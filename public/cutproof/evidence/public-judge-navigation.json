@@ -1,0 +1,82 @@
+{
+  "url": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/judge.html",
+  "status": 200,
+  "title": "CutProof | Keep the context. Cut the rest.",
+  "links": [
+    {
+      "text": "Open the working studio \u2192",
+      "href": "/cutproof/",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/"
+    },
+    {
+      "text": "Watch the walkthrough",
+      "href": "#demo",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/judge.html#demo"
+    },
+    {
+      "text": "Download complete source",
+      "href": "source.zip",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/source.zip"
+    },
+    {
+      "text": "Open the MP4 directly",
+      "href": "demo.mp4",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/demo.mp4"
+    },
+    {
+      "text": "Inspect an actual rendered clip \u2192",
+      "href": "examples/rendered/clip-01.mp4",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/examples/rendered/clip-01.mp4"
+    },
+    {
+      "text": "CI result",
+      "href": "evidence/ci-result.json",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/ci-result.json"
+    },
+    {
+      "text": "JavaScript tests",
+      "href": "evidence/core-tests.txt",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/core-tests.txt"
+    },
+    {
+      "text": "Renderer checks",
+      "href": "evidence/renderer-tests.txt",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/renderer-tests.txt"
+    },
+    {
+      "text": "Browser exports and rendering",
+      "href": "evidence/browser-tests.json",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/browser-tests.json"
+    },
+    {
+      "text": "Review workflow tests",
+      "href": "evidence/workflow-browser-tests.json",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/workflow-browser-tests.json"
+    },
+    {
+      "text": "Decoded media checks",
+      "href": "evidence/media-verification.json",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/media-verification.json"
+    },
+    {
+      "text": "Known misses and false alarms",
+      "href": "evidence/context-diagnostics.json",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/evidence/context-diagnostics.json"
+    },
+    {
+      "text": "Release hashes",
+      "href": "release-files.json",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/release-files.json"
+    },
+    {
+      "text": "Open the exact GitHub source directory",
+      "href": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/cutproof-entry-preview-20260906/public/cutproof",
+      "resolved": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/cutproof-entry-preview-20260906/public/cutproof"
+    },
+    {
+      "text": "Try CutProof \u2192",
+      "href": "/cutproof/",
+      "resolved": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/"
+    }
+  ]
+}

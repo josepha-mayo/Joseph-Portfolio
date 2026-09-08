@@ -1,0 +1,3 @@
+Rendered clip-01.mp4: 33.400s, 720x1280
+Rendered clip-02.mp4: 32.900s, 720x1280
+Rendered clip-03.mp4: 30.500s, 720x1280

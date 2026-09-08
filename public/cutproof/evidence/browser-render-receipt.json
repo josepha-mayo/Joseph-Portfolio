@@ -1,0 +1,12 @@
+{
+  "app": "CutProof 1.1.0",
+  "clip_id": "clip-01",
+  "mime": "video/webm;codecs=vp8,opus",
+  "bytes": 286773,
+  "source_start_ms": 0,
+  "source_end_ms": 5141,
+  "wall_seconds": 5.31,
+  "audio_track_attached": true,
+  "review_status": "pending",
+  "limitation": "Real-time browser capture. Encoded duration and audio content have not been independently verified by the app."
+}
