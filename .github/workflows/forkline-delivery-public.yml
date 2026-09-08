@@ -1,0 +1,43 @@
+name: Forkline Delivery Lab anonymous verification
+on:
+  push:
+    branches: [forkline-outbox-20260908]
+    paths: [OUTBOX_PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: forkline-delivery-public-verification
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/forkline-outbox-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Install anonymous browser and media verifier
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/forkline-public
+          /tmp/forkline-public/bin/pip -q install playwright==1.55.0
+          /tmp/forkline-public/bin/python -m playwright install --with-deps chromium
+      - name: Verify served assets, both public browser suites, source and demonstration
+        run: /tmp/forkline-public/bin/python tools/delivery_public_check.py
+      - name: Preserve actual public-origin results on the isolated branch
+        if: always()
+        run: |
+          git config user.name 'Forkline Public Verification'
+          git config user.email 'forkline-build@users.noreply.github.com'
+          git add evidence/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual anonymous Delivery Lab verification results'
+          git push origin HEAD:forkline-outbox-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: forkline-delivery-public-evidence
+          path: evidence/
+          retention-days: 14
