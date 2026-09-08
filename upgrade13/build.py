@@ -50,6 +50,8 @@ text=text[:pos]+json.dumps(renderer,ensure_ascii=False).replace('</script','<\\/
 assert '<script src="desk.js"></script>' in text
 text=text.replace('<script src="desk.js"></script>','<script src="desk.js"></script><script src="binding.js"></script><script src="source-lock.js"></script>',1)
 text=text.replace('CutProof 1.2','CutProof 1.3').replace('1.2.0','1.3.0')
+assert text.count('No external requests from the app')==1
+text=text.replace('No external requests from the app','Optional models download after consent; media stays local')
 (OUT/'index.html').write_text(text);(OUT/'render.py').write_text(renderer)
 for src,target in [('binding.cjs','binding.js'),('source-lock.js','source-lock.js')]:shutil.copy2(U/src,OUT/target)
 (OUT/'source-lock').mkdir(exist_ok=True)
@@ -64,6 +66,8 @@ An additive upgrade to the existing CutProof project, not a separate hackathon e
 The edit-bundle ZIP and manifest export now compute SHA-256 from the attached media bytes and store both its digest and byte count. The native Python/FFmpeg renderer validates a v1.3 source lock before creating output files. A different file with the same name or duration is rejected. The Source Lock panel can compare an exported manifest with a newly attached local file. Matching never approves a clip; existing review-reset rules still apply.
 
 An export captures the current transcript, cuts, review states and media reference. Source or editing-state changes while hashing abort the export rather than producing a mixed-state package. The hash path supports cancellation and enforces a 120 MB limit. Caption-only SRT export remains available without media. Speech transcription and comparison are unchanged from v1.2 and still require explicit model-download consent.
+
+The inherited footer's blanket no-external-requests wording has been corrected: the optional speech model downloads after explicit consent. Media is not uploaded. The earlier v1.2 walkthrough is retained as historical footage of that version, not a claim that optional model downloads are absent.
 
 ## Run
 
@@ -88,5 +92,5 @@ The base v1.2 archive is pinned to SHA-256 `01f40317e30b078687f25823b89f3d31b213
 Source Lock was developed with substantial AI assistance on September 8, 2026 during the existing contest window. Original code is MIT licensed. The optional model and narration dependencies retain their existing licenses. The demo uses disclosed stock Kokoro synthetic narration, not a cloned person's voice. No real customer media or private information is used in tests. No new consensus, cryptographic algorithm or independent security audit is claimed.
 '''
 (OUT/'README.md').write_text(readme)
-(OUT/'evidence/provenance.json').write_text(json.dumps({'base_sha256':hashlib.sha256(base.read_bytes()).hexdigest(),'base_url':'https://6a9df3894e5c0f00082deec8--josephm.netlify.app/cutproof/v12/source.zip','new_files':['binding.js','source-lock.js'],'restored_original_srt_sha256':fixture_sha,'renderer_change':'validate source lock version, hash and byte count before encoding','base_asr_changed':False,'created_at':'2026-09-08'},indent=2))
+(OUT/'evidence/provenance.json').write_text(json.dumps({'base_sha256':hashlib.sha256(base.read_bytes()).hexdigest(),'base_url':'https://6a9df3894e5c0f00082deec8--josephm.netlify.app/cutproof/v12/source.zip','new_files':['binding.js','source-lock.js'],'restored_original_srt_sha256':fixture_sha,'renderer_change':'validate source lock version, hash and byte count before encoding','base_asr_changed':False,'network_notice':'Corrected to disclose optional external model downloads after consent. No media uploads.','created_at':'2026-09-08'},indent=2))
 print(OUT)
