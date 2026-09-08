@@ -8,6 +8,7 @@ from pypdf import PdfReader
 from PIL import Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'public/cutproof/ai-builders';EV=OUT/'evidence';EV.mkdir(exist_ok=True)
+APP='https://6a9f79eb04c6ca0008aa89b2--josephm.netlify.app/cutproof/v13/'
 EXPECTED={'pitch.html':'3ee2d93fd4a203fb6330dc51bce6f3d604d5774f9beb930a4947584e22be2666','pitch.css':'763407c26b907c33c1c13c3e0fe30c8bbf99e283e4dd5e54acfe29d2b7461afd','../v13/evidence/speech-check.png':'c6e390e0389d1520e4a806115bd6e528356411e8d1501cba5e1579c409db07bc','../v13/evidence/source-mismatch.png':'1484e0b9a6716e63ebc3b06405c6dbc38a63f6b1407ae8fbadee82089af90484'}
 TITLES=['Keep the context.','Three errors','Ask the audio,','The edit plan','AI proposes.','A working system,','Validate usefulness','One recording.']
 public='--public' in sys.argv
@@ -32,17 +33,25 @@ try:
   if public:
    base=(ROOT/'PITCH_PUBLIC_URL').read_text().strip().rstrip('/');parsed=urlsplit(base)
    assert parsed.scheme=='https' and parsed.hostname.endswith('--josephm.netlify.app') and parsed.path=='/cutproof/ai-builders' and not parsed.username
-   report.update(origin=base,authentication='none')
+   report.update(origin=base,authentication='none',files=[])
    manifest=json.loads((OUT/'release-files.json').read_text())
    for name,meta in manifest.items():
-    data=read_url(base+'/'+name);assert len(data)==meta['bytes'] and digest(data)==meta['sha256'],name
-   report['checks'].append('Every published presentation file is byte-identical to the reviewed build.')
+    data=read_url(base+'/'+name);exact=len(data)==meta['bytes'] and digest(data)==meta['sha256']
+    if not exact:
+     assert name=='pitch.html',name
+     expected=(OUT/name).read_bytes();before=('href="'+APP+'index.html"').encode();after=("href='"+APP+"'").encode()
+     assert expected.count(before)==2
+     assert data==expected.replace(before,after),'Unexpected HTML transformation'
+     assert digest(data)=='352d69f0c604e1607db0d5769cd7c877cbf537b3021167a78bc263b96245d83c'
+     report['html_transformation']='Only the two app index.html links and their quote delimiters changed, exactly as recorded in html-diff.json.'
+    report['files'].append({'name':name,'bytes':len(data),'sha256':digest(data),'byte_identical':exact})
+   report['checks'].append('Published PDF and CSS are byte-identical; HTML differs only by the two recorded app-link rewrites.')
    data=read_url(base+'/CutProof-pitch.pdf');report['pdf_pages']=pdf_check(data)
    page.goto(base+'/pitch.html',wait_until='networkidle')
-   app='https://6a9f79eb04c6ca0008aa89b2--josephm.netlify.app/cutproof/v13/'
    for name in ['index.html','source.zip','demo.mp4']:
-    data=read_url(app+name);assert data==(ROOT/'public/cutproof/v13'/name).read_bytes(),name
-   report['checks'].append('The existing immutable app document, source ZIP and demo still match the verified v1.3 release; no new runtime tests are claimed.')
+    data=read_url(APP+name);assert data==(ROOT/'public/cutproof/v13'/name).read_bytes(),name
+   assert read_url(APP)==(ROOT/'public/cutproof/v13/index.html').read_bytes()
+   report['checks'].append('The rewritten app destination works. The existing app document, source ZIP and demo still match the verified v1.3 release; no new runtime tests are claimed.')
   else:
    html=(OUT/'pitch.html').read_text().replace('<link rel="stylesheet" href="pitch.css">','<style>'+(OUT/'pitch.css').read_text()+'</style>')
    html=re.sub(r'src="(\.\./v13/[^\"]+)"',lambda m:'src="data:image/png;base64,'+base64.b64encode((OUT/m[1]).read_bytes()).decode()+'"',html)
