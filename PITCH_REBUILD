@@ -1,0 +1,1 @@
+Public check 2: preserve strict PDF/CSS hashes; accept only the two recorded app index-link and quote rewrites in the served HTML. Verify the rewritten app destination, all eight pages and both actual screenshots. No runtime changes or security policy bypasses.
