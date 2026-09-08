@@ -1,6 +1,6 @@
 # Counterstep: repair and transfer record
 
-Focus: Distribute to every term. Selection: neural suggestion. Exercise seed: 786665.
+Focus: Distribute to every term. Selection: neural suggestion. Exercise seed: 774628.
 
 ## Original work
 
@@ -51,24 +51,24 @@ Check: repaired. The repaired chain preserves the original solution and isolates
 Status: Completed with help
 Help requested on this card: hint, reveal.
 
-Question: 2(x + 3) = 12
+Question: 5(x + 3) = 55
 Requested operation: Expand the bracket. Keep all terms and do not solve for x yet.
 
 Response 1:
 ~~~
-x=3
+x=8
 ~~~
 Check: different_operation. Same solution set, but not the requested step. Complete the operation above, rather than copying the question or jumping ahead.
 
 Response 2:
 ~~~
-2(x + 3) = 12
+5(x + 3) = 55
 ~~~
 Check: different_operation. Same solution set, but not the requested step. Complete the operation above, rather than copying the question or jumping ahead.
 
 Response 3:
 ~~~
-2x + 6 = 12
+5x + 15 = 55
 ~~~
 Check: requested_step. The requested form is correct, and the solution set is preserved.
 
@@ -77,12 +77,12 @@ Check: requested_step. The requested form is correct, and the solution set is pr
 Status: Correct on first response, no help on this card
 Help requested on this card: none.
 
-Question: 48 = 3(3x - 2)
+Question: 36 = 6(3x - 6)
 Requested operation: Expand the bracket on the right. Do not solve for x yet.
 
 Response 1:
 ~~~
-48 = 9x - 6
+36 = 18x - 36
 ~~~
 Check: requested_step. The requested form is correct, and the solution set is preserved.
 

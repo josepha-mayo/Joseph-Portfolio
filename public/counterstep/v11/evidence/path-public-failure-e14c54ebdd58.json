@@ -1,0 +1,106 @@
+{
+  "status": "failed",
+  "origin": "https://6aa073243da07a000888d692--josephm.netlify.app/counterstep/v11/path.html",
+  "authentication": "none",
+  "files": [
+    {
+      "name": "index.html",
+      "bytes": 70234,
+      "sha256": "db1f21d63dbf2a5af51463bf9699b2a28252e63cc86972a07c974115547f090a",
+      "byte_identical": true
+    },
+    {
+      "name": "path.html",
+      "bytes": 77131,
+      "sha256": "9cf45eee75bcf50b033d64904f8b2219157ee77650ae28a07e08281dcce85c9a",
+      "byte_identical": false
+    },
+    {
+      "name": "judge.html",
+      "bytes": 3228,
+      "sha256": "2d22a6a5aa86b9a863690450bf90c4f11eaae0895f8b3b4804bd49f0be3c54ff",
+      "byte_identical": false
+    },
+    {
+      "name": "src/core.js",
+      "bytes": 10035,
+      "sha256": "bbb1c78f2b77a6ab9ec47792b41bdec842c703c5ebf08014a5c53b80d072e1ff",
+      "byte_identical": true
+    },
+    {
+      "name": "src/model.json",
+      "bytes": 35679,
+      "sha256": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381",
+      "byte_identical": true
+    },
+    {
+      "name": "src/path.js",
+      "bytes": 11402,
+      "sha256": "cd8d44ee7a9e42c86a020cd92c421a87f2cbba7a11a0afe1fa704db73fd9243e",
+      "byte_identical": true
+    },
+    {
+      "name": "src/path-ui.js",
+      "bytes": 7226,
+      "sha256": "8cd57dced69f131d86130305de73c9b8245526aa6988be5eaec75940b35843e0",
+      "byte_identical": true
+    },
+    {
+      "name": "README.md",
+      "bytes": 7390,
+      "sha256": "de044f3e09b2d98e97b5c8fd0eab89500eff7f5bce6f375693e5a40323566b6a",
+      "byte_identical": true
+    },
+    {
+      "name": "LICENSE",
+      "bytes": 1070,
+      "sha256": "89b9d331b10ad9800a20868e2b0aa13f21cd121813f204ce5a09c3726fad27f1",
+      "byte_identical": true
+    },
+    {
+      "name": "demo.mp4",
+      "bytes": 4241481,
+      "sha256": "1d57811fa3ccd8acdcf6b443b386c44de2574b478576a19345bc8bf8e0ca7c1a",
+      "byte_identical": true
+    },
+    {
+      "name": "demo-transcript.md",
+      "bytes": 1350,
+      "sha256": "8df9cb93c6cf91d5c014b78df56ab0a3b4a8ae6f16e3296f7b3db4a6b3673bb5",
+      "byte_identical": true
+    },
+    {
+      "name": "source.zip",
+      "bytes": 2549982,
+      "sha256": "666a0adf76468fee1c70ece106916c3cdc7d8945cbf9947be9168c24e339117d",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/path-release.json",
+      "bytes": 1690,
+      "sha256": "3454f669638f9c0e0a566bc375c456a76e5c5561dc9d5fe08fc35be73cabef98",
+      "byte_identical": true
+    }
+  ],
+  "started_at": "2026-09-08T20:49:43.423486+00:00",
+  "rewritten_destinations": [
+    {
+      "path": "/counterstep/v11/",
+      "matches_page": "index.html",
+      "scripts_styles_identical": true
+    },
+    {
+      "path": "/counterstep/v11/path",
+      "matches_page": "path.html",
+      "scripts_styles_identical": true
+    },
+    {
+      "path": "/counterstep/v11/judge",
+      "matches_page": "judge.html",
+      "scripts_styles_identical": true
+    }
+  ],
+  "error": "('classic', 'Traceback (most recent call last):\\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/counterstep/v11/tests/browser.py\", line 14, in <module>\\n    assert page.locator(\\'#export\\').is_disabled();ok(\\'No session export before a current audit\\')\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/sync_api/_generated.py\", line 17082, in is_disabled\\n    self._sync(self._impl_obj.is_disabled(timeout=timeout))\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_sync_base.py\", line 115, in _sync\\n    return task.result()\\n           ^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_locator.py\", line 482, in is_disabled\\n    return await self._frame.is_disabled(\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_frame.py\", line 384, in is_disabled\\n    return await self._channel.send(\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 69, in send\\n    return await self._connection.wrap_api_call(\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 558, in wrap_api_call\\n    raise rewrite_error(error, f\"{parsed_st[\\'apiName\\']}: {error}\") from None\\nplaywright._impl._errors.TimeoutError: Locator.is_disabled: Timeout 30000ms exceeded.\\nCall log:\\n  - waiting for locator(\"#export\")\\n\\n')",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/counterstep/v11/tools/path_public_check.py\", line 71, in <module>\n    p=subprocess.run([sys.executable,script],cwd=R,env={**os.environ,envname:target},stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180);(E/('public-'+name+'.log')).write_text(p.stdout);assert p.returncode==0,(name,p.stdout[-3000:])\n                                                                                                                                                                                                                    ^^^^^^^^^^^^^^^\nAssertionError: ('classic', 'Traceback (most recent call last):\\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/counterstep/v11/tests/browser.py\", line 14, in <module>\\n    assert page.locator(\\'#export\\').is_disabled();ok(\\'No session export before a current audit\\')\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/sync_api/_generated.py\", line 17082, in is_disabled\\n    self._sync(self._impl_obj.is_disabled(timeout=timeout))\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_sync_base.py\", line 115, in _sync\\n    return task.result()\\n           ^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_locator.py\", line 482, in is_disabled\\n    return await self._frame.is_disabled(\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_frame.py\", line 384, in is_disabled\\n    return await self._channel.send(\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 69, in send\\n    return await self._connection.wrap_api_call(\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/tmp/counterstep-public/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 558, in wrap_api_call\\n    raise rewrite_error(error, f\"{parsed_st[\\'apiName\\']}: {error}\") from None\\nplaywright._impl._errors.TimeoutError: Locator.is_disabled: Timeout 30000ms exceeded.\\nCall log:\\n  - waiting for locator(\"#export\")\\n\\n')\n",
+  "finished_at": "2026-09-08T20:50:35.292566+00:00"
+}

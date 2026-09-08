@@ -4,7 +4,7 @@
   "input": {
     "chain": "3(x + 2) = 12\n3x + 2 = 12\nx = 2",
     "requestedSkill": "auto",
-    "seed": 786665
+    "seed": 774628
   },
   "actions": [
     {
@@ -30,12 +30,12 @@
     {
       "stage": "warmup",
       "type": "answer",
-      "answer": "x=3"
+      "answer": "x=8"
     },
     {
       "stage": "warmup",
       "type": "answer",
-      "answer": "2(x + 3) = 12"
+      "answer": "5(x + 3) = 55"
     },
     {
       "stage": "warmup",
@@ -48,17 +48,17 @@
     {
       "stage": "warmup",
       "type": "answer",
-      "answer": "2x + 6 = 12"
+      "answer": "5x + 15 = 55"
     },
     {
       "stage": "transfer",
       "type": "answer",
-      "answer": "48 = 9x - 6"
+      "answer": "36 = 18x - 36"
     }
   ],
   "draft": {
     "phase": "complete",
     "text": ""
   },
-  "input_sha256": "bbb39e4ccf33e0b13008ee8880f100fc8961c957440fea9bb55f3d32b6074f99"
+  "input_sha256": "a84c84c913cefcca9ebec973a07a3f25b3875d46f4cac6913119de7113d98971"
 }
