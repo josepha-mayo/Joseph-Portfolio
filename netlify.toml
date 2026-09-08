@@ -1,0 +1,5 @@
+[build]
+command = "echo 'Serving the verified build; no runtime regeneration'"
+publish = "public"
+[build.processing]
+skip_processing = true

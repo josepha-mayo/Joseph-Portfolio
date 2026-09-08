@@ -1,0 +1,1 @@
+{"name":"trimwise-planner","version":"1.0.0","private":true,"description":"Python exact offcut-first cutting plans with a separate material ledger","license":"MIT","scripts":{"build":"python3 tools/build.py","test":"python3 -m unittest discover -s tests -v"},"dependencies":{"pyodide":"314.0.6"}}
