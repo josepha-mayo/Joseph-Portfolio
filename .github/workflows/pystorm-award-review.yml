@@ -1,0 +1,70 @@
+name: PyStorm public award and contact review
+on:
+  push:
+    branches: [pystorm-award-review-20260908]
+    paths: [.github/workflows/pystorm-award-review.yml]
+permissions:
+  contents: read
+jobs:
+  public-pages:
+    if: github.ref == 'refs/heads/pystorm-award-review-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Read public pages only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          from urllib.request import Request,urlopen
+          from datetime import datetime,timezone
+          import json,hashlib,re
+          out=Path('pystorm-public-review');out.mkdir()
+          class Page(HTMLParser):
+            def __init__(self):
+              super().__init__();self.text=[];self.links=[];self.active=None;self.ignore=0;self.contacts=[]
+            def handle_starttag(self,tag,attrs):
+              d=dict(attrs)
+              if tag in ('script','style'):self.ignore+=1
+              if tag=='a':
+                self.active={'attrs':d,'text':''};self.links.append(self.active)
+              if 'data-cfemail' in d:self.contacts.append(d['data-cfemail'])
+              if tag in ('p','div','h1','h2','h3','li','br'):self.text.append('\n')
+            def handle_endtag(self,tag):
+              if tag in ('script','style'):self.ignore=max(0,self.ignore-1)
+              if tag=='a':self.active=None
+              if tag in ('p','div','h1','h2','h3','li','br'):self.text.append('\n')
+            def handle_data(self,t):
+              if not self.ignore:
+                self.text.append(t)
+                if self.active is not None:self.active['text']+=t
+          urls={
+            'home':'https://pystorm.devpost.com/',
+            'gallery':'https://pystorm.devpost.com/project-gallery',
+            'trimwise':'https://devpost.com/software/trimwise-make-the-offcuts-count'
+          }
+          records=[]
+          for name,url in urls.items():
+            row={'name':name,'url':url,'at':datetime.now(timezone.utc).isoformat()}
+            try:
+              with urlopen(Request(url,headers={'User-Agent':'Mozilla/5.0 public contest review'}),timeout=35)as r:
+                data=r.read(3_000_001);row.update(status=r.status,final_url=r.url)
+              assert len(data)<=3_000_000
+              html=data.decode('utf-8');(out/(name+'.html')).write_text(html)
+              p=Page();p.feed(html)
+              text='\n'.join(line.strip()for line in ''.join(p.text).splitlines()if line.strip())
+              (out/(name+'.txt')).write_text(text)
+              for link in p.links:link['text']=' '.join(link['text'].split())
+              (out/(name+'-links.json')).write_text(json.dumps(p.links,indent=2))
+              row.update(sha256=hashlib.sha256(data).hexdigest(),emails=sorted(set(re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',html))),encoded_contacts=p.contacts)
+              print('\n=== '+name+' ===\n'+text[:24000])
+              print('RELEVANT LINKS:',json.dumps([l for l in p.links if any(x in (l['text']+' '+str(l['attrs'])).lower()for x in ['contact','organizer','manager','mailto','software/','winner'])],indent=2))
+            except Exception as e:row['error']=repr(e)
+            records.append(row)
+          (out/'source-record.json').write_text(json.dumps(records,indent=2));print(json.dumps(records,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pystorm-public-award-review
+          path: pystorm-public-review/
+          retention-days: 7
