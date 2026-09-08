@@ -1,0 +1,16 @@
+[
+  {
+    "suite": "tests/browser.py",
+    "original_sha256": "8591bd41f88b09f184881c6e81edb93de797297798ee59bc5f861817f24df702",
+    "scope": "Candidate document and public URL whitelist adapted; assertions unchanged.",
+    "exit": 0,
+    "count": 12
+  },
+  {
+    "suite": "upgrade02/browser.py",
+    "original_sha256": "600467a9bd81c83760f17f8b6a3b8549b2a671f83d99190f37ccd9a5cc586b15",
+    "scope": "Candidate document and public URL whitelist adapted; assertions unchanged.",
+    "exit": 0,
+    "count": 16
+  }
+]

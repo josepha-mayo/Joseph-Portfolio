@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "origin": "local generated document",
+  "checks": [
+    "Cannot freeze nonexistent plan",
+    "Freeze captures actual planner schedule",
+    "Forecast replay processes all hours through the real simulator",
+    "JSON report exports exact fixed starts and profile hash",
+    "Replay project is downloadable",
+    "Label change invalidates old exports",
+    "Failed replay does not move jobs or report false savings",
+    "Invalid CSV cannot preserve stale results",
+    "Reopening validates inputs and requires recomputation",
+    "Corrupt project leaves active work untouched",
+    "User markup remains inert",
+    "Planner edits synchronously invalidate frozen results",
+    "A new planning run cannot leave old replay approved",
+    "Replay workbench fits a 390-pixel screen",
+    "Import picker remains hidden until requested",
+    "No uncaught errors or third-party runtime requests"
+  ],
+  "count": 16,
+  "browser": "152.0.7977.0",
+  "errors": [],
+  "requests": [
+    "blob:null/5a91ee01-add1-4e72-aae2-6028d713c2f0",
+    "blob:null/7a208f07-dd6b-4a85-bdaa-11aa87d66f35",
+    "blob:null/be16b541-5474-4ac3-84f2-af735c26388e"
+  ]
+}

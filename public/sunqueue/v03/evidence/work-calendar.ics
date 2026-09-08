@@ -1,0 +1,47 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SunQueue//Shift Sheet 0.3//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:f0e2a852e148bdf8ffa412ec1e940d92a950e4af772e81345ba2804c219fba53@sunque
+ ue.local
+DTSTAMP:20260908T194532Z
+DTSTART:20260909T090000Z
+DTEND:20260909T110000Z
+SUMMARY:Tentative: Model evaluation
+DESCRIPTION:SunQueue manual work plan. 650 W\; 2 hours. Planned 2026-09-09 
+ 10:00 to 2026-09-09 12:00 UTC+01:00. Verify current conditions before star
+ ting. Not a completed job or a power controller. Delete old calendar entri
+ es when replacing a plan\; this file does not synchronize them.
+STATUS:TENTATIVE
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:fc85f2c9b10ca55bf07f88460c3233449c046905ea70e15a70664898be514a1e@sunque
+ ue.local
+DTSTAMP:20260908T194532Z
+DTSTART:20260909T110000Z
+DTEND:20260909T140000Z
+SUMMARY:Tentative: Training experiment
+DESCRIPTION:SunQueue manual work plan. 850 W\; 3 hours. Planned 2026-09-09 
+ 12:00 to 2026-09-09 15:00 UTC+01:00. Verify current conditions before star
+ ting. Not a completed job or a power controller. Delete old calendar entri
+ es when replacing a plan\; this file does not synchronize them.
+STATUS:TENTATIVE
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:955231675b41fd7d5f920cfa745de103fa4e82519437e37d1253c106e403c570@sunque
+ ue.local
+DTSTAMP:20260908T194532Z
+DTSTART:20260909T140000Z
+DTEND:20260909T150000Z
+SUMMARY:Tentative: Dataset processing
+DESCRIPTION:SunQueue manual work plan. 400 W\; 1 hours. Planned 2026-09-09 
+ 15:00 to 2026-09-09 16:00 UTC+01:00. Verify current conditions before star
+ ting. Not a completed job or a power controller. Delete old calendar entri
+ es when replacing a plan\; this file does not synchronize them.
+STATUS:TENTATIVE
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
