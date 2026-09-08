@@ -39,7 +39,13 @@ try:
     duration=float(meta['format']['duration']); assert 40<duration<240
     pcm=subprocess.check_output(['ffmpeg','-v','error','-i',str(media),'-vn','-ar','8000','-ac','1','-f','s16le','-'])
     samples=array.array('h',pcm); rms=math.sqrt(sum((x/32768)**2 for x in samples)/len(samples)); assert rms>.001
-    subprocess.run(['python','tests/browser.py'],cwd=R,env={**os.environ,'FORKLINE_URL':base},check=True,timeout=180)
+    # The frozen source stays byte-identical. Only the automation wait mechanism changes.
+    # browser_csp.py retains and checks the same 18 named assertions, without bypassing CSP.
+    result=subprocess.run(['python','tests/browser_csp.py'],cwd=R,env={**os.environ,'FORKLINE_URL':base},capture_output=True,text=True,timeout=180)
+    (E/'public-browser.log').write_text(result.stdout+'\n'+result.stderr)
+    if result.returncode: raise RuntimeError('CSP-compatible browser workflows failed: '+result.stderr[-3000:])
+    browser_report=json.loads((E/'public-browser.json').read_text())
+    assert browser_report['status']=='passed' and browser_report['count']==18
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
         browser=p.chromium.launch(); page=browser.new_page(viewport={'width':1440,'height':900})
@@ -49,8 +55,10 @@ try:
             assert section.locator('h1').inner_text().strip() and section.locator('p').inner_text().strip()
         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
         browser.close()
-    report.update(status='passed',public_browser_workflows=json.loads((E/'public-browser.json').read_text())['count'],
+    report.update(status='passed',public_browser_workflows=browser_report['count'],
                   demo_seconds=duration,audio_rms=rms,pitch_sections=5,package_runtime_source='identical',
+                  test_runner='tests/browser_csp.py: all 18 original workflows with locator waits; no CSP bypass',
+                  observed_content_security_policy=browser_report['observed_content_security_policy'],
                   scope='Anonymous static-site replay of executed local-EVM fixtures, not a live consensus or external-delivery test.')
 except BaseException as exc:
     report.update(status='failed',error=str(exc),traceback=traceback.format_exc()); raise
