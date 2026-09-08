@@ -1,0 +1,41 @@
+{
+  "status": "failed",
+  "origin": "https://6a9f4f83a0214d00086f1617--josephm.netlify.app",
+  "authentication": "none",
+  "started_at": "2026-09-08T00:02:34.327807+00:00",
+  "files": [
+    {
+      "name": "pitch.html",
+      "bytes": 2651,
+      "sha256": "2023ad18e4bcde4057da5f0f65033a17791fab6e7bce9f24807420de7b454be1"
+    },
+    {
+      "name": "demo.mp4",
+      "bytes": 2849358,
+      "sha256": "7c31cf73a97add66d2e2a272c2541ce707ee9d6a183d43beeed494cc2c6e5fea"
+    },
+    {
+      "name": "source.zip",
+      "bytes": 661499,
+      "sha256": "0868288cb6bacf3a86b02f4e82f24c8739a4d4303e36ccc9ef703f5736313a87"
+    },
+    {
+      "name": "screenshot.png",
+      "bytes": 199341,
+      "sha256": "5299da131e70932388238a91cd3171fbbec605b044093fc6eeeb853d118eadb9"
+    },
+    {
+      "name": "pitch.pptx",
+      "bytes": 33795,
+      "sha256": "29008f85452e984517e5efa1c6d4aaafa0f704da86247a2e9136640da3b400e3"
+    },
+    {
+      "name": "engine.mjs",
+      "bytes": 6939,
+      "sha256": "7d8d0c5f98231e8f4ad2811c03724c0c43c44e23e9836dd41056a85faabdb4d7"
+    }
+  ],
+  "error": "Served bytes differ: index.html",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/public_check.py\", line 22, in <module>\n    assert len(data)==entry['bytes'] and sha==entry['sha256'], 'Served bytes differ: '+name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Served bytes differ: index.html\n",
+  "finished_at": "2026-09-08T00:02:36.015141+00:00"
+}
