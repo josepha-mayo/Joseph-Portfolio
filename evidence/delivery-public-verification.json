@@ -309,12 +309,12 @@
     "delivery.html",
     "index.html"
   ],
-  "started_at": "2026-09-08T22:27:53.981653+00:00",
+  "started_at": "2026-09-08T22:29:31.464061+00:00",
   "demo_seconds": 154.538,
   "audio_rms": 0.04951944819558243,
   "original_browser": 18,
   "delivery_replay_browser": 13,
   "html_change_scope": "Only observed internal anchor URLs and the exact brand-anchor attribute order/quotes; all non-anchor bytes retained and rewritten destinations checked",
   "scope": "Anonymous hosted executed-record replay and original workbench, not hosted live SQLite or external delivery. CSP enforced; local controls verified separately.",
-  "finished_at": "2026-09-08T22:28:16.381432+00:00"
+  "finished_at": "2026-09-08T22:29:46.557369+00:00"
 }
