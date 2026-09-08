@@ -1,5 +1,5 @@
 {
-  "status": "failed",
+  "status": "passed",
   "origin": "https://6aa089c0cc86050008977842--josephm.netlify.app",
   "authentication": "none",
   "files": [
@@ -56,13 +56,265 @@
       "bytes": 6483,
       "sha256": "c55556919643f4a0ebfc58f24317d3802c593cab2bbb4ba2491b7f2fab48f3ce",
       "byte_identical": true
+    },
+    {
+      "name": "delivery.html",
+      "bytes": 5503,
+      "sha256": "b465f5892a33a369f065527fc61ba07944743f58b5c4627029fc027df5763037",
+      "byte_identical": false
+    },
+    {
+      "name": "index.html",
+      "bytes": 4727,
+      "sha256": "5e939a311e98ee6692f7c59bc7308e3b5fd4f6240a03f7190dbb275aa55de901",
+      "byte_identical": false
+    },
+    {
+      "name": "delivery.css",
+      "bytes": 5460,
+      "sha256": "bc375a4ecd46cdef1d1156506144884e984e4b734bd1b37c5847ba417b80c721",
+      "byte_identical": true
+    },
+    {
+      "name": "README.md",
+      "bytes": 6522,
+      "sha256": "fafb46c66312a94ab2f4559b3a888ab5a9be853a263a6066ea57c06e6ba1fbf0",
+      "byte_identical": true
+    },
+    {
+      "name": "app.mjs",
+      "bytes": 3857,
+      "sha256": "1d90da0170f4700e0435dffb25347aa6866f85d700ebac34059d8f735a2eaf57",
+      "byte_identical": true
+    },
+    {
+      "name": "demo-original.mp4",
+      "bytes": 2849358,
+      "sha256": "7c31cf73a97add66d2e2a272c2541ce707ee9d6a183d43beeed494cc2c6e5fea",
+      "byte_identical": true
+    },
+    {
+      "name": "style.css",
+      "bytes": 4846,
+      "sha256": "530056cf55af0c78da2938878c82334b9965d6941edf32c5fc77fdf77a371fab",
+      "byte_identical": true
+    },
+    {
+      "name": "LICENSE",
+      "bytes": 1070,
+      "sha256": "89b9d331b10ad9800a20868e2b0aa13f21cd121813f204ce5a09c3726fad27f1",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-1.png",
+      "bytes": 133153,
+      "sha256": "e492148ac2552d67d7388554954a51e59e85554e8d64cd915211e665a622f995",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-6.png",
+      "bytes": 143003,
+      "sha256": "0f0fac361043ac767dc7baabdbc386d6ea32bb78706d9de167dbc8e208f4a568",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-lost-ack.png",
+      "bytes": 293120,
+      "sha256": "c4da9225c789d33d460438c5133a0ed9cdc2f4aa214c9311b5cf7411379f9a58",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/bad.json",
+      "bytes": 4,
+      "sha256": "17eed55d881c0dd5fe0935a98d89dd9e52d62aed941f3fb7d17bd490e5aa3e8f",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-live.png",
+      "bytes": 284315,
+      "sha256": "e5167726c7e6dedb8a454417bbbbb96633f85aed76bc1885638d79cdaeb76624",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/mobile.png",
+      "bytes": 156271,
+      "sha256": "569afce7e6eb251d54e26c284e175479b05f46e953ed66d90978c8d605ae4c23",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-browser.json",
+      "bytes": 1366,
+      "sha256": "68d1825431f143aed826a798780bf9c2c01b24bc60f5ead8aa685d55f1880321",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/sqlite-oracle.json",
+      "bytes": 701,
+      "sha256": "84b4b3db56417f250e6ed908548d597967b6ebab307ec204875e1258d6c44dba",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-pitch-1.png",
+      "bytes": 54587,
+      "sha256": "06563ab7eea75e3f9b1c80ee7a0216a1956b6699c3f9ec4ace5c671d139e0ccd",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-demo.json",
+      "bytes": 344,
+      "sha256": "d03dd4be2e59cf09b7c5ebaa8af693e7754e79cbc864a2e491cf9911d247dd44",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/markup.json",
+      "bytes": 5815,
+      "sha256": "998f1d063ccfd2fff8a5188f0db4f857b3a9bc716159dbbcf7b594c4975a6018",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-2.png",
+      "bytes": 137683,
+      "sha256": "fb213a7f784259d16ec1e296d8febf45d40d4583ed71a002755db0f12b9d2837",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-3.png",
+      "bytes": 149476,
+      "sha256": "72882ac1e9c2dae76d813bbe51f852b9e0fcd6a2ef2b24d0f3996c8a504076f1",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-before-send.png",
+      "bytes": 277561,
+      "sha256": "28d3d8c64c0f120f323ac9c6019ed2c56861b22cf382f9b92a98ae7c51f5dbd6",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/portable-lock-fix.json",
+      "bytes": 1211,
+      "sha256": "ad961981251fd3f759f563470b6baac07997c05b0d336c1a32a45c71aa62c4ec",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-pitch-4.png",
+      "bytes": 69683,
+      "sha256": "6419904823d2dfc870ddb4cb58ad9ef8aa791fbf45369384f7c33619c6878c1d",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-snapshot.json",
+      "bytes": 9178,
+      "sha256": "ed8388c327eacffbfd190e661dd30303b0ec49cbe6dc2ded9a856903c78b31f9",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-pitch-5.png",
+      "bytes": 71252,
+      "sha256": "1b006f6c3ff4db0d5348396657caffc2f90b5bf6192912df870c30bf380964e5",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-pitch-3.png",
+      "bytes": 64937,
+      "sha256": "5e7763d0038875cc82fe81016d122302155eccce89f3aa69e699f7c2d8f966fc",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/desktop.png",
+      "bytes": 199341,
+      "sha256": "5299da131e70932388238a91cd3171fbbec605b044093fc6eeeb853d118eadb9",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-4.png",
+      "bytes": 140449,
+      "sha256": "bfd3771236e815b5bce8c90630e10df36679ff3fb1d02b492b0fb3752f064e7b",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-5.png",
+      "bytes": 139292,
+      "sha256": "f708a41f2086bf8b56e7367ce32e79d22c220c8039c9e799c5610984dc67edd5",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/saved-run.json",
+      "bytes": 7380,
+      "sha256": "7c60e21ec3fc69b356d70eeeff5562eeb9a257264bbeea47a2b4238d035fc128",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-mobile.png",
+      "bytes": 287019,
+      "sha256": "56ae932a0403074c64bc0dde950ac7ceae2b2c3851e36f735c8e772df2507151",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/evm.json",
+      "bytes": 5873,
+      "sha256": "8c23c359834217d55cc204bd9860c1db107a61327ee74945b11b180532cf3ce0",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/outbox-record.json",
+      "bytes": 635,
+      "sha256": "844c67a46588e5ef426d90971612990eb3b5fdf8667c76fcb2ac3a05b1c70126",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-scene-7.png",
+      "bytes": 158367,
+      "sha256": "bc2e70df5d7a605331396f54f6f98802841726f3e7c8c1e7f9f3aaf100bb2305",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-release.json",
+      "bytes": 1446,
+      "sha256": "d5a1855051b887a943075b7b0a77707209c15687bbbae6d20b573a8896815c65",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/browser.json",
+      "bytes": 851,
+      "sha256": "1f4f56e2b34e1b01002804fc7c0d57aabd68d7aaf4f9e039045ee0155a142263",
+      "byte_identical": true
+    },
+    {
+      "name": "evidence/delivery-pitch-2.png",
+      "bytes": 56271,
+      "sha256": "371d3d1731b3fe13173bc40187264e10d0fc8902964455efa6a5f1da56f88cc1",
+      "byte_identical": true
+    },
+    {
+      "name": "data/contract.json",
+      "bytes": 3476,
+      "sha256": "3ddc16b2ae7cd2406443b0cf8373a81a89419ec73f754e5bd1f4b56bd4934d75",
+      "byte_identical": true
+    },
+    {
+      "name": "data/outbox-runs.json",
+      "bytes": 190199,
+      "sha256": "99492785a585268659541280aab41e1e97651c5ca664b810195312b546696b1f",
+      "byte_identical": true
+    },
+    {
+      "name": "data/evm-trace.json",
+      "bytes": 6517,
+      "sha256": "32d3dc76b4cd5b863e74bc285c4dfba1742208210c06bff02a2fa088aac978de",
+      "byte_identical": true
     }
   ],
   "html_rewrites": [
-    "pitch.html"
+    "pitch.html",
+    "delivery.html",
+    "index.html"
   ],
-  "started_at": "2026-09-08T22:22:29.670109+00:00",
-  "error": "Unexpected non-anchor HTML change delivery.html",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/delivery_public_check.py\", line 32, in <module>\n    assert anchors(data.decode())==anchors((P/name).read_text()),'Unexpected non-anchor HTML change '+name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Unexpected non-anchor HTML change delivery.html\n",
-  "finished_at": "2026-09-08T22:22:31.858630+00:00"
+  "started_at": "2026-09-08T22:27:53.981653+00:00",
+  "demo_seconds": 154.538,
+  "audio_rms": 0.04951944819558243,
+  "original_browser": 18,
+  "delivery_replay_browser": 13,
+  "html_change_scope": "Only observed internal anchor URLs and the exact brand-anchor attribute order/quotes; all non-anchor bytes retained and rewritten destinations checked",
+  "scope": "Anonymous hosted executed-record replay and original workbench, not hosted live SQLite or external delivery. CSP enforced; local controls verified separately.",
+  "finished_at": "2026-09-08T22:28:16.381432+00:00"
 }
