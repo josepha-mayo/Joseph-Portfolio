@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "date_offset_combinations": 18,
+  "events_checked": 54,
+  "method": "Independent Python datetime mapping and strict basic ICS content reader. Not a general standards validator or a real calendar-client import."
+}
