@@ -1,0 +1,18 @@
+PASS Source Lock is in the actual editor
+PASS No-media manifest export is blocked
+PASS Caption-only SRT export still works
+PASS Original clip selection works
+PASS Reviewed-only ZIP binds to independently hashed actual media
+PASS Exported manifest matches its actual source
+PASS Replacing media resets existing reviews
+PASS Same filename and duration but changed file is rejected
+PASS Byte match never restores editorial approval
+PASS Reviewed-only export cannot use identity as review
+PASS Standalone manifest also binds to exact source bytes
+PASS Malformed manifest is rejected
+PASS Legacy unbound manifest cannot get a match verdict
+PASS Concurrent caption edit aborts handoff; actual source response is not replaced
+PASS Canceled hash issues no partial export
+PASS Source-lock workflows make no media uploads or speech-model requests
+PASS Source Lock fits a 390-pixel viewport
+PASS No uncaught browser exceptions

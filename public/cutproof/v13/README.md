@@ -14,7 +14,7 @@ Serve this directory with `python3 -m http.server 8000`, then open localhost:800
 
 ## Reproduce the new checks from the repository
 
-Clone the `cutproof-sourcelock-20260908` branch of `josepha-mayo/Joseph-Portfolio`. At its root, the new scripts are in `upgrade13/`. Run `python3 upgrade13/build.py`, `node --test upgrade13/binding.test.cjs`, and `python3 upgrade13/native_check.py`. Browser verification additionally requires Playwright and Chromium. `python3 upgrade13/release.py` runs new and inherited checks, including real browser speech recognition; narration also requires Kokoro and its stock voice. The source-lock scripts in this downloadable archive preserve the implementation, while the branch provides their build-workspace layout and pinned GitHub Actions recipe.
+Clone the `cutproof-sourcelock-20260908` branch of `josepha-mayo/Joseph-Portfolio`. At its root, the new scripts are in `upgrade13/`. Run `python3 upgrade13/build.py`, `node --test upgrade13/binding.test.cjs`, and `python3 upgrade13/native_check.py`. Browser verification additionally requires Playwright and an installed Chrome with H.264 support. The bundled Chromium in the CI environment cannot decode the original H.264 demonstration; the actual diagnostic is recorded in evidence/browser-environment.json. `python3 upgrade13/release.py` runs new and inherited checks, including real browser speech recognition; narration also requires Kokoro and its stock voice. The source-lock scripts in this downloadable archive preserve the implementation, while the branch provides their build-workspace layout and pinned GitHub Actions recipe.
 
 ## Important boundaries
 
@@ -26,6 +26,6 @@ English ASR, lexical context flags and real-time browser-rendering limitations d
 
 ## Provenance and checks
 
-The base v1.2 archive is pinned to SHA-256 `01f40317e30b078687f25823b89f3d31b2133ac56629ce35cef89f0e36d3fc7c`. Its original code, tests, models and dependency notices are preserved. New tests are in source-lock/; new execution evidence is in evidence/. Original v1.2 evidence is retained separately in evidence-v12/. Old failures are not changed into successes.
+The base v1.2 archive is pinned to SHA-256 `01f40317e30b078687f25823b89f3d31b2133ac56629ce35cef89f0e36d3fc7c`. Its original code, tests, models and dependency notices are preserved. Its source.srt test fixture was missing from the v1.2 archive; the exact original was restored from CutProof-entry.zip with SHA-256 `7a68ee4aac72e10521f334edbdbea4bcad2b008d4511b2e22b6fffbe3e074555`. No inherited test was removed or weakened. New tests are in source-lock/; new execution evidence is in evidence/. Original v1.2 evidence is retained separately in evidence-v12/. Failed CI runs remain in repository history.
 
 Source Lock was developed with substantial AI assistance on September 8, 2026 during the existing contest window. Original code is MIT licensed. The optional model and narration dependencies retain their existing licenses. The demo uses disclosed stock Kokoro synthetic narration, not a cloned person's voice. No real customer media or private information is used in tests. No new consensus, cryptographic algorithm or independent security audit is claimed.

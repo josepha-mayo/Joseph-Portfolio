@@ -2,169 +2,169 @@ TAP version 13
 # Subtest: bind without mutating original
 ok 1 - bind without mutating original
   ---
-  duration_ms: 1.711524
+  duration_ms: 1.309093
   type: 'test'
   ...
 # Subtest: match compares bytes and size; never editorial approval
 ok 2 - match compares bytes and size; never editorial approval
   ---
-  duration_ms: 0.448916
+  duration_ms: 0.429544
   type: 'test'
   ...
 # Subtest: same size, different bytes fails
 ok 3 - same size, different bytes fails
   ---
-  duration_ms: 0.243188
+  duration_ms: 0.161879
   type: 'test'
   ...
 # Subtest: same digest, wrong size fails
 ok 4 - same digest, wrong size fails
   ---
-  duration_ms: 0.279497
+  duration_ms: 0.213145
   type: 'test'
   ...
 # Subtest: filename does not confer identity
 ok 5 - filename does not confer identity
   ---
-  duration_ms: 0.204345
+  duration_ms: 0.166416
   type: 'test'
   ...
 # Subtest: rename preserves byte comparison
 ok 6 - rename preserves byte comparison
   ---
-  duration_ms: 0.152798
+  duration_ms: 0.170702
   type: 'test'
   ...
 # Subtest: corrected limitations preserve review warning
 ok 7 - corrected limitations preserve review warning
   ---
-  duration_ms: 0.252215
+  duration_ms: 0.199535
   type: 'test'
   ...
 # Subtest: reject invalid binding null
 ok 8 - reject invalid binding null
   ---
-  duration_ms: 0.309353
+  duration_ms: 0.234446
   type: 'test'
   ...
 # Subtest: reject invalid binding array
 ok 9 - reject invalid binding array
   ---
-  duration_ms: 0.344779
+  duration_ms: 0.268457
   type: 'test'
   ...
 # Subtest: reject invalid binding algorithm
 ok 10 - reject invalid binding algorithm
   ---
-  duration_ms: 0.445349
+  duration_ms: 0.407202
   type: 'test'
   ...
 # Subtest: reject invalid binding version
 ok 11 - reject invalid binding version
   ---
-  duration_ms: 0.169269
+  duration_ms: 0.159015
   type: 'test'
   ...
 # Subtest: reject invalid binding boolversion
 ok 12 - reject invalid binding boolversion
   ---
-  duration_ms: 0.132509
+  duration_ms: 0.080078
   type: 'test'
   ...
 # Subtest: reject invalid binding emptyhash
 ok 13 - reject invalid binding emptyhash
   ---
-  duration_ms: 0.081984
+  duration_ms: 0.942572
   type: 'test'
   ...
 # Subtest: reject invalid binding badhash
 ok 14 - reject invalid binding badhash
   ---
-  duration_ms: 0.938928
+  duration_ms: 0.080849
   type: 'test'
   ...
 # Subtest: reject invalid binding shorthash
 ok 15 - reject invalid binding shorthash
   ---
-  duration_ms: 0.122541
+  duration_ms: 0.058406
   type: 'test'
   ...
 # Subtest: reject invalid binding upperhash
 ok 16 - reject invalid binding upperhash
   ---
-  duration_ms: 0.110378
+  duration_ms: 0.095171
   type: 'test'
   ...
 # Subtest: reject invalid binding zerobytes
 ok 17 - reject invalid binding zerobytes
   ---
-  duration_ms: 0.11155
+  duration_ms: 0.063163
   type: 'test'
   ...
 # Subtest: reject invalid binding floatbytes
 ok 18 - reject invalid binding floatbytes
   ---
-  duration_ms: 0.066455
+  duration_ms: 0.047871
   type: 'test'
   ...
 # Subtest: reject invalid binding boolbytes
 ok 19 - reject invalid binding boolbytes
   ---
-  duration_ms: 0.060604
+  duration_ms: 0.045186
   type: 'test'
   ...
 # Subtest: reject invalid binding huge
 ok 20 - reject invalid binding huge
   ---
-  duration_ms: 0.064361
+  duration_ms: 0.043094
   type: 'test'
   ...
 # Subtest: reject invalid binding stringbytes
 ok 21 - reject invalid binding stringbytes
   ---
-  duration_ms: 0.056576
+  duration_ms: 0.042483
   type: 'test'
   ...
 # Subtest: size cap is inclusive
 ok 22 - size cap is inclusive
   ---
-  duration_ms: 0.136257
+  duration_ms: 0.08146
   type: 'test'
   ...
 # Subtest: unbound legacy manifest gets no match verdict
 ok 23 - unbound legacy manifest gets no match verdict
   ---
-  duration_ms: 0.266672
+  duration_ms: 0.265722
   type: 'test'
   ...
 # Subtest: truncated JSON rejected
 ok 24 - truncated JSON rejected
   ---
-  duration_ms: 0.150654
+  duration_ms: 0.146977
   type: 'test'
   ...
 # Subtest: oversized JSON rejected
 ok 25 - oversized JSON rejected
   ---
-  duration_ms: 0.142899
+  duration_ms: 0.139867
   type: 'test'
   ...
 # Subtest: round-trip preserves binding
 ok 26 - round-trip preserves binding
   ---
-  duration_ms: 0.91887
+  duration_ms: 0.657641
   type: 'test'
   ...
 # Subtest: null digest in locked manifest rejected
 ok 27 - null digest in locked manifest rejected
   ---
-  duration_ms: 0.267534
+  duration_ms: 0.233245
   type: 'test'
   ...
 # Subtest: malformed transcript fingerprint rejected
 ok 28 - malformed transcript fingerprint rejected
   ---
-  duration_ms: 0.225054
+  duration_ms: 0.147408
   type: 'test'
   ...
 1..28
@@ -175,4 +175,4 @@ ok 28 - malformed transcript fingerprint rejected
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 85.852795
+# duration_ms 78.751101

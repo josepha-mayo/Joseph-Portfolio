@@ -2,19 +2,26 @@
 """Add Source Lock to the byte-pinned, previously verified v1.2 release."""
 from pathlib import Path
 import hashlib,json,os,re,shutil,urllib.request,zipfile
-ROOT=Path(__file__).resolve().parents[1];U=ROOT/'upgrade13';OUT=ROOT/'public/cutproof/v13';OUT.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1];U=ROOT/'upgrade13';OUT=ROOT/'public/cutproof/v13'
 base=ROOT/'base-v12.zip'
 if not base.exists():
  with urllib.request.urlopen('https://6a9df3894e5c0f00082deec8--josephm.netlify.app/cutproof/v12/source.zip',timeout=90) as r:base.write_bytes(r.read())
 assert hashlib.sha256(base.read_bytes()).hexdigest()=='01f40317e30b078687f25823b89f3d31b2133ac56629ce35cef89f0e36d3fc7c'
+# Only this generated candidate directory is rebuilt. Published immutable releases are untouched.
+if OUT.exists():shutil.rmtree(OUT)
+OUT.mkdir(parents=True)
 with zipfile.ZipFile(base) as z:
  for item in z.infolist():
   path=Path(item.filename);assert not path.is_absolute() and '..' not in path.parts and path.parts[0]=='CutProof-v1.2'
   rel=Path(*path.parts[1:])
   if item.is_dir():continue
   dest=OUT/rel;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(z.read(item))
-if (OUT/'evidence-v12').exists():shutil.rmtree(OUT/'evidence-v12')
 (OUT/'evidence').rename(OUT/'evidence-v12');(OUT/'evidence').mkdir(exist_ok=True)
+# Recovered byte-for-byte from the original CutProof-entry.zip, not rewritten to pass a test.
+fixture=U/'original-source.srt';fixture_sha=hashlib.sha256(fixture.read_bytes()).hexdigest()
+assert fixture_sha=='7a68ee4aac72e10521f334edbdbea4bcad2b008d4511b2e22b6fffbe3e074555'
+(OUT/'base-source/examples').mkdir(exist_ok=True)
+shutil.copy2(fixture,OUT/'base-source/examples/source.srt')
 shutil.copy2(OUT/'README.md',OUT/'README-v12.md')
 shutil.copy2(OUT/'demo.mp4',OUT/'walkthrough-v12.mp4');(OUT/'demo.mp4').unlink()
 text=(OUT/'index.html').read_text();pos=text.index('window.CUTPROOF_RENDERER=')+len('window.CUTPROOF_RENDERER=')
@@ -64,7 +71,7 @@ Serve this directory with `python3 -m http.server 8000`, then open localhost:800
 
 ## Reproduce the new checks from the repository
 
-Clone the `cutproof-sourcelock-20260908` branch of `josepha-mayo/Joseph-Portfolio`. At its root, the new scripts are in `upgrade13/`. Run `python3 upgrade13/build.py`, `node --test upgrade13/binding.test.cjs`, and `python3 upgrade13/native_check.py`. Browser verification additionally requires Playwright and Chromium. `python3 upgrade13/release.py` runs new and inherited checks, including real browser speech recognition; narration also requires Kokoro and its stock voice. The source-lock scripts in this downloadable archive preserve the implementation, while the branch provides their build-workspace layout and pinned GitHub Actions recipe.
+Clone the `cutproof-sourcelock-20260908` branch of `josepha-mayo/Joseph-Portfolio`. At its root, the new scripts are in `upgrade13/`. Run `python3 upgrade13/build.py`, `node --test upgrade13/binding.test.cjs`, and `python3 upgrade13/native_check.py`. Browser verification additionally requires Playwright and an installed Chrome with H.264 support. The bundled Chromium in the CI environment cannot decode the original H.264 demonstration; the actual diagnostic is recorded in evidence/browser-environment.json. `python3 upgrade13/release.py` runs new and inherited checks, including real browser speech recognition; narration also requires Kokoro and its stock voice. The source-lock scripts in this downloadable archive preserve the implementation, while the branch provides their build-workspace layout and pinned GitHub Actions recipe.
 
 ## Important boundaries
 
@@ -76,10 +83,10 @@ English ASR, lexical context flags and real-time browser-rendering limitations d
 
 ## Provenance and checks
 
-The base v1.2 archive is pinned to SHA-256 `01f40317e30b078687f25823b89f3d31b2133ac56629ce35cef89f0e36d3fc7c`. Its original code, tests, models and dependency notices are preserved. New tests are in source-lock/; new execution evidence is in evidence/. Original v1.2 evidence is retained separately in evidence-v12/. Old failures are not changed into successes.
+The base v1.2 archive is pinned to SHA-256 `01f40317e30b078687f25823b89f3d31b2133ac56629ce35cef89f0e36d3fc7c`. Its original code, tests, models and dependency notices are preserved. Its source.srt test fixture was missing from the v1.2 archive; the exact original was restored from CutProof-entry.zip with SHA-256 `7a68ee4aac72e10521f334edbdbea4bcad2b008d4511b2e22b6fffbe3e074555`. No inherited test was removed or weakened. New tests are in source-lock/; new execution evidence is in evidence/. Original v1.2 evidence is retained separately in evidence-v12/. Failed CI runs remain in repository history.
 
 Source Lock was developed with substantial AI assistance on September 8, 2026 during the existing contest window. Original code is MIT licensed. The optional model and narration dependencies retain their existing licenses. The demo uses disclosed stock Kokoro synthetic narration, not a cloned person's voice. No real customer media or private information is used in tests. No new consensus, cryptographic algorithm or independent security audit is claimed.
 '''
 (OUT/'README.md').write_text(readme)
-(OUT/'evidence/provenance.json').write_text(json.dumps({'base_sha256':hashlib.sha256(base.read_bytes()).hexdigest(),'base_url':'https://6a9df3894e5c0f00082deec8--josephm.netlify.app/cutproof/v12/source.zip','new_files':['binding.js','source-lock.js'],'renderer_change':'validate source lock version, hash and byte count before encoding','base_asr_changed':False,'created_at':'2026-09-08'},indent=2))
+(OUT/'evidence/provenance.json').write_text(json.dumps({'base_sha256':hashlib.sha256(base.read_bytes()).hexdigest(),'base_url':'https://6a9df3894e5c0f00082deec8--josephm.netlify.app/cutproof/v12/source.zip','new_files':['binding.js','source-lock.js'],'restored_original_srt_sha256':fixture_sha,'renderer_change':'validate source lock version, hash and byte count before encoding','base_asr_changed':False,'created_at':'2026-09-08'},indent=2))
 print(OUT)

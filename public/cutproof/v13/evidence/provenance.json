@@ -5,6 +5,7 @@
     "binding.js",
     "source-lock.js"
   ],
+  "restored_original_srt_sha256": "7a68ee4aac72e10521f334edbdbea4bcad2b008d4511b2e22b6fffbe3e074555",
   "renderer_change": "validate source lock version, hash and byte count before encoding",
   "base_asr_changed": false,
   "created_at": "2026-09-08"
