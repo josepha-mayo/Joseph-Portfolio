@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
-      - name: Repair only the optional macOS watcher metadata
+      - name: Validate only the optional macOS watcher metadata
         run: |
           mkdir -p evidence
           python3 - <<'PY'
@@ -39,14 +39,25 @@ jobs:
           p.write_text(json.dumps(lock,indent=2)+'\n')
           Path('evidence/portable-lock-fix.json').write_text(json.dumps({'scope':'Only macOS-only optional watcher metadata; versions, resolved URLs and integrity hashes unchanged','entry':key,'before':before,'after':entry,'optional_dependency_owners':owners,'before_sha256':hashlib.sha256(raw).hexdigest(),'after_sha256':hashlib.sha256(p.read_bytes()).hexdigest()},indent=2))
           PY
-      - name: Install pinned runtime without forcing unsupported platforms
+      - name: Install pinned runtime and exercise real database and browser paths first
         run: |
           set -o pipefail
           npm ci --ignore-scripts --no-audit --no-fund 2>&1 | tee evidence/portable-install.log
           python3 -m venv /tmp/forkline-outbox-venv
           /tmp/forkline-outbox-venv/bin/pip -q install playwright==1.55.0 python-pptx==1.0.2
           /tmp/forkline-outbox-venv/bin/python -m playwright install --with-deps chromium
+          export PATH=/tmp/forkline-outbox-venv/bin:$PATH
+          npm run build
+          npm run evm
           npm test 2>&1 | tee evidence/portable-unit-preflight.log
+          npm run outbox:record
+          python tests/sqlite_oracle.py
+          python -m http.server 8080 --bind 127.0.0.1 --directory public >/tmp/forkline-preflight-http.log 2>&1 &
+          SERVER=$!
+          trap 'kill $SERVER || true' EXIT
+          sleep 1
+          python tests/browser.py
+          python tests/delivery_browser.py
       - name: Install CPU-only stock narration and media tools
         run: |
           sudo apt-get update -qq
@@ -65,7 +76,7 @@ jobs:
           git config user.email 'forkline-build@users.noreply.github.com'
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'Preserve portable Delivery Lab dependency fix and actual release results'
+          git commit -m 'Preserve portable Delivery Lab source and actual release results'
           git push origin HEAD:forkline-outbox-20260908
       - uses: actions/upload-artifact@v4
         if: always()
@@ -74,4 +85,13 @@ jobs:
           path: |
             public/
             evidence/
+            src/
+            tools/
+            tests/
+            contracts/
+            package.json
+            package-lock.json
+            README.md
+            docs-delivery.md
+            netlify.toml
           retention-days: 14
