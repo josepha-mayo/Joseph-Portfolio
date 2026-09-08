@@ -1,0 +1,41 @@
+name: Original mathematics prize statement
+on:
+  push:
+    branches: [math-bounty-audit-20260908]
+    paths: [.github/workflows/math-tum-source.yml]
+permissions:
+  contents: read
+jobs:
+  read:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Fetch public original statement
+        run: |
+          mkdir source
+          python3 - <<'PY'
+          from urllib.request import urlopen
+          from pathlib import Path
+          from datetime import datetime,timezone
+          import json,hashlib
+          urls={'tum-prize.pdf':'https://www.epc.ed.tum.de/fileadmin/w00cgc/ddmm/pics/quantum_preis.pdf','tum-announcement.html':'https://www.epc.ed.tum.de/ddmm/aktuelles/article/200-euro-prize-problem/'}
+          record=[]
+          for name,url in urls.items():
+            row={'url':url,'at':datetime.now(timezone.utc).isoformat()}
+            try:
+              with urlopen(url,timeout=35)as r:data=r.read(5_000_001);row['status']=r.status
+              assert len(data)<=5_000_000
+              Path('source',name).write_bytes(data);row['sha256']=hashlib.sha256(data).hexdigest()
+              if name.endswith('pdf'):
+                import subprocess
+                subprocess.run(['pdftotext','source/'+name,'source/'+name+'.txt'],check=True)
+                print(Path('source',name+'.txt').read_text())
+            except Exception as e:row['error']=repr(e)
+            record.append(row)
+          Path('source/record.json').write_text(json.dumps(record,indent=2));print(json.dumps(record))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tum-math-prize-source
+          path: source/
+          retention-days: 7
