@@ -1,0 +1,265 @@
+{
+  "method": "GET only",
+  "form_submitted": false,
+  "samples": [
+    {
+      "url": "https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/master/sample-ipv4.csv",
+      "bytes": 1920,
+      "sha256": "a2c70ea83de30391cbf8903442828b9fbdd0cb013bafb502eb0c8f3f41a9a679",
+      "first_lines": [
+        "\"17170432\",\"17301503\",\"IN\",\"India\"",
+        "\"17301504\",\"17367039\",\"CN\",\"China\"",
+        "\"17367040\",\"17432575\",\"MY\",\"Malaysia\""
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/master/sample-ipv6.csv",
+      "bytes": 3164,
+      "sha256": "b9a48cf77030e41e59f93732eb77316fa195bebc525c4f552c4d058214bfdb01",
+      "first_lines": [
+        "\"42540649787705424798310411965141352448\",\"42540649787706633724130026594316058623\",\"RU\",\"Russian Federation\"",
+        "\"42540721409998190862847763118645313536\",\"42540721409998230117519151972571152383\",\"CZ\",\"Czechia\"",
+        "\"42540771274684779694431067427225731072\",\"42540771274685988620250682056400437247\",\"ID\",\"Indonesia\""
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/master/LICENSE",
+      "bytes": 1077,
+      "sha256": "273334b1f2b5da8941b4e9ee5c6c7d6b684b63c4655a23a11695a40a3e27f1c8",
+      "first_lines": [
+        "MIT License",
+        "",
+        "Copyright (c) 2019-2026 IP2Location.com"
+      ]
+    }
+  ],
+  "form_http_status": 200,
+  "elements": [
+    {
+      "tag": "script",
+      "attributes": {}
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "application/ld+json"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "src": "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
+        "defer": null
+      }
+    },
+    {
+      "tag": "form",
+      "attributes": {
+        "action": "",
+        "method": "post",
+        "class": "mb-5"
+      }
+    },
+    {
+      "tag": "input",
+      "attributes": {
+        "name": "name",
+        "type": "text",
+        "class": "form-control",
+        "value": ""
+      }
+    },
+    {
+      "tag": "input",
+      "attributes": {
+        "name": "email",
+        "type": "text",
+        "class": "form-control",
+        "value": ""
+      }
+    },
+    {
+      "tag": "input",
+      "attributes": {
+        "name": "project_title",
+        "type": "text",
+        "class": "form-control",
+        "value": ""
+      }
+    },
+    {
+      "tag": "textarea",
+      "attributes": {
+        "name": "short_desc",
+        "class": "form-control"
+      }
+    },
+    {
+      "tag": "input",
+      "attributes": {
+        "name": "github_link",
+        "type": "text",
+        "class": "form-control",
+        "value": ""
+      }
+    },
+    {
+      "tag": "textarea",
+      "attributes": {
+        "name": "message",
+        "rows": "8",
+        "class": "form-control"
+      }
+    },
+    {
+      "tag": "select",
+      "attributes": {
+        "id": "source",
+        "name": "source",
+        "class": "form-select"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Email"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Advertisement"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Facebook"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Twitter"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Google+"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Our Website"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Google Search"
+      }
+    },
+    {
+      "tag": "option",
+      "attributes": {
+        "value": "Others"
+      }
+    },
+    {
+      "tag": "input",
+      "attributes": {
+        "name": "other",
+        "type": "text",
+        "class": "form-control",
+        "value": ""
+      }
+    },
+    {
+      "tag": "input",
+      "attributes": {
+        "type": "checkbox",
+        "name": "agreed",
+        "value": "1"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.4.0/jquery-migrate.min.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.7/js/bootstrap.bundle.min.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdn-contest.ip2location.com/assets/plugins/back-to-top.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdn-contest.ip2location.com/assets/plugins/jquery.mixitup.min.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdn-contest.ip2location.com/assets/js/custom.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdn-contest.ip2location.com/assets/js/app.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript",
+        "src": "https://cdn-contest.ip2location.com/assets/js/pages/page_portfolio.js"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "type": "text/javascript"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {}
+    },
+    {
+      "tag": "script",
+      "attributes": {}
+    }
+  ],
+  "same_site_script_urls": [
+    "https://cdn-contest.ip2location.com/assets/plugins/back-to-top.js",
+    "https://cdn-contest.ip2location.com/assets/plugins/jquery.mixitup.min.js",
+    "https://cdn-contest.ip2location.com/assets/js/custom.js",
+    "https://cdn-contest.ip2location.com/assets/js/app.js",
+    "https://cdn-contest.ip2location.com/assets/js/pages/page_portfolio.js"
+  ]
+}

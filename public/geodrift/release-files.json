@@ -1,0 +1,18 @@
+{
+  "index.html": {
+    "bytes": 34501,
+    "sha256": "4af25e327f7dd146d936cd5aff55e0df4c3bb98cf3979e8b4540111f605897d6"
+  },
+  "source.zip": {
+    "bytes": 526281,
+    "sha256": "61eed64f1d08d40d9842f909a88d2668077b72df638c56e4f37f7f434893daec"
+  },
+  "README.md": {
+    "bytes": 8920,
+    "sha256": "a9b3694e957929492470e7c166e1fcfb52e778b16c712e175b93f8bdf22af659"
+  },
+  "evidence/verification.json": {
+    "bytes": 4476,
+    "sha256": "d9c3ce418f195e0fb700f08b529f752c9623b17d0bc011133508dd05d72e771b"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "status": "no_submission_post_observed",
+  "form_url": "https://contest.ip2location.com/submission",
+  "started_at": "2026-09-07T15:15:17.248422+00:00",
+  "submit_clicked": true,
+  "submission_confirmed": false,
+  "post_responses": [],
+  "human_verification_interacted_with": false,
+  "public_source": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/geodrift-entry-preview-20260907/public/geodrift",
+  "public_app": "https://6a9ed46e39eefc00089c7124--josephm.netlify.app/geodrift/index.html",
+  "published_contact_addresses": [
+    "support@ip2location.com"
+  ],
+  "fields_filled": [
+    "name",
+    "email",
+    "project_title",
+    "short_desc",
+    "github_link",
+    "message",
+    "other",
+    "source",
+    "agreed"
+  ],
+  "messages": [
+    "Security validation failed. Please turn off any VPN or Proxy, then try again.",
+    "Security validation failed. Please turn off any VPN or Proxy, then try again.",
+    "Security validation failed. Please turn off any VPN or Proxy, then try again.",
+    "Security validation failed. Please turn off any VPN or Proxy, then try again."
+  ],
+  "challenge_frames_present": true,
+  "final_url": "https://contest.ip2location.com/submission",
+  "finished_at": "2026-09-07T15:16:03.664357+00:00"
+}

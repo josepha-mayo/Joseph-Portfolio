@@ -1,0 +1,2 @@
+{"status": "passed", "seed": 20260907, "enumerated_small_domain_cases": 500, "cross_language_cases": 504, "boundary_cases": 2, "method": "Separate brute-force 64-address oracle, Python streaming engine, JS BigInt engine. Synthetic cases except unchanged official vendor samples.", "vendor_sample_self_comparisons": 2}
+
