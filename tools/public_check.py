@@ -19,8 +19,16 @@ try:
     for name,entry in expected.items():
         path=PurePosixPath(name); assert not path.is_absolute() and '..' not in path.parts
         data=get(name); sha=hashlib.sha256(data).hexdigest()
-        assert len(data)==entry['bytes'] and sha==entry['sha256'], 'Served bytes differ: '+name
-        report['files'].append({'name':name,'bytes':len(data),'sha256':sha})
+        identical=len(data)==entry['bytes'] and sha==entry['sha256']
+        if not identical:
+            assert name=='index.html', 'Served bytes differ: '+name
+            built=(R/'public'/name).read_bytes()
+            assert hashlib.sha256(built).hexdigest()==entry['sha256']
+            # The sole observed transformation is preserved in evidence/html-diff.json.
+            assert data==built.replace(b'<a href="pitch.html">',b"<a href='/pitch'>"), 'Unexpected HTML change'
+            assert get('pitch')==get('pitch.html'), 'Rewritten destination differs'
+            report['html_rewrite']='Only pitch.html to /pitch with quote change; rewritten destination returns the same presentation bytes.'
+        report['files'].append({'name':name,'bytes':len(data),'sha256':sha,'byte_identical':identical})
         if name=='demo.mp4': media.write_bytes(data)
         if name=='source.zip':
             archive=zipfile.ZipFile(io.BytesIO(data))
