@@ -1,7 +1,9 @@
 """Assemble a self-hosted Python runtime and the actual shared Python solver."""
 from pathlib import Path
-import shutil,json,hashlib
+import shutil,json,hashlib,subprocess,sys
 R=Path(__file__).resolve().parents[1];P=R/'public';P.mkdir(exist_ok=True)
+subprocess.run([sys.executable,str(R/'tools/vendor_notices.py')],check=True)
+shutil.copytree(R/'docs/licenses',P/'licenses',dirs_exist_ok=True)
 for p in (R/'web').iterdir():
  if p.is_file():shutil.copy2(p,P/p.name)
 shutil.copy2(R/'src/trimwise.py',P/'trimwise.py')
