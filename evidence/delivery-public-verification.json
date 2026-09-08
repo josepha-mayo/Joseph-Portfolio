@@ -1,0 +1,68 @@
+{
+  "status": "failed",
+  "origin": "https://6aa089c0cc86050008977842--josephm.netlify.app",
+  "authentication": "none",
+  "files": [
+    {
+      "name": "pitch.html",
+      "bytes": 2676,
+      "sha256": "a507e736d94ba579b466b516e3c5ac6e9709593a4582ce7d37fd664f6ded3ae5",
+      "byte_identical": false
+    },
+    {
+      "name": "demo-transcript.md",
+      "bytes": 2035,
+      "sha256": "0b3a27044507093ff4d29b6ca74f8f39c9409787b33ab1b1a09c8ad7cfa05571",
+      "byte_identical": true
+    },
+    {
+      "name": "demo.mp4",
+      "bytes": 5253137,
+      "sha256": "05c6192c970e193c3c8b2f065878bba9b0e50ac75272166818721693ce324e73",
+      "byte_identical": true
+    },
+    {
+      "name": "source.zip",
+      "bytes": 6563279,
+      "sha256": "4542dba405f894d3c573443c7fd7319153aa6fcb3c28f061090ada714448b306",
+      "byte_identical": true
+    },
+    {
+      "name": "screenshot.png",
+      "bytes": 277561,
+      "sha256": "28d3d8c64c0f120f323ac9c6019ed2c56861b22cf382f9b92a98ae7c51f5dbd6",
+      "byte_identical": true
+    },
+    {
+      "name": "docs-delivery.md",
+      "bytes": 5723,
+      "sha256": "53236bd06b29deec1c0de533a2108e1a32c69c0cc36ca311647a757bd5203ca1",
+      "byte_identical": true
+    },
+    {
+      "name": "pitch.pptx",
+      "bytes": 34031,
+      "sha256": "30f635e072695b648f248bae17f38d5654f6923efb63e508545d2b6aecab3435",
+      "byte_identical": true
+    },
+    {
+      "name": "engine.mjs",
+      "bytes": 6939,
+      "sha256": "7d8d0c5f98231e8f4ad2811c03724c0c43c44e23e9836dd41056a85faabdb4d7",
+      "byte_identical": true
+    },
+    {
+      "name": "delivery.mjs",
+      "bytes": 6483,
+      "sha256": "c55556919643f4a0ebfc58f24317d3802c593cab2bbb4ba2491b7f2fab48f3ce",
+      "byte_identical": true
+    }
+  ],
+  "html_rewrites": [
+    "pitch.html"
+  ],
+  "started_at": "2026-09-08T22:22:29.670109+00:00",
+  "error": "Unexpected non-anchor HTML change delivery.html",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/delivery_public_check.py\", line 32, in <module>\n    assert anchors(data.decode())==anchors((P/name).read_text()),'Unexpected non-anchor HTML change '+name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Unexpected non-anchor HTML change delivery.html\n",
+  "finished_at": "2026-09-08T22:22:31.858630+00:00"
+}
