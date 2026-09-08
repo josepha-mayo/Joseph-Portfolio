@@ -3,7 +3,9 @@ let chain=Promise.resolve();
 const ready=(async()=>{
  const py=await loadPyodide({indexURL:new URL('./runtime/',import.meta.url).href});
  const r=await fetch('./trimwise.py');if(!r.ok)throw Error('Python source could not be loaded.');
- py.runPython(await r.text());
+ // Import the trusted same-origin code as a module, not as the native CLI.
+ py.globals.set('_trimwise_source',await r.text());
+ py.runPython("import types, sys\n_trimwise = types.ModuleType('trimwise')\nexec(_trimwise_source, _trimwise.__dict__)\nhandle_json = _trimwise.handle_json\ndel _trimwise_source");
  self.postMessage({type:'ready',python:py.runPython('sys.version.split()[0]'),pyodide:py.version});
  return py;
 })();
