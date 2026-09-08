@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "source_repository": "josepha-mayo/Counterstep-Relay",
+  "source_commit": "f4356ab3890dad7b7bb0779adb691f8773c71c2c",
+  "source_archive_sha256": "9556b2c2e3062872d7fbe6345dfe19304abd3f7b08dc1049d1f43eabf8bd65e8",
+  "destination_branch": "relay-desk-preview-20260908",
+  "production_modified": false
+}

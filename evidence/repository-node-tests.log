@@ -1,0 +1,501 @@
+
+> counterstep-relay@1.0.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: official external HTTP client runs full repair and resumes on another connection
+ok 1 - official external HTTP client runs full repair and resumes on another connection
+  ---
+  duration_ms: 506.878857
+  type: 'test'
+  ...
+# Subtest: official SDK negotiates requested protocol without a server session ID
+ok 2 - official SDK negotiates requested protocol without a server session ID
+  ---
+  duration_ms: 62.442634
+  type: 'test'
+  ...
+# Subtest: notification accepted without a response body
+ok 3 - notification accepted without a response body
+  ---
+  duration_ms: 4.75319
+  type: 'test'
+  ...
+# Subtest: four tools expose real bounded input schemas
+ok 4 - four tools expose real bounded input schemas
+  ---
+  duration_ms: 15.228931
+  type: 'test'
+  ...
+# Subtest: skill resource is served by the SDK
+ok 5 - skill resource is served by the SDK
+  ---
+  duration_ms: 3.648325
+  type: 'test'
+  ...
+# Subtest: real SDK tools repair, transfer and resume across new transport instances
+ok 6 - real SDK tools repair, transfer and resume across new transport instances
+  ---
+  duration_ms: 44.97694
+  type: 'test'
+  ...
+# Subtest: tool-domain errors remain isError, not a successful grade
+ok 7 - tool-domain errors remain isError, not a successful grade
+  ---
+  duration_ms: 2.135384
+  type: 'test'
+  ...
+# Subtest: schema rejection cannot introduce hidden grade fields
+ok 8 - schema rejection cannot introduce hidden grade fields
+  ---
+  duration_ms: 5.279619
+  type: 'test'
+  ...
+# Subtest: parallel transports keep request IDs and capsules independent
+ok 9 - parallel transports keep request IDs and capsules independent
+  ---
+  duration_ms: 36.65232
+  type: 'test'
+  ...
+# Subtest: unsupported GET is 405
+ok 10 - unsupported GET is 405
+  ---
+  duration_ms: 0.710875
+  type: 'test'
+  ...
+# Subtest: unsupported DELETE is 405
+ok 11 - unsupported DELETE is 405
+  ---
+  duration_ms: 0.724821
+  type: 'test'
+  ...
+# Subtest: unsupported PUT is 405
+ok 12 - unsupported PUT is 405
+  ---
+  duration_ms: 0.337483
+  type: 'test'
+  ...
+# Subtest: reject unsupported Accept: application/json
+ok 13 - reject unsupported Accept: application/json
+  ---
+  duration_ms: 0.769055
+  type: 'test'
+  ...
+# Subtest: reject unsupported Accept: text/event-stream
+ok 14 - reject unsupported Accept: text/event-stream
+  ---
+  duration_ms: 0.508705
+  type: 'test'
+  ...
+# Subtest: reject unsupported Accept: notapplication/json, text/event-stream
+ok 15 - reject unsupported Accept: notapplication/json, text/event-stream
+  ---
+  duration_ms: 0.484299
+  type: 'test'
+  ...
+# Subtest: reject unsupported Accept: application/json;q=0, text/event-stream
+ok 16 - reject unsupported Accept: application/json;q=0, text/event-stream
+  ---
+  duration_ms: 0.400001
+  type: 'test'
+  ...
+# Subtest: reject unsupported Accept: application/json, text/event-stream;q=0
+ok 17 - reject unsupported Accept: application/json, text/event-stream;q=0
+  ---
+  duration_ms: 0.355297
+  type: 'test'
+  ...
+# Subtest: reject cross-origin browser requests
+ok 18 - reject cross-origin browser requests
+  ---
+  duration_ms: 0.375746
+  type: 'test'
+  ...
+# Subtest: same-origin browser requests work
+ok 19 - same-origin browser requests work
+  ---
+  duration_ms: 2.731412
+  type: 'test'
+  ...
+# Subtest: reject non-JSON body type
+ok 20 - reject non-JSON body type
+  ---
+  duration_ms: 0.408076
+  type: 'test'
+  ...
+# Subtest: reject malformed envelope not-json
+ok 21 - reject malformed envelope not-json
+  ---
+  duration_ms: 0.499629
+  type: 'test'
+  ...
+# Subtest: reject malformed envelope null
+ok 22 - reject malformed envelope null
+  ---
+  duration_ms: 0.481034
+  type: 'test'
+  ...
+# Subtest: reject malformed envelope []
+ok 23 - reject malformed envelope []
+  ---
+  duration_ms: 2.945383
+  type: 'test'
+  ...
+# Subtest: reject body above 64 KiB
+ok 24 - reject body above 64 KiB
+  ---
+  duration_ms: 1.287809
+  type: 'test'
+  ...
+# Subtest: reject unsupported protocol header
+ok 25 - reject unsupported protocol header
+  ---
+  duration_ms: 0.804141
+  type: 'test'
+  ...
+# Subtest: reject unsupported initialization protocol
+ok 26 - reject unsupported initialization protocol
+  ---
+  duration_ms: 0.711085
+  type: 'test'
+  ...
+# Subtest: wrong intermediate steps despite correct final answer
+ok 27 - wrong intermediate steps despite correct final answer
+  ---
+  duration_ms: 7.471176
+  type: 'test'
+  ...
+# Subtest: counterexample is opt in
+ok 28 - counterexample is opt in
+  ---
+  duration_ms: 4.896219
+  type: 'test'
+  ...
+# Subtest: hint does not expose solution or witness
+ok 29 - hint does not expose solution or witness
+  ---
+  duration_ms: 2.255548
+  type: 'test'
+  ...
+# Subtest: repair passes all transitions and isolates x
+ok 30 - repair passes all transitions and isolates x
+  ---
+  duration_ms: 2.940194
+  type: 'test'
+  ...
+# Subtest: repeating the problem is not a completed repair
+ok 31 - repeating the problem is not a completed repair
+  ---
+  duration_ms: 2.220532
+  type: 'test'
+  ...
+# Subtest: cannot replace original problem
+ok 32 - cannot replace original problem
+  ---
+  duration_ms: 6.309183
+  type: 'test'
+  ...
+# Subtest: unsupported intermediate work is recoverable
+ok 33 - unsupported intermediate work is recoverable
+  ---
+  duration_ms: 2.503143
+  type: 'test'
+  ...
+# Subtest: practice cannot skip unfinished repair
+ok 34 - practice cannot skip unfinished repair
+  ---
+  duration_ms: 1.491242
+  type: 'test'
+  ...
+# Subtest: first correct unassisted answer counts once
+ok 35 - first correct unassisted answer counts once
+  ---
+  duration_ms: 6.637079
+  type: 'test'
+  ...
+# Subtest: revealed answer is assisted, not independent
+ok 36 - revealed answer is assisted, not independent
+  ---
+  duration_ms: 5.054787
+  type: 'test'
+  ...
+# Subtest: hinted answer is assisted
+ok 37 - hinted answer is assisted
+  ---
+  duration_ms: 4.034289
+  type: 'test'
+  ...
+# Subtest: second attempt is revision, not independent first attempt
+ok 38 - second attempt is revision, not independent first attempt
+  ---
+  duration_ms: 3.687798
+  type: 'test'
+  ...
+# Subtest: equivalent non-target answer is not called mathematically wrong
+ok 39 - equivalent non-target answer is not called mathematically wrong
+  ---
+  duration_ms: 8.135472
+  type: 'test'
+  ...
+# Subtest: swapped-side target answer is accepted
+ok 40 - swapped-side target answer is accepted
+  ---
+  duration_ms: 5.433248
+  type: 'test'
+  ...
+# Subtest: unknown math in answer is unsupported, not equivalent
+ok 41 - unknown math in answer is unsupported, not equivalent
+  ---
+  duration_ms: 6.392791
+  type: 'test'
+  ...
+# Subtest: fresh practice uses different numbers
+ok 42 - fresh practice uses different numbers
+  ---
+  duration_ms: 3.068258
+  type: 'test'
+  ...
+# Subtest: answer keys are not in the tool view before reveal
+ok 43 - answer keys are not in the tool view before reveal
+  ---
+  duration_ms: 2.342341
+  type: 'test'
+  ...
+# Subtest: roundtrip reconstructs exactly
+ok 44 - roundtrip reconstructs exactly
+  ---
+  duration_ms: 6.828889
+  type: 'test'
+  ...
+# Subtest: changed capsule bytes reject
+ok 45 - changed capsule bytes reject
+  ---
+  duration_ms: 0.91549
+  type: 'test'
+  ...
+# Subtest: injected saved grades reject rather than being trusted
+ok 46 - injected saved grades reject rather than being trusted
+  ---
+  duration_ms: 0.70271
+  type: 'test'
+  ...
+# Subtest: duplicate action exact retry does not count twice
+ok 47 - duplicate action exact retry does not count twice
+  ---
+  duration_ms: 5.052041
+  type: 'test'
+  ...
+# Subtest: old capsule retry is deterministic without server writes
+ok 48 - old capsule retry is deterministic without server writes
+  ---
+  duration_ms: 13.523269
+  type: 'test'
+  ...
+# Subtest: ID reuse with different action rejects
+ok 49 - ID reuse with different action rejects
+  ---
+  duration_ms: 1.434565
+  type: 'test'
+  ...
+# Subtest: stale expected digest rejects
+ok 50 - stale expected digest rejects
+  ---
+  duration_ms: 0.672965
+  type: 'test'
+  ...
+# Subtest: recomputed report separates practice modes
+ok 51 - recomputed report separates practice modes
+  ---
+  duration_ms: 7.759388
+  type: 'test'
+  ...
+# Subtest: limit bounds replay work
+ok 52 - limit bounds replay work
+  ---
+  duration_ms: 53.601052
+  type: 'test'
+  ...
+# Subtest: reject input not shaped as capsule
+ok 53 - reject input not shaped as capsule
+  ---
+  duration_ms: 0.253145
+  type: 'test'
+  ...
+# Subtest: initial unsupported chain is rejected
+ok 54 - initial unsupported chain is rejected
+  ---
+  duration_ms: 0.243688
+  type: 'test'
+  ...
+# Subtest: identity original has no unambiguous transfer target
+ok 55 - identity original has no unambiguous transfer target
+  ---
+  duration_ms: 2.354985
+  type: 'test'
+  ...
+# Subtest: input cannot execute code
+ok 56 - input cannot execute code
+  ---
+  duration_ms: 0.327214
+  type: 'test'
+  ...
+# Subtest: seed boundary enforced
+ok 57 - seed boundary enforced
+  ---
+  duration_ms: 0.650652
+  type: 'test'
+  ...
+# Subtest: action field strictness
+ok 58 - action field strictness
+  ---
+  duration_ms: 0.657014
+  type: 'test'
+  ...
+# Subtest: real exact transfer spread seed 0
+ok 59 - real exact transfer spread seed 0
+  ---
+  duration_ms: 8.010299
+  type: 'test'
+  ...
+# Subtest: real exact transfer spread seed 7
+ok 60 - real exact transfer spread seed 7
+  ---
+  duration_ms: 6.047521
+  type: 'test'
+  ...
+# Subtest: real exact transfer spread seed 33
+ok 61 - real exact transfer spread seed 33
+  ---
+  duration_ms: 8.994238
+  type: 'test'
+  ...
+# Subtest: real exact transfer spread seed 100
+ok 62 - real exact transfer spread seed 100
+  ---
+  duration_ms: 5.218053
+  type: 'test'
+  ...
+# Subtest: real exact transfer balance seed 0
+ok 63 - real exact transfer balance seed 0
+  ---
+  duration_ms: 5.629777
+  type: 'test'
+  ...
+# Subtest: real exact transfer balance seed 7
+ok 64 - real exact transfer balance seed 7
+  ---
+  duration_ms: 3.338843
+  type: 'test'
+  ...
+# Subtest: real exact transfer balance seed 33
+ok 65 - real exact transfer balance seed 33
+  ---
+  duration_ms: 3.12392
+  type: 'test'
+  ...
+# Subtest: real exact transfer balance seed 100
+ok 66 - real exact transfer balance seed 100
+  ---
+  duration_ms: 2.413885
+  type: 'test'
+  ...
+# Subtest: real exact transfer divide seed 0
+ok 67 - real exact transfer divide seed 0
+  ---
+  duration_ms: 2.818214
+  type: 'test'
+  ...
+# Subtest: real exact transfer divide seed 7
+ok 68 - real exact transfer divide seed 7
+  ---
+  duration_ms: 2.266818
+  type: 'test'
+  ...
+# Subtest: real exact transfer divide seed 33
+ok 69 - real exact transfer divide seed 33
+  ---
+  duration_ms: 2.270506
+  type: 'test'
+  ...
+# Subtest: real exact transfer divide seed 100
+ok 70 - real exact transfer divide seed 100
+  ---
+  duration_ms: 2.670017
+  type: 'test'
+  ...
+# Subtest: real exact transfer negative seed 0
+ok 71 - real exact transfer negative seed 0
+  ---
+  duration_ms: 5.162259
+  type: 'test'
+  ...
+# Subtest: real exact transfer negative seed 7
+ok 72 - real exact transfer negative seed 7
+  ---
+  duration_ms: 7.349097
+  type: 'test'
+  ...
+# Subtest: real exact transfer negative seed 33
+ok 73 - real exact transfer negative seed 33
+  ---
+  duration_ms: 4.044569
+  type: 'test'
+  ...
+# Subtest: real exact transfer negative seed 100
+ok 74 - real exact transfer negative seed 100
+  ---
+  duration_ms: 3.604362
+  type: 'test'
+  ...
+# Subtest: real exact transfer arithmetic seed 0
+ok 75 - real exact transfer arithmetic seed 0
+  ---
+  duration_ms: 4.160647
+  type: 'test'
+  ...
+# Subtest: real exact transfer arithmetic seed 7
+ok 76 - real exact transfer arithmetic seed 7
+  ---
+  duration_ms: 7.043002
+  type: 'test'
+  ...
+# Subtest: real exact transfer arithmetic seed 33
+ok 77 - real exact transfer arithmetic seed 33
+  ---
+  duration_ms: 3.378091
+  type: 'test'
+  ...
+# Subtest: real exact transfer arithmetic seed 100
+ok 78 - real exact transfer arithmetic seed 100
+  ---
+  duration_ms: 2.39017
+  type: 'test'
+  ...
+# Subtest: unexpanded brackets are equivalent but not spread target
+ok 79 - unexpanded brackets are equivalent but not spread target
+  ---
+  duration_ms: 5.07275
+  type: 'test'
+  ...
+# Subtest: unexpanded brackets are equivalent but not negative target
+ok 80 - unexpanded brackets are equivalent but not negative target
+  ---
+  duration_ms: 3.020811
+  type: 'test'
+  ...
+# Subtest: capsule byte limit fails before producing an unresumable handoff
+ok 81 - capsule byte limit fails before producing an unresumable handoff
+  ---
+  duration_ms: 1.876635
+  type: 'test'
+  ...
+1..81
+# tests 81
+# suites 0
+# pass 81
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 824.987499
+

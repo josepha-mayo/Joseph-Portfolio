@@ -1,0 +1,26 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {handleMcp,PROTOCOL} from '../src/mcp.mjs';
+import {EXAMPLE,REPAIR,reconstruct} from '../src/relay.mjs';
+const headers={'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':PROTOCOL};
+let sequence=0;
+const message=(method,params={})=>({jsonrpc:'2.0',id:++sequence,method,params});
+function request(body,extra={}){return new Request('http://localhost:3000/mcp',{method:'POST',headers:{...headers,...extra},body:typeof body==='string'?body:JSON.stringify(body)})}
+async function invoke(name,args){const b=message('tools/call',{name,arguments:args});const r=await handleMcp(request(b));assert.equal(r.status,200);const j=await r.json();assert.equal(j.id,b.id);assert(!j.error,JSON.stringify(j));assert(!j.result.isError,JSON.stringify(j));assert.deepEqual(JSON.parse(j.result.content[0].text),j.result.structuredContent);return j.result.structuredContent}
+test('official SDK negotiates requested protocol without a server session ID',async()=>{const b=message('initialize',{protocolVersion:PROTOCOL,capabilities:{},clientInfo:{name:'relay-tests',version:'1'}}),r=await handleMcp(request(b));assert.equal(r.status,200);assert.equal(r.headers.get('mcp-session-id'),null);assert.equal((await r.json()).result.protocolVersion,PROTOCOL)});
+test('notification accepted without a response body',async()=>{const r=await handleMcp(request({jsonrpc:'2.0',method:'notifications/initialized'}));assert.equal(r.status,202);assert.equal(await r.text(),'')});
+test('four tools expose real bounded input schemas',async()=>{const r=await handleMcp(request(message('tools/list')));const {result}=await r.json();assert.deepEqual(result.tools.map(x=>x.name).sort(),['begin_repair','repair_report','repair_turn','resume_repair']);assert(result.tools.every(x=>x.inputSchema.type==='object'))});
+test('skill resource is served by the SDK',async()=>{const r=await handleMcp(request(message('resources/read',{uri:'counterstep://relay/skill'})));assert((await r.json()).result.contents[0].text.includes('Preserve the returned capsule'))});
+test('real SDK tools repair, transfer and resume across new transport instances',async()=>{let s=await invoke('begin_repair',{chain:EXAMPLE,seed:7});s=await invoke('repair_turn',{capsule:s.capsule,expected_digest:s.capsule.sha256,action:{id:'fix',type:'repair',value:REPAIR}});s=await invoke('repair_turn',{capsule:s.capsule,expected_digest:s.capsule.sha256,action:{id:'new',type:'practice'}});const answer=reconstruct(s.capsule).card.good;s=await invoke('repair_turn',{capsule:s.capsule,expected_digest:s.capsule.sha256,action:{id:'answer',type:'answer',value:answer}});const resumed=await invoke('resume_repair',{capsule:s.capsule});assert.deepEqual(resumed,s);const report=await invoke('repair_report',{capsule:s.capsule});assert.equal(report.summary.independent_first_attempts,1)});
+test('tool-domain errors remain isError, not a successful grade',async()=>{const r=await handleMcp(request(message('tools/call',{name:'begin_repair',arguments:{chain:'x*x=4\nx=2'}})));const j=await r.json();assert.equal(j.result.isError,true);assert.equal(j.result.structuredContent,undefined)});
+test('schema rejection cannot introduce hidden grade fields',async()=>{const r=await handleMcp(request(message('tools/call',{name:'resume_repair',arguments:{capsule:{grade:100}}})));const j=await r.json();assert(j.error||j.result?.isError)});
+test('parallel transports keep request IDs and capsules independent',async()=>{const responses=await Promise.all(Array.from({length:8},(_,i)=>invoke('begin_repair',{chain:EXAMPLE,seed:i})));assert.equal(new Set(responses.map(r=>r.capsule.sha256)).size,8)});
+for(const method of ['GET','DELETE','PUT'])test(`unsupported ${method} is 405`,async()=>{assert.equal((await handleMcp(new Request('http://localhost:3000/mcp',{method,headers}))).status,405)});
+for(const accept of ['application/json','text/event-stream','notapplication/json, text/event-stream','application/json;q=0, text/event-stream','application/json, text/event-stream;q=0'])test(`reject unsupported Accept: ${accept}`,async()=>{assert.equal((await handleMcp(request(message('tools/list'),{Accept:accept}))).status,406)});
+test('reject cross-origin browser requests',async()=>{assert.equal((await handleMcp(request(message('tools/list'),{Origin:'https://example.invalid'}))).status,403)});
+test('same-origin browser requests work',async()=>{assert.equal((await handleMcp(request(message('tools/list'),{Origin:'http://localhost:3000'}))).status,200)});
+test('reject non-JSON body type',async()=>{assert.equal((await handleMcp(request('{}',{'Content-Type':'text/plain'}))).status,415)});
+for(const value of ['not-json','null','[]'])test(`reject malformed envelope ${value}`,async()=>{assert.equal((await handleMcp(request(value))).status,400)});
+test('reject body above 64 KiB',async()=>{assert.equal((await handleMcp(request(' '.repeat(66000)))).status,413)});
+test('reject unsupported protocol header',async()=>{assert.equal((await handleMcp(request(message('tools/list'),{'MCP-Protocol-Version':'2024-11-05'}))).status,400)});
+test('reject unsupported initialization protocol',async()=>{assert.equal((await handleMcp(request(message('initialize',{protocolVersion:'2024-11-05'})))).status,400)});

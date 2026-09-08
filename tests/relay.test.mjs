@@ -1,0 +1,42 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {beginRepair,repairTurn,resumeRepair,repairReport,reconstruct,EXAMPLE,REPAIR,digest,C} from '../src/relay.mjs';
+const act=(s,type,value,id=String(s.capsule.events.length))=>repairTurn(s.capsule,s.capsule.sha256,{id,type,...(value?{value}:{})});
+function ready(){return act(beginRepair(),'repair',REPAIR)}
+function practice(skill='spread'){return act(ready(),'practice',skill)}
+const correct=s=>reconstruct(s.capsule).card.good;
+test('wrong intermediate steps despite correct final answer',()=>{const s=beginRepair();assert.equal(s.view.audit.first,1);assert.equal(s.view.witness,null);assert.equal(s.view.recommendation.skill,'spread')});
+test('counterexample is opt in',()=>{const s=act(beginRepair(),'reveal');assert.notEqual(s.view.witness.before.true,s.view.witness.after.true)});
+test('hint does not expose solution or witness',()=>{const s=act(beginRepair(),'hint');assert.equal(s.view.witness,null);assert(!s.view.reply.includes('x = 2'))});
+test('repair passes all transitions and isolates x',()=>{assert.equal(ready().view.phase,'ready')});
+test('repeating the problem is not a completed repair',()=>{const s=act(beginRepair(),'repair','2(x + 3) = 10\n2(x + 3) = 10');assert.equal(s.view.phase,'repair')});
+test('cannot replace original problem',()=>{assert.throws(()=>act(beginRepair(),'repair','x = 0\nx = 0'),/original problem/) });
+test('unsupported intermediate work is recoverable',()=>{let s=act(beginRepair(),'repair','2(x + 3) = 10\nx*x = 4');assert.equal(s.view.audit.status,'unsupported');s=act(s,'repair',REPAIR);assert.equal(s.view.phase,'ready')});
+test('practice cannot skip unfinished repair',()=>{assert.throws(()=>act(beginRepair(),'practice'),/Finish/)});
+test('first correct unassisted answer counts once',()=>{let s=practice();s=act(s,'answer',correct(s));assert.equal(s.view.summary.independent_first_attempts,1);assert.throws(()=>act(s,'answer','x=2'),/fresh/)});
+test('revealed answer is assisted, not independent',()=>{let s=act(practice(),'reveal');s=act(s,'answer',correct(s));assert.equal(s.view.summary.assisted_completions,1);assert.equal(s.view.summary.independent_first_attempts,0)});
+test('hinted answer is assisted',()=>{let s=act(practice(),'hint');s=act(s,'answer',correct(s));assert.equal(s.view.summary.assisted_completions,1)});
+test('second attempt is revision, not independent first attempt',()=>{let s=act(practice(),'answer','x=99');s=act(s,'answer',correct(s));assert.equal(s.view.summary.revised_completions,1);assert.equal(s.view.summary.independent_first_attempts,0)});
+test('equivalent non-target answer is not called mathematically wrong',()=>{let s=practice();s=act(s,'answer',s.view.card.before);assert(s.view.reply.includes('mathematically equivalent'));assert.equal(s.view.timeline.at(-1).outcome,'equivalent_other_step');assert.equal(s.view.summary.completed_cards,0)});
+test('swapped-side target answer is accepted',()=>{let s=practice();s=act(s,'answer',correct(s).split('=').reverse().join('='));assert.equal(s.view.summary.independent_first_attempts,1)});
+test('unknown math in answer is unsupported, not equivalent',()=>{const s=act(practice(),'answer','x^2=1');assert.equal(s.view.timeline.at(-1).outcome,'unsupported')});
+test('fresh practice uses different numbers',()=>{const s=practice();const n=act(s,'practice','spread');assert.notEqual(s.view.card.id,n.view.card.id);assert.notEqual(s.view.card.before,n.view.card.before)});
+test('answer keys are not in the tool view before reveal',()=>{const s=practice();assert(!Object.hasOwn(s.view.card,'good'));assert(!Object.hasOwn(s.view.card,'bad'));assert(!JSON.stringify(s.capsule).includes('good'))});
+test('roundtrip reconstructs exactly',()=>{let s=act(practice(),'hint');s=act(s,'answer',correct(s));assert.deepEqual(resumeRepair(JSON.parse(JSON.stringify(s.capsule))),s)});
+test('changed capsule bytes reject',()=>{const c=structuredClone(beginRepair().capsule);c.seed++;assert.throws(()=>resumeRepair(c),/fingerprint/)});
+test('injected saved grades reject rather than being trusted',()=>{const c=structuredClone(beginRepair().capsule);c.grade=100;assert.throws(()=>resumeRepair(c),/fields/)});
+test('duplicate action exact retry does not count twice',()=>{const s=act(ready(),'practice');const a={id:'one',type:'answer',value:correct(s)};const x=repairTurn(s.capsule,s.capsule.sha256,a);const y=repairTurn(x.capsule,s.capsule.sha256,a);assert.deepEqual(y,x)});
+test('old capsule retry is deterministic without server writes',()=>{const s=practice(),a={id:'once',type:'answer',value:correct(s)};assert.deepEqual(repairTurn(s.capsule,s.capsule.sha256,a),repairTurn(s.capsule,s.capsule.sha256,a))});
+test('ID reuse with different action rejects',()=>{const s=act(beginRepair(),'hint',undefined,'id');assert.throws(()=>act(s,'reveal',undefined,'id'),/reused/)});
+test('stale expected digest rejects',()=>{const s=beginRepair();assert.throws(()=>repairTurn(s.capsule,'0'.repeat(64),{id:'a',type:'hint'}),/Stale/)});
+test('recomputed report separates practice modes',()=>{let s=practice();s=act(s,'answer',correct(s));s=act(s,'practice');s=act(s,'hint');s=act(s,'answer',correct(s));const r=repairReport(s.capsule);assert.equal(r.summary.independent_first_attempts,1);assert.equal(r.summary.assisted_completions,1)});
+test('limit bounds replay work',()=>{let s=beginRepair();for(let i=0;i<48;i++)s=act(s,'hint');assert.throws(()=>act(s,'hint'),/limit/)});
+test('reject input not shaped as capsule',()=>{for(const c of [null,[],{},'abc'])assert.throws(()=>resumeRepair(c))});
+test('initial unsupported chain is rejected',()=>assert.throws(()=>beginRepair('x*x=4\nx=2'),/Nonlinear/));
+test('identity original has no unambiguous transfer target',()=>assert.throws(()=>beginRepair('x=x\n0=0'),/one solution/));
+test('input cannot execute code',()=>assert.throws(()=>beginRepair('<script>throw 1</script>\nx=2')));
+test('seed boundary enforced',()=>{for(const seed of [-1,1.2,1000001,NaN])assert.throws(()=>beginRepair(EXAMPLE,seed))});
+test('action field strictness',()=>{const s=beginRepair();assert.throws(()=>repairTurn(s.capsule,s.capsule.sha256,{id:'ok',type:'hint',grade:1}),/field/)});
+for(const skill of Object.keys(C.skills))for(const seed of [0,7,33,100])test(`real exact transfer ${skill} seed ${seed}`,()=>{let s=act(beginRepair(EXAMPLE,seed),'repair',REPAIR);s=act(s,'practice',skill);s=act(s,'answer',correct(s));assert.equal(s.view.summary.independent_first_attempts,1)});
+
+for(const skill of ['spread','negative'])test(`unexpanded brackets are equivalent but not ${skill} target`,()=>{let s=practice(skill);s=act(s,'answer',s.view.card.before);assert.equal(s.view.timeline.at(-1).outcome,'equivalent_other_step')});
+test('capsule byte limit fails before producing an unresumable handoff',()=>{const c=beginRepair().capsule;const events=Array.from({length:14},(_,i)=>({id:String(i),type:'hint',value:'a'.repeat(4000)}));const raw={version:1,initialChain:c.initialChain,seed:7,events};assert.throws(()=>resumeRepair({...raw,sha256:digest(raw)}),/byte limit/)});

@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "generated_at": "2026-09-08T18:07:24.840903+00:00",
+  "node_tests": 105,
+  "browser_workflows": 50,
+  "browser_breakdown": {
+    "inherited": 25,
+    "repair_desk": 18,
+    "report_context": 7
+  },
+  "demo_seconds": 129.35,
+  "audio_rms": 0.1367539812639372,
+  "narration": {
+    "voice": "Kokoro af_heart stock synthetic",
+    "speed": 0.88,
+    "words_per_minute": 122.0
+  },
+  "scope": "Internal actual MCP and browser checks using synthetic equations, not a learner study. Exact evaluator, learned weights and event scoring unchanged; report question metadata added. No live Alexa, language-model host or AWS runtime claim."
+}

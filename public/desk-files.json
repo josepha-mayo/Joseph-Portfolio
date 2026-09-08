@@ -1,0 +1,58 @@
+{
+  "index.html": {
+    "sha256": "0d6e04e2149e8c6acd8c8244458ac45945aee903d21d1596992bcb09bfde113c",
+    "bytes": 5022
+  },
+  "app.js": {
+    "sha256": "a2e1ac999995ef48644d37f972b18e82a8ec4cb91f5297c42c96880cf4971f7a",
+    "bytes": 8988
+  },
+  "style.css": {
+    "sha256": "ea058f9d0cf57fa794d65f16796eb2b5e3ba42047309edd60df80d3c15fd0d83",
+    "bytes": 6207
+  },
+  "repair-desk.mjs": {
+    "sha256": "f638b441bbde05608bc70b12fae47801366b167a619c4746c053408ef93b1e54",
+    "bytes": 9789
+  },
+  "judge.html": {
+    "sha256": "46e60d5c98ddf28d978d492d9fb6ef25c339470be46a4083eee456419eb6424c",
+    "bytes": 1082
+  },
+  "README.md": {
+    "sha256": "76d0cb73a4a2c3db5cd3e980a9053c2f51931bd2ab492afcc11d312235269a21",
+    "bytes": 10143
+  },
+  "LICENSE": {
+    "sha256": "b0b87bf209abf9b534fe0c219c2c52adf7923080bde5d05deb4d218e224af399",
+    "bytes": 1070
+  },
+  "SKILL.md": {
+    "sha256": "e5a1fdf8cd8c891293fd287d4f662ac452866513937e6274d44b9ce09ab54f18",
+    "bytes": 2392
+  },
+  "demo.mp4": {
+    "sha256": "f0a07a08de1da4c7d06e12c358129ff693bd73cf2fbc1b43cece9af3c55fd3a8",
+    "bytes": 3890136
+  },
+  "demo-transcript.md": {
+    "sha256": "6613c37d74f4699eac5c63004c85464b566eec80b257ec1a050a40105a835f85",
+    "bytes": 1840
+  },
+  "desk-source.zip": {
+    "sha256": "404d52dcc07a2f8bb9d281685efce859fad52168079ccd538e4f0f316cc4a39f",
+    "bytes": 4005981
+  },
+  "source.zip": {
+    "sha256": "404d52dcc07a2f8bb9d281685efce859fad52168079ccd538e4f0f316cc4a39f",
+    "bytes": 4005981
+  },
+  "evidence/desk-publish.json": {
+    "sha256": "746b15298a4f40af6711a4ce3d26269f25ddac5f07d70a88f185e4399e359c73",
+    "bytes": 656
+  },
+  "evidence/desk-demo.json": {
+    "sha256": "988590f189673993e57c97f3493ea0252a3c5c585fee738a676bb76253521e1e",
+    "bytes": 2950
+  }
+}
