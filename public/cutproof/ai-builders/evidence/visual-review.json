@@ -1,0 +1,9 @@
+{
+  "status": "reviewed",
+  "artifact": "CutProof-pitch.pdf",
+  "sha256": "e411bcd05d29d2c1c594c30275abaf5d6626ce1b3dcdd06d83cfc1bd4e68ee01",
+  "pages": 8,
+  "method": "Downloaded the completed GitHub Actions artifact and inspected its all-page Poppler-rendered contact sheet, in addition to the earlier local render.",
+  "result": "All eight slides are present. No clipping, footer collision, broken screenshot or text overlap was observed at the reviewed scale.",
+  "scope": "Layout review only, not user research, a correctness certificate or a prize decision."
+}
