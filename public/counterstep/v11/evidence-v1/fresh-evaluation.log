@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "seed": 941307,
+  "n": 600,
+  "model_sha256": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381",
+  "top_class_correct": 487,
+  "top_class_accuracy": 0.8116666666666666,
+  "suggestions_issued": 475,
+  "suggestions_correct": 475,
+  "coverage": 0.7916666666666666,
+  "scope": "Fresh coefficient range 31..53, same five injected-edit families, half side-swapped. No hyperparameter selection or retraining in this script. Synthetic numeric generalization, not novel-template or learner evaluation."
+}
+
