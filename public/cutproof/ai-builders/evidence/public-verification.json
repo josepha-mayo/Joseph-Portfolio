@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "mode": "public",
+  "source_commit": "4f4c7aa5276c47f2a72e43679f9ab2ba41779de2",
+  "started_at": "2026-09-08T10:33:54.879074+00:00",
+  "checks": [
+    "Authored HTML, CSS and both actual application screenshots match their reviewed hashes."
+  ],
+  "origin": "https://6a9fe3e721b06a0008067738--josephm.netlify.app/cutproof/ai-builders",
+  "authentication": "none",
+  "error": "pitch.html",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/tools/cutproof_pitch.py\", line 38, in <module>\n    data=read_url(base+'/'+name);assert len(data)==meta['bytes'] and digest(data)==meta['sha256'],name\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pitch.html\n",
+  "finished_at": "2026-09-08T10:33:56.549852+00:00"
+}
