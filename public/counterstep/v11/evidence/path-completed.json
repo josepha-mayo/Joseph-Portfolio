@@ -1,0 +1,64 @@
+{
+  "schema": "counterstep-transfer-1",
+  "version": "1.1.0",
+  "input": {
+    "chain": "3(x + 2) = 12\n3x + 2 = 12\nx = 2",
+    "requestedSkill": "auto",
+    "seed": 774628
+  },
+  "actions": [
+    {
+      "stage": "repair",
+      "type": "answer",
+      "answer": "3(x + 2) = 12\n3x + 2 = 12\nx = 2"
+    },
+    {
+      "stage": "repair",
+      "type": "answer",
+      "answer": "3(x + 2) = 12\n3x+6=12"
+    },
+    {
+      "stage": "repair",
+      "type": "answer",
+      "answer": "3(x + 2) = 12\nx*x=4"
+    },
+    {
+      "stage": "repair",
+      "type": "answer",
+      "answer": "3(x + 2) = 12\n3x+6=12\n3x=6\nx=2"
+    },
+    {
+      "stage": "warmup",
+      "type": "answer",
+      "answer": "x=8"
+    },
+    {
+      "stage": "warmup",
+      "type": "answer",
+      "answer": "5(x + 3) = 55"
+    },
+    {
+      "stage": "warmup",
+      "type": "hint"
+    },
+    {
+      "stage": "warmup",
+      "type": "reveal"
+    },
+    {
+      "stage": "warmup",
+      "type": "answer",
+      "answer": "5x + 15 = 55"
+    },
+    {
+      "stage": "transfer",
+      "type": "answer",
+      "answer": "36 = 18x - 36"
+    }
+  ],
+  "draft": {
+    "phase": "complete",
+    "text": ""
+  },
+  "input_sha256": "a84c84c913cefcca9ebec973a07a3f25b3875d46f4cac6913119de7113d98971"
+}

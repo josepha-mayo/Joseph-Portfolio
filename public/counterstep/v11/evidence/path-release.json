@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-08T20:35:53.585011+00:00",
+  "commands": [
+    {
+      "name": "path-build",
+      "exit_code": 0
+    },
+    {
+      "name": "all-node",
+      "exit_code": 0
+    },
+    {
+      "name": "oracle",
+      "exit_code": 0
+    },
+    {
+      "name": "path-oracle",
+      "exit_code": 0
+    },
+    {
+      "name": "fresh-model",
+      "exit_code": 0
+    },
+    {
+      "name": "classic-browser",
+      "exit_code": 0
+    },
+    {
+      "name": "path-browser",
+      "exit_code": 0
+    },
+    {
+      "name": "path-demo",
+      "exit_code": 0
+    }
+  ],
+  "scope": "Internal synthetic-data software checks and actual UI recording; no learner study, diagnosis validation or educational outcome claim.",
+  "node_tests": 85,
+  "classic_browser_workflows": 16,
+  "transfer_browser_workflows": 29,
+  "browser_workflows": 45,
+  "original_oracle_cases": 250,
+  "transfer_oracle_tasks": 150,
+  "transfer_oracle_responses": 750,
+  "demo_seconds": 118.0,
+  "narration_words_per_minute": 135.1523947750363,
+  "preserved_source_hashes": {
+    "src/core.js": "bbb1c78f2b77a6ab9ec47792b41bdec842c703c5ebf08014a5c53b80d072e1ff",
+    "src/model.json": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381",
+    "src/app.js": "ca62d4de47509f6036697ad31ad98d72a664d04c49e407397f55284d8c3d3f3c",
+    "src/page.html": "5e7bed5668bcc23ea2cf934ea081fea28a3f12dc5581b566f896ed532d2b002f",
+    "index.html": "db1f21d63dbf2a5af51463bf9699b2a28252e63cc86972a07c974115547f090a"
+  },
+  "model_evaluation": "Unchanged weights; previous 487/600 synthetic numeric result reproduced, not a new held-out evaluation",
+  "finished_at": "2026-09-08T20:39:06.679065+00:00"
+}

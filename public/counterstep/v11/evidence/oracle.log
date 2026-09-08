@@ -1,0 +1,1 @@
+{"status": "passed", "cases": 250, "seed": 20260907, "method": "Independently calculated linear solution sets and witness truth using Python Fraction; coefficients include zero and negatives. Not learner validation."}

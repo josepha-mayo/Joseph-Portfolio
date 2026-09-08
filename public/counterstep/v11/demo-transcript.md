@@ -1,0 +1,19 @@
+# Counterstep Transfer Path demonstration
+
+Stock synthetic narration, recorded software actions and synthetic work.
+
+The final answer is right, but the working is wrong. Counterstep helps a learner repair that gap, then write a fresh step without multiple-choice answers.
+
+The exact checker finds the first broken transition. A small trained model suggests what to practise, but it never decides whether the mathematics is correct.
+
+The starting problem stays fixed. Here, the learner replaces the incorrect expansion and completes the repaired chain. Now the task moves to new numbers.
+
+Giving the correct value of x is not enough when the question asks for expansion. The checker distinguishes a valid solution from the operation requested.
+
+A worked step is available, but asking for it is recorded. Copying that step completes this card with help, not as an independent first response.
+
+Next comes a changed structure. Save halfway through, reopen the file, and the same question, unfinished draft, and earlier help history return.
+
+Write the new step without help. The tutor note keeps the question, every response, revisions, and assistance, rather than showing only a score.
+
+The workflow runs locally, without sign-in or cloud inference. This is recorded software with synthetic examples, not a learner trial or evidence of improved learning.

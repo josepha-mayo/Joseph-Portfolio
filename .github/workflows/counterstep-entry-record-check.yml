@@ -1,0 +1,40 @@
+name: Counterstep entry record checksum check
+on:
+  push:
+    branches: [counterstep-transfer-final-20260908]
+    paths: [.github/workflows/counterstep-entry-record-check.yml]
+permissions:
+  contents: write
+jobs:
+  check-record:
+    if: github.ref == 'refs/heads/counterstep-transfer-final-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Derive and verify the record against actual release bytes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,re
+          root=Path('public/counterstep/v11')
+          manifest=json.loads((root/'path-manifest.json').read_text())
+          path=root/'TRANSFER_ENTRY_STATUS.md';text=path.read_text()
+          for name,label in [('demo.mp4','Demo'),('source.zip','Source archive')]:
+            data=(root/name).read_bytes();sha=hashlib.sha256(data).hexdigest()
+            assert sha==manifest[name]['sha256'] and len(data)==manifest[name]['bytes']
+            text,n=re.subn(r'^- '+label+r' SHA-256: [a-f0-9]{64}$','- '+label+' SHA-256: '+sha,text,flags=re.M)
+            assert n==1
+            print(label,sha,len(data))
+          path.write_text(text)
+          PY
+      - name: Preserve the checked metadata without changing application files
+        run: |
+          git config user.name 'Counterstep Release Record'
+          git config user.email 'counterstep-build@users.noreply.github.com'
+          git add public/counterstep/v11/TRANSFER_ENTRY_STATUS.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Use directly verified release checksums in the entry record'
+          git push origin HEAD:counterstep-transfer-final-20260908
