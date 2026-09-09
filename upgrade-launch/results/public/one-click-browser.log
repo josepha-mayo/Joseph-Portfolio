@@ -1,0 +1,19 @@
+PASS Original editor and explicit one-click task control are visible
+PASS No example request is made before the operator clicks
+PASS One click loads six real source cues and selects only the first
+PASS Loading grants no editorial approval
+PASS Native media element decodes the attached source video
+PASS Reviewed-only export refuses the unreviewed initial cut
+PASS Real Evidence Desk retrieves the omitted qualification
+PASS Range repair includes every intervening cue and remains pending review
+PASS Actual downloaded bundle retains the correction, approval, five source cues and original digest
+Rendered clip-01.mp4: 20.000s, 360x640
+PASS Downloaded bundle renders to a real source-bound MP4 and fully decodes
+PASS Canceling replacement preserves the current source, cut and review
+PASS Injected wrong sample bytes fail before replacing user work
+PASS Injected missing media preserves the old project
+PASS A user edit during loading cannot be overwritten by the late response
+PASS Explicit reload succeeds after rejected loads
+PASS The complete task fits a 390-pixel viewport
+PASS No uncaught browser error; original CSP is not bypassed
+PASS Context task makes no upload, model request or third-party service request
