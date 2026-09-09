@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "started_at": "2026-09-09T21:05:05.691644+00:00",
+  "public_url": null,
+  "commands": [],
+  "production_merge": false,
+  "provider_calls": 0,
+  "error": "",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade-launch/release.py\", line 25, in <module>\n    assert h.count('</body>')==1;h=h.replace('</body>',tag+'</body>',1);(A/'index.html').write_text(h)\n           ^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "finished_at": "2026-09-09T21:05:05.907138+00:00"
+}
