@@ -2,7 +2,7 @@
 from pathlib import Path
 from datetime import datetime,timezone
 from concurrent.futures import ThreadPoolExecutor
-import hashlib,json,os,re,subprocess,sys,time,traceback,urllib.request,urllib.parse
+import hashlib,json,os,re,subprocess,sys,time,traceback,urllib.request,urllib.parse,urllib.error
 R=Path.cwd();O=R/'public/cutproof/v15';G=R/'publicgate';E=G/'results';E.mkdir(parents=True,exist_ok=True)
 BASE='https://6aa1c2967587b50008d959c8--josephm.netlify.app/cutproof/v15/'
 OLD='https://6a9f79eb04c6ca0008aa89b2--josephm.netlify.app/cutproof/v13/'
@@ -10,11 +10,18 @@ report={'status':'running','started_at':datetime.now(timezone.utc).isoformat(),'
 def digest(data):return hashlib.sha256(data).hexdigest()
 def fetch(base,name):
  assert not Path(name).is_absolute() and '..'not in Path(name).parts
- req=urllib.request.Request(base+urllib.parse.quote(name,safe='/'),headers={'User-Agent':'CutProof-Public-Verification/1.5','Accept-Encoding':'identity'})
- with urllib.request.urlopen(req,timeout=90)as response:
-  assert response.status==200 and urllib.parse.urlsplit(response.url).hostname==urllib.parse.urlsplit(base).hostname
-  data=response.read(180000001);assert len(data)<=180000000
-  return data
+ for attempt in range(3):
+  try:
+   req=urllib.request.Request(base+urllib.parse.quote(name,safe='/'),headers={'User-Agent':'CutProof-Public-Verification/1.5','Accept-Encoding':'identity'})
+   with urllib.request.urlopen(req,timeout=45)as response:
+    assert response.status==200 and urllib.parse.urlsplit(response.url).hostname==urllib.parse.urlsplit(base).hostname
+    data=response.read(180000001);assert len(data)<=180000000
+    return data
+  except (TimeoutError,urllib.error.URLError,ConnectionError)as error:
+   if isinstance(error,urllib.error.HTTPError)and error.code not in [429,500,502,503,504]:raise
+   print('GET_RETRY',name,attempt+1,str(error),flush=True)
+   if attempt==2:raise
+   time.sleep(1+attempt)
 
 def run(name,args,env=None,timeout=1200):
  started=time.monotonic();p=subprocess.run(args,cwd=R,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=timeout)
@@ -24,9 +31,12 @@ def run(name,args,env=None,timeout=1200):
 try:
  manifest=json.loads((O/'candidate-files.json').read_text());assert json.loads(fetch(BASE,'candidate-files.json'))==manifest
  def asset(item):
-  name,expected=item;data=fetch(BASE,name);got={'bytes':len(data),'sha256':digest(data)}
-  return {'path':name,'matched':got==expected,'expected':expected,'actual':got}
- with ThreadPoolExecutor(max_workers=8)as pool:assets=list(pool.map(asset,sorted(manifest.items())))
+  name,expected=item
+  try:
+   data=fetch(BASE,name);got={'bytes':len(data),'sha256':digest(data)};result={'path':name,'matched':got==expected,'expected':expected,'actual':got}
+  except Exception as error:result={'path':name,'matched':False,'expected':expected,'error':str(error)}
+  print('ASSET',name,result['matched'],flush=True);return result
+ with ThreadPoolExecutor(max_workers=4)as pool:assets=list(pool.map(asset,sorted(manifest.items())))
  (E/'public-assets.json').write_text(json.dumps(assets,indent=2));report['public_assets_checked']=len(assets)
  assert all(a['matched']for a in assets),[a for a in assets if not a['matched']]
  old=[]
