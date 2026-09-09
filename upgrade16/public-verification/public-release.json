@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "origin": "https://6aa1e73893b44800087c7f1d--josephm.netlify.app/cutproof/v15/",
+  "started_at": "2026-09-09T23:13:17.604431+00:00",
+  "scope": "Anonymous public asset and application verification. No provider call, submission, new user study, or new speech-model accuracy test.",
+  "verified_files": 261,
+  "manifest_sha256": "173cb568d9a2cedb6fce938d7ebe6db56b6c383138a56ba9cc59c4960eee5347",
+  "application_checks": 18,
+  "actual_browser_version": "152.0.7977.64",
+  "native_source_sha256": "42a3f44989fa9ea230b3e9ddd00ec99f38e97a7beea9f5a7f8ba7eaeb1753e90",
+  "same_application_assertions": true,
+  "finished_at": "2026-09-09T23:14:35.860544+00:00"
+}
