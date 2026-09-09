@@ -1,0 +1,52 @@
+name: Countback native OpenCV runtime comparison
+on:
+  push:
+    branches: [countback-opencv5-20260909]
+    paths:
+      - .github/workflows/countback-opencv5.yml
+      - countback-runtime/probe.py
+      - countback-runtime/baseline.json.xz.b64
+permissions:
+  contents: read
+concurrency:
+  group: countback-opencv5-migration
+  cancel-in-progress: false
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - opencv: '4.13.0.92'
+            major: 4
+          - opencv: '5.0.0.93'
+            major: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install exact native runtime and record resolved package hashes
+        run: |
+          mkdir -p countback-runtime/reports
+          python -m pip install --only-binary=:all: --report countback-runtime/reports/pip-install.json 'numpy==2.3.5' 'scikit-image==0.26.0' 'opencv-python-headless==${{ matrix.opencv }}' 'pooch==1.8.2'
+          python -m pip freeze > countback-runtime/reports/environment.lock.txt
+      - name: Run original assertions and photographic correspondence
+        run: python countback-runtime/probe.py --expected-major ${{ matrix.major }} --allow-sample-download --output countback-runtime/reports/native
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-opencv-${{ matrix.major }}
+          retention-days: 14
+          path: |
+            countback-runtime/reports/
+            countback-runtime/probe.py
+          if-no-files-found: error
