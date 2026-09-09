@@ -1,0 +1,64 @@
+name: Countback OpenCV 5 compatibility only
+on:
+  push:
+    branches: [ci/countback-opencv5-20260909]
+    paths: [.github/workflows/countback-opencv5.yml, COUNTBACK_COMPAT_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: countback-compat-20260909
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install only the bounded version-5 CPU runtime
+        run: |
+          mkdir -p countback-compat/results
+          python -m venv /tmp/countback-five
+          set -o pipefail
+          /tmp/countback-five/bin/pip install --only-binary=:all: --report countback-compat/results/install.json 'numpy==2.3.5' 'scikit-image==0.26.0' 'pooch==1.8.2' 'opencv-python-headless>=5,<6' 2>&1 | tee countback-compat/results/install.log
+      - name: Run unchanged matcher, 19 tests and photographic audit
+        run: /tmp/countback-five/bin/python countback-compat/check.py
+      - name: Preserve text evidence only
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,os
+          p=Path('countback-compat/results/verification.json')
+          if not p.exists():
+              p.write_text(json.dumps({'status':'not_executed','reason':'Dependency installation failed before runtime verification; inspect install.log.','opencv5_executed':False,'aws_executed':False,'competition_registered':False,'workflow_run':os.environ['GITHUB_RUN_ID']},indent=2))
+          for f in Path('countback-compat/results').rglob('*'):
+              if f.is_file():assert f.suffix in ['.json','.log','.txt'],f
+          PY
+          git diff --exit-code -- countback-compat/original/src countback-compat/original/tests countback-compat/original/evaluate.py
+          git config user.name 'Countback Runtime Verification'
+          git config user.email 'countback@users.noreply.github.com'
+          git add countback-compat/results/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record actual OpenCV 5 compatibility result without redistributing input photos'
+            git push origin HEAD:ci/countback-opencv5-20260909
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-opencv5-compatibility
+          path: |
+            countback-compat/README.md
+            countback-compat/LICENSE
+            countback-compat/check.py
+            countback-compat/original/src/
+            countback-compat/original/tests/
+            countback-compat/original/evaluate.py
+            countback-compat/results/
+          retention-days: 14
