@@ -1,0 +1,32 @@
+[
+  {
+    "path": "index.html",
+    "matched": true,
+    "sha256": "8166705f6db0bda5cbae0c0984cedf3ab760f911df677f4bbfe1db4fe0ed1d77"
+  },
+  {
+    "path": "evidence.js",
+    "matched": true,
+    "sha256": "6853b9f26b3116054254245fef72d75f29b5d85ff4b524308e89d81cb19628a7"
+  },
+  {
+    "path": "binding.js",
+    "matched": true,
+    "sha256": "265a75e73183c70a0827fd3f72941c0232facbeb6566917cee566fa86fc8dae1"
+  },
+  {
+    "path": "source-lock.js",
+    "matched": true,
+    "sha256": "e49e67493783df0ab052f4710f817ee198d9a5628f046d94e959a0bc8c39bd0c"
+  },
+  {
+    "path": "speech-worker.mjs",
+    "matched": true,
+    "sha256": "d87eb03695f32bbd256fa46307fa00b1985f130d462abfc53e689167e6f09c94"
+  },
+  {
+    "path": "source.zip",
+    "matched": true,
+    "sha256": "d1ec1207042b3225f79c92db61654dfc192cad019158fd4d52ca317c015d0c50"
+  }
+]

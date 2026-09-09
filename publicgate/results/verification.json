@@ -1,12 +1,38 @@
 {
-  "status": "failed",
-  "started_at": "2026-09-09T20:38:33.928150+00:00",
+  "status": "passed",
+  "started_at": "2026-09-09T20:46:12.021299+00:00",
   "base_url": "https://6aa1c2967587b50008d959c8--josephm.netlify.app/cutproof/v15/",
   "app_commit": "644b1ee39b842112b4ad5334a71fd6345439e4af",
   "authentication": "none",
-  "commands": [],
+  "commands": [
+    {
+      "name": "source-lock",
+      "exit_code": 0,
+      "seconds": 3.79
+    },
+    {
+      "name": "speech",
+      "exit_code": 0,
+      "seconds": 18.13
+    },
+    {
+      "name": "signed",
+      "exit_code": 0,
+      "seconds": 10.61
+    },
+    {
+      "name": "passage",
+      "exit_code": 0,
+      "seconds": 5.99
+    }
+  ],
   "application_modified": false,
-  "error": "The read operation timed out",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/publicgate/verify.py\", line 29, in <module>\n    with ThreadPoolExecutor(max_workers=8)as pool:assets=list(pool.map(asset,sorted(manifest.items())))\n                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 619, in result_iterator\n    yield _result_or_cancel(fs.pop())\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 317, in _result_or_cancel\n    return fut.result(timeout)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 456, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/usr/lib/python3.12/concurrent/futures/thread.py\", line 58, in run\n    result = self.fn(*self.args, **self.kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/publicgate/verify.py\", line 27, in asset\n    name,expected=item;data=fetch(BASE,name);got={'bytes':len(data),'sha256':digest(data)}\n                            ^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/publicgate/verify.py\", line 14, in fetch\n    with urllib.request.urlopen(req,timeout=90)as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 215, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 515, in open\n    response = self._open(req, data)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 532, in _open\n    result = self._call_chain(self.handle_open, protocol, protocol +\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 492, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 1392, in https_open\n    return self.do_open(http.client.HTTPSConnection, req,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 1348, in do_open\n    r = h.getresponse()\n        ^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/http/client.py\", line 1457, in getresponse\n    response.begin()\n  File \"/usr/lib/python3.12/http/client.py\", line 336, in begin\n    version, status, reason = self._read_status()\n                              ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/http/client.py\", line 297, in _read_status\n    line = str(self.fp.readline(_MAXLINE + 1), \"iso-8859-1\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/socket.py\", line 707, in readinto\n    return self._sock.recv_into(b)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/ssl.py\", line 1252, in recv_into\n    return self.read(nbytes, buffer)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/ssl.py\", line 1104, in read\n    return self._sslobj.read(len, buffer)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: The read operation timed out\n",
-  "finished_at": "2026-09-09T20:40:10.226196+00:00"
+  "public_assets_checked": 248,
+  "inherited_public_browser_checks": 40,
+  "passage_public_browser_checks": 14,
+  "total_public_browser_checks": 54,
+  "original_deployment_files_checked": 6,
+  "source_zip_sha256": "dade94a5a1e85e7b4d758c53efe9ca76d4a7714029d89ff3b6c0a790b430477d",
+  "scope": "Anonymous HTTPS asset hashes, actual browser speech and edits, source identity, actual downloads, native rendering and mobile checks. These repeat release workflows, not new independent users or measured creator benefits.",
+  "finished_at": "2026-09-09T20:46:57.338632+00:00"
 }
