@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "seconds": 154.538,
+  "audioRms": 0.050721295177936554,
+  "voice": "Stock Kokoro af_heart synthetic, speed .86",
+  "spokenWordsPerMinute": 125.38569424964938,
+  "scenes": 7,
+  "scope": "Actual browser against live loopback SQLite/HTTP lab; supplied local-EVM observations, not mainnet or real-world ticket delivery."
+}

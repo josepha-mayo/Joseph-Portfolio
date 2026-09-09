@@ -1,0 +1,78 @@
+name: Forkline Delivery Lab verified release
+on:
+  push:
+    branches: [forkline-outbox-20260908]
+    paths: [.github/workflows/forkline-outbox-release.yml, OUTBOX_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: forkline-outbox-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/forkline-outbox-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand the hash-verified original integration upgrade
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,hashlib,json,shutil
+          if Path('outbox-upgrade/part0.bin').exists():
+            data=b''.join(Path(f'outbox-upgrade/part{i}.bin').read_bytes() for i in range(5))
+            assert hashlib.sha256(data).hexdigest()=='6528b74ae389823088ea18b612c5924701c397d9e5acc894fed9ffac022fcaa5'
+            files=json.loads(lzma.decompress(data));assert len(files)==20
+            for name,text in files.items():
+              p=Path(name)
+              assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github' and isinstance(text,str)
+              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+            if Path('evidence').exists() and not Path('evidence-original').exists():shutil.move('evidence','evidence-original')
+            shutil.rmtree('public/evidence',ignore_errors=True)
+            if Path('public/demo.mp4').exists():shutil.copy2('public/demo.mp4','public/demo-original.mp4')
+            shutil.rmtree('outbox-upgrade')
+          Path('evidence').mkdir(exist_ok=True)
+          PY
+      - name: Install pinned runtime and browser then fail fast on real database tests
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          python3 -m venv /tmp/forkline-outbox-venv
+          /tmp/forkline-outbox-venv/bin/pip -q install playwright==1.55.0 python-pptx==1.0.2
+          /tmp/forkline-outbox-venv/bin/python -m playwright install --with-deps chromium
+          npm test
+      - name: Install CPU-only stock narration and media tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          /tmp/forkline-outbox-venv/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/forkline-outbox-venv/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1
+      - name: Execute the EVM, real SQLite and HTTP workflows, and record the actual app
+        run: |
+          export PATH=/tmp/forkline-outbox-venv/bin:$PATH
+          python tools/delivery-release.py
+      - name: Preserve actual source and execution evidence on this isolated branch
+        if: always()
+        run: |
+          git config user.name 'Forkline Delivery Lab Verification'
+          git config user.email 'forkline-build@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Delivery Lab source and actual release results'
+          git push origin HEAD:forkline-outbox-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: forkline-outbox-release
+          path: |
+            public/
+            evidence/
+          retention-days: 14

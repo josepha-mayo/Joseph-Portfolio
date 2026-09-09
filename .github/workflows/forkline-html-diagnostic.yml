@@ -1,0 +1,38 @@
+name: Forkline HTML diagnostic
+on:
+  push:
+    branches: [forkline-20260908]
+    paths: [.github/workflows/forkline-html-diagnostic.yml]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/forkline-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Record exact anonymous HTML difference
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import urllib.request,hashlib,json,difflib
+          base=Path('PUBLIC_URL').read_text().strip().rstrip('/')
+          expected=Path('public/index.html').read_bytes()
+          with urllib.request.urlopen(base+'/index.html',timeout=30) as r:
+            assert r.status==200
+            data=r.read()
+          out={'url':base+'/index.html','expected_sha256':hashlib.sha256(expected).hexdigest(),'served_sha256':hashlib.sha256(data).hexdigest(),'diff':list(difflib.unified_diff(expected.decode().splitlines(),data.decode().splitlines(),fromfile='built',tofile='served'))}
+          Path('evidence/html-diff.json').write_text(json.dumps(out,indent=2))
+          print(json.dumps(out))
+          PY
+      - name: Preserve actual diagnostic on isolated branch
+        run: |
+          git config user.name 'Forkline Verification'
+          git config user.email 'forkline-verification@users.noreply.github.com'
+          git add evidence/html-diff.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record Forkline hosted HTML transformation'
+          git push origin HEAD:forkline-20260908

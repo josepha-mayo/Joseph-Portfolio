@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "cases": 2,
+  "databaseRoot": "evidence/outbox-databases/20260908221107110",
+  "traceSha256": "d4902354d927a156949cbbf2cd06042d56cfbbd1fe62ce260b7da23957ad77e3",
+  "checks": [
+    "enqueue-only sent one orphan; guarded sent zero",
+    "uncertain receipt recovered without second POST",
+    "incident remains after prior branch returns",
+    "blocked/acknowledged state survives SQLite reopening"
+  ],
+  "scope": "Rehearsal only. Local fixture tickets are real persisted rows, not real admission tickets or shipments. RPC observations are trusted. No production exactly-once or consensus-finality guarantee."
+}

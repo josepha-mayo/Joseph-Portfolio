@@ -1,0 +1,71 @@
+name: Forkline verified release
+on:
+  push:
+    branches: [forkline-20260908]
+    paths: [.github/workflows/forkline-release.yml, REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: forkline-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/forkline-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand verified original source on isolated branch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,hashlib,json
+          if not Path('src/engine.mjs').exists():
+            data=b''.join(Path(f'build-input/part{i}.bin').read_bytes() for i in range(4))
+            assert hashlib.sha256(data).hexdigest()=='82a46605c389bccfc3d3ad46ce513d0c4271858e6e2ad2780615380fdd7aa6d2'
+            for name,text in json.loads(lzma.decompress(data)).items():
+              p=Path(name);assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github'
+              if not p.exists():p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+          PY
+      - name: Install isolated local EVM and execute core gates
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          npm test
+          npm run evm
+      - name: Install browser and neural narration dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python3 -m venv /tmp/forkline
+          /tmp/forkline/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/forkline/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1 playwright==1.55.0 python-pptx==1.0.2
+          /tmp/forkline/bin/python -m playwright install --with-deps chromium
+      - name: Verify UI, produce deck and record actual application
+        run: |
+          export PATH=/tmp/forkline/bin:$PATH
+          python tools/release.py
+      - name: Preserve completed source and executed evidence only on isolated branch
+        run: |
+          git config user.name 'Forkline Build'
+          git config user.email 'forkline-build@users.noreply.github.com'
+          git add src contracts tools tests public evidence README.md LICENSE .gitignore netlify.toml package.json package-lock.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Publish Forkline source and actual EVM, browser and media verification'
+          git push origin HEAD:forkline-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: forkline-release
+          path: |
+            public/
+            evidence/
+            package-lock.json
+          retention-days: 14

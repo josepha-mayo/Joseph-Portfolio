@@ -1,0 +1,4499 @@
+{
+  "databaseRoot": "evidence/outbox-databases/20260908221107110",
+  "format": "forkline-outbox-record-v1",
+  "generatedAt": "2026-09-08T22:11:07.110Z",
+  "execution": "Node.js SQLite worker + independent SQLite HTTP ticket receiver; block-hash-pinned local-EVM observations",
+  "scope": "Rehearsal only. Local fixture tickets are real persisted rows, not real admission tickets or shipments. RPC observations are trusted. No production exactly-once or consensus-finality guarantee.",
+  "traceSha256": "d4902354d927a156949cbbf2cd06042d56cfbbd1fe62ce260b7da23957ad77e3",
+  "cases": [
+    {
+      "id": "before-send",
+      "title": "A reorg happens while the command waits in the outbox",
+      "steps": [
+        {
+          "title": "Start two empty delivery databases",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": -1,
+              "remaining": 8,
+              "note": "Contract deployed. No orders yet.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": -1,
+              "remaining": 8,
+              "note": "Contract deployed. No orders yet.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [],
+              "tickets": []
+            },
+            "last": []
+          }
+        },
+        {
+          "title": "Observe the common deployment",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": 0,
+              "remaining": 7,
+              "note": "Common deployment block. No order exists.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": 0,
+              "remaining": 7,
+              "note": "Common deployment block. No order exists.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #1"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #1"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Observe ALPHA-42 on branch A",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                "number": 2
+              },
+              "cursor": 1,
+              "remaining": 6,
+              "note": "ALPHA-42: order event observed, not finality.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                "number": 2
+              },
+              "cursor": 1,
+              "remaining": 6,
+              "note": "ALPHA-42: order event observed, not finality.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #2"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #2"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Wait: two confirmations",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                "number": 3
+              },
+              "cursor": 2,
+              "remaining": 5,
+              "note": "Two confirmations on branch A. Still waiting at the three-block setting.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 2,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                "number": 3
+              },
+              "cursor": 2,
+              "remaining": 5,
+              "note": "Two confirmations on branch A. Still waiting at the three-block setting.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 2,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #3"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #3"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Three confirmations: eligible to queue",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #4"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #4"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Queue the same command under both policies",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Before the worker sends, branch A disappears",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "blocked",
+                  "reason": "Supporting event no longer meets the observed-head policy",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "dispatch-hold",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #2"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #2"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Dispatch: enqueue-only issues an orphaned ticket; guarded holds",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "blocked",
+                  "reason": "Supporting event no longer meets the observed-head policy",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "dispatch-hold",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-4af990bdd428c3bc"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "ticket": "LAB-4af990bdd428c3bc"
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "incident",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-4af990bdd428c3bc",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "error": "No queued command"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "dispatch completed"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Restart both workers: the hold and ticket survive",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "blocked",
+                  "reason": "Supporting event no longer meets the observed-head policy",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "dispatch-hold",
+                  "detail": {
+                    "key": "7069a8fe514e1bc909f9086bab7970308f8f9599fae5d7787e423ea1fe218a03",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-4af990bdd428c3bc"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "ticket": "LAB-4af990bdd428c3bc"
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "incident",
+                  "detail": {
+                    "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "ee3d1e56d03d1439dc6c61d5966948e3d25373c42c981a87e4d1614488b3259e",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-4af990bdd428c3bc",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "both",
+                "result": "Reopened the existing SQLite files. Receiver ledger retained."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "lost-ack",
+      "title": "The receiver commits, the acknowledgement is lost, then the chain changes",
+      "steps": [
+        {
+          "title": "Start two empty delivery databases",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": -1,
+              "remaining": 8,
+              "note": "Contract deployed. No orders yet.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": -1,
+              "remaining": 8,
+              "note": "Contract deployed. No orders yet.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [],
+              "tickets": []
+            },
+            "last": []
+          }
+        },
+        {
+          "title": "Observe the common deployment",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": 0,
+              "remaining": 7,
+              "note": "Common deployment block. No order exists.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                "number": 1
+              },
+              "cursor": 0,
+              "remaining": 7,
+              "note": "Common deployment block. No order exists.",
+              "eligible": [],
+              "rows": [],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #1"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #1"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Observe ALPHA-42 on branch A",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                "number": 2
+              },
+              "cursor": 1,
+              "remaining": 6,
+              "note": "ALPHA-42: order event observed, not finality.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                "number": 2
+              },
+              "cursor": 1,
+              "remaining": 6,
+              "note": "ALPHA-42: order event observed, not finality.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #2"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #2"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Wait: two confirmations",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                "number": 3
+              },
+              "cursor": 2,
+              "remaining": 5,
+              "note": "Two confirmations on branch A. Still waiting at the three-block setting.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 2,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                "number": 3
+              },
+              "cursor": 2,
+              "remaining": 5,
+              "note": "Two confirmations on branch A. Still waiting at the three-block setting.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 2,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #3"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #3"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Three confirmations: eligible to queue",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #4"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #4"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Queue the same command under both policies",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": false,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                }
+              ],
+              "tickets": []
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Receiver commits each ticket, then drops the HTTP acknowledgement",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "uncertain",
+                  "reason": "Acknowledgement not durably recorded: fetch failed",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": false
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "uncertain",
+                  "reason": "Acknowledgement not durably recorded: fetch failed",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": false
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "error": "fetch failed"
+              },
+              {
+                "lane": "enqueue-only",
+                "error": "fetch failed"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Restart workers: uncertain does not mean undelivered",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "uncertain",
+                  "reason": "Acknowledgement not durably recorded: fetch failed",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": false
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 3,
+              "remaining": 4,
+              "note": "Three confirmations on branch A. Eligibility depends on the selected waiting policy; this is not consensus finality.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "uncertain",
+                  "reason": "Acknowledgement not durably recorded: fetch failed",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": false
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "both",
+                "result": "Reopened the existing SQLite files. Receiver ledger retained."
+              }
+            ]
+          }
+        },
+        {
+          "title": "Branch A disappears before receipt reconciliation",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "uncertain",
+                  "reason": "Acknowledgement not durably recorded: fetch failed",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": true
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "uncertain",
+                  "reason": "Acknowledgement not durably recorded: fetch failed",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [],
+              "incidents": [],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #2"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #2"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Read the receiver receipt without issuing a second ticket",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "ticket": "LAB-e494e162f2e2ecac"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": true
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                "number": 2
+              },
+              "cursor": 4,
+              "remaining": 3,
+              "note": "Deep reorg: the delivered ALPHA-42 event disappears. The delivery cannot be undone.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 1,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "ticket": "LAB-cf3b40eea6d61fec"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "reconcile completed"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "reconcile completed"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Branch B extends",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                "number": 3
+              },
+              "cursor": 5,
+              "remaining": 2,
+              "note": "Branch B extends. ALPHA-42 stays orphaned.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 2,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "ticket": "LAB-e494e162f2e2ecac"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": true
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                "number": 3
+              },
+              "cursor": 5,
+              "remaining": 2,
+              "note": "Branch B extends. ALPHA-42 stays orphaned.",
+              "eligible": [],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 2,
+                  "status": "waiting"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "ticket": "LAB-cf3b40eea6d61fec"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #3"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #3"
+              }
+            ]
+          }
+        },
+        {
+          "title": "BETA-17 reaches the waiting threshold",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                "number": 4
+              },
+              "cursor": 6,
+              "remaining": 1,
+              "note": "BETA-17 reaches three confirmations. Eligibility also depends on the selected policy and any latched incident.",
+              "eligible": [
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "units": "2"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "ticket": "LAB-e494e162f2e2ecac"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                },
+                {
+                  "seq": 12,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                    "cursor": 6
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": true
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                "number": 4
+              },
+              "cursor": 6,
+              "remaining": 1,
+              "note": "BETA-17 reaches three confirmations. Eligibility also depends on the selected policy and any latched incident.",
+              "eligible": [
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "units": "2"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "ticket": "LAB-cf3b40eea6d61fec"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                },
+                {
+                  "seq": 12,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                    "cursor": 6
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #4"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #4"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Guarded queue stays paused after the orphaned acknowledged action",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                "number": 4
+              },
+              "cursor": 6,
+              "remaining": 1,
+              "note": "BETA-17 reaches three confirmations. Eligibility also depends on the selected policy and any latched incident.",
+              "eligible": [
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "units": "2"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "ticket": "LAB-e494e162f2e2ecac"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                },
+                {
+                  "seq": 12,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                    "cursor": 6
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": true
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                "number": 4
+              },
+              "cursor": 6,
+              "remaining": 1,
+              "note": "BETA-17 reaches three confirmations. Eligibility also depends on the selected policy and any latched incident.",
+              "eligible": [
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "units": "2"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                },
+                {
+                  "key": "6a6ba485bd4536e7ef1a3cabed370d03e0d0cf8111f3ed7be6af4dff2b8d09a1",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x424554412d313700000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "ticket": "LAB-cf3b40eea6d61fec"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                },
+                {
+                  "seq": 12,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                    "cursor": 6
+                  }
+                },
+                {
+                  "seq": 13,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "6a6ba485bd4536e7ef1a3cabed370d03e0d0cf8111f3ed7be6af4dff2b8d09a1",
+                    "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                    "head": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9"
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": true
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "error": "Paused: reconcile uncertain delivery or resolve incident outside this lab"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "6a6ba485bd4536e7ef1a3cabed370d03e0d0cf8111f3ed7be6af4dff2b8d09a1"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The old branch returns: the incident must stay latched",
+          "state": {
+            "guard": {
+              "policy": "guarded",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 7,
+              "remaining": 0,
+              "note": "A prior branch is reported again. The incident latch must remain set.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "ticket": "LAB-e494e162f2e2ecac"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                },
+                {
+                  "seq": 12,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                    "cursor": 6
+                  }
+                },
+                {
+                  "seq": 13,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 7
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "d2f0f483d5896c77f0af242475fa8fcc85f207aab611b1c18d4ec38d3ff4551d",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-e494e162f2e2ecac",
+                  "orphaned": false
+                }
+              ]
+            },
+            "naive": {
+              "policy": "enqueue-only",
+              "head": {
+                "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                "number": 4
+              },
+              "cursor": 7,
+              "remaining": 0,
+              "note": "A prior branch is reported again. The incident latch must remain set.",
+              "eligible": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "units": "1"
+                }
+              ],
+              "rows": [
+                {
+                  "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                  "depth": 3,
+                  "status": "ready"
+                },
+                {
+                  "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "orderId": "0x424554412d313700000000000000000000000000000000000000000000000000",
+                  "depth": 0,
+                  "status": "orphaned"
+                }
+              ],
+              "outbox": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x414c5048412d3432000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                  "state": "acknowledged",
+                  "reason": "Receipt persisted; action cannot be undone by a reorg",
+                  "attempts": 1
+                },
+                {
+                  "key": "6a6ba485bd4536e7ef1a3cabed370d03e0d0cf8111f3ed7be6af4dff2b8d09a1",
+                  "business_key": "31337:0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab:0x424554412d313700000000000000000000000000000000000000000000000000:0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                  "event_id": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                  "state": "queued",
+                  "reason": "",
+                  "attempts": 0
+                }
+              ],
+              "receipts": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec"
+                }
+              ],
+              "incidents": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                  "first_head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                }
+              ],
+              "paused": true,
+              "audit": [
+                {
+                  "seq": 1,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x86d580016d8c0f7761f4b504742ace41944b8f734ee609090de91d1634046205",
+                    "cursor": 0
+                  }
+                },
+                {
+                  "seq": 2,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795",
+                    "cursor": 1
+                  }
+                },
+                {
+                  "seq": 3,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x72d5ae7aa4bcc25830ea4a58368fce6ae7b44e5df511f2b2efee08d78f926960",
+                    "cursor": 2
+                  }
+                },
+                {
+                  "seq": 4,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 3
+                  }
+                },
+                {
+                  "seq": 5,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "eventId": "0x2b2b1e9eed2670244fd1c019ae955bb4ae7905c20d03485a1d31492a69d70795:0x82f2f2be82b3e86a848a54c161925243af7dd4ae5c2550eb466a60ca9b88a745:0",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 6,
+                  "action": "send-intent",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "head": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031"
+                  }
+                },
+                {
+                  "seq": 7,
+                  "action": "uncertain",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb"
+                  }
+                },
+                {
+                  "seq": 8,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f",
+                    "cursor": 4
+                  }
+                },
+                {
+                  "seq": 9,
+                  "action": "acknowledge",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "ticket": "LAB-cf3b40eea6d61fec"
+                  }
+                },
+                {
+                  "seq": 10,
+                  "action": "incident",
+                  "detail": {
+                    "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                    "reason": "Receiver issued a ticket whose supporting event is now orphaned",
+                    "head": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f"
+                  }
+                },
+                {
+                  "seq": 11,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x644f340f991ed5f32d5d44fb52c1330ece1932fdcd3ab55253eb706be9be81a8",
+                    "cursor": 5
+                  }
+                },
+                {
+                  "seq": 12,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9",
+                    "cursor": 6
+                  }
+                },
+                {
+                  "seq": 13,
+                  "action": "enqueue",
+                  "detail": {
+                    "key": "6a6ba485bd4536e7ef1a3cabed370d03e0d0cf8111f3ed7be6af4dff2b8d09a1",
+                    "eventId": "0xb8564eea8b8c78abb6dac6fafa57e0e11bb1380c05f072971d5adc987ed8cc2f:0x58f39b042b1831ead0c5f565570cfc5ed97f20f30ec975c9f783a6591bf46e4f:0",
+                    "head": "0xf5252d51c731c231c617e02d04c94036a10556a7726d853d6bc48a276d22e9f9"
+                  }
+                },
+                {
+                  "seq": 14,
+                  "action": "head",
+                  "detail": {
+                    "hash": "0x855b3274279a8020cb0b562492df3225065c5154d4169fb2e3c3e5b9cd14f031",
+                    "cursor": 7
+                  }
+                }
+              ],
+              "tickets": [
+                {
+                  "key": "117e2817636c647cb59c59154dab7188c5710a93b72d92d41419a645404663fb",
+                  "payload": {
+                    "chainId": "31337",
+                    "contract": "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab",
+                    "orderId": "0x414c5048412d3432000000000000000000000000000000000000000000000000",
+                    "account": "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
+                    "units": "1"
+                  },
+                  "payloadHash": "31f515b2e26ba8afdcddae795f9e7c84296d8a357e6ac19d685bb2efd67376aa",
+                  "ticket": "LAB-cf3b40eea6d61fec",
+                  "orphaned": false
+                }
+              ]
+            },
+            "last": [
+              {
+                "lane": "guarded",
+                "result": "Observed head #4"
+              },
+              {
+                "lane": "enqueue-only",
+                "result": "Observed head #4"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

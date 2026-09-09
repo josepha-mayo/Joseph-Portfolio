@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "origin": "https://6aa089c0cc86050008977842--josephm.netlify.app",
+  "count": 13,
+  "checks": [
+    "Hosted view visibly labels recorded execution",
+    "Hosted view hides live-delivery controls",
+    "Same observed reorg: guarded sends zero, enqueue-only sends one",
+    "Queued command survives as held rather than disappearing",
+    "Receiver ticket remains visibly orphan-backed",
+    "Snapshot export retains both actual recorded ledgers",
+    "Deep reorg remains paused after the old branch returns",
+    "Recovered acknowledgement is not a second receiver ticket",
+    "Orphan-backed receipt is visible before the prior branch returns",
+    "No page-wide overflow at 390 pixels",
+    "Loaded execution replay works offline",
+    "Hosted live mode refuses to impersonate a live receiver",
+    "No uncaught browser exceptions"
+  ],
+  "scope": "Actual SQLite/HTTP local workflow and replay of executed integration. No real admission or assets."
+}

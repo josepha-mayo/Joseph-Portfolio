@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "origin": "http://127.0.0.1:8080",
+  "count": 21,
+  "checks": [
+    "Hosted view visibly labels recorded execution",
+    "Hosted view hides live-delivery controls",
+    "Same observed reorg: guarded sends zero, enqueue-only sends one",
+    "Queued command survives as held rather than disappearing",
+    "Receiver ticket remains visibly orphan-backed",
+    "Snapshot export retains both actual recorded ledgers",
+    "Deep reorg remains paused after the old branch returns",
+    "Recovered acknowledgement is not a second receiver ticket",
+    "Orphan-backed receipt is visible before the prior branch returns",
+    "No page-wide overflow at 390 pixels",
+    "Loaded execution replay works offline",
+    "Live mode uses the loopback API",
+    "Browser enqueues a real SQLite command",
+    "Real receiver commits and destroys the HTTP response",
+    "Worker reopen retains unresolved intent and receiver effect",
+    "Receipt lookup after reorg latches an incident",
+    "Reconciliation does not issue a duplicate ticket",
+    "New order cannot pass an unresolved incident",
+    "Returned branch does not release the durable incident",
+    "Actual database state survives page reload",
+    "No uncaught browser exceptions"
+  ],
+  "scope": "Actual SQLite/HTTP local workflow and replay of executed integration. No real admission or assets."
+}
