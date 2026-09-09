@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "source_commit": "9835e48bd409c004bea665cca48304795718563a",
+  "workflow_run": 34407437208,
+  "workflow_url": "https://github.com/josepha-mayo/Joseph-Portfolio/actions/runs/34407437208",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "scikit_image": "0.26.0",
+  "runtime_versions": {
+    "control": {"cv2": "4.13.0", "opencv_python_headless": "4.13.0.92"},
+    "candidate": {"cv2": "5.0.0", "opencv_python_headless": "5.0.0.93"}
+  },
+  "original_tests_per_runtime": 19,
+  "distinct_original_test_methods": 19,
+  "same_matcher_source": true,
+  "same_assertions": true,
+  "same_input_hashes": true,
+  "same_thresholds": true,
+  "case_status_agreement": {"agree": 9, "compared": 9},
+  "photographic_results_both_versions": {
+    "engine_patch": {"status": "visual_correspondence_supported", "inliers": 93, "supported_informative_cells": 8, "informative_cells": 9},
+    "fuel_tank_patch": {"status": "request_another_view", "inliers": 18, "reason": "localized_but_coverage_insufficient"},
+    "rear_light_patch": {"status": "request_another_view", "inliers": 20, "reason": "localized_but_coverage_insufficient"}
+  },
+  "unrelated_controls": {"observations": ["coffee.png", "brick.png"], "patch_observation_pairs": 6, "supported_correspondences": 0},
+  "opencv5_stereo_audit": {
+    "engine_patch": {"landmarks_with_ground_truth": 86, "median_error_px": 0.20391943109230556},
+    "fuel_tank_patch": {"landmarks_with_ground_truth": 17, "median_error_px": 0.2671378435685256},
+    "rear_light_patch": {"landmarks_with_ground_truth": 20, "median_error_px": 0.481852243068305}
+  },
+  "duplicate_view_rejected": true,
+  "opencv5_native_execution": true,
+  "aws_executed": false,
+  "real_kit_images_evaluated": 0,
+  "competition_submission_ready": false,
+  "artifacts": {
+    "opencv5": {"id": 10125884216, "sha256": "cbb94ca0559af4bc60c1691e1ddcaa540adaf0649dc6aa0b1e6d67e438c6f2be", "zip_integrity_verified": true},
+    "opencv4_control": {"id": 10125878328, "sha256": "600b82af113d3eb3108fd60f224215626ff7b32482bdcce497fe5786b4cc8a69", "zip_integrity_verified": true}
+  },
+  "scope": "Version migration on the existing single Middlebury photographic development scene and two unrelated controls. Source regions are not independent subjects. No accuracy improvement, quantity, absence, condition, active camera control, real-kit capability or AWS deployment is established. Ground-truth disparity was used only after inference for a separate landmark audit."
+}
