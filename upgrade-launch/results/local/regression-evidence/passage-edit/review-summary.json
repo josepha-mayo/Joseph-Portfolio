@@ -1,0 +1,11 @@
+{
+  "clips": 1,
+  "reviewed": 0,
+  "unreviewed": [
+    "clip-01"
+  ],
+  "boundary_checks": 0,
+  "duration_seconds": 20,
+  "reviewed_only_available": false,
+  "all_reviewed": false
+}
