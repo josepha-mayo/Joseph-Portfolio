@@ -1,0 +1,17 @@
+test_budget_stops_requests (__main__.InputAndSessionTests.test_budget_stops_requests) ... ok
+test_color_rejected_explicitly (__main__.InputAndSessionTests.test_color_rejected_explicitly) ... ok
+test_corrupt_image (__main__.InputAndSessionTests.test_corrupt_image) ... ok
+test_duplicate_is_not_new_view (__main__.InputAndSessionTests.test_duplicate_is_not_new_view) ... ok
+test_flat_image_has_no_absence_verdict (__main__.InputAndSessionTests.test_flat_image_has_no_absence_verdict) ... ok
+test_float_rejected_explicitly (__main__.InputAndSessionTests.test_float_rejected_explicitly) ... ok
+test_invalid_reference_and_budget (__main__.InputAndSessionTests.test_invalid_reference_and_budget) ... ok
+test_match_never_approves_kit (__main__.InputAndSessionTests.test_match_never_approves_kit) ... ok
+test_new_weak_frame_does_not_inherit_match (__main__.InputAndSessionTests.test_new_weak_frame_does_not_inherit_match) ... ok
+test_oversized_rejected (__main__.InputAndSessionTests.test_oversized_rejected) ... ok
+test_reference_change_rejected (__main__.InputAndSessionTests.test_reference_change_rejected) ... ok
+test_tiny_rejected (__main__.InputAndSessionTests.test_tiny_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.003s
+
+OK

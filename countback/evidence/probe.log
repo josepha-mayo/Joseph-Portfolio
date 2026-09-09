@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/countback/probe.py", line 140, in <module>
+    if errors:raise AssertionError('; '.join(errors))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Planar graffiti under changed view: expectation not met; retain and inspect failure

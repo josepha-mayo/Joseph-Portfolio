@@ -1,0 +1,26 @@
+[
+  {
+    "name": "box.png",
+    "sha256": "1094629c1e2ebbc8a9ae2c9c63e18c1dff0f5f1481146e02f3b11a3d30feb20a",
+    "url": "https://github.com/opencv/opencv/blob/40738fb16ceddb5fb3fea747585f7ce6abb0605b/samples/data/box.png",
+    "use": "Unmodified upstream sample photo. Not collected for Countback."
+  },
+  {
+    "name": "box_in_scene.png",
+    "sha256": "8b0225ff76244a42bd1400c0904f8b7afea7d97b7d8115495e42e98ad347bd51",
+    "url": "https://github.com/opencv/opencv/blob/40738fb16ceddb5fb3fea747585f7ce6abb0605b/samples/data/box_in_scene.png",
+    "use": "Unmodified upstream sample photo. Not collected for Countback."
+  },
+  {
+    "name": "graf1.png",
+    "sha256": "1504b769303c7bde00fa578eeaad3c68e02aceabeb1242e556f1f8d19e4bdea5",
+    "url": "https://github.com/opencv/opencv/blob/40738fb16ceddb5fb3fea747585f7ce6abb0605b/samples/data/graf1.png",
+    "use": "Unmodified upstream sample photo. Not collected for Countback."
+  },
+  {
+    "name": "graf3.png",
+    "sha256": "492e0e96f21748d093e1a29f4dbfd46528bd75966937e85ce7c8abc0f361fc15",
+    "url": "https://github.com/opencv/opencv/blob/40738fb16ceddb5fb3fea747585f7ce6abb0605b/samples/data/graf3.png",
+    "use": "Unmodified upstream sample photo. Not collected for Countback."
+  }
+]
