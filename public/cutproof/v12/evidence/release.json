@@ -1,0 +1,375 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-06T23:11:11.453674+00:00",
+  "source_commit": "5e3e58c9d1bc5fd925af6ab14c37fade54030428",
+  "commands": [
+    {
+      "name": "evidence-unit-tests",
+      "exit_code": 0,
+      "seconds": 0.128
+    },
+    {
+      "name": "foundation-core-tests",
+      "exit_code": 0,
+      "seconds": 0.352
+    },
+    {
+      "name": "native-renderer-tests",
+      "exit_code": 0,
+      "seconds": 0.275
+    },
+    {
+      "name": "speech-fixture-render",
+      "exit_code": 0,
+      "seconds": 1.552
+    },
+    {
+      "name": "natural-fixture-convert",
+      "exit_code": 0,
+      "seconds": 0.062
+    },
+    {
+      "name": "browser-evidence-tests",
+      "exit_code": 0,
+      "seconds": 20.925
+    },
+    {
+      "name": "narrated-scene-1",
+      "exit_code": 0,
+      "seconds": 4.169
+    },
+    {
+      "name": "narrated-scene-2",
+      "exit_code": 0,
+      "seconds": 4.52
+    },
+    {
+      "name": "narrated-scene-3",
+      "exit_code": 0,
+      "seconds": 4.649
+    },
+    {
+      "name": "narrated-scene-4",
+      "exit_code": 0,
+      "seconds": 4.541
+    },
+    {
+      "name": "narrated-scene-5",
+      "exit_code": 0,
+      "seconds": 4.524
+    },
+    {
+      "name": "narrated-scene-6",
+      "exit_code": 0,
+      "seconds": 4.496
+    },
+    {
+      "name": "neural-walkthrough",
+      "exit_code": 0,
+      "seconds": 0.247
+    },
+    {
+      "name": "voice-preview",
+      "exit_code": 0,
+      "seconds": 0.405
+    },
+    {
+      "name": "demo-decode",
+      "exit_code": 0,
+      "seconds": 1.804
+    }
+  ],
+  "scope": "Internal execution checks, not independent creator validation.",
+  "speech_model": {
+    "id": "onnx-community/whisper-tiny.en",
+    "revision": "2575352d61be1bf7225cf8f8b268a4678025fc58",
+    "dtype": "q8",
+    "device": "wasm",
+    "runtime": "Transformers.js 3.8.1"
+  },
+  "browser": {
+    "status": "passed",
+    "checks": [
+      {
+        "name": "Existing ranker works in the actual v1.2 document"
+      },
+      {
+        "name": "No model fetched before explicit consent"
+      },
+      {
+        "name": "Actual quantized Whisper detects the missing NOT on the synthetic speech fixture"
+      },
+      {
+        "name": "ASR comparison does not rewrite captions or approve cuts"
+      },
+      {
+        "name": "Speech record binds actual media bytes, transcript, model revision and range"
+      },
+      {
+        "name": "Changed captions invalidate an already completed speech check"
+      },
+      {
+        "name": "Explicit caption correction preserves timing and clears approvals"
+      },
+      {
+        "name": "Video-first transcription creates real estimated cues and applies only on request"
+      },
+      {
+        "name": "Generated captions feed the real selection and ZIP-export pipeline"
+      },
+      {
+        "name": "Actual browser speech recognition also processes a natural-speech fixture"
+      },
+      {
+        "name": "Cancel terminates speech work without applying a partial result"
+      },
+      {
+        "name": "Retrieval surfaces a related correction 180 seconds outside the cut without splicing it"
+      },
+      {
+        "name": "Evidence Desk fits a 390-pixel viewport"
+      },
+      {
+        "name": "No browser errors or audio-upload requests were observed"
+      }
+    ],
+    "speech_results": [
+      {
+        "fixture": "original neural-synthetic missing-word test",
+        "asr_text": " This is a fictional product review. The battery does not last 12 hours. It lasts about 7 hours during video calls. Please keep that qualification in the final clip.",
+        "inference_seconds": 2.986,
+        "download_and_inference_seconds": 5.6604606849999755,
+        "priority_differences": [
+          {
+            "kind": "speech_only",
+            "caption": null,
+            "speech": "not",
+            "caption_index": 9,
+            "speech_index": 9,
+            "priority": "attention"
+          }
+        ]
+      },
+      {
+        "fixture": "OpenAI Whisper test natural speech",
+        "asr_text": " And so my fellow Americans ask not what your country can do for you ask what you can do for your country.",
+        "inference_seconds": 2.4743000000000173
+      }
+    ],
+    "browser_version": "152.0.7977.64",
+    "requests": [
+      {
+        "url": "http://127.0.0.1:40839/index.html",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/evidence.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/desk.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/speech-demo.json",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/speech-demo.mp4",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/speech-demo.mp4",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/speech-worker.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/transformers.web.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/model-config.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/onnx/encoder_model_quantized.onnx",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/onnx/decoder_model_merged_quantized.onnx",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+        "method": "GET"
+      },
+      {
+        "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/4245b7a6927fefde7f8ed6f7c31d86a3c21dfbc4969b3174ec6f1ea7a5d7bafa",
+        "method": "GET"
+      },
+      {
+        "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/8da3dd7d164c9129aecea413b0efbc74ef9cd7e87ba8e43aa2ef3f418ff6dbe5",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/ort-wasm-simd-threaded.jsep.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/ort-wasm-simd-threaded.jsep.wasm",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/speech-worker.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/transformers.web.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/model-config.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/ort-wasm-simd-threaded.jsep.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/ort-wasm-simd-threaded.jsep.wasm",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/natural-speech.wav",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/natural-speech.wav",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/speech-worker.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/transformers.web.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/model-config.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/ort-wasm-simd-threaded.jsep.mjs",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:40839/vendor/ort-wasm-simd-threaded.jsep.wasm",
+        "method": "GET"
+      }
+    ],
+    "errors": []
+  },
+  "narration": {
+    "model": "hexgrad/Kokoro-82M",
+    "voice": "af_heart",
+    "speed": 0.88,
+    "synthetic": true,
+    "scenes": [
+      {
+        "title": "Every word matters.",
+        "text": "A short clip can use the exact source words, and still leave out the sentence that changes their meaning. Cut Proof puts the recording, its captions, and the missing context into one editing workflow.",
+        "seconds": 14.2,
+        "words": 34
+      },
+      {
+        "title": "Hear the missing word.",
+        "text": "A missing word can reverse a claim. In this deliberately incorrect caption, the word not is missing. Cut Proof runs a speech model on the audio and highlights the disagreement. You listen before deciding what to correct.",
+        "seconds": 16.075,
+        "words": 37
+      },
+      {
+        "title": "Start with the recording.",
+        "text": "No transcript yet? Attach your recording and generate captions on your own device. After the model download, audio is processed in your browser, not sent to an inference service. Review and apply the generated captions.",
+        "seconds": 16.625,
+        "words": 35
+      },
+      {
+        "title": "Look beyond nearby sentences.",
+        "text": "A correction may appear much later than the clip. Evidence Desk searches the whole transcript for related passages, with exact times and original wording. Distant passages are never silently stitched into a new claim.",
+        "seconds": 16.1,
+        "words": 34
+      },
+      {
+        "title": "Make the correction visible.",
+        "text": "Caption corrections update the fingerprint and clear previous approvals. Export the speech check, captions, or an editing bundle. These checks assist an editor. They do not certify truth, and the speech model can make mistakes.",
+        "seconds": 16.425,
+        "words": 35
+      },
+      {
+        "title": "Keep the context. Cut the rest.",
+        "text": "This is not another invented viral score. It is a working tool for checking what a recording supports, and handing over usable edits. Try the live studio, inspect the source, and keep the final decision visible.",
+        "seconds": 15.55,
+        "words": 36
+      }
+    ],
+    "seconds": 94.975,
+    "words_per_minute": 133.29823637799421
+  },
+  "finished_at": "2026-09-06T23:13:04.351950+00:00"
+}

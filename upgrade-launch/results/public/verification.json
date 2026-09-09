@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-09T21:17:20.568585+00:00",
+  "public_url": "https://6aa1cc3bab49d3000915533e--josephm.netlify.app/cutproof/v15/",
+  "commands": [
+    {
+      "name": "javascript",
+      "exit_code": 0,
+      "seconds": 0.26
+    },
+    {
+      "name": "source-lock-browser",
+      "exit_code": 0,
+      "seconds": 19.21
+    },
+    {
+      "name": "inherited_asr.py",
+      "exit_code": 0,
+      "seconds": 21.12
+    },
+    {
+      "name": "signed_browser.py",
+      "exit_code": 0,
+      "seconds": 11.11
+    },
+    {
+      "name": "one-click-browser",
+      "exit_code": 0,
+      "seconds": 5.63
+    }
+  ],
+  "production_merge": false,
+  "provider_calls": 0,
+  "public_manifest_files_checked": 330,
+  "javascript_tests": 232,
+  "inherited_browser_workflows": 40,
+  "launch_browser_workflows": 18,
+  "actual_speech_inference": true,
+  "native_browser_http": true,
+  "isolated_bridge_used": false,
+  "earlier_releases_unchanged": {
+    "v13": 132,
+    "v14": 171
+  },
+  "unchanged_core_modules": {
+    "evidence.js": "728a84aee63c883db7baa75216e3529c88712f1adb45329b16d88bf458197278",
+    "binding.js": "265a75e73183c70a0827fd3f72941c0232facbeb6566917cee566fa86fc8dae1",
+    "source-lock.js": "e49e67493783df0ab052f4710f817ee198d9a5628f046d94e959a0bc8c39bd0c",
+    "speech-worker.mjs": "d87eb03695f32bbd256fa46307fa00b1985f130d462abfc53e689167e6f09c94",
+    "passages.js": "3dd1fe858db5e7c72be187df94e15d4497ed8876302ac57843d0161886415b43",
+    "desk.js": "b6020ada51ed014922b9abc9b88a33ed2bfcd80fdc7b4506631874cc609744b6",
+    "render.py": "8ccb1ce879ca57c2f6a59844e328a30e947c13289476fa385f1a2d8e3262798b"
+  },
+  "finished_at": "2026-09-09T21:18:29.295874+00:00"
+}

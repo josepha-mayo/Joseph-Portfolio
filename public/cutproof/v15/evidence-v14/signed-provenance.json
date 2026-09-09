@@ -1,0 +1,8 @@
+{
+  "base_blob": "eebcc62557fbb8e1b90a0d29be304f1fafc756b0",
+  "base_module_sha256": "6853b9f26b3116054254245fef72d75f29b5d85ff4b524308e89d81cb19628a7",
+  "candidate_module_sha256": "728a84aee63c883db7baa75216e3529c88712f1adb45329b16d88bf458197278",
+  "comparison_only": true,
+  "judged_base_changed": false,
+  "scope": "Signed numerals and supported speech equivalents. No change to ASR weights, source locking, context retrieval or boundary-risk accuracy."
+}

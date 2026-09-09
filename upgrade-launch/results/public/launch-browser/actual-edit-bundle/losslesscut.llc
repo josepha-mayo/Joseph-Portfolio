@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "mediaFileName": "fictional-passage-source.mp4",
+  "cutSegments": [
+    {
+      "start": 0,
+      "end": 20,
+      "name": "Battery life is twelve hours during video calls.",
+      "selected": true,
+      "tags": {
+        "cutproof_id": "clip-01",
+        "review": "reviewed",
+        "transcript_sha256": "aeb920a2cf9253736bdba87c514160a75564173d693b46d9dd26851af2af9644"
+      }
+    }
+  ]
+}

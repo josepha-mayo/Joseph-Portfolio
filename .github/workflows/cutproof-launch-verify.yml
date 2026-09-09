@@ -1,0 +1,72 @@
+name: CutProof launch release and public verification
+on:
+  push:
+    branches: [cutproof-passage-20260909]
+    paths: [.github/workflows/cutproof-launch-verify.yml, LAUNCH_REBUILD, LAUNCH_PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-launch-verification
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/cutproof-passage-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Correct exact outer-document insertion point
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('upgrade-launch/release.py');s=p.read_text()
+          old="assert h.count('</body>')==1;h=h.replace('</body>',tag+'</body>',1);(A/'index.html').write_text(h)"
+          new="needle='<script src=\"source-lock.js\"></script></body>';assert h.count(needle)==1;h=h.replace(needle,'<script src=\"source-lock.js\"></script>'+tag+'</body>',1);(A/'index.html').write_text(h)"
+          if old in s:s=s.replace(old,new,1);p.write_text(s)
+          else:assert new in s,'Unexpected build source'
+          compile(p.read_text(),str(p),'exec')
+          PY
+      - name: Install actual browser and media runtime
+        run: |
+          sudo apt-get update -qq -o Dir::Etc::sourcelist=sources.list.d/ubuntu.sources -o Dir::Etc::sourceparts=-
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
+          if ! command -v google-chrome >/dev/null; then
+            curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
+            sudo apt-get install -y /tmp/chrome.deb
+          fi
+          python3 -m venv /tmp/cutproof-launch
+          /tmp/cutproof-launch/bin/pip -q install playwright==1.55.0
+          /tmp/cutproof-launch/bin/python -m playwright install ffmpeg
+      - name: Verify actual app without simulated browser transport
+        run: |
+          if [ -f LAUNCH_PUBLIC_URL ]; then
+            /tmp/cutproof-launch/bin/python upgrade-launch/release.py --public "$(cat LAUNCH_PUBLIC_URL)"
+          else
+            /tmp/cutproof-launch/bin/python upgrade-launch/release.py
+          fi
+      - name: Publish passed release or retain diagnostic report only
+        if: always()
+        run: |
+          git config user.name 'CutProof Release Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add upgrade-launch/
+          if [ ! -f LAUNCH_PUBLIC_URL ] && python3 -c "import json; assert json.load(open('upgrade-launch/results/local/verification.json'))['status']=='passed'"; then
+            git add public/cutproof/v15/
+          fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual native CutProof launch verification and candidate artifacts'
+          git push origin HEAD:cutproof-passage-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-launch-verification
+          path: |
+            upgrade-launch/
+            public/cutproof/v15/source.zip
+            public/cutproof/v15/candidate-files.json
+          retention-days: 14

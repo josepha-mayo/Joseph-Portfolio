@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:04,000
+Battery life is twelve hours during video calls.
+
+2
+00:00:04,000 --> 00:00:08,000
+The case is plastic.
+
+3
+00:00:08,000 --> 00:00:12,000
+The screen is bright.
+
+4
+00:00:12,000 --> 00:00:16,000
+Returning to battery life.
+
+5
+00:00:16,000 --> 00:00:20,000
+Actually, that estimate was for standby alone.

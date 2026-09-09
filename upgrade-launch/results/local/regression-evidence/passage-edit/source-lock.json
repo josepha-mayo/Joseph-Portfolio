@@ -1,0 +1,11 @@
+{
+  "format": "cutproof-source-lock",
+  "source": {
+    "version": 1,
+    "algorithm": "SHA-256",
+    "sha256": "b237af58f015dee3e72bbb8335a8f5264ea883eeb69b7e49bcd761226bbdb745",
+    "bytes": 211032
+  },
+  "transcript_sha256": "aeb920a2cf9253736bdba87c514160a75564173d693b46d9dd26851af2af9644",
+  "interpretation": "Bytes read from the attached source. Not proof of authorship, caption accuracy or completeness."
+}

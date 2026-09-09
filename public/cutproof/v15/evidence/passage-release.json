@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-09T16:44:30.603613+00:00",
+  "commands": [
+    {
+      "name": "javascript",
+      "exit_code": 0,
+      "seconds": 0.32
+    },
+    {
+      "name": "native",
+      "exit_code": 0,
+      "seconds": 1.65
+    },
+    {
+      "name": "identity-browser",
+      "exit_code": 0,
+      "seconds": 10.93
+    },
+    {
+      "name": "inherited-asr",
+      "exit_code": 0,
+      "seconds": 19.61
+    },
+    {
+      "name": "signed-browser",
+      "exit_code": 0,
+      "seconds": 11.72
+    },
+    {
+      "name": "passage-fixture",
+      "exit_code": 0,
+      "seconds": 1.74
+    },
+    {
+      "name": "passage-browser",
+      "exit_code": 0,
+      "seconds": 64.35
+    }
+  ],
+  "shared_entry_modified": false,
+  "javascript_tests": 232,
+  "inherited_javascript_tests": 196,
+  "new_passage_tests": 36,
+  "native_checks": 13,
+  "inherited_browser_workflows": 40,
+  "new_passage_browser_workflows": 16,
+  "v13_files_unchanged": 132,
+  "v14_files_unchanged": 171,
+  "model_weights_changed": false,
+  "boundary_detector_changed": false,
+  "scope": "Source-neighborhood review and contiguous repair. Existing ASR/sign/native checks rerun. Original synthetic source and actual app recording. No user study or new boundary-risk accuracy claim.",
+  "finished_at": "2026-09-09T16:46:21.169553+00:00"
+}

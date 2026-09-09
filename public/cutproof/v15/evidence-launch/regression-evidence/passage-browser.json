@@ -1,0 +1,241 @@
+{
+  "status": "passed",
+  "checks": [
+    "Fixture loaded through real transcript/video inputs and source-boundary controls",
+    "Unmatched following correction is displayed beside the matched topic cue",
+    "Passage playback uses original media without changing the cut or approving it",
+    "Expansion includes the whole correction and every intervening source cue, in order",
+    "Actual edit ZIP retains the correction, pending review and exact original-media SHA-256",
+    "Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP",
+    "Actual-app delta walkthrough encoded and fully decoded; captioned, no simulated call or narration",
+    "Edited transcript invalidates an old context-card action without changing the current selection",
+    "Old context-card playback also refuses stale source text",
+    "Changing the selected cut invalidates old context actions",
+    "Changed media identity invalidates old context actions",
+    "Over-limit context remains inspectable but cannot be silently spliced into a short clip",
+    "No result is not presented as a context-completeness guarantee",
+    "Expanded source passages remain usable at a 390-pixel width",
+    "No uncaught JavaScript error",
+    "Context workflow makes no external model, audio-upload or live-provider request"
+  ],
+  "scope": "Real local HTTP, actual UI interactions, synthetic source, actual downloaded edit ZIP and FFmpeg output. Not a creator study or a new boundary-risk benchmark.",
+  "count": 16,
+  "browser_version": "152.0.7977.64",
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:33721/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/d2c4836b-0e39-4359-8405-518cd256832c",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/d2c4836b-0e39-4359-8405-518cd256832c",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/d2c4836b-0e39-4359-8405-518cd256832c",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence/passage-edit/review.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/6384ce96-9aa1-4838-b0f6-6405cbd83bc4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/71d2101f-fe4c-4a77-8dbe-4a300aaa4bf0",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/3f624067-5c32-470d-bd0d-dac9893ff338",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/different.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33721/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33721/2f97155c-ae75-4054-b658-4803f83e405a",
+      "method": "GET"
+    }
+  ],
+  "manifest_sha256": "bca43230cbe9d63df9fa42fdd07c4bd48140b6961c7562366bf850f87532ef47",
+  "source_media_sha256": "b237af58f015dee3e72bbb8335a8f5264ea883eeb69b7e49bcd761226bbdb745",
+  "repaired_source_cue_ids": [
+    "s0001",
+    "s0002",
+    "s0003",
+    "s0004",
+    "s0005"
+  ],
+  "repaired_end_ms": 20000
+}
