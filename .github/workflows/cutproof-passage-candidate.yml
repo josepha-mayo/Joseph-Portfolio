@@ -1,0 +1,66 @@
+name: CutProof isolated passage-repair candidate
+on:
+  push:
+    branches: [cutproof-passage-20260909]
+    paths: [.github/workflows/cutproof-passage-candidate.yml, PASSAGE_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-passage-candidate
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/cutproof-passage-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Verify reviewed input bytes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected={'browser.py':'791d9782ac6be5d5ddd9ab52ad1a9ae251dcdf60bcc9d8c3266fbc599a56a5e1','build.py':'70fdf95dc1be7caf822ad6b3acf4a27fc8549755adcca6c31a54b981b63f38a2','desk-replacement.js':'ddeaf8872edcd76ee02702199e5df3728d8f907674a7ef52034198c413dc287a','fixture.py':'30b458bc68d284d2e016434f4d26b1e2191508f437a306d77f7416d0606439d0','passages.js':'3dd1fe858db5e7c72be187df94e15d4497ed8876302ac57843d0161886415b43','passages.test.cjs':'da82dd73f152805b6d30a492c63b9424f4121b5cc81ceb5b35a460285208afd4','release.py':'359c4447e5a5adb246e13070836d581a4f26cad2932b6ad490adeac6f2412a50','README.md':'4351b39a7740d49f41361c1fdb3fdcd5fb59cbda190526f054d7f7dd9aaff477'}
+          for name,want in expected.items():
+              got=hashlib.sha256((Path('upgrade15')/name).read_bytes()).hexdigest()
+              assert got==want,(name,got,want)
+          print('All eight reviewed input files match.')
+          PY
+      - name: Install real browser and media tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
+          if ! command -v google-chrome >/dev/null; then
+            curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
+            sudo apt-get install -y /tmp/chrome.deb
+          fi
+          python3 -m venv /tmp/cutproof-passage
+          /tmp/cutproof-passage/bin/pip -q install playwright==1.55.0
+          /tmp/cutproof-passage/bin/python -m playwright install ffmpeg
+      - name: Verify inherited speech, source identity, actual editing and exports
+        run: /tmp/cutproof-passage/bin/python upgrade15/release.py
+      - name: Preserve candidate code and actual outcomes only
+        if: always()
+        run: |
+          git config user.name 'CutProof Candidate Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add upgrade15/
+          if [ -d public/cutproof/v15 ]; then git add public/cutproof/v15/; fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record isolated passage candidate and executed release evidence'
+          git push origin HEAD:cutproof-passage-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-passage-candidate
+          path: |
+            public/cutproof/v15/
+            upgrade15/
+          retention-days: 14
