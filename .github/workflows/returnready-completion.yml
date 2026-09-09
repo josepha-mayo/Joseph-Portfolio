@@ -1,0 +1,56 @@
+name: ReturnReady candidate no-call validation
+on:
+  push:
+    branches: [returnready-completion-20260909]
+    paths: [.github/workflows/returnready-completion.yml, RETURNREADY_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: returnready-completion
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/returnready-completion-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Expand the reviewed original-source candidate
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,lzma,hashlib
+          inputs=Path('returnready-build-input')
+          if inputs.exists():
+            data=b''.join((inputs/f'part{i}.xz').read_bytes() for i in range(4))
+            assert hashlib.sha256(data).hexdigest()=='137bdd2e19bbfb55bdfad7158f3ea7fc62bcca74794e4da3f04145634da4adfe'
+            root=Path('apps/python/returnready')
+            for name,text in json.loads(lzma.decompress(data)).items():
+              p=Path(name)
+              assert not p.is_absolute() and '..'not in p.parts and isinstance(text,str)
+              target=root/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_text(text)
+          PY
+      - name: Install actual browser
+        run: |
+          python3 -m venv /tmp/returnready-test
+          /tmp/returnready-test/bin/pip -q install playwright==1.55.0
+          /tmp/returnready-test/bin/python -m playwright install --with-deps chromium
+      - name: Test Python ledger, transport and UI without provider credentials
+        run: /tmp/returnready-test/bin/python apps/python/returnready/release_gate.py
+      - name: Preserve code and executed evidence only on this candidate branch
+        if: always()
+        run: |
+          git config user.name 'ReturnReady Verification'
+          git config user.email 'returnready-build@users.noreply.github.com'
+          git add apps/python/returnready/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve ReturnReady candidate, documented live gate and actual no-call checks'
+          git push origin HEAD:returnready-completion-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: returnready-completion-candidate
+          path: apps/python/returnready/
+          retention-days: 14
