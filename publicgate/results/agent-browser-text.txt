@@ -1,0 +1,94 @@
+cutproof
+STUDIO
+LOCAL-FIRST
+Evidence Desk
+Save project
+Open project
+How it works
+Export edit bundle ↗
+SOURCE-LINKED SHORT-FORM EDITING
+Keep the context. Cut the rest.
+
+Find useful moments, check their words against the audio, and inspect the context left outside the cut.
+
+No account. No API bill.
+Your files stay in this browser.
+Your media is not uploaded or published.
+01 Source & direction
+⇧
+Drop a transcript here
+SRT, VTT, or JSON · up to 3,000 cues
+OR START WITH THE EXAMPLE
+Load built-in demo
+Original 2-minute source with synthetic narration. Included in the app.
+Try a risky cut →
+Paste transcript
+Reset
+ATTACH THE MATCHING VIDEO
+Choose local video
+Optional for analysis. Required to render.
+No captions? Create them from your video
+Import captions, or create them locally in Evidence Desk.
+SHAPE THE SELECTION
+Minimum seconds
+Maximum seconds
+Number of clips
+1
+2
+3
+4
+5
+6
+7
+8
+Topic focus
+Keep nearby qualifications when they fit the duration limit.
+Find source-linked clips →
+TF-IDF relevance + diversity ranking. Scores compare this source's candidates, not predicted engagement.
+Preview
+Source trace
+WAITING FOR SOURCE
+⌜ ▷ ⌟
+Your source, on the record.
+
+Load the demo or attach a video
+to preview exact source ranges.
+
+Nothing has been uploaded.
+0:00
+▷ Play selected cut
+Captions ↓ Render WebM ↗
+Import captions, then choose Find source-linked clips.
+SOURCE LOCK / SAME FILE AT HANDOFF
+
+The edit ZIP and manifest now bind to the attached media bytes. Replacing a file with the same name is not a match. SHA-256 identifies bytes, not whether the captions tell the truth.
+
+Fingerprint attached source
+Cancel
+Check a previously exported manifest against the attached file 
+
+Attach media, then export or verify. Caption-only SRT export remains available.
+
+02 Suggested cuts
+0 CLIPS
+No generated claims. Every suggestion will be a contiguous part of your source.
+—
+source duration
+—
+timestamped cues
+—
+candidate ranges ranked
+—
+measured analysis time
+More than a list of timestamps.
+
+Get real captions, a standalone context review page, a LosslessCut edit list, publication drafts and a fingerprinted manifest.
+
+Review summary appears after selection.
+Export reviewed clips only
+Inspect manifest JSON ↓
+The bundle also includes a native MP4 renderer. Python + FFmpeg are required for that route.
+A source link is not a truth guarantee.
+English context heuristics can miss nuance. Review each cut against the video. A matching fingerprint verifies transcript integrity, not factual accuracy.
+CutProof v1.3.0 · Deterministic extractive ranking · Optional models download after consent; media stays local
+Made for the handoff between a creator and an editor.
