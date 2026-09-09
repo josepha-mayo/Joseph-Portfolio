@@ -1,0 +1,52 @@
+name: CutProof quickstart anonymous public verification
+on:
+  push:
+    branches: [ci/cutproof-quickstart-public-20260909]
+    paths: [.github/workflows/cutproof-quickstart-public.yml, QUICKSTART_PUBLIC_RECHECK]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-quickstart-public
+  cancel-in-progress: false
+jobs:
+  public:
+    if: github.ref == 'refs/heads/ci/cutproof-quickstart-public-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      CUTPROOF_PUBLIC_URL: https://6aa1e73893b44800087c7f1d--josephm.netlify.app/cutproof/v15/
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install actual browser verification dependencies
+        run: |
+          sudo apt-get update -qq -o Dir::Etc::sourcelist=sources.list.d/ubuntu.sources -o Dir::Etc::sourceparts=- -o APT::Get::List-Cleanup=0
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          if ! command -v google-chrome >/dev/null; then
+            curl -fsSL --retry 2 https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
+            sudo apt-get install -y /tmp/chrome.deb
+          fi
+          python -m pip install playwright==1.55.0
+      - name: Check public asset bytes and the actual no-login workflow
+        run: python upgrade16/public_verify.py
+      - name: Record actual public checks on this CI branch only
+        if: always()
+        run: |
+          git config user.name 'CutProof Public Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          if [ ! -d upgrade16/public-verification ]; then exit 0; fi
+          git add upgrade16/public-verification/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record anonymous quickstart preview checks and actual downloads'
+          git push origin HEAD:ci/cutproof-quickstart-public-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-quickstart-public
+          path: upgrade16/public-verification/
+          retention-days: 14
