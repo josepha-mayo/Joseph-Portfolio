@@ -1,0 +1,100 @@
+name: Countback OpenCV 5 photo feasibility
+on:
+  push:
+    branches: [countback-feasibility-20260909]
+    paths: [.github/workflows/countback-feasibility.yml, COUNTBACK_RECHECK]
+permissions:
+  contents: write
+concurrency:
+  group: countback-photo-feasibility
+  cancel-in-progress: false
+jobs:
+  probe:
+    if: github.ref == 'refs/heads/countback-feasibility-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Restore reviewed candidate sources
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,lzma,json
+          p=Path('countback/payload.xz')
+          if p.exists():
+            data=p.read_bytes()
+            assert hashlib.sha256(data).hexdigest()=='f103b5257925778038f1663cb4399a923eb04641f9273fd876ac5b4e1ab8e338'
+            for name,text in json.loads(lzma.decompress(data)).items():
+              assert name in ['countback.py','probe.py','README.md']
+              (Path('countback')/name).write_text(text)
+            p.unlink()
+          PY
+      - name: Fetch exact official OpenCV 5 source and photographic samples
+        uses: actions/checkout@v4
+        with:
+          repository: opencv/opencv
+          ref: 40738fb16ceddb5fb3fea747585f7ce6abb0605b
+          path: upstream-opencv
+          persist-credentials: false
+      - name: Configure minimal CPU OpenCV with isolated Python bindings
+        run: |
+          mkdir -p countback/evidence
+          python3 -m venv /tmp/countback-venv
+          /tmp/countback-venv/bin/pip -q install numpy==2.2.6
+          /tmp/countback-venv/bin/pip freeze > countback/evidence/python-packages.txt
+          cmake -S upstream-opencv -B /tmp/countback-build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_LIST=core,imgproc,imgcodecs,features,geometry,flann,python3 \
+            -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_EXAMPLES=OFF \
+            -DBUILD_opencv_apps=OFF -DBUILD_JAVA=OFF -DBUILD_opencv_python2=OFF \
+            -DBUILD_opencv_python3=ON -DOPENCV_SKIP_PYTHON_LOADER=ON \
+            -DPYTHON3_EXECUTABLE=/tmp/countback-venv/bin/python \
+            -DPYTHON3_NUMPY_INCLUDE_DIRS=$(/tmp/countback-venv/bin/python -c 'import numpy;print(numpy.get_include())') \
+            -DWITH_IPP=OFF -DWITH_OPENCL=OFF -DWITH_FFMPEG=OFF \
+            -DWITH_GSTREAMER=OFF -DWITH_QT=OFF -DWITH_GTK=OFF \
+            -DWITH_OPENEXR=OFF -DWITH_ITT=OFF -DCPU_DISPATCH= \
+            2>&1 | tee countback/evidence/configure.log
+      - name: Compile the real OpenCV 5 Python target
+        run: |
+          set -o pipefail
+          cmake --build /tmp/countback-build --target opencv_python3 --parallel 3 2>&1 | tee countback/evidence/compile.log
+      - name: Execute bounded real-photo and uncertainty checks
+        run: |
+          CVSO=$(find /tmp/countback-build -name 'cv2*.so' -type f | head -n 1)
+          test -n "$CVSO"
+          export PYTHONPATH="$(dirname "$CVSO")"
+          export LD_LIBRARY_PATH=/tmp/countback-build/lib
+          export OPENCV_SOURCE="$GITHUB_WORKSPACE/upstream-opencv"
+          /tmp/countback-venv/bin/python countback/probe.py 2>&1 | tee countback/evidence/probe.log
+      - name: Record the supplied YouTube link's anonymous public metadata
+        if: always()
+        continue-on-error: true
+        run: |
+          python3 - <<'PY'
+          import json,urllib.request
+          from pathlib import Path
+          p=Path('countback/evidence');p.mkdir(exist_ok=True)
+          url='https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DZNnNR-yUtdg&format=json'
+          try:
+            with urllib.request.urlopen(url,timeout=20) as r: data=json.load(r)
+            record={'status':'public_metadata_available','youtube_id':'ZNnNR-yUtdg','metadata':data,'scope':'Unauthenticated oEmbed metadata, not a complete playback test.'}
+          except Exception as e:record={'status':'unavailable','error':str(e),'youtube_id':'ZNnNR-yUtdg'}
+          (p/'forkline-youtube-check.json').write_text(json.dumps(record,indent=2))
+          PY
+      - name: Preserve source and actual probe output only on this branch
+        if: always()
+        run: |
+          git config user.name 'Countback Feasibility Checks'
+          git config user.email 'countback-build@users.noreply.github.com'
+          git add -A countback/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Countback source, real OpenCV build and observed photo-gate results'
+          git push origin HEAD:countback-feasibility-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-photo-feasibility
+          path: countback/
+          retention-days: 14
