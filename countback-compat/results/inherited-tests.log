@@ -1,0 +1,24 @@
+test_a_new_image_cannot_reuse_an_ambiguous_label (test_countback.MatchingTests.test_a_new_image_cannot_reuse_an_ambiguous_label) ... ok
+test_actual_different_view_supports_textured_region (test_countback.MatchingTests.test_actual_different_view_supports_textured_region) ... ok
+test_actual_matching_landmarks_do_not_override_incomplete_coverage (test_countback.MatchingTests.test_actual_matching_landmarks_do_not_override_incomplete_coverage) ... ok
+test_bad_thresholds_rejected (test_countback.MatchingTests.test_bad_thresholds_rejected) ... ok
+test_blank_reference_requests_another_sensing_method (test_countback.MatchingTests.test_blank_reference_requests_another_sensing_method) ... ok
+test_blank_view_is_unknown_not_missing (test_countback.MatchingTests.test_blank_view_is_unknown_not_missing) ... ok
+test_duplicate_image_does_not_inflate_evidence (test_countback.MatchingTests.test_duplicate_image_does_not_inflate_evidence) ... ok
+test_float_pixels_are_not_silently_scaled (test_countback.MatchingTests.test_float_pixels_are_not_silently_scaled) ... ok
+test_inspection_starts_with_no_evidence (test_countback.MatchingTests.test_inspection_starts_with_no_evidence) ... ok
+test_malformed_input_shapes_are_rejected (test_countback.MatchingTests.test_malformed_input_shapes_are_rejected) ... ok
+test_mutating_returned_evidence_does_not_forge_internal_result (test_countback.MatchingTests.test_mutating_returned_evidence_does_not_forge_internal_result) ... ok
+test_pixel_budget_is_checked (test_countback.MatchingTests.test_pixel_budget_is_checked) ... ok
+test_reference_input_is_copied (test_countback.MatchingTests.test_reference_input_is_copied) ... ok
+test_reference_names_and_observation_labels_are_bounded (test_countback.MatchingTests.test_reference_names_and_observation_labels_are_bounded) ... ok
+test_reference_reuse_is_not_a_new_observation (test_countback.MatchingTests.test_reference_reuse_is_not_a_new_observation) ... ok
+test_second_view_can_resolve_first_views_feature_failure (test_countback.MatchingTests.test_second_view_can_resolve_first_views_feature_failure) ... ok
+test_sessions_are_bounded (test_countback.MatchingTests.test_sessions_are_bounded) ... ok
+test_strong_synthetic_blur_requests_recapture (test_countback.MatchingTests.test_strong_synthetic_blur_requests_recapture) ... ok
+test_unrelated_real_photo_does_not_confirm_region (test_countback.MatchingTests.test_unrelated_real_photo_does_not_confirm_region) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.859s
+
+OK

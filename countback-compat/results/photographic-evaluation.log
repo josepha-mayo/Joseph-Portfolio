@@ -1,0 +1,55 @@
+{
+  "runtime": "5.0.0",
+  "positive_scene": {
+    "engine_patch": [
+      "visual_correspondence_supported",
+      "distinct_landmarks_agree_across_the_reference",
+      93
+    ],
+    "fuel_tank_patch": [
+      "request_another_view",
+      "localized_but_coverage_insufficient",
+      18
+    ],
+    "rear_light_patch": [
+      "request_another_view",
+      "localized_but_coverage_insufficient",
+      20
+    ]
+  },
+  "ground_truth": {
+    "engine_patch": {
+      "landmarks_with_ground_truth": 86,
+      "median_stereo_correspondence_error_px": 0.20391943109230556,
+      "p90_error_px": 0.7980409066867303
+    },
+    "fuel_tank_patch": {
+      "landmarks_with_ground_truth": 17,
+      "median_stereo_correspondence_error_px": 0.2671378435685256,
+      "p90_error_px": 0.5330151615968872
+    },
+    "rear_light_patch": {
+      "landmarks_with_ground_truth": 20,
+      "median_stereo_correspondence_error_px": 0.481852243068305,
+      "p90_error_px": 0.8503614191951319
+    }
+  },
+  "controls": {
+    "coffee.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    },
+    "brick.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    }
+  },
+  "blurred": {
+    "engine_patch": "request_another_view",
+    "fuel_tank_patch": "request_another_view",
+    "rear_light_patch": "request_another_view"
+  },
+  "kit_complete": null
+}

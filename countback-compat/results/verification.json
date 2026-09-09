@@ -1,0 +1,103 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-09T20:49:21.541036+00:00",
+  "aws_executed": false,
+  "competition_registered": false,
+  "eligibility_confirmed": false,
+  "original_assertions_changed": false,
+  "commands": [
+    {
+      "name": "inherited-tests",
+      "exit_code": 0
+    },
+    {
+      "name": "photographic-evaluation",
+      "exit_code": 0
+    }
+  ],
+  "runtime": {
+    "python": "3.12.14",
+    "opencv": "5.0.0",
+    "wheel": "5.0.0.93",
+    "numpy": "2.3.5",
+    "skimage": "0.26.0"
+  },
+  "inputs": {
+    "motorcycle_left.png": {
+      "sha256": "db18e9c4157617403c3537a6ba355dfeafe9a7eabb6b9b94cb33f6525dd49179",
+      "bytes": 644701
+    },
+    "motorcycle_right.png": {
+      "sha256": "5fc913ae870e42a4b662314bc904d1786bcad8e2f0b9b67dba5a229406357797",
+      "bytes": 640373
+    },
+    "motorcycle_disp.npz": {
+      "sha256": "2e49c8cebff3fa20359a0cc6880c82e1c03bbb106da81a177218281bc2f113d7",
+      "bytes": 1146173
+    },
+    "coffee.png": {
+      "sha256": "cc02f8ca188b167c775a7101b5d767d1e71792cf762c33d6fa15a4599b5a8de7",
+      "bytes": 466706
+    },
+    "brick.png": {
+      "sha256": "7966caf324f6ba843118d98f7a07746d22f6a343430add0233eca5f6eaaa8fcf",
+      "bytes": 106634
+    }
+  },
+  "source_sha256": {
+    "src/countback.py": "1e082524bea5d1aa05ae17a344071772db09a4b4ab4e15e69509ae75892a431d",
+    "tests/test_countback.py": "b43736e7399d7ea2d6d9eb655d6a7d64d20a65b541eed5600d345b2ea821ac15",
+    "evaluate.py": "5e8e679eaf95959508f4eb3ccf4ec3495492861024ff2bfa26e1501b34df15d5"
+  },
+  "opencv5_executed": true,
+  "inherited_test_methods": 19,
+  "photographic_regions": {
+    "engine_patch": {
+      "status": "visual_correspondence_supported",
+      "reason": "distinct_landmarks_agree_across_the_reference",
+      "inliers": 93
+    },
+    "fuel_tank_patch": {
+      "status": "request_another_view",
+      "reason": "localized_but_coverage_insufficient",
+      "inliers": 18
+    },
+    "rear_light_patch": {
+      "status": "request_another_view",
+      "reason": "localized_but_coverage_insufficient",
+      "inliers": 20
+    }
+  },
+  "unrelated_controls": {
+    "coffee.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    },
+    "brick.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    }
+  },
+  "stereo_audit": {
+    "engine_patch": {
+      "landmarks_with_ground_truth": 86,
+      "median_stereo_correspondence_error_px": 0.20391943109230556,
+      "p90_error_px": 0.7980409066867303
+    },
+    "fuel_tank_patch": {
+      "landmarks_with_ground_truth": 17,
+      "median_stereo_correspondence_error_px": 0.2671378435685256,
+      "p90_error_px": 0.5330151615968872
+    },
+    "rear_light_patch": {
+      "landmarks_with_ground_truth": 20,
+      "median_stereo_correspondence_error_px": 0.481852243068305,
+      "p90_error_px": 0.8503614191951319
+    }
+  },
+  "duplicate_view_rejected": true,
+  "scope": "Compatibility reproduction of the same three regions in one Middlebury stereo scene, with two unrelated image controls. Not new held-out data, kit identity, counting, absence or condition validation. OpenCV 5 alone does not satisfy the competition requirements.",
+  "finished_at": "2026-09-09T20:49:24.422314+00:00"
+}
