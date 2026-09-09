@@ -17,7 +17,8 @@ def run(name,args,timeout=600):
 try:
  h=(O/'index.html').read_text();tag='<script src="quickstart.js"></script>'
  if tag not in h:
-  assert h.count('</body>')==1;h=h.replace('</body>',tag+'</body>',1);(O/'index.html').write_text(h)
+  anchor='<script src="source-lock.js"></script>';assert h.count(anchor)==1
+  h=h.replace(anchor,anchor+tag,1);(O/'index.html').write_text(h)
  assert h.count(tag)==1
  js=run('javascript',['node','--test',str(O/'base-source/tests/core.test.js'),str(O/'base-source/tests/workflow.test.js'),str(O/'upgrade/evidence.test.cjs'),str(R/'upgrade15/binding.test.cjs'),str(O/'signed/signed.test.cjs'),str(R/'upgrade15/passages.test.cjs')]);count=int(re.search(r'# tests (\d+)',js).group(1));assert count==232 and '# fail 0'in js
  run('native-renderer',[sys.executable,str(R/'upgrade15/native_check.py')])
@@ -34,7 +35,6 @@ try:
 except BaseException as e:report.update(status='failed',error=str(e),traceback=traceback.format_exc());raise
 finally:
  report['finished_at']=datetime.now(timezone.utc).isoformat();(E/'quickstart-release.json').write_text(json.dumps(report,indent=2))
-# Preserve source, evidence, launcher and tests in the standalone source package.
 Q=O/'quickstart-reproduction';Q.mkdir(exist_ok=True)
 shutil.copy2(U/'tests/native_browser.py',Q/'native_browser.py');shutil.copy2(U/'start.py',Q/'start.py');shutil.copy2(U/'release.py',Q/'release.py')
 for name in ['quickstart-release.json','quickstart-browser.json','launch-desktop.png','launch-mobile.png','quickstart-repaired.png']:
