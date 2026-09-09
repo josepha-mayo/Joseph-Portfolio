@@ -48,8 +48,8 @@
     {
       "fixture": "original neural-synthetic missing-word test",
       "asr_text": " This is a fictional product review. The battery does not last 12 hours. It lasts about 7 hours during video calls. Please keep that qualification in the final clip.",
-      "inference_seconds": 2.517399999999994,
-      "download_and_inference_seconds": 5.761434461999983,
+      "inference_seconds": 2.620099999999977,
+      "download_and_inference_seconds": 7.090993240999978,
       "priority_differences": [
         {
           "kind": "speech_only",
@@ -64,57 +64,61 @@
     {
       "fixture": "OpenAI Whisper test natural speech",
       "asr_text": " And so my fellow Americans ask not what your country can do for you ask what you can do for your country.",
-      "inference_seconds": 2.462
+      "inference_seconds": 3.0236999999999536
     }
   ],
-  "browser_version": "152.0.7977.82",
+  "browser_version": "152.0.7977.64",
   "requests": [
     {
-      "url": "http://127.0.0.1:40879/index.html",
+      "url": "http://127.0.0.1:41531/index.html",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/evidence.js",
+      "url": "http://127.0.0.1:41531/evidence.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/passages.js",
+      "url": "http://127.0.0.1:41531/passages.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/desk.js",
+      "url": "http://127.0.0.1:41531/desk.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/binding.js",
+      "url": "http://127.0.0.1:41531/binding.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/source-lock.js",
+      "url": "http://127.0.0.1:41531/source-lock.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-demo.json",
+      "url": "http://127.0.0.1:41531/quickstart.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-demo.mp4",
+      "url": "http://127.0.0.1:41531/speech-demo.json",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-demo.mp4",
+      "url": "http://127.0.0.1:41531/speech-demo.mp4",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-worker.mjs",
+      "url": "http://127.0.0.1:41531/speech-demo.mp4",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/transformers.web.js",
+      "url": "http://127.0.0.1:41531/speech-worker.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/model-config.mjs",
+      "url": "http://127.0.0.1:41531/vendor/transformers.web.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:41531/model-config.mjs",
       "method": "GET"
     },
     {
@@ -134,7 +138,11 @@
       "method": "GET"
     },
     {
-      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
       "method": "GET"
     },
     {
@@ -142,11 +150,7 @@
       "method": "GET"
     },
     {
-      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
-      "method": "GET"
-    },
-    {
-      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
       "method": "GET"
     },
     {
@@ -182,63 +186,63 @@
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "url": "http://127.0.0.1:41531/vendor/ort-wasm-simd-threaded.jsep.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "url": "http://127.0.0.1:41531/vendor/ort-wasm-simd-threaded.jsep.wasm",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-worker.mjs",
+      "url": "http://127.0.0.1:41531/speech-worker.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/transformers.web.js",
+      "url": "http://127.0.0.1:41531/vendor/transformers.web.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/model-config.mjs",
+      "url": "http://127.0.0.1:41531/model-config.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "url": "http://127.0.0.1:41531/vendor/ort-wasm-simd-threaded.jsep.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "url": "http://127.0.0.1:41531/vendor/ort-wasm-simd-threaded.jsep.wasm",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-demo.mp4",
+      "url": "http://127.0.0.1:41531/speech-demo.mp4",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/natural-speech.wav",
+      "url": "http://127.0.0.1:41531/natural-speech.wav",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/natural-speech.wav",
+      "url": "http://127.0.0.1:41531/natural-speech.wav",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/speech-worker.mjs",
+      "url": "http://127.0.0.1:41531/speech-worker.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/transformers.web.js",
+      "url": "http://127.0.0.1:41531/vendor/transformers.web.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/model-config.mjs",
+      "url": "http://127.0.0.1:41531/model-config.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "url": "http://127.0.0.1:41531/vendor/ort-wasm-simd-threaded.jsep.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:40879/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "url": "http://127.0.0.1:41531/vendor/ort-wasm-simd-threaded.jsep.wasm",
       "method": "GET"
     }
   ],
