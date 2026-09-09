@@ -1,0 +1,70 @@
+name: Countback pinned OpenCV 5 runtime
+on:
+  push:
+    branches: [countback-cv5-20260909]
+    paths: [.github/workflows/countback-cv5-runtime.yml]
+permissions:
+  contents: read
+concurrency:
+  group: countback-cv5-runtime
+  cancel-in-progress: false
+jobs:
+  runtime:
+    if: github.ref == 'refs/heads/countback-cv5-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Fetch and verify official pinned wheel
+        run: |
+          mkdir -p cv5-runtime/wheels cv5-runtime/data
+          python - <<'PY'
+          from pathlib import Path
+          import urllib.request,json,hashlib
+          name='opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl'
+          expected='ed709fdf9aa0bd1f2ed8549e71d19449b03a675bb581eb292285f6861953be37'
+          with urllib.request.urlopen('https://pypi.org/pypi/opencv-python-headless/5.0.0.93/json',timeout=30) as response:
+              metadata=json.load(response)
+          entry=next(e for e in metadata['urls'] if e['filename']==name)
+          assert entry['digests']['sha256']==expected and entry['url'].startswith('https://files.pythonhosted.org/')
+          with urllib.request.urlopen(entry['url'],timeout=120) as response:
+              content=response.read(80_000_001)
+          assert len(content)<80_000_001 and hashlib.sha256(content).hexdigest()==expected
+          (Path('cv5-runtime/wheels')/name).write_bytes(content)
+          Path('cv5-runtime/wheel-provenance.json').write_text(json.dumps(entry,indent=2))
+          PY
+      - name: Install runtime and explicitly obtain development benchmark files
+        run: |
+          python -m pip install 'numpy==2.2.6' 'scikit-image==0.26.0'
+          python -m pip install --no-deps cv5-runtime/wheels/*.whl
+          python - <<'PY'
+          from pathlib import Path
+          from datetime import datetime,timezone
+          import json,cv2,numpy as np,hashlib,sys
+          from skimage import data
+          O=Path('cv5-runtime')
+          assert cv2.__version__.split('.')[0]=='5',cv2.__version__
+          (O/'build-info.txt').write_text(cv2.getBuildInformation())
+          # Explicitly authorized retrieval of public development fixtures, not a kit benchmark.
+          left,right,disparity=data.stereo_motorcycle()
+          items={'motorcycle_left':left,'motorcycle_right':right,'motorcycle_disparity':disparity,'camera':data.camera(),'brick':data.brick()}
+          manifest={}
+          for name,array in items.items():
+              path=O/'data'/(name+'.npy');np.save(path,array,allow_pickle=False)
+              manifest[name]={'shape':list(array.shape),'dtype':str(array.dtype),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+          report={'status':'passed','opencv_version':cv2.__version__,'numpy_version':np.__version__,'python':sys.version,'timestamp':datetime.now(timezone.utc).isoformat(),'data':manifest,'scope':'Runtime and development fixture preparation only. No kit accuracy, AWS, registration or submission. No user photographs. Fixtures are for local evaluation and must not be republished as original kit images.'}
+          (O/'runtime.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-cv5-runtime
+          path: cv5-runtime/
+          retention-days: 7
+          if-no-files-found: error
