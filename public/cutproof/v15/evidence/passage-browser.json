@@ -1,7 +1,217 @@
 {
-  "status": "failed",
-  "checks": [],
+  "status": "passed",
+  "checks": [
+    "Fixture loaded through real transcript/video inputs and source-boundary controls",
+    "Unmatched following correction is displayed beside the matched topic cue",
+    "Passage playback uses original media without changing the cut or approving it",
+    "Expansion includes the whole correction and every intervening source cue, in order",
+    "Actual edit ZIP retains the correction, pending review and exact original-media SHA-256",
+    "Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP",
+    "Actual-app delta walkthrough encoded and fully decoded; captioned, no simulated call or narration",
+    "Edited transcript invalidates an old context-card action without changing the current selection",
+    "Old context-card playback also refuses stale source text",
+    "Changing the selected cut invalidates old context actions",
+    "Changed media identity invalidates old context actions",
+    "Over-limit context remains inspectable but cannot be silently spliced into a short clip",
+    "No result is not presented as a context-completeness guarantee",
+    "Expanded source passages remain usable at a 390-pixel width",
+    "No uncaught JavaScript error",
+    "Context workflow makes no external model, audio-upload or live-provider request"
+  ],
   "scope": "Real local HTTP, actual UI interactions, synthetic source, actual downloaded edit ZIP and FFmpeg output. Not a creator study or a new boundary-risk benchmark.",
-  "error": "Page.wait_for_function: EvalError: Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'\".\n\n    at eval (<anonymous>)\n    at predicate (eval at evaluate (:291:30), <anonymous>:4:56)\n    at next (eval at evaluate (:291:30), <anonymous>:29:29)",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade15/browser.py\", line 23, in <module>\n    load();ok('Fixture loaded through real transcript/video inputs and source-boundary controls')\n    ^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade15/browser.py\", line 22, in load\n    page.goto(base+'index.html',wait_until='load');page.set_input_files('#transcriptFile',str(F/'source.cues.json'));page.set_input_files('#mediaFile',str(F/'source.mp4'));page.wait_for_function('document.getElementById(\"sourceVideo\").readyState>=2');page.fill('#minDuration','4');page.fill('#maxDuration','40');page.select_option('#clipCount','1');page.click('#analyzeBtn');page.get_by_text('Adjust source boundaries',exact=True).click();page.select_option('#firstCue','0');page.select_option('#lastCue','0');page.click('#applyBounds');assert page.evaluate('CutProofStudio.snapshot().result.clips[0].last')==0\n                                                                                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cutproof-passage/lib/python3.12/site-packages/playwright/sync_api/_generated.py\", line 11559, in wait_for_function\n    self._sync(\n  File \"/tmp/cutproof-passage/lib/python3.12/site-packages/playwright/_impl/_sync_base.py\", line 115, in _sync\n    return task.result()\n           ^^^^^^^^^^^^^\n  File \"/tmp/cutproof-passage/lib/python3.12/site-packages/playwright/_impl/_page.py\", line 1113, in wait_for_function\n    return await self._main_frame.wait_for_function(**locals_to_params(locals()))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cutproof-passage/lib/python3.12/site-packages/playwright/_impl/_frame.py\", line 860, in wait_for_function\n    await self._channel.send(\"waitForFunction\", self._timeout, params)\n  File \"/tmp/cutproof-passage/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 69, in send\n    return await self._connection.wrap_api_call(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cutproof-passage/lib/python3.12/site-packages/playwright/_impl/_connection.py\", line 558, in wrap_api_call\n    raise rewrite_error(error, f\"{parsed_st['apiName']}: {error}\") from None\nplaywright._impl._errors.Error: Page.wait_for_function: EvalError: Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'\".\n\n    at eval (<anonymous>)\n    at predicate (eval at evaluate (:291:30), <anonymous>:4:56)\n    at next (eval at evaluate (:291:30), <anonymous>:29:29)\n"
+  "count": 16,
+  "browser_version": "152.0.7977.82",
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:42149/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/195889fd-88c5-4ecc-bb6f-08397101d37d",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/195889fd-88c5-4ecc-bb6f-08397101d37d",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/195889fd-88c5-4ecc-bb6f-08397101d37d",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence/passage-edit/review.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/1d19208e-eefc-44c6-a7f1-99dc3f297374",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/a598db2c-23fe-4836-8df2-c3d9cfae73d2",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/73feb503-170e-45a5-a5dc-c648551e8bba",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/different.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:42149/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:42149/7f3134ed-0e30-4327-b4f2-e0b353b6dde8",
+      "method": "GET"
+    }
+  ],
+  "manifest_sha256": "b4b7800857db3a0d68e68d7774d5734b52ccd3464754364e45d4f445ff68cf74",
+  "source_media_sha256": "b237af58f015dee3e72bbb8335a8f5264ea883eeb69b7e49bcd761226bbdb745",
+  "repaired_source_cue_ids": [
+    "s0001",
+    "s0002",
+    "s0003",
+    "s0004",
+    "s0005"
+  ],
+  "repaired_end_ms": 20000
 }

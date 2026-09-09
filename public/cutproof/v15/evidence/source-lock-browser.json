@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "base": "http://127.0.0.1:40929",
+  "base": "http://127.0.0.1:39939",
   "checks": [
     "Source Lock is in the actual editor",
     "No-media manifest export is blocked",

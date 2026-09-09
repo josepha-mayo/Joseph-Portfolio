@@ -18,8 +18,14 @@ try:
   browser=p.chromium.launch(executable_path=shutil.which('google-chrome') or p.chromium.executable_path,args=['--no-sandbox']);ctx=browser.new_context(viewport={'width':1440,'height':1000},accept_downloads=True,record_video_dir=str(E/'recording'),record_video_size={'width':1440,'height':1000});page=ctx.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.on('request',lambda r:requests.append({'url':r.url,'method':r.method}));began=time.monotonic()
   def caption(text,seconds=5):
    t=time.monotonic()-began;captions.append((t,t+seconds,text));page.wait_for_timeout(seconds*1000)
+  def wait_ready():
+   until=time.monotonic()+30
+   while time.monotonic()<until:
+    if page.evaluate('document.getElementById("sourceVideo").readyState>=2'):return
+    page.wait_for_timeout(80)
+   raise AssertionError('Source media did not become playable within 30 seconds.')
   def load():
-   page.goto(base+'index.html',wait_until='load');page.set_input_files('#transcriptFile',str(F/'source.cues.json'));page.set_input_files('#mediaFile',str(F/'source.mp4'));page.wait_for_function('document.getElementById("sourceVideo").readyState>=2');page.fill('#minDuration','4');page.fill('#maxDuration','40');page.select_option('#clipCount','1');page.click('#analyzeBtn');page.get_by_text('Adjust source boundaries',exact=True).click();page.select_option('#firstCue','0');page.select_option('#lastCue','0');page.click('#applyBounds');assert page.evaluate('CutProofStudio.snapshot().result.clips[0].last')==0
+   page.goto(base+'index.html',wait_until='load');page.set_input_files('#transcriptFile',str(F/'source.cues.json'));page.set_input_files('#mediaFile',str(F/'source.mp4'));wait_ready();page.fill('#minDuration','4');page.fill('#maxDuration','40');page.select_option('#clipCount','1');page.click('#analyzeBtn');page.get_by_text('Adjust source boundaries',exact=True).click();page.select_option('#firstCue','0');page.select_option('#lastCue','0');page.click('#applyBounds');assert page.evaluate('CutProofStudio.snapshot().result.clips[0].last')==0
   load();ok('Fixture loaded through real transcript/video inputs and source-boundary controls')
   caption('CUTPROOF PASSAGE REPAIR / isolated candidate\nAn exact excerpt can still stop before the correction.',6)
   page.click('#evidenceBtn');page.click('#evSearch');cards=page.locator('#evResults .ev-card');assert cards.count()==1;assert 'Actually, that estimate was for standby alone.'in cards.inner_text();assert 'surrounding source'in cards.inner_text();ok('Unmatched following correction is displayed beside the matched topic cue')

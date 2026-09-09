@@ -3,7 +3,7 @@
   "source_identity": "matched_locked_manifest",
   "source_media_sha256": "6cf7c85d13ee9688658b0cf1f6c06a7bd84a89d73af79d2dc9b2326c26e1e5b3",
   "source_transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
-  "manifest_sha256": "e78661d2b0756aa34f0308e6b579b530125d4a2aa0ca09d8824f24a315efe25c",
+  "manifest_sha256": "aa7409f63d6903a625c1a8d68ecd1ddf2282a12cd4d43a137fe26c0fe1428f27",
   "source_duration_seconds": 126.987982,
   "video_transcript_semantic_alignment": "not_verified",
   "render_mode": "portrait safe-pad; original frame retained",
@@ -20,7 +20,7 @@
       "height": 640,
       "codec": "h264",
       "audio_present": true,
-      "render_elapsed_seconds": 0.568,
+      "render_elapsed_seconds": 0.644,
       "review_status": "pending"
     }
   ],

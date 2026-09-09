@@ -1,7 +1,7 @@
 {
   "format": "cutproof-speech-check",
   "version": 1,
-  "created_at": "2026-09-09T16:31:46.257Z",
+  "created_at": "2026-09-09T16:36:29.643Z",
   "source_sha256": "ffa64d9ace8e6186f715b1e28bae07e8024d638a2569f0ef6a4a5516cc40a098",
   "transcript_sha256": "ac0f824288e5c94818bed17d939f6ae841dafd9aec08c9de1dc5a7f766070686",
   "range": {
@@ -12,7 +12,7 @@
   "asr_text": " This is a fictional product review. The battery does not last 12 hours. It lasts about 7 hours during video calls. Please keep that qualification in the final clip.",
   "model": "onnx-community/whisper-tiny.en",
   "model_revision": "2575352d61be1bf7225cf8f8b268a4678025fc58",
-  "inference_seconds": 2.7651000000000057,
+  "inference_seconds": 2.165699999999997,
   "comparison": {
     "caption_words": 28,
     "speech_words": 29,
