@@ -20,6 +20,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
+      - name: Correct exact outer-document insertion point
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('upgrade-launch/release.py');s=p.read_text()
+          old="assert h.count('</body>')==1;h=h.replace('</body>',tag+'</body>',1);(A/'index.html').write_text(h)"
+          new="needle='<script src=\"source-lock.js\"></script></body>';assert h.count(needle)==1;h=h.replace(needle,'<script src=\"source-lock.js\"></script>'+tag+'</body>',1);(A/'index.html').write_text(h)"
+          if old in s:s=s.replace(old,new,1);p.write_text(s)
+          else:assert new in s,'Unexpected build source'
+          compile(p.read_text(),str(p),'exec')
+          PY
       - name: Install actual browser and media runtime
         run: |
           sudo apt-get update -qq -o Dir::Etc::sourcelist=sources.list.d/ubuntu.sources -o Dir::Etc::sourceparts=-
