@@ -1,0 +1,64 @@
+name: CutProof v15 anonymous deployment verification
+on:
+  push:
+    branches: [ci/cutproof-v15-public-20260909]
+    paths: [.github/workflows/cutproof-v15-public.yml, PUBLIC_GATE_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-v15-public-20260909
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      AGENT_BROWSER_SESSION: cutproof-public
+      AGENT_BROWSER_EXECUTABLE_PATH: /usr/bin/google-chrome
+      AGENT_BROWSER_ARGS: --no-sandbox
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install bounded browser tooling
+        run: |
+          command -v google-chrome
+          if ! command -v ffmpeg; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+          python3 -m venv /tmp/cutproof-public
+          /tmp/cutproof-public/bin/pip -q install playwright==1.55.0
+          npm install --prefix /tmp/cutproof-agent-browser agent-browser@0.33.2 --no-fund --no-audit
+      - name: Verify the public editor loads with agent-browser
+        run: |
+          mkdir -p publicgate/results
+          AB=/tmp/cutproof-agent-browser/node_modules/.bin/agent-browser
+          $AB open https://6aa1c2967587b50008d959c8--josephm.netlify.app/cutproof/v15/index.html
+          $AB snapshot -i > publicgate/results/agent-browser-snapshot.txt
+          $AB screenshot publicgate/results/agent-browser.png
+          $AB get text body > publicgate/results/agent-browser-text.txt
+          grep -q 'CutProof' publicgate/results/agent-browser-text.txt
+          $AB close
+      - name: Verify actual public assets, source identity, speech, edits and exports
+        run: /tmp/cutproof-public/bin/python publicgate/verify.py
+      - name: Preserve public verification only; do not touch deployed app or production
+        if: always()
+        run: |
+          git diff --exit-code -- public/cutproof/v13 public/cutproof/v14 public/cutproof/v15
+          git config user.name 'CutProof Public Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add publicgate/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual anonymous CutProof v15 verification outcomes'
+          git push origin HEAD:ci/cutproof-v15-public-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-v15-public-verification
+          path: publicgate/
+          retention-days: 14
