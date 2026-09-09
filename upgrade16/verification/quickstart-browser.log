@@ -1,0 +1,21 @@
+PASS Real localhost launch displays the quickstart and original editor
+PASS The example is not fetched or installed before an explicit click
+PASS One click loads original source bytes and selects only the first cue
+PASS Loading does not grant editorial approval
+PASS Attached sample is a playable native video, not a screen-state mock
+PASS Reviewed-only export refuses the unreviewed starting cut
+PASS Original Evidence Desk retrieves the omitted qualification after quickstart
+PASS Original range repair includes all intervening cues and leaves review pending
+PASS Actual downloaded bundle retains the correction, five source cues and original-media digest
+Rendered clip-01.mp4: 20.000s, 360x640
+PASS Actual exported bundle renders a source-bound MP4 and fully decodes
+PASS Canceling replacement preserves current source, cut and review
+PASS Injected wrong sample bytes are rejected before replacing user work
+PASS Injected missing media leaves the old project unchanged
+PASS An edit made during loading is preserved rather than overwritten by a late response
+PASS Explicit replacement can succeed after a rejected load; no latched broken state
+PASS One-click workflow retains the original mobile layout without horizontal overflow
+PASS No uncaught browser error with original Content Security Policy enforced
+PASS The context-review task sends no media or inference requests to an external host
+PASS Local server serves JavaScript with its correct MIME type and original-style safety headers
+PASS Server does not expose directory listings outside the app workflow

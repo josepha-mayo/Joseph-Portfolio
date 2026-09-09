@@ -1,13 +1,241 @@
 {
-  "status": "failed",
+  "status": "passed",
   "checks": [
     "Fixture loaded through real transcript/video inputs and source-boundary controls",
     "Unmatched following correction is displayed beside the matched topic cue",
     "Passage playback uses original media without changing the cut or approving it",
     "Expansion includes the whole correction and every intervening source cue, in order",
-    "Actual edit ZIP retains the correction, pending review and exact original-media SHA-256"
+    "Actual edit ZIP retains the correction, pending review and exact original-media SHA-256",
+    "Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP",
+    "Actual-app delta walkthrough encoded and fully decoded; captioned, no simulated call or narration",
+    "Edited transcript invalidates an old context-card action without changing the current selection",
+    "Old context-card playback also refuses stale source text",
+    "Changing the selected cut invalidates old context actions",
+    "Changed media identity invalidates old context actions",
+    "Over-limit context remains inspectable but cannot be silently spliced into a short clip",
+    "No result is not presented as a context-completeness guarantee",
+    "Expanded source passages remain usable at a 390-pixel width",
+    "No uncaught JavaScript error",
+    "Context workflow makes no external model, audio-upload or live-provider request"
   ],
   "scope": "Real local HTTP, actual UI interactions, synthetic source, actual downloaded edit ZIP and FFmpeg output. Not a creator study or a new boundary-risk benchmark.",
-  "error": "Output already exists. Choose a new output directory, or explicitly pass --overwrite.",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade15/browser.py\", line 48, in <module>\n    spec=importlib.util.spec_from_file_location('passage_renderer',O/'render.py');renderer=importlib.util.module_from_spec(spec);spec.loader.exec_module(renderer);receipt=renderer.render(D,F/'source.mp4',E/'passage-render',width=360);(E/'passage-render-receipt.json').write_text(json.dumps(receipt,indent=2));media=next((E/'passage-render').glob('*.mp4'));subprocess.run(['ffmpeg','-v','error','-i',str(media),'-f','null','-'],check=True,timeout=90);ok('Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP')\n                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py\", line 170, in render\n    require(overwrite or not any(p.exists() for p in outputs + [receipt_path]),\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py\", line 28, in require\n    raise ValueError(message)\nValueError: Output already exists. Choose a new output directory, or explicitly pass --overwrite.\n"
+  "count": 16,
+  "browser_version": "152.0.7977.82",
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:33171/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/e0c32de0-05b6-4d13-bf9f-c4671866ecbf",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/e0c32de0-05b6-4d13-bf9f-c4671866ecbf",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/e0c32de0-05b6-4d13-bf9f-c4671866ecbf",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence/passage-edit/review.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/4d5b929a-350c-4e64-ae11-f7f0833938db",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/84be7b24-a32b-4ca8-87dd-e3e6e4862c6e",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/0a48c98a-a672-406c-a917-3bdb92a9a68e",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/different.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/passages.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:33171/quickstart.js",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:33171/ceda3457-dc8a-4be3-ac6d-cd56edf36b71",
+      "method": "GET"
+    }
+  ],
+  "manifest_sha256": "e8151d60d8f6af1a42e87d099b79db4203e322735de332993286023d563c8bcf",
+  "source_media_sha256": "b237af58f015dee3e72bbb8335a8f5264ea883eeb69b7e49bcd761226bbdb745",
+  "repaired_source_cue_ids": [
+    "s0001",
+    "s0002",
+    "s0003",
+    "s0004",
+    "s0005"
+  ],
+  "repaired_end_ms": 20000
 }

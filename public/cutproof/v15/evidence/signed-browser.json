@@ -11,7 +11,7 @@
     "Sign-review workflow fits mobile and makes no media-upload request"
   ],
   "scope": "Real model and editor on original synthetic audio, not a representative ASR or creator study.",
-  "started_at": "2026-09-09T23:03:35.955801+00:00",
+  "started_at": "2026-09-09T23:07:18.339124+00:00",
   "initial_asr_text": " The temperature is minus 5 degrees.",
   "initial_priority_differences": [
     {
@@ -26,54 +26,54 @@
   "model_revision": "2575352d61be1bf7225cf8f8b268a4678025fc58",
   "corrected_asr_text": " The temperature is minus 5 degrees.",
   "count": 8,
-  "browser": "152.0.7977.64",
+  "browser": "152.0.7977.82",
   "requests": [
     {
-      "url": "http://127.0.0.1:44001/index.html",
+      "url": "http://127.0.0.1:44709/index.html",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/evidence.js",
+      "url": "http://127.0.0.1:44709/evidence.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/passages.js",
+      "url": "http://127.0.0.1:44709/passages.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/desk.js",
+      "url": "http://127.0.0.1:44709/desk.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/binding.js",
+      "url": "http://127.0.0.1:44709/binding.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/source-lock.js",
+      "url": "http://127.0.0.1:44709/source-lock.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/quickstart.js",
+      "url": "http://127.0.0.1:44709/quickstart.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/signed/speech.mp4",
+      "url": "http://127.0.0.1:44709/signed/speech.mp4",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/signed/speech.mp4",
+      "url": "http://127.0.0.1:44709/signed/speech.mp4",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/speech-worker.mjs",
+      "url": "http://127.0.0.1:44709/speech-worker.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/vendor/transformers.web.js",
+      "url": "http://127.0.0.1:44709/vendor/transformers.web.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/model-config.mjs",
+      "url": "http://127.0.0.1:44709/model-config.mjs",
       "method": "GET"
     },
     {
@@ -93,15 +93,15 @@
       "method": "GET"
     },
     {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
       "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
       "method": "GET"
     },
     {
       "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
-      "method": "GET"
-    },
-    {
-      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
       "method": "GET"
     },
     {
@@ -129,15 +129,11 @@
       "method": "GET"
     },
     {
-      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
-      "method": "GET"
-    },
-    {
       "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
       "method": "GET"
     },
     {
-      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
       "method": "GET"
     },
     {
@@ -145,41 +141,45 @@
       "method": "GET"
     },
     {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+      "method": "GET"
+    },
+    {
       "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/4245b7a6927fefde7f8ed6f7c31d86a3c21dfbc4969b3174ec6f1ea7a5d7bafa",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "url": "http://127.0.0.1:44709/vendor/ort-wasm-simd-threaded.jsep.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "url": "http://127.0.0.1:44709/vendor/ort-wasm-simd-threaded.jsep.wasm",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/speech-worker.mjs",
+      "url": "http://127.0.0.1:44709/speech-worker.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/vendor/transformers.web.js",
+      "url": "http://127.0.0.1:44709/vendor/transformers.web.js",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/model-config.mjs",
+      "url": "http://127.0.0.1:44709/model-config.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "url": "http://127.0.0.1:44709/vendor/ort-wasm-simd-threaded.jsep.mjs",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "url": "http://127.0.0.1:44709/vendor/ort-wasm-simd-threaded.jsep.wasm",
       "method": "GET"
     },
     {
-      "url": "http://127.0.0.1:44001/signed/speech.mp4",
+      "url": "http://127.0.0.1:44709/signed/speech.mp4",
       "method": "GET"
     }
   ],
-  "finished_at": "2026-09-09T23:03:48.214290+00:00"
+  "finished_at": "2026-09-09T23:07:30.908895+00:00"
 }

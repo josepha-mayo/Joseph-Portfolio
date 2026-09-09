@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "base": "http://127.0.0.1:42037",
+  "base": "http://127.0.0.1:37065",
   "checks": [
     "Source Lock is in the actual editor",
     "No-media manifest export is blocked",
@@ -21,7 +21,7 @@
     "Source Lock fits a 390-pixel viewport",
     "No uncaught browser exceptions"
   ],
-  "browser_version": "152.0.7977.64",
+  "browser_version": "152.0.7977.82",
   "count": 18,
   "scope": "Real source hashing and export. Only race/cancel scheduling is controlled; no hash or app result is mocked."
 }
