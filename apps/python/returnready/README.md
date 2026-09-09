@@ -59,7 +59,7 @@ python browser_completion.py
 python browser_completion.py --isolated
 ```
 
-The 68 recovered tests and 24 newly added unit/HTTP/concurrency checks have passed locally. The 18 new UI workflows passed with an explicitly labelled Python bridge; actual local browser navigation was blocked in that environment. `evidence03/release.json` records the separately executed release gates when available, rather than assuming the full HTTP run passed. The original v0.1 browser files remain historical and are not claimed as passing against changed stale-export behavior.
+The 68 recovered tests and 24 new unit/HTTP/concurrency checks passed. All 18 new UI workflows also passed against the real Python HTTP server with the default security policy in GitHub Actions run 34297647083. This is separate from the earlier local bridge run, where direct local navigation was blocked. The latest `evidence03/release.json` records the actual repeated gate for this candidate. The original v0.1 browser files remain historical and are not claimed as passing against changed stale-export behavior.
 
 There is no third-party runtime service in the default mode. Test-only browser dependencies are pinned in the CI workflow. Standard-library transport tests exercise the real HTTP adapter against loopback servers, and negative cases prevent credential forwarding through redirects. The code and demo are not a security certification or customer-benefit study.
 

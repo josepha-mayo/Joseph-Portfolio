@@ -25,19 +25,19 @@
   ],
   "browser": "152.0.7977.0",
   "requests": [
-    "http://127.0.0.1:43203/",
-    "http://127.0.0.1:43203/api/config",
-    "http://127.0.0.1:43203/api/demo",
-    "http://127.0.0.1:43203/api/inspect",
-    "http://127.0.0.1:43203/api/inspect",
-    "http://127.0.0.1:43203/api/inspect",
-    "http://127.0.0.1:43203/api/session/save",
-    "http://127.0.0.1:43203/api/session/open",
-    "http://127.0.0.1:43203/api/session/open",
-    "http://127.0.0.1:43203/api/session/open",
-    "http://127.0.0.1:43203/api/session/open",
-    "http://127.0.0.1:43203/api/inspect",
-    "http://127.0.0.1:43203/api/inspect"
+    "http://127.0.0.1:48833/",
+    "http://127.0.0.1:48833/api/config",
+    "http://127.0.0.1:48833/api/demo",
+    "http://127.0.0.1:48833/api/inspect",
+    "http://127.0.0.1:48833/api/inspect",
+    "http://127.0.0.1:48833/api/inspect",
+    "http://127.0.0.1:48833/api/session/save",
+    "http://127.0.0.1:48833/api/session/open",
+    "http://127.0.0.1:48833/api/session/open",
+    "http://127.0.0.1:48833/api/session/open",
+    "http://127.0.0.1:48833/api/session/open",
+    "http://127.0.0.1:48833/api/inspect",
+    "http://127.0.0.1:48833/api/inspect"
   ],
   "scope": "Python engine and UI functionality with synthetic cases. Actual localhost HTTP with default CSP and no live provider."
 }

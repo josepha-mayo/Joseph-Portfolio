@@ -33,4 +33,4 @@ python -m unittest test_returnready http_test test_completion -v
 python browser_completion.py
 ```
 
-The complete HTTP browser result must be attached only after the release workflow actually passes. Do not convert a written test list or synthetic result into a live-call claim.
+The release HTTP browser suite passed 18 workflows, alongside 92 unit/transport tests. Attach evidence03/release.json and preserve its explicit no-call/provider-unverified scope. Do not convert a written test list or synthetic result into a live-call claim.

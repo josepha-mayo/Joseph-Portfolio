@@ -92,6 +92,6 @@ test_database_context_closes_the_connection (test_completion.DurablePollingTests
 test_first_terminal_result_survives_concurrent_late_poll (test_completion.DurablePollingTests.test_first_terminal_result_survives_concurrent_late_poll) ... ok
 
 ----------------------------------------------------------------------
-Ran 92 tests in 2.902s
+Ran 92 tests in 3.289s
 
 OK
