@@ -1,0 +1,81 @@
+{
+  "status": "comparison_executed",
+  "opencv5_executed": true,
+  "same_source_and_inputs": true,
+  "original_test_methods": 19,
+  "repeated_versions_not_unique_tests": true,
+  "patches": {
+    "engine_patch": {
+      "v4_status": "visual_correspondence_supported",
+      "v5_status": "visual_correspondence_supported",
+      "same_decision": true,
+      "v4_inliers": 93,
+      "v5_inliers": 93,
+      "v4_ground_truth": {
+        "landmarks_with_ground_truth": 86,
+        "median_stereo_correspondence_error_px": 0.20391943109230556
+      },
+      "v5_ground_truth": {
+        "landmarks_with_ground_truth": 86,
+        "median_stereo_correspondence_error_px": 0.20391943109230556
+      }
+    },
+    "fuel_tank_patch": {
+      "v4_status": "request_another_view",
+      "v5_status": "request_another_view",
+      "same_decision": true,
+      "v4_inliers": 18,
+      "v5_inliers": 18,
+      "v4_ground_truth": {
+        "landmarks_with_ground_truth": 17,
+        "median_stereo_correspondence_error_px": 0.2671378435685256
+      },
+      "v5_ground_truth": {
+        "landmarks_with_ground_truth": 17,
+        "median_stereo_correspondence_error_px": 0.2671378435685256
+      }
+    },
+    "rear_light_patch": {
+      "v4_status": "request_another_view",
+      "v5_status": "request_another_view",
+      "same_decision": true,
+      "v4_inliers": 20,
+      "v5_inliers": 20,
+      "v4_ground_truth": {
+        "landmarks_with_ground_truth": 20,
+        "median_stereo_correspondence_error_px": 0.481852243068305
+      },
+      "v5_ground_truth": {
+        "landmarks_with_ground_truth": 20,
+        "median_stereo_correspondence_error_px": 0.481852243068305
+      }
+    }
+  },
+  "v4_controls": {
+    "coffee.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    },
+    "brick.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    }
+  },
+  "v5_controls": {
+    "coffee.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    },
+    "brick.png": {
+      "engine_patch": "request_another_view",
+      "fuel_tank_patch": "request_another_view",
+      "rear_light_patch": "request_another_view"
+    }
+  },
+  "aws_executed": false,
+  "competition_submission_ready": false,
+  "scope": "Compatibility on the original single stereo scene and two unrelated controls, not representative accuracy or kit completion."
+}
