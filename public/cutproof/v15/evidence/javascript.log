@@ -2,1393 +2,1393 @@ TAP version 13
 # Subtest: SRT preserves exact millisecond timing
 ok 1 - SRT preserves exact millisecond timing
   ---
-  duration_ms: 3.193905
+  duration_ms: 1.797174
   type: 'test'
   ...
 # Subtest: Windows newlines and BOM are accepted
 ok 2 - Windows newlines and BOM are accepted
   ---
-  duration_ms: 0.602194
+  duration_ms: 0.41624
   type: 'test'
   ...
 # Subtest: VTT header metadata, settings, identifiers and notes are accepted
 ok 3 - VTT header metadata, settings, identifiers and notes are accepted
   ---
-  duration_ms: 0.295626
+  duration_ms: 0.187985
   type: 'test'
   ...
 # Subtest: JSON segments use seconds, not milliseconds
 ok 4 - JSON segments use seconds, not milliseconds
   ---
-  duration_ms: 0.322083
+  duration_ms: 0.196082
   type: 'test'
   ...
 # Subtest: Whisper-style extra fields do not affect source text
 ok 5 - Whisper-style extra fields do not affect source text
   ---
-  duration_ms: 0.197294
+  duration_ms: 0.106873
   type: 'test'
   ...
 # Subtest: Native cue JSON round-trips
 ok 6 - Native cue JSON round-trips
   ---
-  duration_ms: 1.044067
+  duration_ms: 0.749194
   type: 'test'
   ...
 # Subtest: Caption markup is normalized but entity text is never executed
 ok 7 - Caption markup is normalized but entity text is never executed
   ---
-  duration_ms: 0.177458
+  duration_ms: 0.115205
   type: 'test'
   ...
 # Subtest: Subtitle positioning commands are not treated as narration
 ok 8 - Subtitle positioning commands are not treated as narration
   ---
-  duration_ms: 0.128545
+  duration_ms: 0.080203
   type: 'test'
   ...
 # Subtest: Duplicate source text is preserved
 ok 9 - Duplicate source text is preserved
   ---
-  duration_ms: 0.42624
+  duration_ms: 0.262577
   type: 'test'
   ...
 # Subtest: Rejects empty
 ok 10 - Rejects empty
   ---
-  duration_ms: 0.569707
+  duration_ms: 0.369829
   type: 'test'
   ...
 # Subtest: Rejects plain untimed text
 ok 11 - Rejects plain untimed text
   ---
-  duration_ms: 0.179702
+  duration_ms: 0.116284
   type: 'test'
   ...
 # Subtest: Rejects bad JSON
 ok 12 - Rejects bad JSON
   ---
-  duration_ms: 0.11401
+  duration_ms: 0.088367
   type: 'test'
   ...
 # Subtest: Rejects missing segments
 ok 13 - Rejects missing segments
   ---
-  duration_ms: 0.06783
+  duration_ms: 0.043208
   type: 'test'
   ...
 # Subtest: Rejects zero-duration
 ok 14 - Rejects zero-duration
   ---
-  duration_ms: 0.082557
+  duration_ms: 0.051171
   type: 'test'
   ...
 # Subtest: Rejects negative start
 ok 15 - Rejects negative start
   ---
-  duration_ms: 0.068574
+  duration_ms: 0.040921
   type: 'test'
   ...
 # Subtest: Rejects overlap
 ok 16 - Rejects overlap
   ---
-  duration_ms: 0.080985
+  duration_ms: 0.04811
   type: 'test'
   ...
 # Subtest: Rejects reverse order
 ok 17 - Rejects reverse order
   ---
-  duration_ms: 0.061074
+  duration_ms: 0.037743
   type: 'test'
   ...
 # Subtest: Rejects missing text
 ok 18 - Rejects missing text
   ---
-  duration_ms: 0.109707
+  duration_ms: 0.585426
   type: 'test'
   ...
 # Subtest: Rejects nonnumeric time
 ok 19 - Rejects nonnumeric time
   ---
-  duration_ms: 0.140967
+  duration_ms: 0.100096
   type: 'test'
   ...
 # Subtest: Rejects boolean time
 ok 20 - Rejects boolean time
   ---
-  duration_ms: 0.079339
+  duration_ms: 0.044343
   type: 'test'
   ...
 # Subtest: Rejects fractional milliseconds
 ok 21 - Rejects fractional milliseconds
   ---
-  duration_ms: 0.102719
+  duration_ms: 0.0429
   type: 'test'
   ...
 # Subtest: Rejects blank caption
 ok 22 - Rejects blank caption
   ---
-  duration_ms: 0.082654
+  duration_ms: 0.038282
   type: 'test'
   ...
 # Subtest: Rejects too long cue
 ok 23 - Rejects too long cue
   ---
-  duration_ms: 0.56371
+  duration_ms: 0.462703
   type: 'test'
   ...
 # Subtest: Rejects too many cues
 ok 24 - Rejects too many cues
   ---
-  duration_ms: 8.320039
+  duration_ms: 3.845644
   type: 'test'
   ...
 # Subtest: Rejects lone surrogate
 ok 25 - Rejects lone surrogate
   ---
-  duration_ms: 0.148502
+  duration_ms: 0.152951
   type: 'test'
   ...
 # Subtest: Rejects timestamp minute overflow
 ok 26 - Rejects timestamp minute overflow
   ---
-  duration_ms: 0.109352
+  duration_ms: 0.099244
   type: 'test'
   ...
 # Subtest: Rejects timestamp second overflow
 ok 27 - Rejects timestamp second overflow
   ---
-  duration_ms: 0.094618
+  duration_ms: 0.088913
   type: 'test'
   ...
 # Subtest: Rejects missing milliseconds
 ok 28 - Rejects missing milliseconds
   ---
-  duration_ms: 0.083814
+  duration_ms: 0.088456
   type: 'test'
   ...
 # Subtest: Rejects over-limit input text
 ok 29 - Rejects over-limit input text
   ---
-  duration_ms: 0.110438
+  duration_ms: 0.116903
   type: 'test'
   ...
 # Subtest: Formatting is millisecond-exact over hour boundaries
 ok 30 - Formatting is millisecond-exact over hour boundaries
   ---
-  duration_ms: 0.137929
+  duration_ms: 0.138244
   type: 'test'
   ...
 # Subtest: VTT formatting uses decimal points
 ok 31 - VTT formatting uses decimal points
   ---
-  duration_ms: 0.112765
+  duration_ms: 0.087013
   type: 'test'
   ...
 # Subtest: Automatic suggestions do not overlap
 ok 32 - Automatic suggestions do not overlap
   ---
-  duration_ms: 6.469459
+  duration_ms: 4.484012
   type: 'test'
   ...
 # Subtest: Automatic cuts respect requested duration
 ok 33 - Automatic cuts respect requested duration
   ---
-  duration_ms: 0.841105
+  duration_ms: 0.555611
   type: 'test'
   ...
 # Subtest: All selected text and IDs equal whole consecutive source cues
 ok 34 - All selected text and IDs equal whole consecutive source cues
   ---
-  duration_ms: 0.819579
+  duration_ms: 0.835795
   type: 'test'
   ...
 # Subtest: Titles preserve complete source sentences and negation
 ok 35 - Titles preserve complete source sentences and negation
   ---
-  duration_ms: 0.507579
+  duration_ms: 0.072255
   type: 'test'
   ...
 # Subtest: Relative captions start at the first source cue
 ok 36 - Relative captions start at the first source cue
   ---
-  duration_ms: 0.149667
+  duration_ms: 0.062135
   type: 'test'
   ...
 # Subtest: Subtitles round-trip back to the selected words
 ok 37 - Subtitles round-trip back to the selected words
   ---
-  duration_ms: 0.516527
+  duration_ms: 0.339055
   type: 'test'
   ...
 # Subtest: An omitted but-qualification is flagged
 ok 38 - An omitted but-qualification is flagged
   ---
-  duration_ms: 0.127317
+  duration_ms: 0.156421
   type: 'test'
   ...
 # Subtest: Omitted hypothetical framing is flagged
 ok 39 - Omitted hypothetical framing is flagged
   ---
-  duration_ms: 0.092284
+  duration_ms: 0.097829
   type: 'test'
   ...
 # Subtest: Included qualification triggers a headline context reminder
 ok 40 - Included qualification triggers a headline context reminder
   ---
-  duration_ms: 0.075573
+  duration_ms: 0.07557
   type: 'test'
   ...
 # Subtest: Numbers written as words are flagged
 ok 41 - Numbers written as words are flagged
   ---
-  duration_ms: 0.114153
+  duration_ms: 0.093492
   type: 'test'
   ...
 # Subtest: Dependent openings and incomplete endings are flagged
 ok 42 - Dependent openings and incomplete endings are flagged
   ---
-  duration_ms: 0.138114
+  duration_ms: 0.10127
   type: 'test'
   ...
 # Subtest: Long uncaptained gaps are flagged, not silently deleted
 ok 43 - Long uncaptained gaps are flagged, not silently deleted
   ---
-  duration_ms: 0.6321
+  duration_ms: 0.520594
   type: 'test'
   ...
 # Subtest: New cuts and manual revisions always start pending
 ok 44 - New cuts and manual revisions always start pending
   ---
-  duration_ms: 0.163563
+  duration_ms: 0.09271
   type: 'test'
   ...
 # Subtest: Rejects options: minimum below four
 ok 45 - Rejects options: minimum below four
   ---
-  duration_ms: 0.150309
+  duration_ms: 0.094471
   type: 'test'
   ...
 # Subtest: Rejects options: maximum above 120
 ok 46 - Rejects options: maximum above 120
   ---
-  duration_ms: 0.095039
+  duration_ms: 0.053553
   type: 'test'
   ...
 # Subtest: Rejects options: inverted bounds
 ok 47 - Rejects options: inverted bounds
   ---
-  duration_ms: 0.085212
+  duration_ms: 0.049087
   type: 'test'
   ...
 # Subtest: Rejects options: NaN duration
 ok 48 - Rejects options: NaN duration
   ---
-  duration_ms: 0.093674
+  duration_ms: 0.054738
   type: 'test'
   ...
 # Subtest: Rejects options: fractional count
 ok 49 - Rejects options: fractional count
   ---
-  duration_ms: 0.094935
+  duration_ms: 0.053096
   type: 'test'
   ...
 # Subtest: Rejects options: zero count
 ok 50 - Rejects options: zero count
   ---
-  duration_ms: 0.091315
+  duration_ms: 0.049088
   type: 'test'
   ...
 # Subtest: Rejects options: more than eight
 ok 51 - Rejects options: more than eight
   ---
-  duration_ms: 0.924949
+  duration_ms: 0.090407
   type: 'test'
   ...
 # Subtest: Rejects options: oversized focus
 ok 52 - Rejects options: oversized focus
   ---
-  duration_ms: 0.11799
+  duration_ms: 0.092964
   type: 'test'
   ...
 # Subtest: Impossible duration ranges fail explicitly
 ok 53 - Impossible duration ranges fail explicitly
   ---
-  duration_ms: 0.36768
+  duration_ms: 0.381287
   type: 'test'
   ...
 # Subtest: Dictionary prototype words cannot corrupt scores
 ok 54 - Dictionary prototype words cannot corrupt scores
   ---
-  duration_ms: 0.632362
+  duration_ms: 0.508919
   type: 'test'
   ...
 # Subtest: Focus input is data, not code
 ok 55 - Focus input is data, not code
   ---
-  duration_ms: 0.694467
+  duration_ms: 0.529189
   type: 'test'
   ...
 # Subtest: Seeded 120-source invariant sweep
 ok 56 - Seeded 120-source invariant sweep
   ---
-  duration_ms: 98.97832
+  duration_ms: 105.57866
   type: 'test'
   ...
 # Subtest: Portable SHA-256 matches standard known vectors and Node for UTF-8
 ok 57 - Portable SHA-256 matches standard known vectors and Node for UTF-8
   ---
-  duration_ms: 7.381753
+  duration_ms: 15.858202
   type: 'test'
   ...
 # Subtest: SHA-256 matches Node for 100 reproducible varying-length inputs
 ok 58 - SHA-256 matches Node for 100 reproducible varying-length inputs
   ---
-  duration_ms: 36.681518
+  duration_ms: 32.498916
   type: 'test'
   ...
 # Subtest: Canonical transcript fingerprint changes with text or timing
 ok 59 - Canonical transcript fingerprint changes with text or timing
   ---
-  duration_ms: 0.503399
+  duration_ms: 0.464165
   type: 'test'
   ...
 # Subtest: Manifest retains pending review state and explicit limitations
 ok 60 - Manifest retains pending review state and explicit limitations
   ---
-  duration_ms: 1.147101
+  duration_ms: 1.062062
   type: 'test'
   ...
 # Subtest: Manifest rejects invented text, altered captions, altered IDs, titles and cut times
 ok 61 - Manifest rejects invented text, altered captions, altered IDs, titles and cut times
   ---
-  duration_ms: 2.379535
+  duration_ms: 2.409888
   type: 'test'
   ...
 # Subtest: Export includes real captions, complete source cues and renderer
 ok 62 - Export includes real captions, complete source cues and renderer
   ---
-  duration_ms: 1.235862
+  duration_ms: 1.147991
   type: 'test'
   ...
 # Subtest: ZIP uses the standard signature and CRC-32 vector
 ok 63 - ZIP uses the standard signature and CRC-32 vector
   ---
-  duration_ms: 0.569093
+  duration_ms: 0.369924
   type: 'test'
   ...
 # Subtest: ZIP rejects path traversal
 ok 64 - ZIP rejects path traversal
   ---
-  duration_ms: 0.124949
+  duration_ms: 0.147678
   type: 'test'
   ...
 # Subtest: Original demo generates three source-grounded suggestions
 ok 65 - Original demo generates three source-grounded suggestions
   ---
-  duration_ms: 2.528055
+  duration_ms: 2.278555
   type: 'test'
   ...
 # Subtest: Boundary proposal adds omitted setup and qualification verbatim
 ok 66 - Boundary proposal adds omitted setup and qualification verbatim
   ---
-  duration_ms: 3.245073
+  duration_ms: 4.81764
   type: 'test'
   ...
 # Subtest: Boundary expansion cannot silently exceed the requested cap
 ok 67 - Boundary expansion cannot silently exceed the requested cap
   ---
-  duration_ms: 0.258989
+  duration_ms: 0.379465
   type: 'test'
   ...
 # Subtest: A complete neutral cut is not changed
 ok 68 - A complete neutral cut is not changed
   ---
-  duration_ms: 0.205453
+  duration_ms: 0.358786
   type: 'test'
   ...
 # Subtest: Proposal does not mutate existing approvals
 ok 69 - Proposal does not mutate existing approvals
   ---
-  duration_ms: 0.148889
+  duration_ms: 0.260268
   type: 'test'
   ...
 # Subtest: Answer without its question is flagged and expansion retains the question
 ok 70 - Answer without its question is flagged and expansion retains the question
   ---
-  duration_ms: 0.681732
+  duration_ms: 0.993552
   type: 'test'
   ...
 # Subtest: A quotation retains an adjacent attribution
 ok 71 - A quotation retains an adjacent attribution
   ---
-  duration_ms: 0.218295
+  duration_ms: 0.362906
   type: 'test'
   ...
 # Subtest: Two-cue lookahead detects a delayed qualification
 ok 72 - Two-cue lookahead detects a delayed qualification
   ---
-  duration_ms: 0.14858
+  duration_ms: 0.249368
   type: 'test'
   ...
 # Subtest: Lookahead does not bridge a large time gap
 ok 73 - Lookahead does not bridge a large time gap
   ---
-  duration_ms: 0.111433
+  duration_ms: 0.160043
   type: 'test'
   ...
 # Subtest: Saved project retains source and exact boundaries
 ok 74 - Saved project retains source and exact boundaries
   ---
-  duration_ms: 3.699308
+  duration_ms: 5.2534
   type: 'test'
   ...
 # Subtest: Approvals never survive a restored project
 ok 75 - Approvals never survive a restored project
   ---
-  duration_ms: 0.788317
+  duration_ms: 2.200503
   type: 'test'
   ...
 # Subtest: Forged restored quotes and flags are discarded
 ok 76 - Forged restored quotes and flags are discarded
   ---
-  duration_ms: 1.329639
+  duration_ms: 0.609446
   type: 'test'
   ...
 # Subtest: Transcript tampering is rejected on restore
 ok 77 - Transcript tampering is rejected on restore
   ---
-  duration_ms: 0.60828
+  duration_ms: 0.901124
   type: 'test'
   ...
 # Subtest: Invalid project JSON rejected
 ok 78 - Invalid project JSON rejected
   ---
-  duration_ms: 0.126432
+  duration_ms: 0.222198
   type: 'test'
   ...
 # Subtest: Unsupported project version rejected
 ok 79 - Unsupported project version rejected
   ---
-  duration_ms: 0.373407
+  duration_ms: 0.438643
   type: 'test'
   ...
 # Subtest: Empty project clip list rejected
 ok 80 - Empty project clip list rejected
   ---
-  duration_ms: 0.334566
+  duration_ms: 0.526623
   type: 'test'
   ...
 # Subtest: Ninth project clip rejected
 ok 81 - Ninth project clip rejected
   ---
-  duration_ms: 0.237213
+  duration_ms: 0.408299
   type: 'test'
   ...
 # Subtest: Fractional and out-of-bounds restored indices rejected
 ok 82 - Fractional and out-of-bounds restored indices rejected
   ---
-  duration_ms: 0.842563
+  duration_ms: 1.055399
   type: 'test'
   ...
 # Subtest: Invalid restored options rejected
 ok 83 - Invalid restored options rejected
   ---
-  duration_ms: 1.203366
+  duration_ms: 1.4012
   type: 'test'
   ...
 # Subtest: Oversized project rejected before parse
 ok 84 - Oversized project rejected before parse
   ---
-  duration_ms: 0.270549
+  duration_ms: 0.245712
   type: 'test'
   ...
 # Subtest: Aggregate programmatic transcript limit enforced
 ok 85 - Aggregate programmatic transcript limit enforced
   ---
-  duration_ms: 1.015429
+  duration_ms: 1.032222
   type: 'test'
   ...
 # Subtest: Review report escapes every untrusted content field
 ok 86 - Review report escapes every untrusted content field
   ---
-  duration_ms: 0.633768
+  duration_ms: 0.656235
   type: 'test'
   ...
 # Subtest: Review report includes outside cues without marking them as selected
 ok 87 - Review report includes outside cues without marking them as selected
   ---
-  duration_ms: 0.438331
+  duration_ms: 0.402552
   type: 'test'
   ...
 # Subtest: LosslessCut export preserves millisecond source times
 ok 88 - LosslessCut export preserves millisecond source times
   ---
-  duration_ms: 0.326021
+  duration_ms: 0.457472
   type: 'test'
   ...
 # Subtest: Readiness never converts flagged cuts into approvals
 ok 89 - Readiness never converts flagged cuts into approvals
   ---
-  duration_ms: 0.257464
+  duration_ms: 0.397932
   type: 'test'
   ...
 # Subtest: Unicode save/restore keeps the normalized source exactly
 ok 90 - Unicode save/restore keeps the normalized source exactly
   ---
-  duration_ms: 0.531463
+  duration_ms: 0.77012
   type: 'test'
   ...
 # Subtest: Boundary work is bounded for an all-dependent long source
 ok 91 - Boundary work is bounded for an all-dependent long source
   ---
-  duration_ms: 1.552645
+  duration_ms: 1.52175
   type: 'test'
   ...
 # Subtest: Missing settings and invalid boolean settings are rejected
 ok 92 - Missing settings and invalid boolean settings are rejected
   ---
-  duration_ms: 1.174662
+  duration_ms: 6.250665
   type: 'test'
   ...
 # Subtest: ASCII sign
 ok 93 - ASCII sign
   ---
-  duration_ms: 2.980296
+  duration_ms: 3.045471
   type: 'test'
   ...
 # Subtest: Unicode sign
 ok 94 - Unicode sign
   ---
-  duration_ms: 1.038162
+  duration_ms: 1.039772
   type: 'test'
   ...
 # Subtest: Decimal
 ok 95 - Decimal
   ---
-  duration_ms: 0.274169
+  duration_ms: 0.265925
   type: 'test'
   ...
 # Subtest: Opposite signs
 ok 96 - Opposite signs
   ---
-  duration_ms: 0.150418
+  duration_ms: 0.153377
   type: 'test'
   ...
 # Subtest: Currency prefix
 ok 97 - Currency prefix
   ---
-  duration_ms: 0.224606
+  duration_ms: 0.253102
   type: 'test'
   ...
 # Subtest: Parentheses
 ok 98 - Parentheses
   ---
-  duration_ms: 0.129849
+  duration_ms: 0.133029
   type: 'test'
   ...
 # Subtest: Spoken negative
 ok 99 - Spoken negative
   ---
-  duration_ms: 0.205506
+  duration_ms: 0.175811
   type: 'test'
   ...
 # Subtest: Spoken minus
 ok 100 - Spoken minus
   ---
-  duration_ms: 0.119537
+  duration_ms: 0.122532
   type: 'test'
   ...
 # Subtest: Positive sign
 ok 101 - Positive sign
   ---
-  duration_ms: 0.391781
+  duration_ms: 0.412325
   type: 'test'
   ...
 # Subtest: Spaced Unicode
 ok 102 - Spaced Unicode
   ---
-  duration_ms: 0.431848
+  duration_ms: 0.411698
   type: 'test'
   ...
 # Subtest: Fullwidth
 ok 103 - Fullwidth
   ---
-  duration_ms: 1.242297
+  duration_ms: 1.478803
   type: 'test'
   ...
 # Subtest: Leading signed value
 ok 104 - Leading signed value
   ---
-  duration_ms: 0.125211
+  duration_ms: 0.127609
   type: 'test'
   ...
 # Subtest: minus speech
 ok 105 - minus speech
   ---
-  duration_ms: 0.176596
+  duration_ms: 0.155092
   type: 'test'
   ...
 # Subtest: negative speech
 ok 106 - negative speech
   ---
-  duration_ms: 0.091836
+  duration_ms: 0.085777
   type: 'test'
   ...
 # Subtest: positive speech
 ok 107 - positive speech
   ---
-  duration_ms: 0.081193
+  duration_ms: 0.078507
   type: 'test'
   ...
 # Subtest: plus speech
 ok 108 - plus speech
   ---
-  duration_ms: 0.061287
+  duration_ms: 0.082646
   type: 'test'
   ...
 # Subtest: decimal speech
 ok 109 - decimal speech
   ---
-  duration_ms: 0.056834
+  duration_ms: 0.069416
   type: 'test'
   ...
 # Subtest: fullwidth literal
 ok 110 - fullwidth literal
   ---
-  duration_ms: 0.055839
+  duration_ms: 0.100384
   type: 'test'
   ...
 # Subtest: unchanged: ordinary numbers
 ok 111 - unchanged: ordinary numbers
   ---
-  duration_ms: 1.18332
+  duration_ms: 1.171305
   type: 'test'
   ...
 # Subtest: unchanged: negation
 ok 112 - unchanged: negation
   ---
-  duration_ms: 0.535271
+  duration_ms: 0.501357
   type: 'test'
   ...
 # Subtest: unchanged: numeric change
 ok 113 - unchanged: numeric change
   ---
-  duration_ms: 0.259899
+  duration_ms: 0.290128
   type: 'test'
   ...
 # Subtest: unchanged: word hyphen
 ok 114 - unchanged: word hyphen
   ---
-  duration_ms: 0.119691
+  duration_ms: 0.134697
   type: 'test'
   ...
 # Subtest: unchanged: bullet
 ok 115 - unchanged: bullet
   ---
-  duration_ms: 0.107676
+  duration_ms: 0.113782
   type: 'test'
   ...
 # Subtest: unchanged: date
 ok 116 - unchanged: date
   ---
-  duration_ms: 0.262718
+  duration_ms: 0.231438
   type: 'test'
   ...
 # Subtest: unchanged: range
 ok 117 - unchanged: range
   ---
-  duration_ms: 0.102337
+  duration_ms: 0.111261
   type: 'test'
   ...
 # Subtest: unchanged: positive adjective
 ok 118 - unchanged: positive adjective
   ---
-  duration_ms: 0.104997
+  duration_ms: 0.116662
   type: 'test'
   ...
 # Subtest: unchanged: negative adjective
 ok 119 - unchanged: negative adjective
   ---
-  duration_ms: 0.088376
+  duration_ms: 0.138358
   type: 'test'
   ...
 # Subtest: unchanged: contraction
 ok 120 - unchanged: contraction
   ---
-  duration_ms: 0.108683
+  duration_ms: 0.128029
   type: 'test'
   ...
 # Subtest: unchanged: thousands
 ok 121 - unchanged: thousands
   ---
-  duration_ms: 0.072134
+  duration_ms: 0.087504
   type: 'test'
   ...
 # Subtest: known baseline collision is exposed, not silently removed from comparison
 ok 122 - known baseline collision is exposed, not silently removed from comparison
   ---
-  duration_ms: 0.182658
+  duration_ms: 0.20045
   type: 'test'
   ...
 # Subtest: related-passage tokenization remains unchanged
 ok 123 - related-passage tokenization remains unchanged
   ---
-  duration_ms: 0.136722
+  duration_ms: 0.156436
   type: 'test'
   ...
 # Subtest: related passage result is unchanged
 ok 124 - related passage result is unchanged
   ---
-  duration_ms: 1.592232
+  duration_ms: 1.584636
   type: 'test'
   ...
 # Subtest: ASR cue conversion is unchanged
 ok 125 - ASR cue conversion is unchanged
   ---
-  duration_ms: 0.588893
+  duration_ms: 0.580937
   type: 'test'
   ...
 # Subtest: invalid argument rejected
 ok 126 - invalid argument rejected
   ---
-  duration_ms: 0.231722
+  duration_ms: 0.273874
   type: 'test'
   ...
 # Subtest: original token budget enforced
 ok 127 - original token budget enforced
   ---
-  duration_ms: 0.410276
+  duration_ms: 0.409496
   type: 'test'
   ...
 # Subtest: leading decimal equivalent -.5
 ok 128 - leading decimal equivalent -.5
   ---
-  duration_ms: 0.796037
+  duration_ms: 0.121546
   type: 'test'
   ...
 # Subtest: leading decimal equivalent −.5
 ok 129 - leading decimal equivalent −.5
   ---
-  duration_ms: 0.109589
+  duration_ms: 0.687669
   type: 'test'
   ...
 # Subtest: leading decimal equivalent +.5
 ok 130 - leading decimal equivalent +.5
   ---
-  duration_ms: 0.07282
+  duration_ms: 0.112458
   type: 'test'
   ...
 # Subtest: leading decimal equivalent (-.5)
 ok 131 - leading decimal equivalent (-.5)
   ---
-  duration_ms: 0.082927
+  duration_ms: 0.074616
   type: 'test'
   ...
 # Subtest: leading decimal difference -.5 / .5
 ok 132 - leading decimal difference -.5 / .5
   ---
-  duration_ms: 0.100239
+  duration_ms: 0.117637
   type: 'test'
   ...
 # Subtest: leading decimal difference −.5 / 0.5
 ok 133 - leading decimal difference −.5 / 0.5
   ---
-  duration_ms: 0.059942
+  duration_ms: 0.092908
   type: 'test'
   ...
 # Subtest: leading decimal difference +.5 / -.5
 ok 134 - leading decimal difference +.5 / -.5
   ---
-  duration_ms: 0.056258
+  duration_ms: 0.068896
   type: 'test'
   ...
 # Subtest: leading decimal difference 0.5 / 5
 ok 135 - leading decimal difference 0.5 / 5
   ---
-  duration_ms: 0.052942
+  duration_ms: 0.060898
   type: 'test'
   ...
 # Subtest: case and punctuation
 ok 136 - case and punctuation
   ---
-  duration_ms: 2.495765
+  duration_ms: 2.914039
   type: 'test'
   ...
 # Subtest: digit normalization
 ok 137 - digit normalization
   ---
-  duration_ms: 0.298579
+  duration_ms: 0.311694
   type: 'test'
   ...
 # Subtest: two-digit number
 ok 138 - two-digit number
   ---
-  duration_ms: 0.307378
+  duration_ms: 0.381702
   type: 'test'
   ...
 # Subtest: contractions
 ok 139 - contractions
   ---
-  duration_ms: 0.392666
+  duration_ms: 0.513296
   type: 'test'
   ...
 # Subtest: missing not
 ok 140 - missing not
   ---
-  duration_ms: 0.342256
+  duration_ms: 0.412046
   type: 'test'
   ...
 # Subtest: changed number
 ok 141 - changed number
   ---
-  duration_ms: 0.157225
+  duration_ms: 0.221724
   type: 'test'
   ...
 # Subtest: changed permission
 ok 142 - changed permission
   ---
-  duration_ms: 0.112608
+  duration_ms: 0.159501
   type: 'test'
   ...
 # Subtest: normal word
 ok 143 - normal word
   ---
-  duration_ms: 0.131544
+  duration_ms: 0.14183
   type: 'test'
   ...
 # Subtest: removed exception
 ok 144 - removed exception
   ---
-  duration_ms: 0.332739
+  duration_ms: 0.461679
   type: 'test'
   ...
 # Subtest: never removed
 ok 145 - never removed
   ---
-  duration_ms: 0.375803
+  duration_ms: 0.471855
   type: 'test'
   ...
 # Subtest: only removed
 ok 146 - only removed
   ---
-  duration_ms: 0.213463
+  duration_ms: 0.233246
   type: 'test'
   ...
 # Subtest: percentage format
 ok 147 - percentage format
   ---
-  duration_ms: 0.099965
+  duration_ms: 0.129806
   type: 'test'
   ...
 # Subtest: spelled seven
 ok 148 - spelled seven
   ---
-  duration_ms: 0.068604
+  duration_ms: 0.098214
   type: 'test'
   ...
 # Subtest: thousands separator
 ok 149 - thousands separator
   ---
-  duration_ms: 0.066192
+  duration_ms: 0.087925
   type: 'test'
   ...
 # Subtest: decimal changed
 ok 150 - decimal changed
   ---
-  duration_ms: 0.06526
+  duration_ms: 0.087204
   type: 'test'
   ...
 # Subtest: unicode normal form
 ok 151 - unicode normal form
   ---
-  duration_ms: 1.334283
+  duration_ms: 1.537578
   type: 'test'
   ...
 # Subtest: never claims correctness
 ok 152 - never claims correctness
   ---
-  duration_ms: 0.297056
+  duration_ms: 0.255393
   type: 'test'
   ...
 # Subtest: comparison bounded
 ok 153 - comparison bounded
   ---
-  duration_ms: 0.81915
+  duration_ms: 0.873253
   type: 'test'
   ...
 # Subtest: empty text rejected
 ok 154 - empty text rejected
   ---
-  duration_ms: 0.134565
+  duration_ms: 0.144292
   type: 'test'
   ...
 # Subtest: difference reconstructs each normalized side
 ok 155 - difference reconstructs each normalized side
   ---
-  duration_ms: 0.835035
+  duration_ms: 0.984159
   type: 'test'
   ...
 # Subtest: finds correction 180 seconds away
 ok 156 - finds correction 180 seconds away
   ---
-  duration_ms: 1.025108
+  duration_ms: 1.087416
   type: 'test'
   ...
 # Subtest: never includes selected cues
 ok 157 - never includes selected cues
   ---
-  duration_ms: 0.62357
+  duration_ms: 0.669293
   type: 'test'
   ...
 # Subtest: unrelated query returns empty
 ok 158 - unrelated query returns empty
   ---
-  duration_ms: 0.256608
+  duration_ms: 0.233774
   type: 'test'
   ...
 # Subtest: source has no distant context to retrieve
 ok 159 - source has no distant context to retrieve
   ---
-  duration_ms: 0.131136
+  duration_ms: 0.131525
   type: 'test'
   ...
 # Subtest: invalid range rejected
 ok 160 - invalid range rejected
   ---
-  duration_ms: 0.105503
+  duration_ms: 0.119605
   type: 'test'
   ...
 # Subtest: retrieval result limit bounded
 ok 161 - retrieval result limit bounded
   ---
-  duration_ms: 0.090875
+  duration_ms: 0.089192
   type: 'test'
   ...
 # Subtest: converts estimated ASR ranges
 ok 162 - converts estimated ASR ranges
   ---
-  duration_ms: 0.49629
+  duration_ms: 0.500102
   type: 'test'
   ...
 # Subtest: tiny rounding overlap is normalized
 ok 163 - tiny rounding overlap is normalized
   ---
-  duration_ms: 0.120723
+  duration_ms: 0.126347
   type: 'test'
   ...
 # Subtest: fully overlapping ASR range rejected
 ok 164 - fully overlapping ASR range rejected
   ---
-  duration_ms: 0.12037
+  duration_ms: 0.146197
   type: 'test'
   ...
 # Subtest: nonfinite ASR start rejected
 ok 165 - nonfinite ASR start rejected
   ---
-  duration_ms: 0.094305
+  duration_ms: 0.105333
   type: 'test'
   ...
 # Subtest: oversized speech rejected
 ok 166 - oversized speech rejected
   ---
-  duration_ms: 0.093417
+  duration_ms: 0.103141
   type: 'test'
   ...
 # Subtest: missing timestamp chunks rejected
 ok 167 - missing timestamp chunks rejected
   ---
-  duration_ms: 0.080711
+  duration_ms: 0.09117
   type: 'test'
   ...
 # Subtest: silence marker is not a caption
 ok 168 - silence marker is not a caption
   ---
-  duration_ms: 0.163153
+  duration_ms: 0.172749
   type: 'test'
   ...
 # Subtest: bind without mutating original
 ok 169 - bind without mutating original
   ---
-  duration_ms: 1.456243
+  duration_ms: 1.575636
   type: 'test'
   ...
 # Subtest: match compares bytes and size; never editorial approval
 ok 170 - match compares bytes and size; never editorial approval
   ---
-  duration_ms: 0.471685
+  duration_ms: 0.49097
   type: 'test'
   ...
 # Subtest: same size, different bytes fails
 ok 171 - same size, different bytes fails
   ---
-  duration_ms: 0.188077
+  duration_ms: 0.229478
   type: 'test'
   ...
 # Subtest: same digest, wrong size fails
 ok 172 - same digest, wrong size fails
   ---
-  duration_ms: 0.23839
+  duration_ms: 0.26311
   type: 'test'
   ...
 # Subtest: filename does not confer identity
 ok 173 - filename does not confer identity
   ---
-  duration_ms: 0.19473
+  duration_ms: 0.217815
   type: 'test'
   ...
 # Subtest: rename preserves byte comparison
 ok 174 - rename preserves byte comparison
   ---
-  duration_ms: 0.191108
+  duration_ms: 0.220445
   type: 'test'
   ...
 # Subtest: corrected limitations preserve review warning
 ok 175 - corrected limitations preserve review warning
   ---
-  duration_ms: 0.225464
+  duration_ms: 0.249519
   type: 'test'
   ...
 # Subtest: reject invalid binding null
 ok 176 - reject invalid binding null
   ---
-  duration_ms: 0.240631
+  duration_ms: 0.286696
   type: 'test'
   ...
 # Subtest: reject invalid binding array
 ok 177 - reject invalid binding array
   ---
-  duration_ms: 0.332098
+  duration_ms: 0.356477
   type: 'test'
   ...
 # Subtest: reject invalid binding algorithm
 ok 178 - reject invalid binding algorithm
   ---
-  duration_ms: 0.461529
+  duration_ms: 0.443261
   type: 'test'
   ...
 # Subtest: reject invalid binding version
 ok 179 - reject invalid binding version
   ---
-  duration_ms: 0.193233
+  duration_ms: 0.184973
   type: 'test'
   ...
 # Subtest: reject invalid binding boolversion
 ok 180 - reject invalid binding boolversion
   ---
-  duration_ms: 0.118105
+  duration_ms: 0.09857
   type: 'test'
   ...
 # Subtest: reject invalid binding emptyhash
 ok 181 - reject invalid binding emptyhash
   ---
-  duration_ms: 0.0786
+  duration_ms: 0.074049
   type: 'test'
   ...
 # Subtest: reject invalid binding badhash
 ok 182 - reject invalid binding badhash
   ---
-  duration_ms: 0.069533
+  duration_ms: 0.071277
   type: 'test'
   ...
 # Subtest: reject invalid binding shorthash
 ok 183 - reject invalid binding shorthash
   ---
-  duration_ms: 0.128835
+  duration_ms: 0.12261
   type: 'test'
   ...
 # Subtest: reject invalid binding upperhash
 ok 184 - reject invalid binding upperhash
   ---
-  duration_ms: 0.074307
+  duration_ms: 0.08152
   type: 'test'
   ...
 # Subtest: reject invalid binding zerobytes
 ok 185 - reject invalid binding zerobytes
   ---
-  duration_ms: 0.072388
+  duration_ms: 0.077051
   type: 'test'
   ...
 # Subtest: reject invalid binding floatbytes
 ok 186 - reject invalid binding floatbytes
   ---
-  duration_ms: 0.056623
+  duration_ms: 0.06385
   type: 'test'
   ...
 # Subtest: reject invalid binding boolbytes
 ok 187 - reject invalid binding boolbytes
   ---
-  duration_ms: 0.099796
+  duration_ms: 0.060145
   type: 'test'
   ...
 # Subtest: reject invalid binding huge
 ok 188 - reject invalid binding huge
   ---
-  duration_ms: 0.055874
+  duration_ms: 0.061772
   type: 'test'
   ...
 # Subtest: reject invalid binding stringbytes
 ok 189 - reject invalid binding stringbytes
   ---
-  duration_ms: 0.057162
+  duration_ms: 0.05884
   type: 'test'
   ...
 # Subtest: size cap is inclusive
 ok 190 - size cap is inclusive
   ---
-  duration_ms: 0.088918
+  duration_ms: 0.112499
   type: 'test'
   ...
 # Subtest: unbound legacy manifest gets no match verdict
 ok 191 - unbound legacy manifest gets no match verdict
   ---
-  duration_ms: 0.323139
+  duration_ms: 0.309776
   type: 'test'
   ...
 # Subtest: truncated JSON rejected
 ok 192 - truncated JSON rejected
   ---
-  duration_ms: 0.168457
+  duration_ms: 0.161419
   type: 'test'
   ...
 # Subtest: oversized JSON rejected
 ok 193 - oversized JSON rejected
   ---
-  duration_ms: 0.098592
+  duration_ms: 0.103229
   type: 'test'
   ...
 # Subtest: round-trip preserves binding
 ok 194 - round-trip preserves binding
   ---
-  duration_ms: 0.706578
+  duration_ms: 0.791721
   type: 'test'
   ...
 # Subtest: null digest in locked manifest rejected
 ok 195 - null digest in locked manifest rejected
   ---
-  duration_ms: 0.222573
+  duration_ms: 0.244895
   type: 'test'
   ...
 # Subtest: malformed transcript fingerprint rejected
 ok 196 - malformed transcript fingerprint rejected
   ---
-  duration_ms: 0.162943
+  duration_ms: 0.152628
   type: 'test'
   ...
 # Subtest: old hit omits the follow-up correction, new passage contains it
 ok 197 - old hit omits the follow-up correction, new passage contains it
   ---
-  duration_ms: 2.541516
+  duration_ms: 2.640234
   type: 'test'
   ...
 # Subtest: neighbor text is exact, not a generated correction
 ok 198 - neighbor text is exact, not a generated correction
   ---
-  duration_ms: 0.27378
+  duration_ms: 0.314056
   type: 'test'
   ...
 # Subtest: matching cue is distinguished from context
 ok 199 - matching cue is distinguished from context
   ---
-  duration_ms: 0.306822
+  duration_ms: 0.267379
   type: 'test'
   ...
 # Subtest: repair goes through the correction, not merely the anchor
 ok 200 - repair goes through the correction, not merely the anchor
   ---
-  duration_ms: 0.868743
+  duration_ms: 0.911293
   type: 'test'
   ...
 # Subtest: repair adds every intervening cue
 ok 201 - repair adds every intervening cue
   ---
-  duration_ms: 0.272564
+  duration_ms: 0.268854
   type: 'test'
   ...
 # Subtest: long context is blocked, not spliced
 ok 202 - long context is blocked, not spliced
   ---
-  duration_ms: 0.206796
+  duration_ms: 0.782803
   type: 'test'
   ...
 # Subtest: exact limit accepted
 ok 203 - exact limit accepted
   ---
-  duration_ms: 0.08893
+  duration_ms: 0.133141
   type: 'test'
   ...
 # Subtest: timing gaps count toward duration
 ok 204 - timing gaps count toward duration
   ---
-  duration_ms: 0.161762
+  duration_ms: 0.545747
   type: 'test'
   ...
 # Subtest: previous passage expands backwards and preserves order
 ok 205 - previous passage expands backwards and preserves order
   ---
-  duration_ms: 1.004474
+  duration_ms: 2.005687
   type: 'test'
   ...
 # Subtest: neighborhood never crosses selected range
 ok 206 - neighborhood never crosses selected range
   ---
-  duration_ms: 0.441073
+  duration_ms: 0.793802
   type: 'test'
   ...
 # Subtest: start of source is bounded
 ok 207 - start of source is bounded
   ---
-  duration_ms: 0.175934
+  duration_ms: 0.324977
   type: 'test'
   ...
 # Subtest: end of source is bounded
 ok 208 - end of source is bounded
   ---
-  duration_ms: 0.110823
+  duration_ms: 0.823035
   type: 'test'
   ...
 # Subtest: overlapping neighborhoods merge without duplicate cues
 ok 209 - overlapping neighborhoods merge without duplicate cues
   ---
-  duration_ms: 0.158865
+  duration_ms: 0.299877
   type: 'test'
   ...
 # Subtest: no-match query remains empty
 ok 210 - no-match query remains empty
   ---
-  duration_ms: 0.090734
+  duration_ms: 0.216497
   type: 'test'
   ...
 # Subtest: whole-source selection produces no outside passage
 ok 211 - whole-source selection produces no outside passage
   ---
-  duration_ms: 0.093304
+  duration_ms: 0.224679
   type: 'test'
   ...
 # Subtest: single cue produces no outside passage
 ok 212 - single cue produces no outside passage
   ---
-  duration_ms: 0.050865
+  duration_ms: 0.142588
   type: 'test'
   ...
 # Subtest: empty transcript rejected
 ok 213 - empty transcript rejected
   ---
-  duration_ms: 0.143301
+  duration_ms: 0.311812
   type: 'test'
   ...
 # Subtest: invalid selected range rejected
 ok 214 - invalid selected range rejected
   ---
-  duration_ms: 0.051193
+  duration_ms: 0.149402
   type: 'test'
   ...
 # Subtest: invalid query type rejected
 ok 215 - invalid query type rejected
   ---
-  duration_ms: 0.047562
+  duration_ms: 0.118005
   type: 'test'
   ...
 # Subtest: oversized query rejected
 ok 216 - oversized query rejected
   ---
-  duration_ms: 0.050021
+  duration_ms: 0.123157
   type: 'test'
   ...
 # Subtest: invalid result limit 0
 ok 217 - invalid result limit 0
   ---
-  duration_ms: 0.04739
+  duration_ms: 0.111675
   type: 'test'
   ...
 # Subtest: invalid result limit -1
 ok 218 - invalid result limit -1
   ---
-  duration_ms: 0.035915
+  duration_ms: 0.083945
   type: 'test'
   ...
 # Subtest: invalid result limit 21
 ok 219 - invalid result limit 21
   ---
-  duration_ms: 0.035089
+  duration_ms: 0.077649
   type: 'test'
   ...
 # Subtest: invalid result limit 1.5
 ok 220 - invalid result limit 1.5
   ---
-  duration_ms: 0.033721
+  duration_ms: 0.066706
   type: 'test'
   ...
 # Subtest: invalid duration limit 0
 ok 221 - invalid duration limit 0
   ---
-  duration_ms: 0.156059
+  duration_ms: 0.282637
   type: 'test'
   ...
 # Subtest: invalid duration limit -1
 ok 222 - invalid duration limit -1
   ---
-  duration_ms: 0.043209
+  duration_ms: 0.088556
   type: 'test'
   ...
 # Subtest: invalid duration limit 121
 ok 223 - invalid duration limit 121
   ---
-  duration_ms: 0.036279
+  duration_ms: 0.075249
   type: 'test'
   ...
 # Subtest: invalid duration limit NaN
 ok 224 - invalid duration limit NaN
   ---
-  duration_ms: 0.034393
+  duration_ms: 0.066178
   type: 'test'
   ...
 # Subtest: invalid duration limit Infinity
 ok 225 - invalid duration limit Infinity
   ---
-  duration_ms: 0.034967
+  duration_ms: 0.072687
   type: 'test'
   ...
 # Subtest: invalid duration limit 30
 ok 226 - invalid duration limit 30
   ---
-  duration_ms: 0.035795
+  duration_ms: 0.070697
   type: 'test'
   ...
 # Subtest: overlapping repair rejected
 ok 227 - overlapping repair rejected
   ---
-  duration_ms: 0.067386
+  duration_ms: 0.129259
   type: 'test'
   ...
 # Subtest: missing passage rejected
 ok 228 - missing passage rejected
   ---
-  duration_ms: 0.045518
+  duration_ms: 0.099929
   type: 'test'
   ...
 # Subtest: out-of-source passage rejected
 ok 229 - out-of-source passage rejected
   ---
-  duration_ms: 0.044327
+  duration_ms: 0.092318
   type: 'test'
   ...
 # Subtest: invalid timing rejected
 ok 230 - invalid timing rejected
   ---
-  duration_ms: 0.094756
+  duration_ms: 0.193246
   type: 'test'
   ...
 # Subtest: input is not mutated
 ok 231 - input is not mutated
   ---
-  duration_ms: 0.134985
+  duration_ms: 0.269514
   type: 'test'
   ...
 # Subtest: signed comparison unchanged
 ok 232 - signed comparison unchanged
   ---
-  duration_ms: 0.549831
+  duration_ms: 0.90006
   type: 'test'
   ...
 1..232
@@ -1399,4 +1399,4 @@ ok 232 - signed comparison unchanged
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 269.461359
+# duration_ms 295.980701

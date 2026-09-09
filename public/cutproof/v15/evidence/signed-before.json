@@ -1,7 +1,7 @@
 {
   "format": "cutproof-speech-check",
   "version": 1,
-  "created_at": "2026-09-09T16:36:46.199Z",
+  "created_at": "2026-09-09T16:45:09.709Z",
   "source_sha256": "3281634c774ba0e121ab7b6082cc7d778b14329607371d79a0326cdd52cd4512",
   "transcript_sha256": "a0335f4c125595aeb36c4744f0809f6a28d9b30db1971bf1e6e2039cb42aea88",
   "range": {
@@ -12,7 +12,7 @@
   "asr_text": " The temperature is minus 5 degrees.",
   "model": "onnx-community/whisper-tiny.en",
   "model_revision": "2575352d61be1bf7225cf8f8b268a4678025fc58",
-  "inference_seconds": 1.6515,
+  "inference_seconds": 1.9897000000000116,
   "comparison": {
     "caption_words": 6,
     "speech_words": 6,

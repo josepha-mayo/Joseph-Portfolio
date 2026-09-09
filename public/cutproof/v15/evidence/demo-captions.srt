@@ -1,34 +1,34 @@
 1
-00:00:00,730 --> 00:00:06,730
+00:00:00,970 --> 00:00:06,970
 CUTPROOF PASSAGE REPAIR / isolated candidate
 An exact excerpt can still stop before the correction.
 
 2
-00:00:07,084 --> 00:00:15,084
+00:00:07,301 --> 00:00:15,301
 The topic sentence matches. The next cue does not.
 Both source passages are visible, with their exact cue IDs.
 
 3
-00:00:15,645 --> 00:00:21,645
-Listen to the surrounding source.
-This is a synthetic device-review fixture, not a product claim.
+00:00:15,843 --> 00:00:21,843
+The app plays the surrounding source.
+Silent walkthrough; the source audio is synthetic.
 
 4
-00:00:21,825 --> 00:00:27,825
+00:00:22,036 --> 00:00:28,036
 The repaired cut includes all intervening words.
 It is still pending human review, not automatically approved.
 
 5
-00:00:27,994 --> 00:00:34,994
+00:00:28,095 --> 00:00:35,095
 A real edit ZIP is exported.
 It retains the correction, pending-review state and source-media fingerprint.
 
 6
-00:00:36,379 --> 00:00:43,379
+00:00:36,642 --> 00:00:43,642
 The exported review page contains the full source interval.
 The native renderer also produced a decoded, playable MP4.
 
 7
-00:00:43,487 --> 00:00:48,487
+00:00:43,764 --> 00:00:48,764
 Existing speech checks and Source Lock remain unchanged.
 This improves context inspection, not semantic truth detection.
