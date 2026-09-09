@@ -36,6 +36,18 @@ jobs:
           fi
           python -m pip install playwright==1.55.0
           python -m playwright install ffmpeg
+      - name: Preserve old generated test render before running the unchanged non-overwriting renderer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,shutil
+          old=Path('public/cutproof/v15/evidence/passage-render')
+          if old.exists():
+              dest=Path('upgrade16/verification/prior-render')/os.environ['GITHUB_RUN_ID']
+              assert not dest.exists()
+              dest.parent.mkdir(parents=True,exist_ok=True)
+              shutil.move(str(old),str(dest))
+          PY
       - name: Run existing assertions and actual quickstart workflow without weakening CSP
         run: python upgrade16/release.py
       - name: Preserve isolated implementation and actual outcomes
