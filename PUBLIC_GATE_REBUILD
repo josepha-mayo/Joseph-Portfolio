@@ -1,0 +1,1 @@
+2026-09-09: Retry transient anonymous GET failures with bounded retries and retain per-file outcomes. All hash, browser, speech, export and original-deployment assertions remain required. No application change.
