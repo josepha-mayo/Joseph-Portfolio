@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-09T01:04:32.222267+00:00",
+  "commands": [
+    {
+      "name": "all-tests",
+      "exit_code": 0
+    },
+    {
+      "name": "browser-http",
+      "exit_code": 0
+    }
+  ],
+  "real_calls": 0,
+  "upstream_pr_created": false,
+  "provider_live_verified": false,
+  "scope": "Recovered v0.1 plus new candidate changes. Local synthetic inputs and loopback HTTP; not the CALL-E service or a completed competition entry.",
+  "unit_and_http_tests": 92,
+  "inherited_tests": 68,
+  "new_tests": 24,
+  "browser_workflows": 18,
+  "browser_scope": "Actual localhost navigation, default CSP, real Python server and downloads; synthetic transcript cases only.",
+  "finished_at": "2026-09-09T01:05:12.178730+00:00"
+}
