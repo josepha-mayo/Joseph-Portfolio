@@ -14,6 +14,7 @@ jobs:
     timeout-minutes: 20
     env:
       HF_HUB_DISABLE_TELEMETRY: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
       AGENT_BROWSER_SESSION: cutproof-public
       AGENT_BROWSER_EXECUTABLE_PATH: /usr/bin/google-chrome
       AGENT_BROWSER_ARGS: --no-sandbox
