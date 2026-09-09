@@ -1,0 +1,14 @@
+PASS Existing ranker works in the actual v1.2 document
+PASS No model fetched before explicit consent
+PASS Actual quantized Whisper detects the missing NOT on the synthetic speech fixture
+PASS ASR comparison does not rewrite captions or approve cuts
+PASS Speech record binds actual media bytes, transcript, model revision and range
+PASS Changed captions invalidate an already completed speech check
+PASS Explicit caption correction preserves timing and clears approvals
+PASS Video-first transcription creates real estimated cues and applies only on request
+PASS Generated captions feed the real selection and ZIP-export pipeline
+PASS Actual browser speech recognition also processes a natural-speech fixture
+PASS Cancel terminates speech work without applying a partial result
+PASS Retrieval surfaces a related correction 180 seconds outside the cut without splicing it
+PASS Evidence Desk fits a 390-pixel viewport
+PASS No browser errors or audio-upload requests were observed
