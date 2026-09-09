@@ -1,0 +1,56 @@
+name: Countback OpenCV version compatibility
+on:
+  push:
+    branches: [countback-opencv5-compat-20260909]
+    paths: [.github/workflows/countback-compat.yml, COUNTBACK_RECHECK]
+permissions:
+  contents: write
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Execute original tests under isolated pinned versions
+        run: |
+          for v in 4.13.0.92 5.0.0.93; do
+            python -m venv "/tmp/countback-$v"
+            "/tmp/countback-$v/bin/pip" -q install "opencv-python-headless==$v" numpy==2.3.5 scikit-image==0.26.0 pooch==1.8.2
+            "/tmp/countback-$v/bin/python" compat-countback/recheck.py
+          done
+      - name: Compare corresponding outcomes without promoting a benchmark claim
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('compat-countback/results')
+          a=json.loads((root/'4.13.0/verification.json').read_text());b=json.loads((root/'5.0.0/verification.json').read_text())
+          assert a['status']==b['status']=='passed'
+          assert a['same_input_sha256']==b['same_input_sha256']
+          assert a['unchanged_source_sha256']==b['unchanged_source_sha256']
+          assert a['config']==b['config'] and a['regions_xywh']==b['regions_xywh']
+          rows={}
+          for name in a['photographic_results']:
+              x,y=a['photographic_results'][name],b['photographic_results'][name]
+              rows[name]={'v4_status':x['status'],'v5_status':y['status'],'same_decision':x['status']==y['status'],'v4_inliers':x['metrics'].get('inliers'),'v5_inliers':y['metrics'].get('inliers'),'v4_ground_truth':a['stereo_ground_truth_audit'][name],'v5_ground_truth':b['stereo_ground_truth_audit'][name]}
+          out={'status':'comparison_executed','opencv5_executed':True,'same_source_and_inputs':True,'original_test_methods':19,'repeated_versions_not_unique_tests':True,'patches':rows,'v4_controls':a['unrelated_photograph_controls'],'v5_controls':b['unrelated_photograph_controls'],'aws_executed':False,'competition_submission_ready':False,'scope':'Compatibility on the original single stereo scene and two unrelated controls, not representative accuracy or kit completion.'}
+          (root/'comparison.json').write_text(json.dumps(out,indent=2));print(json.dumps(out,indent=2))
+          PY
+      - name: Preserve executed outcomes without publishing sample photographs
+        if: always()
+        run: |
+          git config user.name 'Countback Compatibility Verification'
+          git config user.email 'countback@users.noreply.github.com'
+          git add compat-countback/results/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual OpenCV compatibility outcomes and retained failures'
+          git push origin HEAD:countback-opencv5-compat-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-opencv-compatibility
+          path: compat-countback/
+          retention-days: 14
