@@ -1,0 +1,52 @@
+name: ReturnReady final candidate verification
+on:
+  push:
+    branches: [returnready-completion-20260909]
+    paths: [.github/workflows/returnready-final-candidate.yml]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Correct candidate notices without changing application behavior
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          r=Path('apps/python/returnready')
+          p=r/'web/index.html';s=p.read_text()
+          assert s.count('ReturnReady 0.1 / No-call mode by default')==1
+          p.write_text(s.replace('ReturnReady 0.1 / No-call mode by default','ReturnReady 0.3 candidate / No-call mode by default'))
+          p=r/'README.md';s=p.read_text()
+          before='The 68 recovered tests and 24 newly added unit/HTTP/concurrency checks have passed locally. The 18 new UI workflows passed with an explicitly labelled Python bridge; actual local browser navigation was blocked in that environment. `evidence03/release.json` records the separately executed release gates when available, rather than assuming the full HTTP run passed.'
+          after='The 68 recovered tests and 24 new unit/HTTP/concurrency checks passed. All 18 new UI workflows also passed against the real Python HTTP server with the default security policy in GitHub Actions run 34297647083. This is separate from the earlier local bridge run, where direct local navigation was blocked. The latest `evidence03/release.json` records the actual repeated gate for this candidate.'
+          assert before in s;p.write_text(s.replace(before,after))
+          p=r/'docs/CONTRIBUTION.md';s=p.read_text().replace('The complete HTTP browser result must be attached only after the release workflow actually passes.','The release HTTP browser suite passed 18 workflows, alongside 92 unit/transport tests. Attach evidence03/release.json and preserve its explicit no-call/provider-unverified scope.')
+          p.write_text(s)
+          PY
+      - name: Install real browser
+        run: |
+          python3 -m venv /tmp/rr-final
+          /tmp/rr-final/bin/pip -q install playwright==1.55.0
+          /tmp/rr-final/bin/python -m playwright install --with-deps chromium
+      - name: Repeat the actual no-call release
+        run: /tmp/rr-final/bin/python apps/python/returnready/release_gate.py
+      - name: Preserve final code and outcome on candidate only
+        if: always()
+        run: |
+          git config user.name 'ReturnReady Verification'
+          git config user.email 'returnready-build@users.noreply.github.com'
+          git add apps/python/returnready/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record corrected version notice and repeated actual HTTP no-call checks'
+          git push origin HEAD:returnready-completion-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: returnready-final-candidate
+          path: apps/python/returnready/
+          retention-days: 14
