@@ -1,11 +1,43 @@
 {
   "status": "failed",
-  "started_at": "2026-09-09T21:05:05.691644+00:00",
+  "started_at": "2026-09-09T21:07:01.624128+00:00",
   "public_url": null,
-  "commands": [],
+  "commands": [
+    {
+      "name": "javascript",
+      "exit_code": 0,
+      "seconds": 0.44
+    },
+    {
+      "name": "native",
+      "exit_code": 0,
+      "seconds": 2.25
+    },
+    {
+      "name": "source-lock-browser",
+      "exit_code": 0,
+      "seconds": 4.35
+    },
+    {
+      "name": "inherited_asr.py",
+      "exit_code": 0,
+      "seconds": 20.66
+    },
+    {
+      "name": "signed_browser.py",
+      "exit_code": 0,
+      "seconds": 12.06
+    },
+    {
+      "name": "passage-browser",
+      "exit_code": 1,
+      "seconds": 36.61
+    }
+  ],
   "production_merge": false,
   "provider_calls": 0,
-  "error": "",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade-launch/release.py\", line 25, in <module>\n    assert h.count('</body>')==1;h=h.replace('</body>',tag+'</body>',1);(A/'index.html').write_text(h)\n           ^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
-  "finished_at": "2026-09-09T21:05:05.907138+00:00"
+  "javascript_tests": 232,
+  "error": "passage-browser\nPASS Fixture loaded through real transcript/video inputs and source-boundary controls\nPASS Unmatched following correction is displayed beside the matched topic cue\nPASS Passage playback uses original media without changing the cut or approving it\nPASS Expansion includes the whole correction and every intervening source cue, in order\nPASS Actual edit ZIP retains the correction, pending review and exact original-media SHA-256\nTraceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade15/browser.py\", line 48, in <module>\n    spec=importlib.util.spec_from_file_location('passage_renderer',O/'render.py');renderer=importlib.util.module_from_spec(spec);spec.loader.exec_module(renderer);receipt=renderer.render(D,F/'source.mp4',E/'passage-render',width=360);(E/'passage-render-receipt.json').write_text(json.dumps(receipt,indent=2));media=next((E/'passage-render').glob('*.mp4'));subprocess.run(['ffmpeg','-v','error','-i',str(media),'-f','null','-'],check=True,timeout=90);ok('Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP')\n                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py\", line 170, in render\n    require(overwrite or not any(p.exists() for p in outputs + [receipt_path]),\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py\", line 28, in require\n    raise ValueError(message)\nValueError: Output already exists. Choose a new output directory, or explicitly pass --overwrite.\n",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade-launch/release.py\", line 47, in <module>\n    if not PUBLIC:run('passage-browser',[sys.executable,str(R/'upgrade15/browser.py')],timeout=900)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade-launch/release.py\", line 16, in run\n    if p.returncode:raise RuntimeError(name+'\\n'+p.stdout[-5000:])\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: passage-browser\nPASS Fixture loaded through real transcript/video inputs and source-boundary controls\nPASS Unmatched following correction is displayed beside the matched topic cue\nPASS Passage playback uses original media without changing the cut or approving it\nPASS Expansion includes the whole correction and every intervening source cue, in order\nPASS Actual edit ZIP retains the correction, pending review and exact original-media SHA-256\nTraceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade15/browser.py\", line 48, in <module>\n    spec=importlib.util.spec_from_file_location('passage_renderer',O/'render.py');renderer=importlib.util.module_from_spec(spec);spec.loader.exec_module(renderer);receipt=renderer.render(D,F/'source.mp4',E/'passage-render',width=360);(E/'passage-render-receipt.json').write_text(json.dumps(receipt,indent=2));media=next((E/'passage-render').glob('*.mp4'));subprocess.run(['ffmpeg','-v','error','-i',str(media),'-f','null','-'],check=True,timeout=90);ok('Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP')\n                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py\", line 170, in render\n    require(overwrite or not any(p.exists() for p in outputs + [receipt_path]),\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py\", line 28, in require\n    raise ValueError(message)\nValueError: Output already exists. Choose a new output directory, or explicitly pass --overwrite.\n\n",
+  "finished_at": "2026-09-09T21:08:18.204505+00:00"
 }

@@ -22,7 +22,7 @@ try:
  if not PUBLIC:
   h=(A/'index.html').read_text();tag='<script src="quickstart.js"></script>'
   if tag not in h:
-   assert h.count('</body>')==1;h=h.replace('</body>',tag+'</body>',1);(A/'index.html').write_text(h)
+   needle='<script src="source-lock.js"></script></body>';assert h.count(needle)==1;h=h.replace(needle,'<script src="source-lock.js"></script>'+tag+'</body>',1);(A/'index.html').write_text(h)
   shutil.copy2(U/'quickstart.js',A/'quickstart.js')
  else:
   manifest=json.loads((A/'candidate-files.json').read_text());mraw=download('candidate-files.json');assert json.loads(mraw)==manifest,'Remote manifest differs from the candidate'

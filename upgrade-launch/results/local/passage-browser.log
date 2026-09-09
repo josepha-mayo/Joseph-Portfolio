@@ -1,0 +1,14 @@
+PASS Fixture loaded through real transcript/video inputs and source-boundary controls
+PASS Unmatched following correction is displayed beside the matched topic cue
+PASS Passage playback uses original media without changing the cut or approving it
+PASS Expansion includes the whole correction and every intervening source cue, in order
+PASS Actual edit ZIP retains the correction, pending review and exact original-media SHA-256
+Traceback (most recent call last):
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/upgrade15/browser.py", line 48, in <module>
+    spec=importlib.util.spec_from_file_location('passage_renderer',O/'render.py');renderer=importlib.util.module_from_spec(spec);spec.loader.exec_module(renderer);receipt=renderer.render(D,F/'source.mp4',E/'passage-render',width=360);(E/'passage-render-receipt.json').write_text(json.dumps(receipt,indent=2));media=next((E/'passage-render').glob('*.mp4'));subprocess.run(['ffmpeg','-v','error','-i',str(media),'-f','null','-'],check=True,timeout=90);ok('Native renderer creates and fully decodes a real source-bound MP4 from that downloaded ZIP')
+                                                                                                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py", line 170, in render
+    require(overwrite or not any(p.exists() for p in outputs + [receipt_path]),
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/v15/render.py", line 28, in require
+    raise ValueError(message)
+ValueError: Output already exists. Choose a new output directory, or explicitly pass --overwrite.
