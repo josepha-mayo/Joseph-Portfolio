@@ -11,6 +11,10 @@ def tree(p):return {str(f.relative_to(p)):digest(f)for f in p.rglob('*')if f.is_
 protected={str(p):tree(p)for p in [R/'public/cutproof/v13',R/'public/cutproof/v14']}
 critical={n:digest(A/n)for n in ['evidence.js','binding.js','source-lock.js','speech-worker.mjs','passages.js','desk.js','render.py']}
 backup=R/'.launch-evidence-backup';shutil.rmtree(backup,ignore_errors=True);shutil.copytree(E,backup)
+# The renderer deliberately refuses to overwrite outputs. Run against an empty
+# evidence directory, then restore the preserved historical bytes in finally.
+shutil.rmtree(E);E.mkdir()
+for name in ['launch-browser','regression-evidence']:shutil.rmtree(D/name,ignore_errors=True)
 def run(name,args,env=None,timeout=1200):
  t=time.monotonic();p=subprocess.run(args,cwd=R,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=timeout);(D/(name+'.log')).write_text(p.stdout);report['commands'].append({'name':name,'exit_code':p.returncode,'seconds':round(time.monotonic()-t,2)});print(name,p.returncode,flush=True)
  if p.returncode:raise RuntimeError(name+'\n'+p.stdout[-5000:])
@@ -55,10 +59,10 @@ try:
  for key,before in protected.items():assert before==tree(Path(key)),'Earlier release changed: '+key
  assert critical=={n:digest(A/n)for n in critical},'Original core module changed'
  report['earlier_releases_unchanged']={str(Path(k).name):len(v)for k,v in protected.items()};report['unchanged_core_modules']=critical
- shutil.copytree(E,D/'regression-evidence',dirs_exist_ok=True)
  report['status']='passed'
 except BaseException as error:report.update(status='failed',error=str(error),traceback=traceback.format_exc());raise
 finally:
+ shutil.copytree(E,D/'regression-evidence',dirs_exist_ok=True)
  shutil.rmtree(E);shutil.copytree(backup,E);shutil.rmtree(backup)
  report['finished_at']=datetime.now(timezone.utc).isoformat();(D/'verification.json').write_text(json.dumps(report,indent=2))
 if not PUBLIC:
