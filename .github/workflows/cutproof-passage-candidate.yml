@@ -22,17 +22,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
-      - name: Apply exact reviewed test-runner wait correction
+      - name: Apply exact reviewed test-runner and recording corrections
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
           p=Path('upgrade15/browser.py');before=hashlib.sha256(p.read_bytes()).hexdigest()
-          old='791d9782ac6be5d5ddd9ab52ad1a9ae251dcdf60bcc9d8c3266fbc599a56a5e1';new='29ddf0d7130791efd102fbe111176dd515771cb66fbb335534bdaa5b2a65bb09'
-          assert before in [old,new],before
+          old='791d9782ac6be5d5ddd9ab52ad1a9ae251dcdf60bcc9d8c3266fbc599a56a5e1';mid='29ddf0d7130791efd102fbe111176dd515771cb66fbb335534bdaa5b2a65bb09';new='c721a7b1ddc3909aa087f471d5fd779e93f2a4c291221b8ab762af21d8a86b7b'
+          assert before in [old,mid,new],before
           if before==old:
               helper='  def wait_ready():\n   until=time.monotonic()+30\n   while time.monotonic()<until:\n    if page.evaluate(\'document.getElementById("sourceVideo").readyState>=2\'):return\n    page.wait_for_timeout(80)\n   raise AssertionError(\'Source media did not become playable within 30 seconds.\')\n'
               s=p.read_text().replace('  def load():\n',helper+'  def load():\n',1).replace('page.wait_for_function(\'document.getElementById("sourceVideo").readyState>=2\')','wait_ready()',1)
+              p.write_text(s)
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==mid
+          if hashlib.sha256(p.read_bytes()).hexdigest()==mid:
+              s=p.read_text().replace('Fontsize=18,PrimaryColour=&HFFFFFF,Outline=0,Alignment=2,MarginV=14','Fontsize=8,PrimaryColour=&HFFFFFF,Outline=1,Alignment=2,MarginV=3')
+              s=s.replace('Listen to the surrounding source.\\nThis is a synthetic device-review fixture, not a product claim.','The app plays the surrounding source.\\nSilent walkthrough; the source audio is synthetic.')
+              s=s.replace(";shutil.rmtree(E/'recording');ok(",";ok(")
               p.write_text(s)
           assert hashlib.sha256(p.read_bytes()).hexdigest()==new
           PY
@@ -41,7 +47,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected={'browser.py':'29ddf0d7130791efd102fbe111176dd515771cb66fbb335534bdaa5b2a65bb09','build.py':'70fdf95dc1be7caf822ad6b3acf4a27fc8549755adcca6c31a54b981b63f38a2','desk-replacement.js':'ddeaf8872edcd76ee02702199e5df3728d8f907674a7ef52034198c413dc287a','fixture.py':'30b458bc68d284d2e016434f4d26b1e2191508f437a306d77f7416d0606439d0','passages.js':'3dd1fe858db5e7c72be187df94e15d4497ed8876302ac57843d0161886415b43','passages.test.cjs':'da82dd73f152805b6d30a492c63b9424f4121b5cc81ceb5b35a460285208afd4','release.py':'359c4447e5a5adb246e13070836d581a4f26cad2932b6ad490adeac6f2412a50','README.md':'4351b39a7740d49f41361c1fdb3fdcd5fb59cbda190526f054d7f7dd9aaff477'}
+          expected={'browser.py':'c721a7b1ddc3909aa087f471d5fd779e93f2a4c291221b8ab762af21d8a86b7b','build.py':'70fdf95dc1be7caf822ad6b3acf4a27fc8549755adcca6c31a54b981b63f38a2','desk-replacement.js':'ddeaf8872edcd76ee02702199e5df3728d8f907674a7ef52034198c413dc287a','fixture.py':'30b458bc68d284d2e016434f4d26b1e2191508f437a306d77f7416d0606439d0','passages.js':'3dd1fe858db5e7c72be187df94e15d4497ed8876302ac57843d0161886415b43','passages.test.cjs':'da82dd73f152805b6d30a492c63b9424f4121b5cc81ceb5b35a460285208afd4','release.py':'359c4447e5a5adb246e13070836d581a4f26cad2932b6ad490adeac6f2412a50','README.md':'4351b39a7740d49f41361c1fdb3fdcd5fb59cbda190526f054d7f7dd9aaff477'}
           for name,want in expected.items():
               got=hashlib.sha256((Path('upgrade15')/name).read_bytes()).hexdigest()
               assert got==want,(name,got,want)
