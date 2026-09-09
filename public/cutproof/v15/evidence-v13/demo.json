@@ -1,0 +1,19 @@
+{
+  "seconds": 97.68,
+  "text": [
+    "CutProof already checks captions against speech and helps inspect context outside a clip. This update tackles a different handoff mistake: sending the right edit instructions with the wrong source file. These are fictional demonstration materials, not a creator study.",
+    "Source Lock reads the attached media inside the browser and computes its exact file fingerprint. No media is uploaded. The same source digest and byte count go into the edit manifest, so a filename is no longer the only hint.",
+    "I export one reviewed cut and open that manifest in the checker. Its source bytes match. The editing archive includes captions, source cues and a native M P four renderer that checks the lock before encoding. A changed editing state during hashing aborts the export.",
+    "Now I attach a changed export with the same filename and duration. Its metadata differs, although its visible content is unchanged. The checker reports a mismatch. This is deliberately strict byte identity: re-encoding or metadata changes require a new handoff.",
+    "Restoring the original bytes produces a match, but the cut remains unreviewed. Matching a file does not prove its captions are accurate, and an editable digest is not a signature. Source Lock keeps file identity and editorial judgment separate."
+  ],
+  "speech": "stock Kokoro af_heart at speed 0.9; disclosed synthetic",
+  "scene_start_seconds": [
+    0.9020114040000067,
+    20.09764633100002,
+    37.63780110599998,
+    57.557501609999974,
+    78.10464711100002
+  ],
+  "recording": "Actual continuous browser recording with narration timed to completed actions. Not a live user study."
+}

@@ -1,0 +1,1 @@
+Original synthetic fixture. Import source.cues.json and attach source.mp4. Select only the first cue, open Evidence Desk, then Find related passages. The correction after the matching topic cue must be visible and included when expanding. No real device evaluation, product claim or general retrieval benchmark.

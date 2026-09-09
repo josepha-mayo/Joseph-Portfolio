@@ -1,0 +1,83 @@
+{
+  "format": "cutproof-speech-check",
+  "version": 1,
+  "created_at": "2026-09-09T16:32:04.950Z",
+  "source_sha256": "3281634c774ba0e121ab7b6082cc7d778b14329607371d79a0326cdd52cd4512",
+  "transcript_sha256": "a0335f4c125595aeb36c4744f0809f6a28d9b30db1971bf1e6e2039cb42aea88",
+  "range": {
+    "start_ms": 0,
+    "end_ms": 4480
+  },
+  "caption_text": "The temperature is +5 degrees.",
+  "asr_text": " The temperature is minus 5 degrees.",
+  "model": "onnx-community/whisper-tiny.en",
+  "model_revision": "2575352d61be1bf7225cf8f8b268a4678025fc58",
+  "inference_seconds": 1.9571000000000058,
+  "comparison": {
+    "caption_words": 6,
+    "speech_words": 6,
+    "edit_distance": 1,
+    "different_words": 1,
+    "priority_differences": [
+      {
+        "kind": "replace",
+        "caption": "plus",
+        "speech": "minus",
+        "caption_index": 3,
+        "speech_index": 3,
+        "priority": "attention"
+      }
+    ],
+    "operations": [
+      {
+        "kind": "match",
+        "caption": "the",
+        "speech": "the",
+        "caption_index": 0,
+        "speech_index": 0,
+        "priority": "normal"
+      },
+      {
+        "kind": "match",
+        "caption": "temperature",
+        "speech": "temperature",
+        "caption_index": 1,
+        "speech_index": 1,
+        "priority": "normal"
+      },
+      {
+        "kind": "match",
+        "caption": "is",
+        "speech": "is",
+        "caption_index": 2,
+        "speech_index": 2,
+        "priority": "normal"
+      },
+      {
+        "kind": "replace",
+        "caption": "plus",
+        "speech": "minus",
+        "caption_index": 3,
+        "speech_index": 3,
+        "priority": "attention"
+      },
+      {
+        "kind": "match",
+        "caption": "5",
+        "speech": "5",
+        "caption_index": 4,
+        "speech_index": 4,
+        "priority": "normal"
+      },
+      {
+        "kind": "match",
+        "caption": "degrees",
+        "speech": "degrees",
+        "caption_index": 5,
+        "speech_index": 5,
+        "priority": "normal"
+      }
+    ],
+    "interpretation": "Agreement with ASR is not proof that captions are correct. Disagreement can be an ASR error. Listen to the source; neither version is automatically accepted."
+  }
+}

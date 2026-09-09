@@ -1,0 +1,28 @@
+{
+  "app": "CutProof 1.3.0",
+  "source_identity": "matched_locked_manifest",
+  "source_media_sha256": "6cf7c85d13ee9688658b0cf1f6c06a7bd84a89d73af79d2dc9b2326c26e1e5b3",
+  "source_transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
+  "manifest_sha256": "e78661d2b0756aa34f0308e6b579b530125d4a2aa0ca09d8824f24a315efe25c",
+  "source_duration_seconds": 126.987982,
+  "video_transcript_semantic_alignment": "not_verified",
+  "render_mode": "portrait safe-pad; original frame retained",
+  "outputs": [
+    {
+      "file": "clip-01.mp4",
+      "sha256": "a341ae73b55bed79f7709d59733abf3805bbc4a8526e413e91ac215d139eea3f",
+      "source_start_ms": 0,
+      "source_end_ms": 5141,
+      "expected_seconds": 5.141,
+      "observed_seconds": 5.166667,
+      "duration_error_seconds": 0.025667,
+      "width": 360,
+      "height": 640,
+      "codec": "h264",
+      "audio_present": true,
+      "render_elapsed_seconds": 0.568,
+      "review_status": "pending"
+    }
+  ],
+  "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers"
+}
