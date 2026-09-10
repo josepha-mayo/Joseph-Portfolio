@@ -1,0 +1,153 @@
+name: Countback native workflow verification
+on:
+  push:
+    branches: [countback-native-20260910]
+    paths:
+      - '.github/workflows/countback-native.yml'
+      - 'countback-native/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: countback-native-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  publish-source:
+    if: github.ref == 'refs/heads/countback-native-20260910'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: countback-native-20260910
+      - name: Verify and expand source-only snapshot
+        run: python3 countback-native/unpack.py
+      - name: Publish readable source only on isolated branch
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = 'refs/heads/countback-native-20260910'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- countback-workbench
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish verified readable Countback source without private photographs'
+            git push origin HEAD:refs/heads/countback-native-20260910
+          fi
+          git rev-parse HEAD
+  verify:
+    if: github.ref == 'refs/heads/countback-native-20260910'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify source snapshot
+        id: source
+        run: |
+          python countback-native/unpack.py
+          mkdir -p countback-workbench/evidence-native
+      - name: Install pinned native runtime and browser
+        id: dependencies
+        working-directory: countback-workbench
+        run: |
+          python -m pip install -r requirements-workbench.txt playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          python -c "import cv2; assert cv2.__version__.startswith('5.'), cv2.__version__; print(cv2.__version__)"
+      - name: Python contract and service tests
+        id: python_tests
+        continue-on-error: true
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests -p 'test_*.py' 2>&1 | tee evidence-native/python-tests.log
+      - name: JavaScript review-state tests
+        id: javascript_tests
+        continue-on-error: true
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          node --test tests/review_state.test.cjs 2>&1 | tee evidence-native/javascript-tests.log
+      - name: Native browser to actual HTTP and OpenCV worker
+        id: native_browser
+        continue-on-error: true
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          export CHROMIUM_EXECUTABLE="$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')"
+          python tests/browser_workbench.py --out evidence-native/browser 2>&1 | tee evidence-native/native-browser.log
+      - name: Record observed verification results
+        if: always()
+        env:
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python_tests.outcome }}
+          JAVASCRIPT_OUTCOME: ${{ steps.javascript_tests.outcome }}
+          NATIVE_OUTCOME: ${{ steps.native_browser.outcome }}
+        run: |
+          python - <<'PY'
+          import json, os, re, sys
+          from pathlib import Path
+          out = Path('countback-workbench/evidence-native')
+          out.mkdir(parents=True, exist_ok=True)
+          native_path = out / 'browser/result.json'
+          native = json.loads(native_path.read_text()) if native_path.exists() else {'status': 'not_executed', 'count': 0}
+          outcomes = {k: os.environ[k] for k in ['DEPENDENCIES_OUTCOME', 'PYTHON_OUTCOME', 'JAVASCRIPT_OUTCOME', 'NATIVE_OUTCOME']}
+          def count(pattern, filename):
+              p = out / filename
+              match = re.search(pattern, p.read_text()) if p.exists() else None
+              return int(match.group(1)) if match else None
+          versions = {'python': sys.version}
+          try:
+              import cv2, numpy, PIL
+              versions.update(opencv=cv2.__version__, numpy=numpy.__version__, pillow=PIL.__version__)
+          except ImportError:
+              versions['native_import'] = 'unavailable'
+          passed = all(v == 'success' for v in outcomes.values()) and native.get('status') == 'passed' and native.get('count') == 14
+          report = {
+              'status': 'passed' if passed else 'failed',
+              'run_url': f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              'workflow_commit': os.environ['GITHUB_SHA'],
+              'source_bundle_sha256': 'bcd099e0158f996e84c236178e9d75882989cb51ac019a5059d4160f69efe205',
+              'step_outcomes': outcomes,
+              'python_test_count': count(r'Ran (\d+) tests', 'python-tests.log'),
+              'javascript_test_count': count(r'# tests (\d+)', 'javascript-tests.log'),
+              'native_browser_check_count': native.get('count', 0),
+              'versions': versions,
+              'synthetic_browser_fixtures': True,
+              'private_photos_uploaded': False,
+              'human_review_performed': False,
+              'held_out_accuracy_evaluated': False,
+              'aws_deployed': False,
+              'scope': 'Software verification only. Not field accuracy, human assessment, or competition acceptance.'
+          }
+          (out / 'verification.json').write_text(json.dumps(report, indent=2) + '\n')
+          print(json.dumps(report, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-native-verification
+          path: countback-workbench/evidence-native/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Enforce the native verification gate
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('countback-workbench/evidence-native/verification.json').read_text())
+          assert report['status'] == 'passed', report
+          assert report['python_test_count'] == 54, report
+          assert report['javascript_test_count'] == 31, report
+          PY
