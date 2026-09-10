@@ -30,10 +30,14 @@ python tests/browser_workbench.py --out evidence-native/browser
 
 The native browser test starts the actual local HTTP server and uses generated software fixtures with the real OpenCV worker. It is not a mock-engine demonstration, an accuracy benchmark, or a real person's review. When browser policy prevents navigation, it fails rather than replacing the path with a simulated result.
 
-## Evidence and remaining gates
+## Verified native execution: September 10, 2026
 
-The isolated `Countback native workflow verification` GitHub Actions run publishes logs, native-browser results and synthetic screenshots in its artifact. A green upload of source alone is not proof that the browser test passed: inspect the verification job and its `verification.json`.
+GitHub Actions run [34527740534](https://github.com/josepha-mayo/Joseph-Portfolio/actions/runs/34527740534) passed 54 Python tests, 31 JavaScript tests and 14 native browser workflow checks. The browser selected photographs, submitted them to the actual local HTTP server, exercised the real OpenCV 5 worker, inspected the generated review and downloaded handoffs. Read [the execution summary](verification/native-ci-20260910.json); logs and synthetic screenshots are in the run artifact.
 
-This source snapshot passed 54 Python and 31 JavaScript tests in the assistant's local runtime on September 10, 2026. That runtime's full browser navigation was blocked, so a separate native CI execution is required. The historical five-photo development set is reused development evidence, not held-out evaluation.
+The earlier local runtime passed the 85 Python/JavaScript tests but blocked native browser navigation. That failed attempt remains separate from the later successful native CI execution. The 85 tests rerun here overlap the earlier workbench suite and must not be added to its count as new coverage.
 
-Remaining competition work includes broader independent validation, an accurate demo video, organizer eligibility clarification, and meaningful AWS integration. No AWS resources have been deployed by this source publication; spending limits and approval to transfer photographs remain separate requirements. Do not present the cloud handler source as evidence of a live AWS deployment.
+Generated browser fixtures establish software-path execution, not real-world identification accuracy. Test assessments are explicitly automated, not a real person's review. Desktop interactions and downloads plus outer workbench layout at mobile width were checked; full mobile embedded Review Desk usability remains unvalidated. The historical five-photo development set is reused development evidence, not held-out evaluation.
+
+## Remaining competition gates
+
+Broader independent validation, an accurate demo video, organizer eligibility clarification and meaningful AWS integration remain. No AWS resources have been deployed by this source publication; spending limits and approval to transfer photographs remain separate requirements. Do not present the cloud handler source as evidence of a live AWS deployment. The OpenCV draft is not a final submission.
