@@ -1,0 +1,69 @@
+name: Countback pinned OpenCV 5 runtime
+on:
+  push:
+    branches: [ci/countback-opencv5-20260910]
+    paths: [.github/workflows/countback-opencv5-runtime.yml]
+permissions:
+  contents: read
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Download and validate official pinned wheel
+        run: |
+          mkdir -p out
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, urllib.request, zipfile
+          name='opencv_python-5.0.0.93-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl'
+          url='https://files.pythonhosted.org/packages/95/54/eb47866b94f2b5b42dde17644b78055ef1ee05aae59962c7290e55270803/'+name
+          expected='f8b6d0a212253dd26ad338c812f1f23ca118fdf05a9c8c6b9444f161aa8c5881'
+          data=urllib.request.urlopen(url,timeout=120).read()
+          actual=hashlib.sha256(data).hexdigest()
+          assert actual==expected,(actual,expected)
+          Path('/tmp/'+name).write_bytes(data)
+          with zipfile.ZipFile('/tmp/'+name) as z:
+              assert z.testzip() is None
+              for member in z.infolist():
+                  p=Path(member.filename)
+                  assert not p.is_absolute() and '..' not in p.parts
+                  if member.is_dir() or p.suffix.lower() in {'.ttf','.otf','.woff','.woff2','.ttc'}: continue
+                  dest=Path('out/runtime')/p
+                  dest.parent.mkdir(parents=True,exist_ok=True)
+                  dest.write_bytes(z.read(member))
+          Path('out/provenance.json').write_text(json.dumps({'package':'opencv-python==5.0.0.93','source_url':url,'wheel_sha256':actual,'font_files_excluded':True,'private_images_uploaded':False,'deployment':False},indent=2))
+          PY
+      - name: Exercise actual native runtime
+        run: |
+          python -m pip -q install numpy==2.2.6
+          PYTHONPATH=out/runtime python - <<'PY'
+          from pathlib import Path
+          import cv2, numpy as np, json, hashlib, sys
+          assert cv2.__version__.startswith('5.'),cv2.__version__
+          rng=np.random.default_rng(25)
+          im=rng.integers(0,256,(160,160),dtype=np.uint8)
+          k,d=cv2.SIFT_create().detectAndCompute(im,None)
+          assert d is not None and len(k)>10
+          p=np.float32([[0,0],[10,0],[10,10],[0,10],[5,5]])
+          H,mask=cv2.findHomography(p,p+[20,30],cv2.RANSAC,3.0)
+          assert H is not None and mask.sum()==5
+          assert cv2.imdecode(cv2.imencode('.png',im)[1],0).shape==im.shape
+          Path('out/build-information.txt').write_text(cv2.getBuildInformation())
+          Path('out/native-smoke.json').write_text(json.dumps({'status':'passed','opencv_version':cv2.__version__,'numpy_version':np.__version__,'python':sys.version,'native_extension':cv2.__file__,'sift_keypoints':len(k),'homography_inliers':int(mask.sum()),'scope':'Native runtime smoke, not Countback task validation.'},indent=2))
+          files={str(p.relative_to('out/runtime')):{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in Path('out/runtime').rglob('*') if p.is_file()}
+          Path('out/runtime-manifest.json').write_text(json.dumps(files,indent=2))
+          print(cv2.__version__)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-opencv5-runtime
+          path: out/
+          retention-days: 7
+          if-no-files-found: error
