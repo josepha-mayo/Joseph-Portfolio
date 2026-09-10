@@ -1,0 +1,45 @@
+{
+  "schema": "countback-stage4-public-verification-1",
+  "status": "passed",
+  "execution_recorded_at": "2026-09-10T01:49:06.063204+00:00",
+  "opencv_version": "5.0.0",
+  "opencv_package": "opencv-python==5.0.0.93",
+  "actual_photo_execution": true,
+  "development_runtime_bypass_used": false,
+  "runtime_ci_run": 34426319848,
+  "runtime_artifact": 10132787675,
+  "runtime_artifact_sha256": "38dd56e246da13086b8b60243c61ff7547b769f2efc1a4af7a8fd4bcb8d6ffcc",
+  "official_wheel_sha256": "f8b6d0a212253dd26ad338c812f1f23ca118fdf05a9c8c6b9444f161aa8c5881",
+  "software_tests": {"passed": 123, "retained": 96, "new": 27},
+  "baseline_source_and_evidence_files_unchanged": 34,
+  "development_photos": {"reference_photos": 3, "group_photos": 2, "held_out": false, "publicly_uploaded": false},
+  "results": {
+    "booklet": {"evidence": "geometric_patch_support", "supporting_views": [1, 2], "inlier_landmarks": [68, 101]},
+    "remote": {"evidence": "internal_pattern_consistent", "supporting_view": 2, "first_view": "appearance_only", "reference_edge_coverage": 0.972814721873693, "observation_edge_agreement": 0.8471189591078067, "score_is_identity_probability": false},
+    "mouse": {"evidence": "appearance_only", "identity_verified": false, "selected_existing_review_view": 2, "selected_proposal_clipped_at_frame": false}
+  },
+  "negative_development_controls": {"cases": 13, "outline_suggestions": 4, "interior_pattern_supports": 0, "independent_benchmark": false},
+  "executed_controller": {
+    "image_checks": 2,
+    "first_decision": "inspect_next_supplied_view",
+    "first_unresolved_references": ["remote", "mouse"],
+    "final_decision": "operator_review",
+    "remaining_unresolved_reference": "mouse",
+    "future_image_content_used_before_decision": false,
+    "camera_recapture_requested": false,
+    "llm_used": false,
+    "camera_control": false
+  },
+  "new_source_sha256": {
+    "src/structure.py": "f1b85f3e27105962977606aed39f84c07bb5bf099603bbcbda75c3ad77840570",
+    "evidence_workflow.py": "77e6929c8443c6a3a4c66bb3582c331e819f60e795a4c5f1128f59af93441a87",
+    "run_next_stage.py": "0f68efd5b567b861690e13082af7e2d316b152d1b0cfee50bd29a328fd69f1d1",
+    "structure_controls.py": "a23e001ebe7032a53c363714b10a8eec32dbfe243554fdb2d9fcc1882a0145f2",
+    "tests/test_structure_workflow.py": "701405154dd656e558e59ff9f480b97998b11981a92c749cca675f7968b4170a"
+  },
+  "aws_executed": false,
+  "competition_submitted": false,
+  "competition_ready": false,
+  "source_delivery": "Separate local source-and-results ZIP. This branch contains runtime provisioning and this execution summary, not a deployed Countback application.",
+  "scope": "Actual OpenCV 5 execution on one previously used development photo set. Interior-layout agreement is distinct from landmark support and cannot establish a unique instance, physical count, condition, kit completeness, absence, general accuracy, contest eligibility or user benefit. No raw user photographs are published."
+}
