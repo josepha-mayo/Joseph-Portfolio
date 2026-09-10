@@ -6,16 +6,15 @@ An isolated child performs native analysis; a timeout bounds each child. Uploads
 live in a parent-owned temporary directory and are removed on every exit path.
 """
 from __future__ import annotations
-import argparse, hashlib, json, math, os, re, secrets, subprocess, sys, tempfile, threading, time
+import argparse, json, os, re, secrets, subprocess, sys, tempfile, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from io import BytesIO
 from pathlib import Path
 from urllib.parse import urlsplit
-from PIL import Image, ImageOps
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / 'cloud'))
-from handler import decode_event, MAX_EVENT_BYTES
+from handler import validate_image_event, MAX_EVENT_BYTES
 REVIEW_TTL = 600
 MAX_REVIEW_BYTES = 8_000_000
 MAX_STORED_REVIEWS = 2
@@ -35,30 +34,8 @@ def strict_json(raw: bytes):
 
 
 def validate_images(event: dict):
-    manifest, images = decode_event(event)
-    if any(re.fullmatch(r'view-[0-9]+', key) or key in {'__proto__','constructor','prototype'} for key in manifest['references']):
-        raise ValueError('Reference labels cannot use the reserved view-N namespace')
-    sizes = {}
-    for name, raw in images.items():
-        with Image.open(BytesIO(raw)) as im:
-            if im.format not in {'JPEG', 'PNG'} or not 64 <= min(im.size) or im.width * im.height > 12_000_000:
-                raise ValueError('Use JPEG or PNG images between 64 pixels and 12 megapixels')
-            im.verify()
-        with Image.open(BytesIO(raw)) as im:
-            sizes[name] = ImageOps.exif_transpose(im).size
-    for spec in manifest['references'].values():
-        b = spec['roi_fraction']
-        if not isinstance(b, list) or len(b) != 4 or not all(type(v) in (int, float) and math.isfinite(v) for v in b):
-            raise ValueError('Reference crops need four finite fractions')
-        if not (0 <= b[0] < b[2] <= 1 and 0 <= b[1] < b[3] <= 1):
-            raise ValueError('Reference crop is outside its photograph')
-        w, h = sizes[spec['filename']]
-        if min(round(b[2]*w)-round(b[0]*w), round(b[3]*h)-round(b[1]*h)) < 24:
-            raise ValueError('Reference crop must be at least 24 pixels per side')
-    view_hashes = [hashlib.sha256(images[n]).hexdigest() for n in manifest['views']]
-    if len(set(view_hashes)) != len(view_hashes):
-        raise ValueError('Repeated group photographs are not distinct evidence')
-    return manifest, images
+    """Keep the public workbench entry point; share the adapter's photo checks."""
+    return validate_image_event(event)
 
 
 def run_analysis(event: dict, *, timeout: float = 90, temp_parent: str | None = None) -> dict:
