@@ -4,9 +4,11 @@ Executed locally in this release. No AWS client, uploader, credentials, public
 endpoint, event queue or retry loop is created by this module.
 """
 from __future__ import annotations
-import base64, binascii, hashlib, json, os, re, sys, tempfile
+import base64, binascii, hashlib, json, math, os, re, sys, tempfile
+from io import BytesIO
 from pathlib import Path
 from typing import Any
+from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'engine'))
@@ -64,11 +66,49 @@ def decode_event(event: dict[str, Any]) -> tuple[dict, dict[str, bytes]]:
     return manifest, decoded
 
 
+def _validate_decoded_images(manifest: dict, images: dict[str, bytes]) -> tuple[dict, dict[str, bytes]]:
+    """Apply the same photo and crop contract before either execution path."""
+    if any(re.fullmatch(r'view-[0-9]+', key) or key in {'__proto__','constructor','prototype'} for key in manifest['references']):
+        raise ValueError('Reference labels cannot use the reserved view-N namespace')
+    sizes = {}
+    for name, raw in images.items():
+        with Image.open(BytesIO(raw)) as im:
+            if im.format not in {'JPEG', 'PNG'} or not 64 <= min(im.size) or im.width * im.height > 12_000_000:
+                raise ValueError('Use JPEG or PNG images between 64 pixels and 12 megapixels')
+            im.verify()
+        with Image.open(BytesIO(raw)) as im:
+            sizes[name] = ImageOps.exif_transpose(im).size
+    for spec in manifest['references'].values():
+        b = spec['roi_fraction']
+        if not isinstance(b, list) or len(b) != 4 or not all(type(v) in (int, float) and math.isfinite(v) for v in b):
+            raise ValueError('Reference crops need four finite fractions')
+        if not (0 <= b[0] < b[2] <= 1 and 0 <= b[1] < b[3] <= 1):
+            raise ValueError('Reference crop is outside its photograph')
+        w, h = sizes[spec['filename']]
+        if min(round(b[2]*w)-round(b[0]*w), round(b[3]*h)-round(b[1]*h)) < 24:
+            raise ValueError('Reference crop must be at least 24 pixels per side')
+    view_hashes = [hashlib.sha256(images[n]).hexdigest() for n in manifest['views']]
+    if len(set(view_hashes)) != len(view_hashes):
+        raise ValueError('Repeated group photographs are not distinct evidence')
+    return manifest, images
+
+
+def validate_image_event(event: dict[str, Any]) -> tuple[dict, dict[str, bytes]]:
+    """Validate supplied photos without a native engine call or data transfer.
+
+    The permission flag authorizes only the caller-selected processing context;
+    validating it is not evidence of consent for a different cloud destination.
+    """
+    return _validate_decoded_images(*decode_event(event))
+
+
 def handler(event: dict[str, Any], context: Any = None) -> dict:
     manifest, images = decode_event(event)
     if context is not None and hasattr(context, 'get_remaining_time_in_millis'):
         if context.get_remaining_time_in_millis() < 20_000:
             raise ValueError('Less than 20 seconds of execution budget remains')
+    # The cloud adapter must not bypass the local photo contract.
+    manifest, images = _validate_decoded_images(manifest, images)
     import cv2
     from evidence_workflow import execute
     if not cv2.__version__.startswith('5.'):
