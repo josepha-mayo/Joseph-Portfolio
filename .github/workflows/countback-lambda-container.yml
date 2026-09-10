@@ -1,0 +1,45 @@
+name: Countback Lambda container compatibility
+on:
+  push:
+    branches: [test/countback-lambda-container-20260910]
+    paths:
+      - 'countback-workbench/**'
+      - '.github/workflows/countback-lambda-container.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: countback-container-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/test/countback-lambda-container-20260910'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build and exercise the actual Lambda image without AWS credentials
+        run: python3 countback-workbench/cloud/container_ci.py --out evidence-countback-container
+      - name: Upload observed evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: countback-lambda-container-evidence
+          path: |
+            evidence-countback-container/*
+            !evidence-countback-container/countback-lambda.tar
+          retention-days: 14
+          if-no-files-found: error
+      - name: Preserve the exact tested image without a registry upload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: countback-lambda-tested-image
+          path: evidence-countback-container/countback-lambda.tar
+          retention-days: 7
+          compression-level: 6
+          if-no-files-found: error
