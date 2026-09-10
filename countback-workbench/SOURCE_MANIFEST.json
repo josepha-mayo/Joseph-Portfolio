@@ -1,0 +1,121 @@
+{
+  "source_bundle_sha256": "bcd099e0158f996e84c236178e9d75882989cb51ac019a5059d4160f69efe205",
+  "files": {
+    "LICENSE": {
+      "bytes": 1151,
+      "sha256": "b22ac8feb8278e6efcd37e4492f9d16b951de4beed46102c7b491a8a5204916b"
+    },
+    "app/review_state.js": {
+      "bytes": 7700,
+      "sha256": "48438313eee8d4e10df3485363312cc683f281f1eff406f12188be72dad2e031"
+    },
+    "app/template.html": {
+      "bytes": 8347,
+      "sha256": "a31fcc055e8a596c885fb5e79d202a3eb6afaab57e33acf7c27bb9a222e72366"
+    },
+    "app/ui.js": {
+      "bytes": 8391,
+      "sha256": "c5290a118c1dc40ba1869d5ab21b267f61d31c3345a78e949d75f7e901f3816a"
+    },
+    "cloud/handler.py": {
+      "bytes": 5252,
+      "sha256": "d8b4a36dd234aa112e34af06adf7d81ad69149975724906dab5509ba412f98c2"
+    },
+    "engine/LICENSE": {
+      "bytes": 1151,
+      "sha256": "b22ac8feb8278e6efcd37e4492f9d16b951de4beed46102c7b491a8a5204916b"
+    },
+    "engine/captures.py": {
+      "bytes": 13958,
+      "sha256": "2a4eca538518f55b934774a32ebc1720ccdf4e520fc6500245534e728cf58591"
+    },
+    "engine/evidence_workflow.py": {
+      "bytes": 9411,
+      "sha256": "77e6929c8443c6a3a4c66bb3582c331e819f60e795a4c5f1128f59af93441a87"
+    },
+    "engine/inspect_captures.py": {
+      "bytes": 8499,
+      "sha256": "bcf798db9f2ba301c41b5563ce83ecea282e6673a2ebec9d14765043f297e04a"
+    },
+    "engine/practical_inspection.py": {
+      "bytes": 5308,
+      "sha256": "b7af7f4942562a3384ff872f75beeca4602ceb5e49bb61ce32053f5941bae5e6"
+    },
+    "engine/run_supplied_set.py": {
+      "bytes": 5435,
+      "sha256": "8bdfaa01c2742f5e201fbece2f9d6db82db91e4e0d6a1737cb208fc8ca0be8d8"
+    },
+    "engine/src/__init__.py": {
+      "bytes": 120,
+      "sha256": "b3d105c8aea63875e41368aefb1edae7978e6c673bc882945160547670f2ab72"
+    },
+    "engine/src/appearance.py": {
+      "bytes": 6904,
+      "sha256": "e9dd990298abb70a7930939408dff3919586ee834907a67d394cdd84fa7ba27a"
+    },
+    "engine/src/countback.py": {
+      "bytes": 12000,
+      "sha256": "1e082524bea5d1aa05ae17a344071772db09a4b4ab4e15e69509ae75892a431d"
+    },
+    "engine/src/joint.py": {
+      "bytes": 10297,
+      "sha256": "86446c453018b8d1bdbd69bf053c07dd6cd92feb2a5f5ad7ca0bf67fa12cd200"
+    },
+    "engine/src/robust_matcher.py": {
+      "bytes": 13493,
+      "sha256": "f5824c17078de3161e69acb9ebb9b1b41cde15a57d14c6de7034399d1548b9e0"
+    },
+    "engine/src/structure.py": {
+      "bytes": 8701,
+      "sha256": "f1b85f3e27105962977606aed39f84c07bb5bf099603bbcbda75c3ad77840570"
+    },
+    "requirements-workbench.txt": {
+      "bytes": 52,
+      "sha256": "99ebc29e8b9d9c2702ac3db94159a6051b3c9cc2cbf04c554dca0654d86994ef"
+    },
+    "review_prepare.py": {
+      "bytes": 8032,
+      "sha256": "6943ea0b87dc9b2ad91dec67d82d8d9be21d97dafa86c5ad24afc2f65332ce7d"
+    },
+    "tests/browser_workbench.py": {
+      "bytes": 5519,
+      "sha256": "5dafd535a373f225c611cdfb77a66adadabcd195aaa33b8855e19cb7f4478ea7"
+    },
+    "tests/review_state.test.cjs": {
+      "bytes": 4815,
+      "sha256": "90811e7252791519dc20a9f1a57356789c7c709267b958f556b8987053f2e8fd"
+    },
+    "tests/test_prepare_cloud.py": {
+      "bytes": 5273,
+      "sha256": "b318a15a884a7edf8f45738505da118aba1fb58c2cfe1fcbee0eb5e4dc3b2f12"
+    },
+    "tests/test_workbench.py": {
+      "bytes": 7517,
+      "sha256": "4ddc50a6df5c05d56f5f7345af7007430811f6745a622cfd3668b5d606dfcac0"
+    },
+    "upload/index.html": {
+      "bytes": 3646,
+      "sha256": "e09f1f439e6748b4a4bd861ef9e2f5863eaebadf492c2ce0665b725fc7fe0e9d"
+    },
+    "upload/upload.css": {
+      "bytes": 4080,
+      "sha256": "7650e161cf2d118441879dce78b494ad8c412731396dcbf54022665cd6ab091a"
+    },
+    "upload/upload.js": {
+      "bytes": 9828,
+      "sha256": "a92647ccbcc96878214d20c5c65690f72a5fcb8045a982cd6ad202164b50a07a"
+    },
+    "workbench.py": {
+      "bytes": 11725,
+      "sha256": "a3563c54b240e6773682d5d3e909de90df8b4a661240f9f47c6ade71ae0d951d"
+    },
+    "workbench_worker.py": {
+      "bytes": 583,
+      "sha256": "2b59c92a6a09ea27658410f099031dcb37e964924f3d13a6225bcc44782e84eb"
+    }
+  },
+  "private_photos_included": false,
+  "fonts_included": false,
+  "cloud_deployment_performed": false,
+  "scope": "Published source snapshot; execution results belong to the corresponding CI run."
+}
