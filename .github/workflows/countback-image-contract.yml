@@ -1,0 +1,131 @@
+name: Countback image contract verification
+on:
+  push:
+    branches: [fix/countback-image-contract-20260910]
+    paths:
+      - 'countback-workbench/**'
+      - '.github/workflows/countback-image-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: countback-image-contract-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/fix/countback-image-contract-20260910'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify source hashes and unchanged baseline components
+        id: source
+        run: |
+          mkdir -p countback-workbench/evidence-contract
+          python - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          root = Path('countback-workbench')
+          manifest = json.loads((root / 'SOURCE_MANIFEST.json').read_text())
+          baseline = json.loads(subprocess.check_output(['git', 'show', '6d2786be81fd9b8bd8753738d1e05bf48c26e42c:countback-workbench/SOURCE_MANIFEST.json']))
+          assert len(manifest['files']) == 29
+          for name, expected in manifest['files'].items():
+              data = (root / name).read_bytes()
+              assert len(data) == expected['bytes'], name
+              assert hashlib.sha256(data).hexdigest() == expected['sha256'], name
+          changed = {'cloud/handler.py', 'workbench.py'}
+          for name, expected in baseline['files'].items():
+              if name not in changed:
+                  assert manifest['files'][name] == expected, name
+          print('All 29 source hashes verified; 26 inherited components unchanged.')
+          PY
+      - name: Install pinned native runtime and browser
+        id: dependencies
+        working-directory: countback-workbench
+        run: |
+          python -m pip install -r requirements-workbench.txt playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          python -c "import cv2; assert cv2.__version__.startswith('5.'), cv2.__version__; print(cv2.__version__)"
+      - name: Python tests including actual native adapter
+        id: python_tests
+        continue-on-error: true
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee evidence-contract/python-tests.log
+      - name: JavaScript review-state tests
+        id: javascript_tests
+        continue-on-error: true
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          node --test tests/review_state.test.cjs 2>&1 | tee evidence-contract/javascript-tests.log
+      - name: Unchanged native browser to HTTP and OpenCV workflow
+        id: browser
+        continue-on-error: true
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          export CHROMIUM_EXECUTABLE="$(python -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')"
+          python tests/browser_workbench.py --out evidence-contract/browser 2>&1 | tee evidence-contract/browser.log
+      - name: Record observed results
+        if: always()
+        env:
+          SOURCE_OUTCOME: ${{ steps.source.outcome }}
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python_tests.outcome }}
+          JAVASCRIPT_OUTCOME: ${{ steps.javascript_tests.outcome }}
+          BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, re, sys
+          from pathlib import Path
+          out = Path('countback-workbench/evidence-contract')
+          out.mkdir(parents=True, exist_ok=True)
+          outcomes = {k: os.environ[k] for k in ['SOURCE_OUTCOME','DEPENDENCIES_OUTCOME','PYTHON_OUTCOME','JAVASCRIPT_OUTCOME','BROWSER_OUTCOME']}
+          def count(pattern, filename):
+              p = out / filename
+              m = re.search(pattern, p.read_text()) if p.exists() else None
+              return int(m.group(1)) if m else None
+          native_path = out / 'browser/result.json'
+          native = json.loads(native_path.read_text()) if native_path.exists() else {'status':'not_executed','count':0}
+          counts = {'python_tests':count(r'Ran (\d+) tests','python-tests.log'), 'javascript_tests':count(r'# tests (\d+)','javascript-tests.log'), 'browser_checks':native.get('count',0)}
+          versions = {'python':sys.version}
+          try:
+              import cv2, numpy, PIL
+              versions.update(opencv=cv2.__version__, numpy=numpy.__version__, pillow=PIL.__version__)
+          except ImportError:
+              versions['native_import'] = 'unavailable'
+          passed = all(v == 'success' for v in outcomes.values()) and counts == {'python_tests':72,'javascript_tests':31,'browser_checks':14} and native.get('status') == 'passed'
+          log_hashes = {p.relative_to(out).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in out.rglob('*') if p.is_file()}
+          report = {'status':'passed' if passed else 'failed', 'commit':os.environ['GITHUB_SHA'], 'run_url':f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}", 'step_outcomes':outcomes, 'counts':counts, 'versions':versions, 'artifact_file_sha256':log_hashes, 'fixtures':'generated software test images', 'private_photos_uploaded':False, 'aws_executed':False, 'human_study':False, 'scope':'Regression and native software execution, not recognition accuracy or competition eligibility.'}
+          (out / 'verification.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-image-contract-verification
+          path: countback-workbench/evidence-contract/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Require all verification paths to pass
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('countback-workbench/evidence-contract/verification.json').read_text())
+          assert report['status'] == 'passed', report
+          PY
