@@ -2,7 +2,7 @@ name: Countback public photo acquisition
 on:
   push:
     branches: [eval/countback-photos-20260913]
-    paths: ['.github/workflows/countback-photo-acquisition.yml', 'countback-evaluation/photo_acquisition.py']
+    paths: ['.github/workflows/countback-photo-acquisition.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,27 +18,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Inspect release metadata only
-        run: |
-          python3 - <<'PY'
-          import json, pathlib, urllib.request
-          out = pathlib.Path('photo-acquisition-evidence'); out.mkdir()
-          urls = {'uwis-occluded': 'https://api.figshare.com/v2/articles/20506506'}
-          for name, url in urls.items():
-              req=urllib.request.Request(url, headers={'User-Agent':'Countback-research-dataset-metadata/1.0'})
-              try:
-                  with urllib.request.urlopen(req, timeout=30) as response:
-                      raw=response.read(2_000_001)
-                  assert len(raw)<=2_000_000, 'Metadata limit exceeded'
-                  obj=json.loads(raw)
-                  (out/(name+'.json')).write_bytes(raw)
-                  print(json.dumps(obj, indent=2))
-              except Exception as exc:
-                  err={'url':url,'error':type(exc).__name__+': '+str(exc)}
-                  (out/(name+'-error.json')).write_text(json.dumps(err))
-                  print(json.dumps(err))
-                  raise
-          PY
+      - name: Inspect bounded ZIP index and release documentation
+        run: python3 countback-evaluation/photo_acquisition.py photo-acquisition-evidence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
