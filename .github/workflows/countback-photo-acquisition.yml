@@ -13,17 +13,22 @@ jobs:
   acquire:
     if: github.ref == 'refs/heads/eval/countback-photos-20260913'
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Inspect bounded ZIP index and release documentation
-        run: python3 countback-evaluation/photo_acquisition.py photo-acquisition-evidence
+      - name: Acquire fixed RGB subset without model inference
+        run: python3 countback-evaluation/photo_subset.py photo-subset-evidence
+      - name: Retain exact evaluator and acquisition sources
+        if: always()
+        run: |
+          mkdir -p photo-subset-evidence/tooling
+          cp countback-evaluation/{evaluate.py,test_evaluate.py,smoke.py,photo_acquisition.py,photo_subset.py,LICENSE,README.md} photo-subset-evidence/tooling/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: countback-photo-acquisition
-          path: photo-acquisition-evidence/
+          name: countback-uwis-photo-subset
+          path: photo-subset-evidence/
           retention-days: 14
           if-no-files-found: error
