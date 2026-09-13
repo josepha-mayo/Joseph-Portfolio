@@ -1,0 +1,26 @@
+{
+  "UWISOccludedDataset/Lounge/Lighting1/Level1Separation/Tools/185.zip": {
+    "catalogue_digest": "deadc5b00fb7f9d0ddb64f17e87a03216706f094179852565f4d59eba964bd5c",
+    "members": ["185/0001_labels.png", "185/0001_rgb.png", "185/0022_labels.png", "185/0022_rgb.png", "185/0042_labels.png", "185/0042_rgb.png"]
+  },
+  "UWISOccludedDataset/Lounge/Lighting1/Level3Separation/Tools/191.zip": {
+    "catalogue_digest": "a2d7c2c298947608d31822bdfd7e56ed4df70d0586cf38ba5b0551fa4f695c65",
+    "members": ["191/0001_labels.png", "191/0001_rgb.png", "191/0053_labels.png", "191/0053_rgb.png", "191/0105_labels.png", "191/0105_rgb.png"]
+  },
+  "UWISOccludedDataset/Warehouse/Lighting1/Level1Separation/Tools/50.zip": {
+    "catalogue_digest": "9132ad26e6e694ab7466627e80e84505e8a476a0c0f6a4ddae1200e2eff6ed5c",
+    "members": ["50/0001_labels.png", "50/0001_rgb.png", "50/0046_labels.png", "50/0046_rgb.png", "50/0090_labels.png", "50/0090_rgb.png"]
+  },
+  "UWISOccludedDataset/Warehouse/Lighting1/Level3Separation/Tools/56.zip": {
+    "catalogue_digest": "1711782c663b9b9c97c702b0fc289597f8330b943d5a88707c5c8c09c9b5c3a3",
+    "members": ["56/0001_labels.png", "56/0001_rgb.png", "56/0101_labels.png", "56/0101_rgb.png", "56/0201_labels.png", "56/0201_rgb.png"]
+  },
+  "UWISOccludedDataset/Lounge/Lighting1/Level1Separation/Kitchen/176.zip": {
+    "catalogue_digest": "598b56d802f4491aed4e57d5b737ae0bddf779b98066366ac676c41cd33c6f00",
+    "members": ["176/0001_labels.png", "176/0001_rgb.png", "176/0069_labels.png", "176/0069_rgb.png", "176/0137_labels.png", "176/0137_rgb.png"]
+  },
+  "UWISOccludedDataset/Lounge/Lighting1/Level1Separation/Food/167.zip": {
+    "catalogue_digest": "e725847a11a6c9b4488f5f831c33f54ec191c95aff177a0ec0456835986979ee",
+    "members": ["167/0001_labels.png", "167/0001_rgb.png", "167/0094_labels.png", "167/0094_rgb.png", "167/0186_labels.png", "167/0186_rgb.png"]
+  }
+}

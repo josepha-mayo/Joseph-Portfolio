@@ -18,19 +18,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check unchanged original transport and the bounded nested reader
+      - name: Verify original transport and both slice implementations
         working-directory: countback-acquisition
         run: |
           python3 -c "import hashlib; from pathlib import Path; assert hashlib.sha256(Path('acquire.py').read_bytes()).hexdigest()=='52ebdbcb7c2ebeb895316c44176750674e66a390feaa311a4136c23af94867e1'"
           python3 -m unittest test_nested -v
-      - name: Catalogue six predetermined real scene archives without extracting photographs
-        run: |
-          python3 countback-acquisition/nested.py catalog --out photo-evidence/nested-catalog
-      - name: Save observed evidence without predictions or cloud deployment
+          python3 - <<'PY'
+          import unittest,nested,fetch_selected,test_nested
+          nested.StoredSlice=fetch_selected.CachedSlice
+          result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(test_nested))
+          assert result.wasSuccessful()
+          PY
+      - name: Fetch only predetermined public RGB images and matching segmentation masks
+        run: python3 countback-acquisition/fetch_selected.py
+      - name: Save observed acquisition evidence and selected original files
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: countback-public-photo-nested-catalog
+          name: countback-public-photos-selected
           path: photo-evidence/
           retention-days: 14
           if-no-files-found: error
