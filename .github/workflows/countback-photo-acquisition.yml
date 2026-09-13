@@ -1,0 +1,48 @@
+name: Countback public photo acquisition
+on:
+  push:
+    branches: [eval/countback-photos-20260913]
+    paths: ['.github/workflows/countback-photo-acquisition.yml', 'countback-evaluation/photo_acquisition.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: countback-photo-acquisition-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  acquire:
+    if: github.ref == 'refs/heads/eval/countback-photos-20260913'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Inspect release metadata only
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, urllib.request
+          out = pathlib.Path('photo-acquisition-evidence'); out.mkdir()
+          urls = {'uwis-occluded': 'https://api.figshare.com/v2/articles/20506506'}
+          for name, url in urls.items():
+              req=urllib.request.Request(url, headers={'User-Agent':'Countback-research-dataset-metadata/1.0'})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      raw=response.read(2_000_001)
+                  assert len(raw)<=2_000_000, 'Metadata limit exceeded'
+                  obj=json.loads(raw)
+                  (out/(name+'.json')).write_bytes(raw)
+                  print(json.dumps(obj, indent=2))
+              except Exception as exc:
+                  err={'url':url,'error':type(exc).__name__+': '+str(exc)}
+                  (out/(name+'-error.json')).write_text(json.dumps(err))
+                  print(json.dumps(err))
+                  raise
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-photo-acquisition
+          path: photo-acquisition-evidence/
+          retention-days: 14
+          if-no-files-found: error
