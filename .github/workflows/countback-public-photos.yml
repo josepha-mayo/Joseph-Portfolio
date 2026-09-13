@@ -18,39 +18,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Verify unchanged acquisition source and discover actual publisher
+      - name: Check unchanged original transport and the bounded nested reader
+        working-directory: countback-acquisition
         run: |
-          mkdir -p photo-evidence
-          python3 - <<'PY'
-          import hashlib, json, subprocess
-          from pathlib import Path
-          source=Path('countback-acquisition/acquire.py')
-          actual=hashlib.sha256(source.read_bytes()).hexdigest()
-          assert actual=='52ebdbcb7c2ebeb895316c44176750674e66a390feaa311a4136c23af94867e1', actual
-          r=subprocess.run(['python3', str(source), 'discover', '--article', '20506506', '--out', 'photo-evidence/discovery'], capture_output=True, text=True, timeout=90)
-          Path('photo-evidence/discovery.stdout').write_text(r.stdout)
-          Path('photo-evidence/discovery.stderr').write_text(r.stderr)
-          print(r.stdout)
-          if r.returncode: raise SystemExit(r.returncode)
-          data=json.loads(Path('photo-evidence/discovery/publisher.json').read_text())
-          print(json.dumps({'title':data.get('title'),'license':data.get('license'),'files':[{'id':f['id'],'name':f['name'],'size':f['size']} for f in data['files']]},indent=2))
-          zips=sorted([f for f in data['files'] if f['name'].lower().endswith('.zip')],key=lambda f:(f['size'],f['id']))
-          if not zips: raise SystemExit('Publisher release has no supported ZIP')
-          chosen=zips[0]
-          Path('photo-evidence/chosen-archive.json').write_text(json.dumps(chosen,indent=2))
-          r=subprocess.run(['python3',str(source),'catalog','--article','20506506','--file-id',str(chosen['id']),'--out','photo-evidence/catalog'],capture_output=True,text=True,timeout=180)
-          Path('photo-evidence/catalog.stdout').write_text(r.stdout)
-          Path('photo-evidence/catalog.stderr').write_text(r.stderr)
-          print(r.stdout)
-          if r.returncode: raise SystemExit(r.returncode)
-          cat=json.loads(Path('photo-evidence/catalog/acquisition.json').read_text())
-          print(json.dumps({'archive':cat['archive'],'count':len(cat['members']),'first_members':cat['members'][:60]},indent=2))
-          PY
+          python3 -c "import hashlib; from pathlib import Path; assert hashlib.sha256(Path('acquire.py').read_bytes()).hexdigest()=='52ebdbcb7c2ebeb895316c44176750674e66a390feaa311a4136c23af94867e1'"
+          python3 -m unittest test_nested -v
+      - name: Catalogue six predetermined real scene archives without extracting photographs
+        run: |
+          python3 countback-acquisition/nested.py catalog --out photo-evidence/nested-catalog
       - name: Save observed evidence without predictions or cloud deployment
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: countback-public-photo-discovery
+          name: countback-public-photo-nested-catalog
           path: photo-evidence/
           retention-days: 14
           if-no-files-found: error
