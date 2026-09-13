@@ -1,0 +1,35 @@
+{
+  "schema": "countback-evaluation-preparation-1",
+  "date": "2026-09-13",
+  "status": "passed",
+  "tested_evaluator_commit": "ecbee6cbd8677f998777cbf325bdb1a360170bbb",
+  "frozen_application_commit": "d6f8be84da041b3a41ba19d3cb29c1c5c85f0e9d",
+  "engine_modules_hash_checked": 9,
+  "new_unit_tests_passed": 18,
+  "final_generated_fixture_engine_runs": 4,
+  "distinct_generated_cases": 2,
+  "independent_photographic_cases": 0,
+  "opencv_version": "5.0.0",
+  "python_version": "3.13.5",
+  "execution_location": "local working runtime, not GitHub Actions or AWS",
+  "cli_scoring_matches_recorded_result": true,
+  "source_readback_hashes_match": true,
+  "source_files": {
+    "evaluate.py": "af9fb9962ded25f77127669e6a77210fa2cbbd7f2993f9456322dfa59c21b2dc",
+    "test_evaluate.py": "4fef717ef08533368ed07e4f2d5e8b76a133d5523945db0dfbad58036f314a80",
+    "smoke.py": "b20f171e023708d3b0163a8ef108084fb6b145caa9884cd9e8c57a586b1f8fbe",
+    "README.md": "b2dc4e6d0f2c82febac104a0c4575031bb2f7e4b2e6984ed04e6dca3b4e58153"
+  },
+  "evidence_sha256": {
+    "unit-tests-final.log": "57b6608fd5b2dc0322f08218dc1ca409744ba9ea271c3226df7c3d2bef1bc814",
+    "native-smoke-final.log": "5b74f957566a49d43a740316563f7fb8fc498dc3e5ba60b44d9f3e479bdcb269",
+    "score.json": "e5422dc0d44891875508c8d6009d43b02d56d4c7d3f496e05bcf98f3088da1d1",
+    "predictions.json": "cdbbd90c9cf845e5b32b4ce5656681d1aecddbd16a8d2b1c7b1c5fb97287b909"
+  },
+  "application_code_changed": false,
+  "private_photos_used": false,
+  "aws_executed": false,
+  "production_merge": false,
+  "contest_entry_changed": false,
+  "scope": "Evaluator preparation only. Four actual engine calls use generated textures and blank controls. The adaptive positive fixture recovered three geometric patches after a blank initial view; the absent fixture stayed unresolved. No independent photo accuracy, localization accuracy, unique-instance identity, physical count, kit completeness or user-benefit claim is made. Repeated smoke runs are not additional independent cases."
+}
