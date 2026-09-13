@@ -1,0 +1,29 @@
+{
+  "schema": "countback-photo-plan-freeze-1",
+  "frozen_at_utc": "2026-09-13T18:12:26.220403+00:00",
+  "phase": "before_engine_predictions",
+  "data_artifact_id": 10323205029,
+  "data_artifact_sha256": "ed08393319e167c38eec210824f08f16f3e79ab1a493cb04d21f4f48e4396e54",
+  "acquisition_commit": "91a58aa5086dcb6fe14adc9ccf97df2ecb491e04",
+  "evaluator_commit": "cad4b8550aebbdb8cbc64cb8a5b46a304bfbf3bb",
+  "engine_source_commit": "d6f8be84da041b3a41ba19d3cb29c1c5c85f0e9d",
+  "plan_sha256": "de33abacac90cdc103cc9d3481be564e8aa63a4056156c7d38b83ac023b3042d",
+  "files": {
+    "annotation-review.json": "102f977687a0d28f3ef55df2193888342b3e58731388fc0312c11792c8fba3ba",
+    "plan.json": "8f8bea595382f1ca9f6a85bcbce566575672fa4d1f83c05c260e106d7e3dc185",
+    "annotations.json": "095f7551ae8b43d8325d0239668fc6299dc446726a145d6eab4672e6157a036b"
+  },
+  "cases": 6,
+  "used_rgb_photos": 24,
+  "reference_comparisons": 34,
+  "visible_references": 29,
+  "absent_references": 5,
+  "selection": "All publisher-labeled reference objects from the first selected Level1 frame, compared with first/middle/last fixed Level3 frames, for both environments and all three categories at Lighting1. No selection by matcher output.",
+  "annotation_provenance": "Publisher LabelFusion pose/mask records and ChatGPT visual review of all selected observations; not an independent human assessment. Five absent targets were visually checked across all three views, not inferred only from missing labels.",
+  "dataset": "UW Indoor Scenes (UW-IS) Occluded v1, Figshare 20506506, file36708684, CC BY4.0",
+  "source": "https://doi.org/10.6084/m9.figshare.20506506.v1",
+  "attribution": "Ekta U. Samani, Xingjian Yang, Srivatsa Grama Satyanarayana and Ashis G. Banerjee (2022)",
+  "scope": "Six correlated scene-condition cases from two environments and a shared object pool. Independent of prior Countback development sources, not a representative or statistically independent 34-object benchmark. Reference crops use publisher masks; observation masks/poses and truth never enter the matcher. No tuning on these cases. Support coverage is not localization/identity accuracy. Full plan, annotations and review ledger are retained in the downloadable evidence packet under the fingerprints above.",
+  "aws_executed": false,
+  "private_photos_used": false
+}
