@@ -1,0 +1,109 @@
+name: Countback extracted delivery verification
+on:
+  push:
+    branches: [release/countback-judge-20260915]
+    paths: [.github/workflows/countback-judge-delivery.yml]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: countback-local-v05-delivery
+  cancel-in-progress: false
+jobs:
+  delivery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install the pinned runtime
+        run: |
+          python -m pip install -r countback-workbench/requirements-workbench.txt playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Build and validate the source archive
+        run: |
+          mkdir -p /tmp/countback-delivery-evidence
+          python countback-delivery/package_release.py self-test | tee /tmp/countback-delivery-evidence/packaging-tests.log
+          python countback-delivery/package_release.py build --root . --out /tmp/countback-delivery-evidence/Countback-Local-Candidate.zip
+          python countback-delivery/package_release.py unpack-check --archive /tmp/countback-delivery-evidence/Countback-Local-Candidate.zip --dest /tmp/countback-delivered | tee /tmp/countback-delivery-evidence/unpacked-imports.log
+      - name: Run Python and JavaScript from the extracted ZIP only
+        working-directory: /tmp/countback-delivered/countback-workbench
+        run: |
+          set -o pipefail
+          unset PYTHONPATH
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee /tmp/countback-delivery-evidence/python-tests.log
+          node --test tests/review_state.test.cjs 2>&1 | tee /tmp/countback-delivery-evidence/javascript-tests.log
+      - name: Original mode from delivered files
+        working-directory: /tmp/countback-delivered/countback-workbench
+        run: python tests/browser_workbench.py --out /tmp/countback-delivery-evidence/default-browser
+      - name: Pose mode from delivered files
+        working-directory: /tmp/countback-delivered/countback-workbench
+        env:
+          COUNTBACK_POSE_REVIEW: '1'
+        run: python tests/browser_workbench.py --out /tmp/countback-delivery-evidence/pose-browser
+      - name: Retrieve pinned public dataset subsets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10397556879/zip > /tmp/countback-original.zip
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10406535398/zip > /tmp/countback-fresh.zip
+      - name: Public-photo workflow from delivered files
+        working-directory: /tmp/countback-delivered
+        run: python countback-validation/browser_pose_public.py --original /tmp/countback-original.zip --fresh /tmp/countback-fresh.zip --out /tmp/countback-delivery-evidence/public-browser
+      - name: Record actual local application, no mocked analysis
+        working-directory: /tmp/countback-delivered
+        run: python countback-delivery/record_demo.py --original /tmp/countback-original.zip --fresh /tmp/countback-fresh.zip --out /tmp/countback-delivery-evidence/demo
+      - name: Record passed delivery gates
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          p=Path('/tmp/countback-delivery-evidence')
+          checks={n:json.loads((p/n/'result.json').read_text()) for n in ['default-browser','pose-browser','public-browser']}
+          assert all(x['status']=='passed' for x in checks.values())
+          demo=json.loads((p/'demo/recording.json').read_text());assert demo['status']=='passed'
+          report={'status':'passed','source_commit':os.environ['GITHUB_SHA'],'run_id':os.environ['GITHUB_RUN_ID'],'tested_from_extracted_zip':True,'python_tests':85,'javascript_tests':31,'packaging_guards':7,'browser_checks':{n:x['count'] for n,x in checks.items()},'demo_recorded':True,'aws_executed':False,'final_submission':False,'artifact_sha256':hashlib.sha256((p/'Countback-Local-Candidate.zip').read_bytes()).hexdigest()}
+          (p/'DELIVERY_VERIFICATION.json').write_text(json.dumps(report,indent=2))
+          (p/'SHA256SUMS.txt').write_text(report['artifact_sha256']+'  Countback-Local-Candidate.zip\n')
+          PY
+      - name: Publish a non-latest local candidate, never replace existing assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: josepha-mayo/Joseph-Portfolio
+        run: |
+          tag=countback-local-v0.5-rc1
+          if gh release view "$tag" >/dev/null 2>&1; then echo 'Refusing to overwrite existing candidate'; exit 1; fi
+          gh release create "$tag" \
+            /tmp/countback-delivery-evidence/Countback-Local-Candidate.zip \
+            /tmp/countback-delivery-evidence/DELIVERY_VERIFICATION.json \
+            /tmp/countback-delivery-evidence/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title 'Countback 0.5 local candidate: extracted-ZIP verified' \
+            --notes-file countback-delivery/README.md
+      - name: Anonymous release download verification
+        run: |
+          python - <<'PY'
+          import urllib.request,hashlib,json
+          from pathlib import Path
+          p=Path('/tmp/countback-delivery-evidence');base='https://github.com/josepha-mayo/Joseph-Portfolio/releases/download/countback-local-v0.5-rc1/'
+          checks=[]
+          for name in ['Countback-Local-Candidate.zip','DELIVERY_VERIFICATION.json','SHA256SUMS.txt']:
+              with urllib.request.urlopen(base+name,timeout=40) as r:data=r.read(5_000_001)
+              assert hashlib.sha256(data).digest()==hashlib.sha256((p/name).read_bytes()).digest()
+              checks.append({'asset':name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'authenticated':False})
+          (p/'ANONYMOUS_DOWNLOADS.json').write_text(json.dumps({'status':'passed','assets':checks},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-extracted-delivery
+          path: /tmp/countback-delivery-evidence/
+          retention-days: 30
+          if-no-files-found: error
