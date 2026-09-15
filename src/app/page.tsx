@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import NeuralNetwork from '@/components/NeuralNetwork';
+import Fireflies from '@/components/Fireflies';
 
 // Skill Tag component
 function SkillTag({ children }: { children: React.ReactNode }) {
@@ -323,7 +323,7 @@ export default function Home() {
             </div>
 
             <div className="md:col-span-5 hidden md:block animate-slide-up animate-slide-up-delay-3">
-              <NeuralNetwork />
+              <Fireflies />
             </div>
           </div>
         </div>

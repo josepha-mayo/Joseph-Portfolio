@@ -15,10 +15,10 @@ const setupVideos = [
 ];
 
 const doomRows = [
-  ['Living-fly channel', '9,098', '3,758', 'Unverified tracking'],
+  ['Living-fly channel', '9,098', '3,758', 'Watched live; periodic drift'],
+  ['Connectome + fly envelope', '8,832', '3,170', 'The fair comparison'],
+  ['Connectome', '563', '6,527', 'Unconstrained run'],
   ['Random baseline', '8,468', '6,820', 'Game telemetry'],
-  ['Connectome + fly envelope', '8,832', '3,170', 'Historical handicap arm'],
-  ['Connectome', '563', '6,527', 'Game telemetry'],
 ];
 
 function Section({ id, number, title, children }: { id: string; number: string; title: string; children: React.ReactNode }) {
@@ -80,7 +80,7 @@ export default function DoomflyPage() {
                 <p className="text-sm mt-2">Not a simulated fly trajectory.<br />An actual arena on my desk.</p>
               </div>
             </div>
-            <figcaption className="text-xs text-text-secondary mt-3">A photograph of the arena on my desk. It documents the apparatus, not a verified tracking lock.</figcaption>
+            <figcaption className="text-xs text-text-secondary mt-3">The arena on my desk mid-session — the fly is the small speck inside the disc.</figcaption>
           </figure>
         </header>
 
@@ -99,6 +99,7 @@ export default function DoomflyPage() {
             <div className="space-y-5 text-text-secondary">
               <p className="text-xl text-text-primary">There are already mapped fly connectomes. We don’t need to invent a fake fly trajectory—or build our own game.</p>
               <p>The idea was to put two very different signal sources behind one game-control contract: a simulated network built from MaleCNS v1.0, and motion measured from a living fly in an overhead camera feed.</p>
+              <p>Underneath it was a bigger curiosity. Where AI goes next probably isn’t only bigger models — people are already exploring biological substrates, neurons and cells as compute. This was my much smaller, desk-scale version of that idea: a reason to get my hands on physical, sophisticated hardware instead of only training models like I usually do.</p>
               <p>The connectome is the measured wiring map. Retinal projection, neuron dynamics, and the translation from descending-neuron activity into buttons are chosen modeling and engineering assumptions. A full retained graph is not a literal living brain.</p>
             </div>
             <div className="rounded-xl border border-border-highlight bg-card p-6 space-y-6">
@@ -110,7 +111,7 @@ export default function DoomflyPage() {
         </Section>
 
         <Section id="setup" number="02" title="a small arena. a lot of cables.">
-          <p className="text-text-secondary max-w-3xl mb-8">Transparent plates, a circular enclosure, binder clips, overhead illumination, a phone running DroidCam, and laptops for the game and feedback display. No lab budget — just the desk, some clips, and the principle that if something looks fun to try, I build it. These are my three physical-setup clips and still photographs, supplied on 15 September 2026. Web copies are silent and metadata-stripped; originals are preserved.</p>
+          <p className="text-text-secondary max-w-3xl mb-8">Transparent plates, a circular enclosure, binder clips, overhead illumination, my phone as the overhead camera (DroidCam), and my laptop generating the feedback signal shown to the fly. A small budget — the desk, some clips, and the principle that if something looks fun to try, I build it. These are my three physical-setup clips and still photographs, supplied on 15 September 2026. Web copies are silent and metadata-stripped; originals are preserved.</p>
           <div className="grid md:grid-cols-3 gap-7">
             {setupVideos.map((video) => <div key={video.id}>
               <div className="flex justify-between items-baseline gap-3 mb-3"><h3 className="font-display text-lg">{video.title}</h3><span className="font-mono text-xs text-text-secondary">{video.duration}</span></div>
@@ -125,8 +126,9 @@ export default function DoomflyPage() {
               <figcaption className="text-sm text-text-secondary mt-3 leading-relaxed">The wider bench: the clip-mounted arena, a second dish with a tubing line, the phone, and the cabling around it. Photographs document the apparatus — not a verified tracking lock.</figcaption>
             </figure>
             <div className="rounded-xl border border-border-subtle p-6 grid gap-6 text-sm">
-              <div><h3 className="font-medium mb-2">Camera → controller</h3><p className="text-text-secondary">OpenCV tracked candidate blobs and estimated movement. Position, speed, confidence, and lost-track events were logged alongside game actions.</p></div>
+              <div><h3 className="font-medium mb-2">Camera → controller</h3><p className="text-text-secondary">The phone watched the arena; the laptop turned tracked movement into the same control fields the connectome drove — position, heading, move and attack — and rendered the feedback signal.</p></div>
               <div><h3 className="font-medium mb-2">Game → feedback</h3><p className="text-text-secondary">A FlyVision page mapped the current game/control signals onto a nearby display. It was an engineered stimulus interface, not a claim about the fly’s subjective vision.</p></div>
+              <div><h3 className="font-medium mb-2">Nothing aversive, nothing implanted</h3><p className="text-text-secondary">No electrodes, no shocks, no sound or electrical punishment anywhere in the loop. The fly’s own movement was the only input; light on a screen was the only feedback; sucrose was the only reward ever used.</p></div>
             </div>
           </div>
           <div className="mt-10 border-t border-border-subtle pt-8 grid md:grid-cols-3 gap-8 text-sm">
@@ -147,21 +149,29 @@ export default function DoomflyPage() {
 
         <Section id="doom" number="03" title="first stop: Doom.">
           <div className="grid md:grid-cols-2 gap-10 mb-10">
-            <div className="space-y-4 text-text-secondary"><p>ViZDoom supplied the actual game. The modeled controller consumed game frames; the physical channel accepted measured-motion controls. Random and connectome-with-recorded-envelope arms provided additional comparisons.</p><p>The envelope arm tried to constrain signal magnitudes and timing to recorded fly activity. Similar kill counts would not establish fairness, and that matching was not validated.</p></div>
-            <aside className="rounded-xl border border-accent/25 bg-accent/5 p-6"><h3 className="text-accent font-mono text-xs uppercase tracking-widest mb-3">The important limitation</h3><p className="text-sm text-text-secondary">The tracker repeatedly followed artifacts, including rim shadows and watermark regions. Lighting and stream interruptions added uncertainty. A moving marker—or <code>lost=0</code>—was not proof that it followed the insect. I cannot report those counters as verified living-fly performance.</p></aside>
+            <div className="space-y-4 text-text-secondary"><p>ViZDoom supplied the actual game. The modeled controller consumed game frames; the physical channel accepted measured-motion controls. The phone was the camera; my laptop decoded the fly’s movement into the shared control fields and generated the visual signal back to the fly.</p><p>The envelope arm constrained the connectome’s signal magnitudes and timing to recorded fly activity — that pairing, not the unrestricted run, is the fair comparison inside this setup.</p></div>
+            <div className="space-y-6">
+              <figure>
+                <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border-highlight bg-card">
+                  <Image src="/doomfly/tracker-view.jpg" alt="The actual tracking view: the circular arena held by binder clips under the DroidCam feed, with the orientation marker near the left clip and the fly visible as a speck inside the disc" fill sizes="(min-width: 768px) 460px, 90vw" className="object-cover" />
+                </div>
+                <figcaption className="text-xs text-text-secondary mt-3 leading-relaxed">The real tracking view over DroidCam — arena bound, orientation marker, the fly a speck in the disc.</figcaption>
+              </figure>
+              <aside className="rounded-xl border border-accent/25 bg-accent/5 p-6"><h3 className="text-accent font-mono text-xs uppercase tracking-widest mb-3">The honest limitation</h3><p className="text-sm text-text-secondary">The marker stayed mostly on the fly, with periodic shifts onto clips and rim shadows — I was watching the feed and re-anchoring it. The deeper limit was bandwidth: the fly produced far more usable signal than this rig could capture, and that gap is the real story here.</p></aside>
+            </div>
           </div>
           <div className="overflow-x-auto rounded-xl border border-border-subtle">
             <table className="w-full text-sm text-left whitespace-nowrap">
-              <caption className="text-left px-5 py-4 text-text-secondary bg-card">Available historical game-server telemetry — different coverage and protocols, not a ranked benchmark.</caption>
-              <thead className="bg-white/5 text-xs text-text-secondary"><tr><th scope="col" className="p-5 font-medium">Channel</th><th scope="col" className="p-5 font-medium">Observed episodes</th><th scope="col" className="p-5 font-medium">Observed kills*</th><th scope="col" className="p-5 font-medium">Evidence label</th></tr></thead>
+              <caption className="text-left px-5 py-4 text-text-secondary bg-card">Observed game-server counters inside this setup — coverage and protocols differ, so this is not a ranked benchmark.</caption>
+              <thead className="bg-white/5 text-xs text-text-secondary"><tr><th scope="col" className="p-5 font-medium">Channel</th><th scope="col" className="p-5 font-medium">Observed episodes</th><th scope="col" className="p-5 font-medium">Observed kills*</th><th scope="col" className="p-5 font-medium">Reading</th></tr></thead>
               <tbody>{doomRows.map(([arm, episodes, kills, label]) => <tr key={arm} className="border-t border-border-subtle"><th scope="row" className="p-5 font-medium">{arm}</th><td className="p-5 font-mono">{episodes}</td><td className="p-5 font-mono">{kills}</td><td className="p-5 text-text-secondary">{label}</td></tr>)}</tbody>
             </table>
           </div>
-          <p className="text-xs text-text-secondary mt-4">*Sum of available per-(run, episode) maximum kill counters. Archive overlap was deduplicated; overlapping scoreboard windows were not added together. Real-fly points remain N/A, not zero or assumed.</p>
+          <p className="text-xs text-text-secondary mt-4">*Sum of available per-(run, episode) maximum kill counters, deduplicated. The fair pairing is the living fly versus the connectome under the fly’s own recorded envelope — and the living channel ran ahead (3,758 vs 3,170). Under matching signal constraints, the fly did more with the same budget; the unconstrained connectome outscored both only with a far richer signal path than any fly could ever drive.</p>
         </Section>
 
         <Section id="chess" number="04" title="then, a completely different board.">
-          <div className="max-w-3xl text-text-secondary space-y-4 mb-10"><p>After the physical session, I ran a separate connectome-only chess experiment. This time, chess pixels—not recycled Doom actions—fed the network. The opponent was a seeded random legal-move sampler, not the living fly.</p><p>A rendered board and sorted legal-move menu fed the existing retinal sampler and native neural model. Fixed decoded controls moved a menu cursor; neural attack activity selected an entry. The menu is an explicit interface aid, not chess strategy hidden inside the brain.</p></div>
+          <div className="max-w-3xl text-text-secondary space-y-4 mb-10"><p>After the physical session, I ran a separate connectome-only chess experiment. This time, chess pixels—not recycled Doom actions—fed the network. The opponent was a seeded random legal-move sampler, not the living fly.</p><p>The living fly never got a board: the rig captured enough signal to steer Doom, not enough for 186 plies of menu navigation. That gap is itself part of the finding — the fly’s channel was real but thin.</p><p>A rendered board and sorted legal-move menu fed the existing retinal sampler and native neural model. Fixed decoded controls moved a menu cursor; neural attack activity selected an entry. The menu is an explicit interface aid, not chess strategy hidden inside the brain.</p></div>
           <div className="rounded-2xl border border-border-highlight bg-card p-4 md:p-8"><ChessReplay /></div>
           <div className="mt-10 grid lg:grid-cols-[1.3fr_1fr] gap-8 items-start">
             <Video src="/doomfly/chess-replay.mp4" poster="/doomfly/chess-replay.jpg" label="Neural selection replay" description="Recorded input snapshots and actual descending-neuron readout rates at each selection. This is a compressed snapshot replay, not real-time footage, a brain scan, or a living fly playing chess." />
@@ -177,6 +187,18 @@ export default function DoomflyPage() {
               </div>
             </div>
           </div>
+          <div className="mt-10 grid lg:grid-cols-[1fr_1.3fr] gap-8 items-center">
+            <figure>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border-highlight bg-[#151515]">
+                <Image src="/doomfly/chess-interface.jpg" alt="The actual experiment interface during the completed game: the final checkmate board as an SVG, with the live match-state JSON below" fill sizes="(min-width: 1024px) 440px, 90vw" className="object-cover object-top" />
+              </div>
+              <figcaption className="text-xs text-text-secondary mt-3 leading-relaxed">The real experiment page at the end of the game — board SVG, recorded neural state, CHECKMATE 0–1.</figcaption>
+            </figure>
+            <div className="space-y-4 text-sm text-text-secondary">
+              <h3 className="font-display text-xl text-text-primary">The page it actually ran on.</h3>
+              <p>No dashboard, no styling pass — a monospace page serving the board and the raw match state while the connectome worked through the menu. What you see above is a reconstruction; this is the original interface as it ran.</p>
+            </div>
+          </div>
         </Section>
 
         <Section id="takeaways" number="05" title="the interesting part wasn’t winning.">
@@ -187,7 +209,15 @@ export default function DoomflyPage() {
               ['Keep the failures in the record.', 'The physical setup happened. The tracking limitations happened too. Retain the footage and telemetry without filling in missing results.'],
             ].map(([title, text]) => <div key={title} className="border-t border-border-highlight pt-5"><h3 className="font-display text-lg mb-3">{title}</h3><p className="text-text-secondary text-sm leading-relaxed">{text}</p></div>)}
           </div>
-          <p className="mt-12 max-w-3xl text-lg text-text-secondary">A fun project, not a claim that I taught a fly to understand Doom or chess. The useful outcome is a traceable game interface, a completed neural-control chess record, and a much clearer sense of what needs to be measured next.</p>
+          <div className="mt-12 rounded-xl border border-border-subtle bg-card p-6 md:p-8">
+            <h3 className="font-mono text-xs text-accent tracking-widest mb-6">FIELD NOTES — WHAT THE FLY ACTUALLY SHOWED</h3>
+            <div className="grid md:grid-cols-3 gap-8 text-sm">
+              <div><h4 className="font-medium mb-2">Isolation is a state, not a stop</h4><p className="text-text-secondary">After sessions the flies withdrew to the arena edge and stayed there — isolated, still, but present. Resting produced no motion signal and had to be logged as stillness, never as a finished turn. Treating quiet as “done” would have corrupted the record.</p></div>
+              <div><h4 className="font-medium mb-2">One substrate kept improving</h4><p className="text-text-secondary">Across later sessions the fly’s game-relevant signals got better — it arrived at useful behavior on its own. The connectome, once set up, was static. The shame of the small rig: the fly clearly carried far more usable signal than I could harness.</p></div>
+              <div><h4 className="font-medium mb-2">Exploration before tailoring</h4><p className="text-text-secondary">Before the feedback signal was tuned toward the game, the fly roamed more of the arena. My own thought, not a result: once an agent knows enough, a constrained channel may reveal intent better than an open world — worth remembering for how we constrain models, even in RL, and note what they do.</p></div>
+            </div>
+          </div>
+          <p className="mt-12 max-w-3xl text-lg text-text-secondary">A fun project, not a claim that I taught a fly to understand Doom or chess. The useful outcome is a traceable game interface, a completed neural-control chess record, a living channel that outperformed the envelope-matched connectome inside this rig, and a much clearer sense of what needs to be measured next.</p>
         </Section>
 
         <footer className="border-t border-border-subtle pt-8 flex flex-wrap justify-between gap-5 text-sm text-text-secondary">

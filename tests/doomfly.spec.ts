@@ -52,7 +52,7 @@ test('setup clips and neural replay load without autoplay', async ({ page, reque
   const ranged = await request.get('/doomfly/setup-1.mp4', { headers: { Range: 'bytes=0-1023' } });
   expect(ranged.status()).toBe(206);
   expect((await ranged.body()).length).toBe(1024);
-  for (const photo of ['/doomfly/setup-photo-1.jpg', '/doomfly/setup-photo-2.jpg']) {
+  for (const photo of ['/doomfly/setup-photo-1.jpg', '/doomfly/setup-photo-2.jpg', '/doomfly/tracker-view.jpg', '/doomfly/chess-interface.jpg']) {
     expect((await request.get(photo)).ok()).toBe(true);
   }
 });
