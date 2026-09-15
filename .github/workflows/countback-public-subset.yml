@@ -1,0 +1,31 @@
+name: Countback public photographic subset
+on:
+  push:
+    branches: [eval/countback-uwis-discovery]
+    paths: [.github/workflows/countback-public-subset.yml]
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch the selected licensed frames, not the whole dataset
+        run: python3 countback-evaluation/uwis_subset.py fetch evidence countback-evaluation/uwis-selection.json
+      - name: Include exact reproducing source without any private photos
+        run: |
+          mkdir -p evidence/source
+          cp countback-evaluation/*.py countback-evaluation/LICENSE evidence/source/
+          cp -r countback-workbench/engine evidence/source/engine
+          find evidence/source -name '__pycache__' -type d -prune -exec rm -rf {} +
+          git rev-parse HEAD > evidence/source-commit.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-public-photo-subset
+          path: evidence/
+          retention-days: 30
+          if-no-files-found: error
