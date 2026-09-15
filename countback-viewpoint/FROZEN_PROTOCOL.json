@@ -1,0 +1,21 @@
+{
+  "schema": "countback-viewpoint-protocol-1",
+  "config": {"minimum_peak":0.48,"component_drop":0.15,"minimum_component":3,"min_margin":0.04},
+  "model":"Official DINOv2 ViT-S/14 with four registers, not fine-tuned",
+  "weights_sha256":"f433177089a681826f849f194ece3bb48f4d63fb38d32fc837e3dc7a4e5641fb",
+  "model_source_commit":"7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+  "feature_resolution":{"reference_long_side":224,"scene_long_side":784,"patch_size":14},
+  "frozen_engine_commit":"d6f8be84da041b3a41ba19d3cb29c1c5c85f0e9d",
+  "test_clips":{"lounge_lighting1":{"food":"171","kitchen":"180","tools":"189"},"warehouse_lighting1":{"food":"35","kitchen":"44","tools":"53"}},
+  "frame_selection":"Sorted RGB frames at floor(N/3) and floor(2N/3); fixed before download, never selected by matcher success.",
+  "references":"Same nine baseline reference crops. RGB-only foreground estimation; observation labels, poses and masks are excluded from inference.",
+  "case_design":"Six same-category and six cyclic cross-category paired cases. First-view and both-view conditions.",
+  "primary_metric":"One highest-ranked review proposal per query, bbox IoU>=0.30 against the visible annotation bbox in the selected view. Also report IoU>=0.50, absent-target proposals, center-in-mask and unresolved outputs.",
+  "support_policy":"Learned visual-similarity suggestions are not verified identity. Baseline strong acceptance tiers and controller remain unchanged.",
+  "fresh_images_inspected_before_freeze":false,
+  "development_result":{"localized_visible_queries":13,"visible_queries":14,"absent_proposals":4,"absent_queries":22},
+  "development_selection":"Three growth widths examined on the reused 15 development RGBs: 0.10, 0.20, 0.15. Selected 0.15. Records retained. No threshold changes after this freeze.",
+  "source_sha256":{"dense_proposals.py":"e086810793d858e2f8c9f0016783cee2dcdb1cdb49e586adb64a6e6f5090ca46","reference_foreground.py":"c8cfd6b37973ce8f69c345fdff5f0d3799543873ef62ecf029bfb2e0c45e5b2d","extract_features.py":"a325ec0861e0d08e8e00029c4447e09a4b962f8823f68e0679f3f2263859abf4"},
+  "limitation":"Held out from this project's tuning only, not a claim of absence from foundation-model pretraining. Same physical objects and related clip frames; not independent identity trials or representative accuracy.",
+  "aws_executed":false,"private_photos_uploaded":false,"competition_submitted":false
+}
