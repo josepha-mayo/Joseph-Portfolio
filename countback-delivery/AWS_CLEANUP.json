@@ -1,0 +1,23 @@
+{
+  "schema": "countback-independent-cleanup-1",
+  "status": "trial_cleanup_complete",
+  "observed_at": "2026-09-15T21:10:28.154378+00:00",
+  "region": "us-east-1",
+  "trial_run": 35023729856,
+  "trial_artifact": 10417844415,
+  "trial_artifact_sha256": "75b0e3a3d2fecef75e2ee4bdfd64c8749ee6c5c0f0486008dede9752340b1ad8",
+  "remaining_trial_functions": [],
+  "remaining_trial_repositories": [],
+  "remaining_trial_log_groups": [],
+  "roles_deleted": ["countback-github-trial", "countback-lambda-execution"],
+  "provider_deleted": true,
+  "other_provider_users": [],
+  "remaining_trial_roles": [],
+  "remaining_github_provider_count": 0,
+  "unrelated_resources_deleted": false,
+  "billing_finalized": false,
+  "verification_method": "AWS API reads confirmed compute, registry and log removal; role tags, exact trust and inline-policy sets were checked before deleting only trial-created IAM objects. Final ListRoles and ListOpenIDConnectProviders confirmed removal.",
+  "standing_judge_endpoint": false,
+  "screen_share_arranged": false,
+  "final_submission": false
+}
