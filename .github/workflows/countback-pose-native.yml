@@ -1,0 +1,92 @@
+name: Countback pose-aware native verification
+on:
+  push:
+    branches: [eval/countback-fresh-validation-20260915]
+    paths: [.github/workflows/countback-pose-native.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned native runtime
+        run: |
+          python -m pip install -r countback-workbench/requirements-workbench.txt playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Check frozen engine and affine source
+        run: |
+          mkdir -p evidence
+          python - <<'PY'
+          import sys,hashlib,json,os
+          from pathlib import Path
+          import cv2
+          sys.path.insert(0,'countback-evaluation')
+          from evaluate import verify_engine
+          verify_engine(Path('countback-workbench/engine'))
+          sha=hashlib.sha256(Path('countback-validation/affine_review.py').read_bytes()).hexdigest()
+          assert sha=='9d7a2052e27eee051d8f9672b23ddb9d1dead831042a6cf86ffc4a11a4a41675',sha
+          assert cv2.__version__=='5.0.0'
+          Path('evidence/runtime.json').write_text(json.dumps({'opencv_version':cv2.__version__,'python':sys.version,'source_commit':os.environ['GITHUB_SHA'],'affine_sha256':sha,'nine_baseline_engine_modules_unchanged':True,'aws_executed':False},indent=2))
+          PY
+      - name: Python and JavaScript regressions
+        working-directory: countback-workbench
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee ../evidence/python-tests.log
+          node --test tests/review_state.test.cjs 2>&1 | tee ../evidence/javascript-tests.log
+      - name: Original native browser regressions
+        working-directory: countback-workbench
+        run: python tests/browser_workbench.py --out ../evidence/default-browser
+      - name: Same native regressions with optional pose mode
+        working-directory: countback-workbench
+        env:
+          COUNTBACK_POSE_REVIEW: '1'
+        run: python tests/browser_workbench.py --out ../evidence/pose-browser
+      - name: Read pinned public photo artifacts only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10397556879/zip > /tmp/countback-original.zip
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10406535398/zip > /tmp/countback-fresh.zip
+      - name: Native public-photo pose integration
+        run: |
+          python countback-validation/browser_pose_public.py --original /tmp/countback-original.zip --fresh /tmp/countback-fresh.zip --out evidence/public-browser
+      - name: Package exact candidate source and verified results
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,zipfile
+          root=Path('.');out=Path('evidence');out.mkdir(exist_ok=True)
+          files={}
+          with zipfile.ZipFile(out/'Countback-native-candidate-source.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for directory in ['countback-workbench','countback-validation']:
+                  for p in sorted(Path(directory).rglob('*')):
+                      if not p.is_file() or any(v.startswith('.') or v.startswith('evidence') or v=='__pycache__' for v in p.parts):continue
+                      if p.suffix.lower() not in {'.py','.js','.cjs','.html','.css','.md','.txt','.json','.yml'} and p.name not in {'LICENSE','Dockerfile'}:continue
+                      data=p.read_bytes();files[p.as_posix()]={'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()};z.writestr(p.as_posix(),data)
+              z.writestr('CANDIDATE_SOURCE_MANIFEST.json',json.dumps({'source_commit':os.environ['GITHUB_SHA'],'files':files,'private_photos_included':False,'fonts_included':False},indent=2))
+          checks={}
+          for name in ['default-browser','pose-browser','public-browser']:
+              p=out/name/'result.json';checks[name]=json.loads(p.read_text()) if p.exists() else {'status':'not_executed'}
+          passed=all(r.get('status')=='passed' for r in checks.values()) and (out/'runtime.json').exists()
+          (out/'NATIVE_VERIFICATION.json').write_text(json.dumps({'status':'passed' if passed else 'not_complete','source_commit':os.environ['GITHUB_SHA'],'run_id':os.environ['GITHUB_RUN_ID'],'browser_checks':{k:{'status':v.get('status'),'count':v.get('count')} for k,v in checks.items()},'cloud_executed':False,'final_submission':False,'scope':'Functional verification. Default and pose-mode browser runs repeat the same regression assertions. The public-photo integration repeats an already evaluated clip.'},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-pose-native-verification
+          path: evidence/
+          retention-days: 30
+          if-no-files-found: error
