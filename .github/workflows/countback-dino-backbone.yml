@@ -1,0 +1,50 @@
+name: Countback DINO backbone acquisition
+on:
+  push:
+    branches: [eval/countback-viewpoint-20260915]
+    paths: [.github/workflows/countback-dino-backbone.yml]
+permissions:
+  contents: read
+jobs:
+  public_weights:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Download official public model and source without executing it
+        run: |
+          mkdir out
+          python3 - <<'PY'
+          import urllib.request,zipfile,io,hashlib,json
+          from pathlib import Path
+          commit='7764ea0f912e53c92e82eb78a2a1631e92725fc8'
+          urls={
+            'source.zip':('https://codeload.github.com/facebookresearch/dinov2/zip/'+commit,32*1024*1024),
+            'dinov2_vits14_reg4_pretrain.pth':('https://dl.fbaipublicfiles.com/dinov2/dinov2_vits14/dinov2_vits14_reg4_pretrain.pth',100*1024*1024)}
+          record={}
+          for name,(url,cap) in urls.items():
+              with urllib.request.urlopen(url,timeout=90) as r: data=r.read(cap+1)
+              assert len(data)<=cap
+              record[name]={'url':url,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+              if name=='source.zip':
+                  with zipfile.ZipFile(io.BytesIO(data)) as z:
+                      assert z.testzip() is None
+                      for info in z.infolist():
+                          p=Path(info.filename)
+                          assert not p.is_absolute() and '..' not in p.parts
+                          parts=p.parts[1:]
+                          if not parts or info.is_dir(): continue
+                          rel=Path(*parts)
+                          if rel.suffix.lower() in ['.ttf','.otf','.woff','.woff2','.ttc']: continue
+                          if not (str(rel).startswith('dinov2/') or str(rel) in ['LICENSE','MODEL_CARD.md','hubconf.py']): continue
+                          dst=Path('out/dinov2-source')/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(z.read(info))
+              else: Path('out',name).write_bytes(data)
+          record.update(source_commit=commit,model='DINOv2 ViT-S/14 with four registers',photos_used=False,inference_executed=False,aws_executed=False)
+          Path('out/provenance.json').write_text(json.dumps(record,indent=2))
+          print(json.dumps(record,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: countback-dino-backbone
+          path: out/
+          retention-days: 14
+          if-no-files-found: error
