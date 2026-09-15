@@ -1,0 +1,52 @@
+name: Countback fresh observation clips
+on:
+  push:
+    branches: [eval/countback-viewpoint-20260915]
+    paths: [.github/workflows/countback-fresh-views.yml]
+permissions:
+  contents: read
+jobs:
+  public_data:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: c66e28d4cf1bea36d394232651dcb338799ab869
+          persist-credentials: false
+      - name: Select thirds of six previously unused observation clips
+        run: |
+          python3 - <<'PY'
+          import sys,json,zipfile,hashlib
+          from pathlib import Path
+          sys.path.insert(0,'countback-evaluation')
+          import uwis_subset as u
+          # Locations copied from the existing publisher ZIP catalogue, not inferred from images.
+          u.SCENES={'171':(1214940813,273164653),'180':(1753187955,164865466),'189':(2076435460,195154216),'35':(11254447560,114561643),'44':(11523465580,102524319),'53':(11855025292,165023832)}
+          out=Path('fresh');out.mkdir();u.license_record(out)
+          selection={};chosen={}
+          for clip in u.SCENES:
+              with zipfile.ZipFile(u.Scene(clip)) as z:
+                  names=set(z.namelist())
+                  rgbs=sorted(n for n in names if n.endswith('_rgb.png'))
+                  assert len(rgbs)>=6
+                  picks=[rgbs[len(rgbs)//3],rgbs[2*len(rgbs)//3]]
+                  chosen[clip]=picks
+                  selection[clip]=[]
+                  for rgb in picks:
+                      base=rgb[:-8]
+                      for name in [rgb,base+'_labels.png',base+'_poses.yaml']:
+                          assert name in names
+                          selection[clip].append(name)
+          (out/'selection-before-download.json').write_text(json.dumps(selection,indent=2))
+          u.fetch(out/'selection-before-download.json',out)
+          (out/'transfer.json').write_text(json.dumps({'archive_bytes_read':u.used,'archive_requests':u.requests,'selected_rgb':chosen,'scene_offsets':u.SCENES,'reader_sha256':hashlib.sha256(Path('countback-evaluation/uwis_subset.py').read_bytes()).hexdigest(),'evaluation_executed':False,'private_photos_used':False,'aws_executed':False},indent=2))
+          print(json.dumps({'selected_rgb':chosen,'archive_bytes_read':u.used,'evaluation_executed':False},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-fresh-observations
+          path: fresh/
+          retention-days: 14
+          if-no-files-found: warn
