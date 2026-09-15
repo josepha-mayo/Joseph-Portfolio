@@ -50,19 +50,15 @@ jobs:
                   assert pack.testzip() is None
                   assert not any(Path(n).suffix.lower() in {'.ttf','.otf','.woff','.woff2','.key','.pem'} for n in pack.namelist())
           (out/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir())))
-          notes='''# Countback: local review and completed AWS trial
-
-The 3:37 narrated demonstration, eight-page technical report, architecture and judge package are available below. The video contains real local application footage plus a clearly identified summary of recorded AWS receipts. One stock neural voice is paced at about 119 spoken words per minute. Local actions retain recorded speed with explanatory holds.
-
-The private AWS original-engine trial passed four valid analyses and five expected input refusals. The public-photo request took 5.265 seconds and did not verify object identity. The local viewpoint refinement is a separate path. All trial compute, registry, logs and temporary access were removed and independently checked.
-
-Media source run: 35025908257 at c735e335d09056b30ecb4c24b46836816d88d47c. Actual AWS run: 35023729856. The application ZIP inside the package is the previously tested release, not a new compilation. Failed media attempts were retained; the corrected output has matching 217.28-second audio/video tracks and passed complete decoding. All eight PDF pages and representative video frames were inspected before this publication.
-
-This is publication of submission materials, not proof that Devpost has received a final submission or that a live judge session is booked. A scheduling request has been sent; no standing public photo-upload endpoint exists. See START-HERE.md and the report for the remaining administrative steps, dataset attribution and limitations.
-
-Original Countback code: Joseph Ayanda, MIT, with AI assistance. Public research images: UW-IS Occluded v1, CC BY 4.0, attributed in the report. No private photographs or font files are included.
-'''
-          Path('/tmp/countback-release-notes.md').write_text(notes)
+          paragraphs=[
+            '# Countback: local review and completed AWS trial',
+            'The 3:37 narrated demonstration, eight-page report, architecture and judge package are available below. Real local footage is followed by an identified summary of recorded AWS receipts. One stock neural voice speaks at about 119 words per minute. Local actions retain recorded speed with explanatory holds.',
+            'The private AWS original-engine trial passed four valid analyses and five expected input refusals. The public-photo request took 5.265 seconds without verifying identity. The local viewpoint refinement is separate. All trial compute, registry, logs and temporary access were removed and independently checked.',
+            'Media run: 35025908257 at c735e335d09056b30ecb4c24b46836816d88d47c. AWS run: 35023729856. The application ZIP is the previously tested release, not a new compilation. Failed media attempts were retained. The corrected output has matching 217.28-second tracks and passed full decoding. All eight PDF pages and representative video frames were inspected.',
+            'These are published submission materials, not proof of a final Devpost submission or a booked live judge session. Scheduling was requested; no standing public upload endpoint exists. See START-HERE.md and the report for remaining administrative steps, attribution and limitations.',
+            'Original code: Joseph Ayanda, MIT, with AI assistance. Public images: UW-IS Occluded v1, CC BY 4.0, attributed in the report. No private photographs or font files are included.'
+          ]
+          Path('/tmp/countback-release-notes.md').write_text('\n\n'.join(paragraphs)+'\n')
           PY
       - name: Publish once without modifying any earlier release
         run: |
