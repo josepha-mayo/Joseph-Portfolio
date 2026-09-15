@@ -64,7 +64,7 @@ export default function DoomflyPage() {
               <span className="text-text-secondary">connectomics × games × a very real desk</span>
             </div>
             <p className="font-mono text-accent text-sm tracking-[0.3em] mb-3">DOOMFLY</p>
-            <h1 className="font-display text-[clamp(2.8rem,6vw,5rem)] leading-[1.04] font-semibold tracking-tight">a fly, a brain map,<br />and <span className="text-accent">DOOM.</span></h1>
+            <h1 className="font-display text-[clamp(2.8rem,6vw,5rem)] leading-[1.04] font-semibold tracking-tight">a fly, a brain map,<br />and <span className="text-accent">DOOM + chess.</span></h1>
             <p className="mt-7 text-lg text-text-secondary max-w-[48ch]">What happens when you connect a mapped fly nervous system to a game—and try to give a living fly the same controls?</p>
             <p className="mt-4 text-sm text-text-secondary max-w-[54ch]">Part desk experiment, part software rabbit hole. It started with Doom, reached a chess board, and taught me as much about measurement as it did about interfaces.</p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -91,7 +91,7 @@ export default function DoomflyPage() {
         </div>
 
         <div className="flex flex-wrap gap-x-6 gap-y-3 py-6 font-mono text-xs text-text-secondary" aria-label="On this page">
-          {[['idea', '01 / the idea'], ['setup', '02 / physical setup'], ['doom', '03 / Doom'], ['chess', '04 / chess'], ['takeaways', '05 / what I learned']].map(([id, text]) => <a key={id} href={`#${id}`} className="hover:text-accent">{text}</a>)}
+          {[['idea', '01 / the idea'], ['setup', '02 / physical setup'], ['notes', '03 / field notes'], ['doom', '04 / Doom'], ['chess', '05 / chess'], ['takeaways', '06 / what I learned']].map(([id, text]) => <a key={id} href={`#${id}`} className="hover:text-accent">{text}</a>)}
         </div>
 
         <Section id="idea" number="01" title="use the map. don’t invent the fly.">
@@ -142,12 +142,20 @@ export default function DoomflyPage() {
             </div>
             <div>
               <h3 className="font-medium mb-2">They kept to themselves after</h3>
-              <p className="text-text-secondary">Post-session the flies mostly settled at the arena edge and stayed there. Stillness is real data — a still fly produces no motion signal — and it had to be logged as stillness, never scored as a finished turn.</p>
+              <p className="text-text-secondary">Back in the vial with its mates after a session, a fly didn’t go where the others were going — it stayed apart from the group. Inside the arena, stillness had to be logged as stillness too, never scored as a finished turn.</p>
             </div>
           </div>
         </Section>
 
-        <Section id="doom" number="03" title="first stop: Doom.">
+        <Section id="notes" number="03" title="field notes — what the fly showed.">
+          <div className="rounded-xl border border-border-subtle bg-card p-6 md:p-8 grid md:grid-cols-3 gap-8 text-sm">
+            <div><h3 className="font-medium mb-2">Kept apart from its mates</h3><p className="text-text-secondary">Returned to the vial after sessions, the fly didn’t go where its mates were going — it stayed apart from the group. And inside the arena, a still fly produced no motion signal: stillness was logged as stillness, never as a finished turn. Quiet was data, not an ending.</p></div>
+            <div><h3 className="font-medium mb-2">One substrate kept improving</h3><p className="text-text-secondary">Across later sessions the fly’s game-relevant signals got better — it arrived at useful behavior on its own. The connectome, once set up, was static. The shame of the small rig: the fly clearly carried far more usable signal than I could harness.</p></div>
+            <div><h3 className="font-medium mb-2">Exploration before tailoring</h3><p className="text-text-secondary">Before the feedback signal was tuned toward the game, the fly roamed more of the arena. My own thought, not a result: once an agent knows enough, a constrained channel may reveal intent better than an open world — worth remembering for how we constrain models, even in RL, and note what they do.</p></div>
+          </div>
+        </Section>
+
+        <Section id="doom" number="04" title="first stop: Doom.">
           <div className="grid md:grid-cols-2 gap-10 mb-10">
             <div className="space-y-4 text-text-secondary"><p>ViZDoom supplied the actual game. The modeled controller consumed game frames; the physical channel accepted measured-motion controls. The phone was the camera; my laptop decoded the fly’s movement into the shared control fields and generated the visual signal back to the fly.</p><p>The envelope arm constrained the connectome’s signal magnitudes and timing to recorded fly activity — that pairing, not the unrestricted run, is the fair comparison inside this setup.</p></div>
             <div className="space-y-6">
@@ -170,7 +178,7 @@ export default function DoomflyPage() {
           <p className="text-xs text-text-secondary mt-4">*Sum of available per-(run, episode) maximum kill counters, deduplicated. The fair pairing is the living fly versus the connectome under the fly’s own recorded envelope — and the living channel ran ahead (3,758 vs 3,170). Under matching signal constraints, the fly did more with the same budget; the unconstrained connectome outscored both only with a far richer signal path than any fly could ever drive.</p>
         </Section>
 
-        <Section id="chess" number="04" title="then, a completely different board.">
+        <Section id="chess" number="05" title="then, a completely different board.">
           <div className="max-w-3xl text-text-secondary space-y-4 mb-10"><p>After the physical session, I ran a separate connectome-only chess experiment. This time, chess pixels—not recycled Doom actions—fed the network. The opponent was a seeded random legal-move sampler, not the living fly.</p><p>The living fly never got a board: the rig captured enough signal to steer Doom, not enough for 186 plies of menu navigation. That gap is itself part of the finding — the fly’s channel was real but thin.</p><p>A rendered board and sorted legal-move menu fed the existing retinal sampler and native neural model. Fixed decoded controls moved a menu cursor; neural attack activity selected an entry. The menu is an explicit interface aid, not chess strategy hidden inside the brain.</p></div>
           <div className="rounded-2xl border border-border-highlight bg-card p-4 md:p-8"><ChessReplay /></div>
           <div className="mt-10 grid lg:grid-cols-[1.3fr_1fr] gap-8 items-start">
@@ -201,21 +209,13 @@ export default function DoomflyPage() {
           </div>
         </Section>
 
-        <Section id="takeaways" number="05" title="the interesting part wasn’t winning.">
+        <Section id="takeaways" number="06" title="the interesting part wasn’t winning.">
           <div className="grid md:grid-cols-3 gap-8">
             {[
               ['Measurement comes first.', 'A plausible trail can be a watermark. A fresh action can still be wrong. Verify the identity of the signal before interpreting the score.'],
               ['The interface is part of the experiment.', 'A legal-move menu makes a chess session possible, but changes what the task measures. State that choice instead of attributing it to the connectome.'],
               ['Keep the failures in the record.', 'The physical setup happened. The tracking limitations happened too. Retain the footage and telemetry without filling in missing results.'],
             ].map(([title, text]) => <div key={title} className="border-t border-border-highlight pt-5"><h3 className="font-display text-lg mb-3">{title}</h3><p className="text-text-secondary text-sm leading-relaxed">{text}</p></div>)}
-          </div>
-          <div className="mt-12 rounded-xl border border-border-subtle bg-card p-6 md:p-8">
-            <h3 className="font-mono text-xs text-accent tracking-widest mb-6">FIELD NOTES — WHAT THE FLY ACTUALLY SHOWED</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-sm">
-              <div><h4 className="font-medium mb-2">Isolation is a state, not a stop</h4><p className="text-text-secondary">After sessions the flies withdrew to the arena edge and stayed there — isolated, still, but present. Resting produced no motion signal and had to be logged as stillness, never as a finished turn. Treating quiet as “done” would have corrupted the record.</p></div>
-              <div><h4 className="font-medium mb-2">One substrate kept improving</h4><p className="text-text-secondary">Across later sessions the fly’s game-relevant signals got better — it arrived at useful behavior on its own. The connectome, once set up, was static. The shame of the small rig: the fly clearly carried far more usable signal than I could harness.</p></div>
-              <div><h4 className="font-medium mb-2">Exploration before tailoring</h4><p className="text-text-secondary">Before the feedback signal was tuned toward the game, the fly roamed more of the arena. My own thought, not a result: once an agent knows enough, a constrained channel may reveal intent better than an open world — worth remembering for how we constrain models, even in RL, and note what they do.</p></div>
-            </div>
           </div>
           <p className="mt-12 max-w-3xl text-lg text-text-secondary">A fun project, not a claim that I taught a fly to understand Doom or chess. The useful outcome is a traceable game interface, a completed neural-control chess record, a living channel that outperformed the envelope-matched connectome inside this rig, and a much clearer sense of what needs to be measured next.</p>
         </Section>

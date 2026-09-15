@@ -8,7 +8,7 @@ test('portfolio entry opens the Fun project in the same tab', async ({ page }) =
   await expect(project.getByText('Fun project', { exact: true })).toBeVisible();
   await project.getByRole('link', { name: 'explore the experiment' }).click();
   await expect(page).toHaveURL(/\/doomfly$/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('DOOM.');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('DOOM + chess.');
   await page.screenshot({ path: '.next/doomfly-desktop.png' });
 });
 
