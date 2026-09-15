@@ -1,0 +1,28 @@
+name: Countback fresh validation data
+on:
+  push:
+    branches: [eval/countback-fresh-validation-20260915]
+    paths: [.github/workflows/countback-fresh-validation-data.yml]
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Acquire only the frozen public subset
+        run: |
+          python3 countback-validation/acquire_fresh.py /tmp/countback-fresh-public
+      - name: Record source identity
+        run: |
+          printf '%s\n' "$GITHUB_SHA" > /tmp/countback-fresh-public/acquisition-source-commit.txt
+          cp countback-validation/FRESH_VALIDATION_PLAN.json /tmp/countback-fresh-public/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: countback-fresh-public-validation
+          path: /tmp/countback-fresh-public/
+          retention-days: 30
+          if-no-files-found: error
