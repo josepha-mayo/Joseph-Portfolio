@@ -1,0 +1,67 @@
+name: Countback cloud evidence media
+on:
+  push:
+    branches: [release/countback-judge-20260915]
+    paths: [.github/workflows/countback-cloud-evidence-media.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  media:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the pinned media and report tools
+        run: |
+          python -m pip install kokoro-onnx==0.4.9 soundfile==0.13.1 numpy==2.2.6 onnxruntime==1.22.1 Pillow==11.3.0 markdown==3.8.2 weasyprint==66.0 cairosvg==2.8.2
+          python -m py_compile countback-delivery/build_aws_media.py
+      - name: Retrieve existing recorded evidence, no AWS access
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10409408816/zip > /tmp/countback-delivery.zip
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10413223210/zip > /tmp/countback-speech.zip
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10417844415/zip > /tmp/countback-aws.zip
+      - name: Use explicit subtitle canvas coordinates
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('countback-delivery/build_aws_media.py')
+          text=p.read_text()
+          old="style='FontName=DejaVu Sans,FontSize=18,PrimaryColour=&H00F7F3ED,OutlineColour=&H00101010,BorderStyle=1,Outline=1,Shadow=0,Alignment=2,MarginV=22'"
+          new="style='PlayResX=1440,PlayResY=1080,FontName=DejaVu Sans,FontSize=28,PrimaryColour=&H00F7F3ED,OutlineColour=&H00101010,BorderStyle=1,Outline=1,Shadow=0,Alignment=2,MarginV=24'"
+          assert text.count(old)==1
+          p.write_text(text.replace(old,new))
+          PY
+      - name: Generate measured-cloud report and narrated demonstration
+        run: |
+          python countback-delivery/build_aws_media.py --delivery /tmp/countback-delivery.zip --speech /tmp/countback-speech.zip --aws /tmp/countback-aws.zip --out /tmp/countback-final-media
+          cp countback-delivery/build_aws_media.py /tmp/countback-final-media/BUILD_SCRIPT_EXECUTED.py
+      - name: Render report and representative video frames for inspection
+        run: |
+          mkdir -p /tmp/countback-final-review
+          pdftoppm -scale-to 1100 -png /tmp/countback-final-media/Countback-Technical-Report.pdf /tmp/countback-final-review/report
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          root=Path('/tmp/countback-final-media')
+          report=json.loads((root/'MEDIA_VERIFICATION.json').read_text())
+          for i in [0,3,5,7,10,11,12,13]:
+              t=report['scenes'][i]['start']+3
+              subprocess.run(['ffmpeg','-v','error','-ss',str(t),'-i',str(root/'Countback-Complete-Demo.mp4'),'-frames:v','1',f'/tmp/countback-final-review/video-{i:02}.png'],check=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-cloud-media-review
+          path: |
+            /tmp/countback-final-media/
+            /tmp/countback-final-review/
+          retention-days: 30
+          if-no-files-found: error
