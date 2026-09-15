@@ -1,0 +1,99 @@
+name: Countback publish inspected judge materials
+on:
+  push:
+    branches: [release/countback-judge-20260915]
+    paths: [.github/workflows/countback-publish-judge-materials.yml]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: countback-judge-package-20260915
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: josepha-mayo/Joseph-Portfolio
+      TAG: countback-judge-package-20260915
+    steps:
+      - name: Retrieve only the successful inspected artifact
+        run: |
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10419687128/zip > /tmp/countback-inspected.zip
+          python3 - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          src=Path('/tmp/countback-inspected.zip')
+          assert hashlib.sha256(src.read_bytes()).hexdigest()=='7297bf2293122472cecb1f04fea2e4528171966062f150e49a144e345d4b193f'
+          out=Path('/tmp/countback-publish');out.mkdir()
+          with zipfile.ZipFile(src) as z:
+              assert z.testzip() is None
+              prefix='countback-final-media/'
+              manifest=json.loads(z.read(prefix+'MANIFEST.json'))
+              for name,meta in manifest['files'].items():
+                  data=z.read(prefix+name)
+                  assert len(data)==meta['bytes'] and hashlib.sha256(data).hexdigest()==meta['sha256']
+              expected={
+                'Countback-Complete-Demo.mp4':'68e23ee0ed069b6f5ddb87e869eaa72d7f398c1a4af2803f3d9a4c9c4f52d4ca',
+                'Countback-Technical-Report.pdf':'cd9459adc296a05b3f4ea8789a5b7a42e976d037f81261838ff2a135327739e5',
+                'Countback-Judge-Package.zip':'27de247a2ccc1efcf4d80e3604db2823d0ab9589904dafb1f1cba2dcac15bc40',
+                'MEDIA_VERIFICATION.json':'8e18c8e2c6eff5f09290103e1f840a2d25911f5e08d3627e80379aedf930b5ae'}
+              files=list(expected)+['Countback-Architecture.svg','Countback-Architecture.png','Countback-Demo.srt','Countback-Narration.txt','START-HERE.md']
+              for name in files:
+                  data=z.read(prefix+name)
+                  if name in expected:assert hashlib.sha256(data).hexdigest()==expected[name]
+                  (out/name).write_bytes(data)
+              media=json.loads((out/'MEDIA_VERIFICATION.json').read_text())
+              assert media['status']=='passed' and media['duration_seconds']<300 and media['single_audio_track'] and media['single_video_track']
+              with zipfile.ZipFile(out/'Countback-Judge-Package.zip') as pack:
+                  assert pack.testzip() is None
+                  assert not any(Path(n).suffix.lower() in {'.ttf','.otf','.woff','.woff2','.key','.pem'} for n in pack.namelist())
+          (out/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir())))
+          notes='''# Countback: local review and completed AWS trial
+
+The 3:37 narrated demonstration, eight-page technical report, architecture and judge package are available below. The video contains real local application footage plus a clearly identified summary of recorded AWS receipts. One stock neural voice is paced at about 119 spoken words per minute. Local actions retain recorded speed with explanatory holds.
+
+The private AWS original-engine trial passed four valid analyses and five expected input refusals. The public-photo request took 5.265 seconds and did not verify object identity. The local viewpoint refinement is a separate path. All trial compute, registry, logs and temporary access were removed and independently checked.
+
+Media source run: 35025908257 at c735e335d09056b30ecb4c24b46836816d88d47c. Actual AWS run: 35023729856. The application ZIP inside the package is the previously tested release, not a new compilation. Failed media attempts were retained; the corrected output has matching 217.28-second audio/video tracks and passed complete decoding. All eight PDF pages and representative video frames were inspected before this publication.
+
+This is publication of submission materials, not proof that Devpost has received a final submission or that a live judge session is booked. A scheduling request has been sent; no standing public photo-upload endpoint exists. See START-HERE.md and the report for the remaining administrative steps, dataset attribution and limitations.
+
+Original Countback code: Joseph Ayanda, MIT, with AI assistance. Public research images: UW-IS Occluded v1, CC BY 4.0, attributed in the report. No private photographs or font files are included.
+'''
+          Path('/tmp/countback-release-notes.md').write_text(notes)
+          PY
+      - name: Publish once without modifying any earlier release
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then echo 'Existing release retained; refusing replacement'; exit 1; fi
+          gh release create "$TAG" /tmp/countback-publish/* --target c735e335d09056b30ecb4c24b46836816d88d47c --prerelease --latest=false --title 'Countback judge materials: measured AWS trial and narrated demo' --notes-file /tmp/countback-release-notes.md
+      - name: Verify every public asset without authentication
+        env:
+          GH_TOKEN: ''
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import urllib.request,hashlib,json,time
+          base='https://github.com/josepha-mayo/Joseph-Portfolio/releases/download/countback-judge-package-20260915/'
+          results=[]
+          for path in sorted(Path('/tmp/countback-publish').iterdir()):
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(base+path.name,timeout=45) as response:data=response.read(12_000_001)
+                      break
+                  except Exception:
+                      if attempt==2:raise
+                      time.sleep(3)
+              assert hashlib.sha256(data).digest()==hashlib.sha256(path.read_bytes()).digest()
+              results.append({'name':path.name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'authenticated':False})
+          out=Path('/tmp/countback-public-proof');out.mkdir()
+          (out/'PUBLIC_DELIVERY.json').write_text(json.dumps({'status':'passed','assets':results,'video_seconds':217.28,'pdf_pages':8,'aws_trial_complete':True,'judge_session_arranged':False,'devpost_submitted':False},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-judge-public-delivery
+          path: /tmp/countback-public-proof/
+          retention-days: 30
+          if-no-files-found: warn
