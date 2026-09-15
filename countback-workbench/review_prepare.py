@@ -25,6 +25,8 @@ def uri(im:Image.Image,max_side:int=880)->str:
     return 'data:image/jpeg;base64,'+base64.b64encode(b.getvalue()).decode()
 def find_poly(v:dict,name:str):
     detail=v['parts'][name]
+    if 'review_localization' in detail:
+        return detail['review_localization']['polygon']
     if detail.get('polygon'):return detail['polygon']
     options=(detail.get('geometric_review',{}).get('appearance') or {}).get('candidates',[])
     return options[0]['polygon'] if options else None
@@ -67,6 +69,9 @@ def prepare(photos:Path,result:Path,output:Path)->dict:
                 crop=im.crop(tuple(bbox));caption='Engine-proposed region, with surrounding pixels. '+('Proposal extends outside this photograph. ' if clipped else '')
             else:
                 bbox=[0,0,w,h];crop=im;caption='No candidate region was supported. Full photograph shown. '
+            localization=v['parts'][name].get('review_localization')
+            if localization:
+                caption=localization['reason']+' '
             caption+='Printing hidden in the booklet display; inference used original images.' if name=='booklet' else 'A visual judgment does not establish a unique physical instance.'
             views.append({'id':v['label'],'label':v['label'].replace('view-','Photo '),'image_sha256':r['input_provenance'][v['label']]['sha256'],
               'region':{'polygon':poly,'display_crop_xyxy':bbox,'display_only':True},'crop':uri(crop),'context':uri(im,1100),'caption':caption})
@@ -80,6 +85,8 @@ def prepare(photos:Path,result:Path,output:Path)->dict:
             'ambiguous':'Competing references or candidates remain ambiguous. Do not treat them as separately identified physical items.',
             'unresolved':'No supported correspondence was obtained from the processed photographs. This does not prove absence.'
         }.get(level,'Inspect the evidence and record what is and is not visible.')
+        if r.get('review_focus_policy'):
+            detail+=' Review focus uses landmark-based proposals or the full photograph; weak appearance highlights are suppressed, not treated as absence.'
         if name=='booklet':detail+=' Printing is concealed in the display copy; inference used original pixels.'
         items.append({'id':name,'title':NAMES.get(name,name),'evidence_level':level,'evidence_label':LABELS.get(level,level),'identity_verified':False,
           'evidence_detail':detail,'instruction':'Compare the reference and candidate, then record a reasoned assessment. Leave it unclear when the image is insufficient.',
