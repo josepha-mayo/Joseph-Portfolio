@@ -1,0 +1,41 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Countback private validation candidate. No public endpoint, triggers, provisioned concurrency or IAM creation. Existing image digest and execution role required.",
+  "Parameters": {
+    "ImageUri": {
+      "Type": "String",
+      "AllowedPattern": "^[0-9]{12}\\.dkr\\.ecr\\.us-east-1\\.amazonaws\\.com/countback-validation@sha256:[a-f0-9]{64}$"
+    },
+    "ExecutionRoleArn": {
+      "Type": "String",
+      "AllowedPattern": "^arn:aws:iam::[0-9]{12}:role/countback-lambda-execution$"
+    }
+  },
+  "Resources": {
+    "LogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/countback-validation-v1",
+        "RetentionInDays": 7,
+        "Tags": [{"Key": "Project", "Value": "Countback"}]
+      }
+    },
+    "Function": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "LogGroup",
+      "Properties": {
+        "FunctionName": "countback-validation-v1",
+        "PackageType": "Image",
+        "Code": {"ImageUri": {"Ref": "ImageUri"}},
+        "Role": {"Ref": "ExecutionRoleArn"},
+        "Architectures": ["x86_64"],
+        "MemorySize": 2048,
+        "Timeout": 90,
+        "EphemeralStorage": {"Size": 512},
+        "LoggingConfig": {"LogGroup": {"Ref": "LogGroup"}, "LogFormat": "Text"},
+        "Tags": [{"Key": "Project", "Value": "Countback"}, {"Key": "Purpose", "Value": "BoundedValidation"}]
+      }
+    }
+  },
+  "Outputs": {"FunctionName": {"Value": {"Ref": "Function"}}}
+}
