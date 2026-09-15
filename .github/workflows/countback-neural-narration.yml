@@ -1,0 +1,75 @@
+name: Countback clear neural narration
+on:
+  push:
+    branches: [release/countback-judge-20260915]
+    paths: [.github/workflows/countback-neural-narration.yml]
+permissions:
+  contents: read
+jobs:
+  narration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned speech runtime
+        run: python -m pip install kokoro-onnx==0.4.9 soundfile==0.13.1 numpy==2.2.6 onnxruntime==1.22.1
+      - name: Generate separate timed narration sections
+        run: |
+          mkdir -p /tmp/countback-voice out
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,re,urllib.request
+          import numpy as np
+          import soundfile as sf
+          import onnxruntime as ort
+          from kokoro_onnx import Kokoro
+          root=Path('/tmp/countback-voice')
+          sources={
+            'kokoro-v1.0.onnx':'7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5',
+            'voices-v1.0.bin':'bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d'}
+          for name,want in sources.items():
+              urllib.request.urlretrieve('https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/'+name,root/name)
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==want,name
+          model=Kokoro(str(root/'kokoro-v1.0.onnx'),str(root/'voices-v1.0.bin'))
+          sections=[
+            "A returned kit can look complete in a photograph, while one item is missing or hidden. Countback helps a repair desk check the evidence before signing it off.",
+            "Here are three reference items, followed by two photographs of the scene. These are public research images, not customer records.",
+            "Analysis stays locked until processing permission is given. In this demonstration, the photographs are processed locally.",
+            "Open C V five now compares the actual images. The processing interval is shown at its recorded speed. There is no prewritten answer behind this screen.",
+            "When the first view leaves an item unresolved, the controller inspects the next photograph already supplied. It does not ask for another photo shoot.",
+            "For the chips can, matching landmarks provide a useful place to look. That is a suggested focus, not a claim that the item has been verified.",
+            "Open the original scene to check that focus in context. The full photograph is still available, so the operator can challenge the suggestion.",
+            "The hot sauce reference is less convincing. Instead of drawing a confident box around a colour match, Countback leaves the image open for manual inspection.",
+            "This example records an unclear result and a reason. The note is scripted for the demonstration. It does not become a machine approval.",
+            "The exported handoff keeps the photographs, fingerprints, unresolved items and review note together. Another operator can see what was checked, and what still needs attention.",
+            "The fresh-view test also exposed the limits. The affine overlay located eleven of twenty four visible targets, but kept too many weak suggestions. The stricter focus path returned five useful locations.",
+            "The local workflow separates image analysis from review. A private Amazon Web Services component is planned for the original image analysis, while the viewpoint refinement remains local.",
+            "Countback is built by Joseph Ayanda. It is an inspection aid, not an automatic complete-kit verdict. The cloud test and final submission still need to be completed."
+          ]
+          report={'voice':'bf_emma','type':'stock neural synthesis, not a human recording or voice clone','model_sha256':sources,'target_words_per_minute':120,'sections':[],'paid_tts_calls':0}
+          for i,text in enumerate(sections):
+              words=len(re.findall(r"[\w]+(?:['-][\w]+)*",text));speed=.78
+              for attempt in range(3):
+                  samples,sr=model.create(text,voice='bf_emma',speed=speed,lang='en-gb')
+                  samples=np.asarray(samples,dtype=np.float32)
+                  assert np.isfinite(samples).all() and len(samples)>sr
+                  wpm=words*60/(len(samples)/sr)
+                  if 115<=wpm<=128:break
+                  speed=float(np.clip(speed*120/wpm,.55,1.0))
+              assert 106<=wpm<=136,(i,wpm)
+              peak=float(np.max(np.abs(samples)));samples=samples*min(1.0,.88/max(peak,1e-9))
+              name=f'section-{i:02d}.wav';sf.write('out/'+name,samples,sr,subtype='PCM_16')
+              report['sections'].append({'index':i,'file':name,'text':text,'words':words,'seconds':len(samples)/sr,'wpm':wpm,'speed':speed,'sample_rate':sr,'sha256':hashlib.sha256(Path('out',name).read_bytes()).hexdigest()})
+          Path('out/narration.json').write_text(json.dumps(report,indent=2))
+          Path('out/narration.txt').write_text('\n\n'.join(sections))
+          print(json.dumps({'sections':len(sections),'words':sum(x['words'] for x in report['sections']),'speech_seconds':sum(x['seconds'] for x in report['sections']),'voice':'bf_emma'}))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-neural-narration
+          path: out/
+          retention-days: 30
+          if-no-files-found: error
