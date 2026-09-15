@@ -1,0 +1,28 @@
+{
+  "schema": "countback-pose-validation-plan-1",
+  "frozen_at": "2026-09-15T14:39:52.966435+00:00",
+  "candidate_sha256": "9d7a2052e27eee051d8f9672b23ddb9d1dead831042a6cf86ffc4a11a4a41675",
+  "dataset_article": 20506506,
+  "archive_file_id": 36708684,
+  "archive_etag": "\"2b475d10a3777c7cbcb4949332b77af3-13\"",
+  "archive_size": 13204345179,
+  "outer_directory_sha256": "4a29171d12234bbb176a211e42a0b936a667713b12d344e21854fd8bc2a75086",
+  "candidate_status": "development_only",
+  "fresh_clips_acquired": false,
+  "development_clips": ["176", "185", "167", "179", "182", "188", "191", "170", "173"],
+  "observation_clips": [
+    {"clip":"171","name":"UWISOccludedDataset/Lounge/Lighting1/Level2Separation/Food/171.zip","local_offset":1214940813,"size":273164653},
+    {"clip":"180","name":"UWISOccludedDataset/Lounge/Lighting1/Level2Separation/Kitchen/180.zip","local_offset":1753187955,"size":164865466},
+    {"clip":"189","name":"UWISOccludedDataset/Lounge/Lighting1/Level2Separation/Tools/189.zip","local_offset":2076435460,"size":195154216},
+    {"clip":"174","name":"UWISOccludedDataset/Lounge/Lighting1/Level3Separation/Food/174.zip","local_offset":2432263909,"size":248578277},
+    {"clip":"183","name":"UWISOccludedDataset/Lounge/Lighting1/Level3Separation/Kitchen/183.zip","local_offset":2946591569,"size":263315947},
+    {"clip":"192","name":"UWISOccludedDataset/Lounge/Lighting1/Level3Separation/Tools/192.zip","local_offset":3330380356,"size":115187372},
+    {"clip":"35","name":"UWISOccludedDataset/Warehouse/Lighting1/Level2Separation/Food/35.zip","local_offset":11254447560,"size":114561643},
+    {"clip":"44","name":"UWISOccludedDataset/Warehouse/Lighting1/Level2Separation/Kitchen/44.zip","local_offset":11523465580,"size":102524319},
+    {"clip":"53","name":"UWISOccludedDataset/Warehouse/Lighting1/Level2Separation/Tools/53.zip","local_offset":11855025292,"size":165023832}
+  ],
+  "frame_rule": "Sorted RGB members at floor((N-1)/3) and floor(2*(N-1)/3); distinct images required. Never select by model score. Acquire paired labels and poses for scoring only.",
+  "references": "Keep the nine fixed reference crops from clips176/185/167. New clips are a scene/viewpoint check, not new physical-object generalization.",
+  "scoring_rule": "Compare frozen original, earlier conservative, new affine proposals. Report localization IoU>=0.30 and>=0.50, visible-mask center hit, absence/unjudgeable status, false-region burden, all missing/failed cases and runtime. No identity or kit approval.",
+  "release_rule": "Do not deploy until fresh clip outputs are acquired, independently checked and improved usefulness versus original/conservative is established."
+}
