@@ -1,0 +1,10 @@
+{
+  "status": "CHECKMATE",
+  "result": "0-1",
+  "plies": 186,
+  "fen": "8/7k/8/p1b4p/P7/1n1p4/4q3/4N1rK w - - 10 94",
+  "connectome_points": 0,
+  "real_fly_points": null,
+  "real_fly_status": "not observed",
+  "run": "native-20260915-154852-a12ef119"
+}

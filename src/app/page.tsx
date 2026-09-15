@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import NeuralNetwork from '@/components/NeuralNetwork';
 
@@ -16,7 +17,7 @@ function SkillTag({ children }: { children: React.ReactNode }) {
 // Project Tag component
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-xs px-2.5 py-1 bg-white/5 rounded text-text-secondary border border-transparent">
+    <span className={`text-xs px-2.5 py-1 rounded border ${children === 'Fun project' ? 'bg-accent/10 text-accent border-accent/25' : 'bg-white/5 text-text-secondary border-transparent'}`}>
       {children}
     </span>
   );
@@ -74,15 +75,15 @@ function ProjectCard({
         </div>
         <div className="flex gap-4 pt-4 border-t border-border-subtle">
           {links.map((link, i) => (
-            <a
+            <Link
               key={i}
               href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={link.href.startsWith('/') ? undefined : '_blank'}
+              rel={link.href.startsWith('/') ? undefined : 'noopener noreferrer'}
               className="text-sm font-semibold text-text-primary hover:text-accent flex items-center gap-1.5 transition-colors"
             >
               <i className={link.icon}></i> {link.label}
-            </a>
+            </Link>
           ))}
         </div>
       </div>
@@ -171,6 +172,16 @@ function ModelCard({
 
 export default function Home() {
   const projects = [
+    {
+      image: "/doomfly/setup-photo-1.jpg",
+      title: "DOOMFLY",
+      icon: "fa-solid fa-gamepad",
+      description: "A fly arena, a mapped nervous system, and actual games. Physical setup footage, the Doom experiment, and a replayable 93-move connectome chess game—with the measurement failures kept in the record.",
+      tags: ["Fun project", "connectomics", "OpenCV", "Doom + chess"],
+      links: [
+        { href: "/doomfly", label: "explore the experiment", icon: "fa-solid fa-arrow-right" }
+      ]
+    },
     {
       image: "/dr-opic.png",
       title: "DR-OPIC",

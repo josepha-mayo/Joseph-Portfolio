@@ -1,0 +1,32 @@
+{
+  "physical_setup": [
+    {
+      "asset": "setup-1.mp4",
+      "source_sha256": "6427049b446edd51700381717970ce0f37c1a22c0f8250c1a5aec2d1baf61433",
+      "source_filename": "WhatsApp Video 2026-09-15 at 4.18.27 PM.mp4"
+    },
+    {
+      "asset": "setup-2.mp4",
+      "source_sha256": "4dcf7f9689d755fc55abc3f722d07b64669110c00f3f06a67d0123f09915fd3a",
+      "source_filename": "WhatsApp Video 2026-09-15 at 4.18.54 PM.mp4"
+    },
+    {
+      "asset": "setup-3.mp4",
+      "source_sha256": "8e1e50682c747d3b1f99f9c9c9ccbdb586fc1b1558a441db699fc0a2eee9f632",
+      "source_filename": "WhatsApp Video 2026-09-15 at 4.18.55 PM.mp4"
+    },
+    {
+      "asset": "setup-photo-1.jpg",
+      "source_sha256": "1ec01dfc81fbd62f709fa22a4c6ae550329558f3b7431543f1672136f54248f6",
+      "source_filename": "WhatsApp Image 2026-09-15 at 4.15.15 PM.jpeg"
+    },
+    {
+      "asset": "setup-photo-2.jpg",
+      "source_sha256": "8c44d9d9dd09715e50b5fd20dca87f8349637014dd3a1c727a7b669e80c92e42",
+      "source_filename": "WhatsApp Image 2026-09-15 at 4.15.16 PM.jpeg"
+    }
+  ],
+  "chess_run": "native-20260915-154852-a12ef119",
+  "physical_media_note": "Owner-provided setup footage; web copies are silent and metadata-stripped.",
+  "chess_replay_note": "Recorded selection snapshots, not real-time video or living-fly footage."
+}

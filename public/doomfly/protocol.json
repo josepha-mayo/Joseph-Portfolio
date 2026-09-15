@@ -1,0 +1,24 @@
+{
+  "source": "MaleCNS v1.0",
+  "neurons": 166700,
+  "edges": 25582938,
+  "kernel": {
+    "kernel_source_sha256": "f755334c260758eaece63d3ab78e6496b2db60942a0a89a196e9f02a047e3586",
+    "binary_sha256": "faba3d9e1dd2356f2968ef49ef046ffa7d2de2fbe7395473cd8ce817b03a0bce",
+    "model_revision": "lif-r2-refractory-write-protection",
+    "compile_flags": [
+      "-O3",
+      "-std=c++17",
+      "-shared",
+      "-Wl,/EXPORT:neural_advance"
+    ]
+  },
+  "handicap": false,
+  "learning": false,
+  "seed": 41027,
+  "graph_sha256": "f4d41f011e97e510761d011634891b1c082f61f91463eb586ee9cf8c6371b1d1",
+  "interface": "Sorted UCI legal menu; cursor += (turn/6 + forward/20)*4*seconds; attack selects after 1000 neural ms",
+  "visual_input": "Board and menu RGB sampled as luminance at existing receptor UVs",
+  "real_fly_score": null,
+  "real_fly_status": "unavailable; no living fly connected"
+}
