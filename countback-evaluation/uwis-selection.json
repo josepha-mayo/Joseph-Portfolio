@@ -1,0 +1,11 @@
+{
+  "176": ["176/0069_rgb.png", "176/0069_labels.png", "176/0069_poses.yaml"],
+  "185": ["185/0022_rgb.png", "185/0022_labels.png", "185/0022_poses.yaml"],
+  "167": ["167/0094_rgb.png", "167/0094_labels.png", "167/0094_poses.yaml"],
+  "170": ["170/0035_rgb.png", "170/0035_labels.png", "170/0035_poses.yaml", "170/0069_rgb.png", "170/0069_labels.png", "170/0069_poses.yaml"],
+  "179": ["179/0063_rgb.png", "179/0063_labels.png", "179/0063_poses.yaml", "179/0125_rgb.png", "179/0125_labels.png", "179/0125_poses.yaml"],
+  "188": ["188/0044_rgb.png", "188/0044_labels.png", "188/0044_poses.yaml", "188/0087_rgb.png", "188/0087_labels.png", "188/0087_poses.yaml"],
+  "173": ["173/0041_rgb.png", "173/0041_labels.png", "173/0041_poses.yaml", "173/0081_rgb.png", "173/0081_labels.png", "173/0081_poses.yaml"],
+  "182": ["182/0063_rgb.png", "182/0063_labels.png", "182/0063_poses.yaml", "182/0125_rgb.png", "182/0125_labels.png", "182/0125_poses.yaml"],
+  "191": ["191/0036_rgb.png", "191/0036_labels.png", "191/0036_poses.yaml", "191/0071_rgb.png", "191/0071_labels.png", "191/0071_poses.yaml"]
+}
