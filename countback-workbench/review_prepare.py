@@ -23,9 +23,9 @@ def uri(im:Image.Image,max_side:int=880)->str:
     im=im.copy();im.thumbnail((max_side,max_side))
     b=BytesIO();im.save(b,format='JPEG',quality=88,optimize=True)
     return 'data:image/jpeg;base64,'+base64.b64encode(b.getvalue()).decode()
-def find_poly(v:dict,name:str):
+def find_poly(v:dict,name:str,*,respect_focus:bool=True):
     detail=v['parts'][name]
-    if 'review_localization' in detail:
+    if respect_focus and 'review_localization' in detail:
         return detail['review_localization']['polygon']
     if detail.get('polygon'):return detail['polygon']
     options=(detail.get('geometric_review',{}).get('appearance') or {}).get('candidates',[])
@@ -51,7 +51,7 @@ def prepare(photos:Path,result:Path,output:Path)->dict:
         roi=r['input_provenance']['booklet']['reference_only_roi_xyxy']
         ImageDraw.Draw(displays['booklet']).rectangle(roi,fill='#253246')
         for v in r['views']:
-            poly=find_poly(v,'booklet')
+            poly=find_poly(v,'booklet',respect_focus=False)
             if poly:
                 dr=ImageDraw.Draw(displays[v['label']]);dr.polygon([tuple(p) for p in poly],fill='#253246')
     items=[]
