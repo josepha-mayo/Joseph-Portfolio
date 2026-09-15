@@ -17,6 +17,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install native video and PDF utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg poppler-utils fonts-dejavu-core libpango-1.0-0 libpangoft2-1.0-0 libcairo2
+          ffmpeg -version
+          pdftoppm -v
       - name: Install the pinned media and report tools
         run: |
           python -m pip install kokoro-onnx==0.4.9 soundfile==0.13.1 numpy==2.2.6 onnxruntime==1.22.1 Pillow==11.3.0 markdown==3.8.2 weasyprint==66.0 cairosvg==2.8.2
@@ -37,7 +43,9 @@ jobs:
           old="style='FontName=DejaVu Sans,FontSize=18,PrimaryColour=&H00F7F3ED,OutlineColour=&H00101010,BorderStyle=1,Outline=1,Shadow=0,Alignment=2,MarginV=22'"
           new="style='PlayResX=1440,PlayResY=1080,FontName=DejaVu Sans,FontSize=28,PrimaryColour=&H00F7F3ED,OutlineColour=&H00101010,BorderStyle=1,Outline=1,Shadow=0,Alignment=2,MarginV=24'"
           assert text.count(old)==1
-          p.write_text(text.replace(old,new))
+          text=text.replace(old,new)
+          text=text.replace('stdout=subprocess.DEVNULL,stderr=subprocess.PIPE','stdout=subprocess.DEVNULL')
+          p.write_text(text)
           PY
       - name: Generate measured-cloud report and narrated demonstration
         run: |
