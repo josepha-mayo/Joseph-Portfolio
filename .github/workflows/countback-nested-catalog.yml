@@ -1,0 +1,23 @@
+name: Countback selected scene directory
+on:
+  push:
+    branches: [eval/countback-uwis-discovery]
+    paths: [.github/workflows/countback-nested-catalog.yml]
+permissions:
+  contents: read
+jobs:
+  catalog:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: python3 countback-evaluation/uwis_subset.py catalog evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: countback-nested-catalog
+          path: evidence/
+          retention-days: 14
+          if-no-files-found: warn
