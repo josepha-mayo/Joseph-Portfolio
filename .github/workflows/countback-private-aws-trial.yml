@@ -1,0 +1,60 @@
+name: Countback private AWS validation
+on:
+  push:
+    branches: [release/countback-judge-20260915]
+    paths: [.github/workflows/countback-private-aws-trial.yml]
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: countback-approved-private-aws-trial
+  cancel-in-progress: false
+jobs:
+  trial:
+    if: github.repository == 'josepha-mayo/Joseph-Portfolio' && github.ref == 'refs/heads/release/countback-judge-20260915'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install trial client dependencies and check syntax
+        run: |
+          python -m pip install boto3==1.40.35 numpy==2.3.5 Pillow==12.3.0
+          python -m py_compile countback-delivery/aws_trial.py
+      - name: Read only the three pinned existing artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10176371365/zip > /tmp/countback-tested-image.zip
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10397556879/zip > /tmp/countback-original.zip
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10406535398/zip > /tmp/countback-fresh.zip
+      - name: Assume the dedicated expiring role using GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::046675437218:role/countback-github-trial
+          role-session-name: countback-${{ github.run_id }}
+          aws-region: us-east-1
+          role-duration-seconds: 1800
+          mask-aws-account-id: true
+          unset-current-credentials: true
+          retry-max-attempts: 2
+      - name: Execute actual image analysis and delete trial-created compute
+        run: |
+          python countback-delivery/aws_trial.py \
+            --image /tmp/countback-tested-image.zip \
+            --original /tmp/countback-original.zip \
+            --fresh /tmp/countback-fresh.zip \
+            --out /tmp/countback-aws-evidence
+      - name: Preserve execution and cleanup evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: countback-actual-aws-trial
+          path: /tmp/countback-aws-evidence/
+          retention-days: 30
+          if-no-files-found: warn
