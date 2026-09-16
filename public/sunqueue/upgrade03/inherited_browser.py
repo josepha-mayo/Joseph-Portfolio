@@ -5,6 +5,9 @@ import tempfile,shutil,subprocess,os,json,hashlib,sys
 R=Path(__file__).resolve().parents[1];E=R/'v03/evidence';url=os.environ.get('SUNQUEUE_V03_URL','').rstrip('/');results=[]
 with tempfile.TemporaryDirectory(prefix='sunqueue-inherited-') as td:
  T=Path(td)/'SunQueue';shutil.copytree(R,T,ignore=shutil.ignore_patterns('node_modules','.git','demo.mp4','source.zip','*.webm'))
+ # Source-only releases omit the historical v02 build directory.
+ # Create the wrapper's temporary destination before copying the current app.
+ (T/'v02').mkdir(parents=True,exist_ok=True)
  shutil.copyfile(R/'v03/index.html',T/'index.html');shutil.copyfile(R/'v03/index.html',T/'v02/index.html')
  for name,script,var in [('core','tests/browser.py','SUNQUEUE_BASE_URL'),('replay','upgrade02/browser.py','SUNQUEUE_V02_URL')]:
   p=T/script;text=p.read_text();original=hashlib.sha256(p.read_bytes()).hexdigest()
