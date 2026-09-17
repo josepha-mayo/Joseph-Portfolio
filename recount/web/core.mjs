@@ -9,8 +9,10 @@ const NUMBER = new Set([...Object.keys(SMALL),...Object.keys(TENS),'hundred']);
 const UNITS = {bag:'bags',bags:'bags',bottle:'bottles',bottles:'bottles',bar:'bars',bars:'bars',carton:'cartons',cartons:'cartons',piece:'pieces',pieces:'pieces'};
 const FILLER = new Set('count counted have i we there are is of the a total set to stock cooking please now'.split(' '));
 export const HOLD_REASONS = new Set(['stream_lost','unfinished_speech','transcript_conflict','stale_turn','invalid_event','audio_gap','consent_revoked']);
+const TASK_CONFIDENCE_FLOOR=.75; // development heuristic; must be recalibrated on human speech before production use.
 export function initial(){return {revision:0,pending:null,hold:null,counts:{},seen:{},history:[],reply:'Name one item, its count, and its unit. For example: rice twelve bags.'};}
 export function normalizeTranscript(s){return s.toLowerCase().replace(/[.,!?;:]/g,' ').replace(/(?<=[a-z])-(?=[a-z])/g,' ').replace(/\s+/g,' ').trim();}
+function cleanToken(s){return String(s??'').toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/g,'');}
 function num(words){
   if(words.length===1 && /^\d+$/.test(words[0])){const n=Number(words[0]);return Number.isSafeInteger(n)&&n<=9999?n:null;}
   if(words.some(w=>/^\d+$/.test(w)))return null;
@@ -50,13 +52,11 @@ export function parse(text,previous=null){
     const repair=parts(chunks.at(-1));
     if(repair.error||!repair.sku||repair.quantity===null||!repair.unit)return {error:'The earlier count is uncertain. Repeat the complete item, number and unit, or discard it.'};
   }
-  for(let i=0;i<chunks.length;i++){
-    const q=parts(chunks[i]);if(q.error)return q;
+  for(const chunk of chunks){
+    const q=parts(chunk);if(q.error)return q;
     if(q.sku&&p.sku&&q.sku!==p.sku)return {error:'Confirm or discard the current item before starting a different item.'};
     if(q.unit&&p.unit&&q.unit!==p.unit&&!correcting)return {error:'The unit changed. Say the corrected unit explicitly or discard this draft.'};
-    if(q.sku)p.sku=q.sku;
-    if(q.quantity!==null)p.quantity=q.quantity;
-    if(q.unit)p.unit=q.unit;
+    if(q.sku)p.sku=q.sku;if(q.quantity!==null)p.quantity=q.quantity;if(q.unit)p.unit=q.unit;
   }
   if(!p.sku)return {error:'Which item? This prototype knows rice, beans, cooking oil and soap.'};
   if(p.unit&&p.unit!==CATALOG[p.sku].unit)return {error:`Use ${CATALOG[p.sku].unit} for ${CATALOG[p.sku].label}. I will not guess pack conversions.`};
@@ -68,7 +68,8 @@ function describe(p){
   if(p.blocked)return 'The latest instruction needs clarification. Repeat the complete count before confirming.';
   if(p.quantity===null)return `How many ${CATALOG[p.sku].unit} of ${CATALOG[p.sku].label}?`;
   if(!p.unit)return `${p.quantity} ${CATALOG[p.sku].label}: which unit? Say ${CATALOG[p.sku].unit}.`;
-  return `${CATALOG[p.sku].label}: ${p.quantity} ${p.unit}. Check the read-back, then press Confirm count. This replaces its count, not adds to it.`;
+  const warning=p.speechEvidence?.min_word_confidence<TASK_CONFIDENCE_FLOOR?' One non-number word was low-confidence, so verify this read-back carefully.':'';
+  return `${CATALOG[p.sku].label}: ${p.quantity} ${p.unit}. Check the read-back, then press Confirm count. This replaces its count, not adds to it.${warning}`;
 }
 function validKey(x){return typeof x==='string'&&/^[a-zA-Z0-9:_-]{1,140}$/.test(x);}
 export function reduce(before,action){
@@ -99,7 +100,7 @@ export function reduce(before,action){
     s.reply=`Saved ${CATALOG[s.pending.sku].label}: ${s.pending.quantity} ${s.pending.unit}. What is the next item?`;s.pending=null;return s;
   }
   s.seen[action.id]={text:normalizeTranscript(action.text),confidence:action.confidence,source:action.source};
-  if(action.confidence<.85){if(s.pending)s.pending.blocked=true;s.reply='I am not confident in that transcript. Please repeat the full item, number and unit.';return s;}
+  if(action.confidence<TASK_CONFIDENCE_FLOOR){if(s.pending)s.pending.blocked=true;s.reply='The task-critical part of that transcript is uncertain. Please repeat the full item, number and unit.';return s;}
   let result=parse(action.text,s.pending);
   if(s.hold && result.pending){
     const restatement=parse(action.text);
@@ -109,16 +110,26 @@ export function reduce(before,action){
   else if(result.cancel){s.hold=null;s.pending=null;s.reply='Draft discarded. Confirmed counts are unchanged.';}
   else if(result.confirmRequested){s.reply=ready(s.pending)?describe(s.pending):'Nothing complete to save yet. '+describe(s.pending);}
   else if(result.repeat)s.reply=describe(s.pending);
-  else{s.hold=null;s.pending=result.pending;s.reply=describe(s.pending);}
+  else{
+    s.hold=null;s.pending=result.pending;
+    if(action.source==='assemblyai'&&action.recognition)s.pending.speechEvidence=structuredClone(action.recognition);
+    s.reply=describe(s.pending);
+  }
   return s;
 }
 export function fromAssembly(message,session,revision){
   if(!message||message.type!=='Turn'||message.end_of_turn!==true)return null;
   if(!validKey(session)||!Number.isSafeInteger(message.turn_order)||message.turn_order<0)throw Error('Invalid provider turn identity');
   if(!Array.isArray(message.words)||!message.words.length)throw Error('Word-confidence evidence missing');
-  const scores=message.words.map(w=>w.confidence);
-  if(scores.some(x=>!Number.isFinite(x)||x<0||x>1))throw Error('Invalid word confidence');
-  return {kind:'turn',id:`${session}:${message.turn_order}`,text:message.transcript,confidence:Math.min(...scores),source:'assemblyai',final:true,revision};
+  const rows=message.words.map(w=>({token:cleanToken(w.text),confidence:w.confidence}));
+  if(rows.some(x=>!Number.isFinite(x.confidence)||x.confidence<0||x.confidence>1))throw Error('Invalid word confidence');
+  const nums=rows.filter(x=>NUMBER.has(x.token)||/^\d+$/.test(x.token));
+  const units=rows.filter(x=>Object.hasOwn(UNITS,x.token));
+  const items=rows.filter(x=>Object.hasOwn(CATALOG,x.token));
+  const semantic=[...nums,...units,...items];
+  const taskRows=nums.length?nums:(semantic.length?semantic:rows);
+  const recognition={policy:'quantity-first-v1',min_word_confidence:Math.min(...rows.map(x=>x.confidence)),quantity_confidence:nums.length?Math.min(...nums.map(x=>x.confidence)):null,unit_confidence:units.length?Math.min(...units.map(x=>x.confidence)):null,item_confidence:items.length?Math.min(...items.map(x=>x.confidence)):null,task_confidence:Math.min(...taskRows.map(x=>x.confidence)),development_floor:TASK_CONFIDENCE_FLOOR};
+  return {kind:'turn',id:`${session}:${message.turn_order}`,text:message.transcript,confidence:recognition.task_confidence,recognition,source:'assemblyai',final:true,revision};
 }
 export function replay(log){
   if(!Array.isArray(log)||log.length>1000)throw Error('Invalid session history');
