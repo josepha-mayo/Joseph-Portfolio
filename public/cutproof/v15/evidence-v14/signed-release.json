@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-09T01:18:01.477597+00:00",
+  "commands": [
+    {
+      "name": "javascript",
+      "exit_code": 0,
+      "seconds": 0.39
+    },
+    {
+      "name": "native",
+      "exit_code": 0,
+      "seconds": 2.26
+    },
+    {
+      "name": "identity-browser",
+      "exit_code": 0,
+      "seconds": 13.57
+    },
+    {
+      "name": "inherited-asr",
+      "exit_code": 0,
+      "seconds": 20.81
+    },
+    {
+      "name": "signed-fixture",
+      "exit_code": 0,
+      "seconds": 0.32
+    },
+    {
+      "name": "signed-browser",
+      "exit_code": 0,
+      "seconds": 15.48
+    }
+  ],
+  "shared_entry_modified": false,
+  "provider_or_aws_calls": 0,
+  "javascript_tests": 196,
+  "inherited_javascript_tests": 153,
+  "new_sign_tests": 43,
+  "native_checks": 13,
+  "existing_browser_workflows": 32,
+  "new_sign_browser_workflows": 8,
+  "total_browser_workflows": 40,
+  "base_files_unchanged": 132,
+  "model_weights_changed": false,
+  "context_retrieval_changed": false,
+  "scope": "Original synthetic negative speech plus existing natural/synthetic ASR cases; no creator study or new semantic/ASR accuracy claim. Candidate only, not submitted.",
+  "finished_at": "2026-09-09T01:18:54.483027+00:00"
+}

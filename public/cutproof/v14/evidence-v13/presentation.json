@@ -1,0 +1,17 @@
+{
+  "parts": [
+    {
+      "file": "walkthrough-v12.mp4",
+      "seconds": 95.071333,
+      "scope": "Existing v1.2 narrated walkthrough of captured real application screens, not a continuous recording."
+    },
+    {
+      "file": "source-lock-demo.mp4",
+      "seconds": 97.68,
+      "scope": "New continuous recording of actual Source Lock actions with synchronized stock synthetic narration."
+    }
+  ],
+  "combined_seconds": 192.76,
+  "synthetic_materials": true,
+  "narration": "Disclosed stock Kokoro af_heart; no voice cloning."
+}

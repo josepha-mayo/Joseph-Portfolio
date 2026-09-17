@@ -1,0 +1,169 @@
+{
+  "status": "passed",
+  "checks": [
+    "New sign fixture still requires explicit speech-download consent",
+    "Actual Whisper audio makes the positive-versus-negative disagreement a priority",
+    "Speech result does not silently rewrite the positive caption",
+    "Exported diagnostic retains original caption, actual speech and media hash",
+    "Explicit minus correction invalidates old speech checks and resets editorial review",
+    "Fresh actual inference agrees with the supported written minus form",
+    "Reviewed edit ZIP retains the corrected minus sign and exact source identity",
+    "Sign-review workflow fits mobile and makes no media-upload request"
+  ],
+  "scope": "Real model and editor on original synthetic audio, not a representative ASR or creator study.",
+  "started_at": "2026-09-09T01:18:39.016914+00:00",
+  "initial_asr_text": " The temperature is minus 5 degrees.",
+  "initial_priority_differences": [
+    {
+      "kind": "replace",
+      "caption": "plus",
+      "speech": "minus",
+      "caption_index": 3,
+      "speech_index": 3,
+      "priority": "attention"
+    }
+  ],
+  "model_revision": "2575352d61be1bf7225cf8f8b268a4678025fc58",
+  "corrected_asr_text": " The temperature is minus 5 degrees.",
+  "count": 8,
+  "browser": "152.0.7977.64",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:39803/index.html",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/evidence.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/desk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/binding.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/source-lock.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/signed/speech.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/signed/speech.mp4",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/speech-worker.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/vendor/transformers.web.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/model-config.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/preprocessor_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/onnx/encoder_model_quantized.onnx",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/onnx/decoder_model_merged_quantized.onnx",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/onnx-community/whisper-tiny.en/resolve/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/generation_config.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/4245b7a6927fefde7f8ed6f7c31d86a3c21dfbc4969b3174ec6f1ea7a5d7bafa",
+      "method": "GET"
+    },
+    {
+      "url": "https://huggingface.co/api/resolve-cache/models/onnx-community/whisper-tiny.en/2575352d61be1bf7225cf8f8b268a4678025fc58/tokenizer.json",
+      "method": "GET"
+    },
+    {
+      "url": "https://us.aws.cdn.hf.co/xet-bridge-us/6650c600b6a539e35fa3cd1e/8da3dd7d164c9129aecea413b0efbc74ef9cd7e87ba8e43aa2ef3f418ff6dbe5",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/speech-worker.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/vendor/transformers.web.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/model-config.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/vendor/ort-wasm-simd-threaded.jsep.mjs",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/vendor/ort-wasm-simd-threaded.jsep.wasm",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:39803/signed/speech.mp4",
+      "method": "GET"
+    }
+  ],
+  "finished_at": "2026-09-09T01:18:54.123514+00:00"
+}
