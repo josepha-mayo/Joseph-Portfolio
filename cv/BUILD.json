@@ -1,0 +1,12 @@
+{
+  "pdf_sha256": "c2e9a955fb92ce55e6c06d4684440b417678cae2cf245f35d6d24d9e496b6469",
+  "pages": 3,
+  "hyperlinks": 47,
+  "snapshot_date": "2026-09-17",
+  "all_time_model_downloads": 21033,
+  "model_repositories": 23,
+  "dataset_repositories": 3,
+  "generator": "scripts/build_cv.py",
+  "source_snapshot_run": 35232431790,
+  "scope": "Public counters and linked project evidence. No weights, font files or private records are included."
+}

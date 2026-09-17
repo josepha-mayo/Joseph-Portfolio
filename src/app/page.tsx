@@ -262,6 +262,7 @@ export default function Home() {
             <li><a href="#skills" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">tech stack</a></li>
             <li><a href="#work" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">work</a></li>
             <li><a href="#contact" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">contact</a></li>
+            <li><a href="/Joseph_Ayanda_CV.pdf" download="Joseph_Ayanda_CV.pdf" aria-label="Download CV (PDF, 3 pages)" className="text-accent hover:text-text-primary text-[15px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">cv <i className="fa-solid fa-arrow-down text-xs" aria-hidden="true"></i></a></li>
             <div className="flex gap-4 ml-4 pl-4 border-l border-border-subtle">
               <a href="https://github.com/josepha-mayo" target="_blank" className="text-text-secondary hover:text-text-primary text-lg transition-colors">
                 <i className="fa-brands fa-github"></i>
@@ -315,6 +316,9 @@ export default function Home() {
                 </a>
                 <a href="#models" className="btn-ghost inline-flex items-center gap-2 px-5 py-3 rounded-md font-medium text-text-primary border border-border-subtle hover:border-border-highlight no-underline">
                   browse open models
+                </a>
+                <a href="/Joseph_Ayanda_CV.pdf" download="Joseph_Ayanda_CV.pdf" aria-label="Download CV (PDF, 3 pages)" className="btn-ghost inline-flex items-center gap-2 px-5 py-3 rounded-md font-medium text-text-primary border border-border-subtle hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent no-underline">
+                  <i className="fa-solid fa-download text-sm" aria-hidden="true"></i> download cv <span className="text-xs text-text-secondary">PDF</span>
                 </a>
                 <a href="#contact" className="btn-ghost inline-flex items-center gap-2 px-5 py-3 rounded-md font-medium text-text-secondary hover:text-text-primary no-underline">
                   get in touch
