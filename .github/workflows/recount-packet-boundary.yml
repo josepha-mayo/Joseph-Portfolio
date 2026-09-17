@@ -1,0 +1,111 @@
+name: Recount valid audio packet boundary
+on:
+  push:
+    branches: [migration/recount-standalone-20260917]
+    paths: [.github/workflows/recount-packet-boundary.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: recount-standalone-delivery
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - uses: actions/download-artifact@v4
+        with:
+          name: recount-standalone-corrected-delivery
+          run-id: 35279110802
+          github-token: ${{ github.token }}
+          path: /tmp/recount-delivery
+      - name: Preserve unsuccessful provider run and fix short audio packet handling
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,shutil,json
+          root=Path('/tmp/recount-delivery');prev=root/'previous/provider-attempt-1';prev.mkdir(parents=True,exist_ok=True)
+          shutil.copytree(root/'evidence',prev/'evidence',dirs_exist_ok=True);shutil.copyfile(root/'media/live-browser.webm',prev/'browser.webm')
+          for name in ['LIVE_BROWSER.json','failure.png','ready.png']:(root/'evidence'/name).unlink(missing_ok=True)
+          with zipfile.ZipFile(root/'Recount-Standalone-Source.zip') as z:z.extractall(root/'unpacked')
+          shutil.move(str(root/'unpacked/Recount'),str(root/'source'))
+          p=root/'source/web/audio-worklet.js';s=p.read_text()
+          old="if(e.data?.type==='drain'){this.emit();this.port.postMessage({type:'drained'});return;}";assert old in s
+          s=s.replace(old,"if(e.data?.type==='drain'){if(this.samples.length>=Math.ceil(sampleRate/20))this.emit();this.port.postMessage({type:'drained'});return;}")
+          s=s.replace('const buffer=new ArrayBuffer(this.samples.length*2),view=new DataView(buffer);','const count=Math.max(this.samples.length,Math.ceil(sampleRate/20));\n    const buffer=new ArrayBuffer(count*2),view=new DataView(buffer);');p.write_text(s)
+          p=root/'source/tests/transport.test.mjs';s=p.read_text().replace('assert.equal(f.sent[0].byteLength,8);','assert.equal(f.sent[0].byteLength,1600);')
+          old="assert.equal(f.sent.length,2);assert.equal(f.sent[1].type,'drained');f.node.process([[new Float32Array(1700).fill(.25)]]);assert.equal(f.sent.length,3);assert.equal(f.sent[2].byteLength,3400);";assert old in s
+          s=s.replace(old,"assert.equal(f.sent.length,1);assert.equal(f.sent[0].type,'drained');f.node.process([[new Float32Array(1700).fill(.25)]]);assert.equal(f.sent.length,2);assert.equal(f.sent[1].byteLength,3404);")
+          s+='''\ntest('terminal sub-frame preserves samples and pads only documented trailing silence to 50ms',()=>{const f=worklet();f.node.process([[new Float32Array([.5,-.5])]]);f.node.port.onmessage({data:{type:'flush'}});const bytes=new DataView(f.sent[0]);assert.equal(bytes.byteLength,1600);assert.equal(bytes.getInt16(0,true),16384);assert.equal(bytes.getInt16(2,true),-16384);for(let i=4;i<bytes.byteLength;i+=2)assert.equal(bytes.getInt16(i,true),0);});
+          test('nonterminal short tail remains buffered until it can form a valid provider packet',()=>{const f=worklet();f.node.process([[new Float32Array(100).fill(.25)]]);f.node.port.onmessage({data:{type:'drain'}});assert.equal(f.sent.length,1);assert.equal(f.sent[0].type,'drained');f.node.process([[new Float32Array(1500).fill(.5)]]);assert.equal(f.sent.length,2);const bytes=new DataView(f.sent[1]);assert.equal(bytes.byteLength,3200);assert.equal(bytes.getInt16(0,true),8192);assert.equal(bytes.getInt16(200,true),16384);});\n''';p.write_text(s)
+          p=root/'source/README.md';p.write_text(p.read_text()+'\nAssemblyAI documents a 50 ms minimum PCM packet. A continuing drain now retains a smaller tail until it can join the next valid packet; terminal flush preserves its samples and adds zero-valued trailing silence up to 50 ms. No transcript, quantity or confidence rule was changed. The preceding real provider attempt stopped after two finalized turns and is retained as a failed development run. Official contract: https://www.assemblyai.com/docs/streaming/common-session-errors-and-closures\n')
+          p=root/'source/ORIGIN.json';d=json.loads(p.read_text());d['migration_changes'].extend(['native browser functions bound to global receiver','outgoing PCM tail satisfies provider minimum packet duration']);p.write_text(json.dumps(d,indent=2))
+          PY
+      - name: Run deterministic and HTTP tests
+        working-directory: /tmp/recount-delivery/source
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/*.test.mjs | tee ../evidence/node.log
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee ../evidence/http.log
+      - name: Extract bounded deployment and capture scripts
+        run: |
+          python -m pip install playwright==1.57.0 PyYAML==6.0.2
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          doc=yaml.safe_load(Path('.github/workflows/recount-standalone-delivery.yml').read_text())
+          names={'Deploy through the authorized short-lived Netlify capability':'/tmp/recount-deploy.sh','Record one actual browser microphone-adapter session on the independent live site':'/tmp/recount-browser.sh','Package independent source and exact manifests':'/tmp/recount-package.sh'}
+          for step in doc['jobs']['deliver']['steps']:
+              if step.get('name') in names:
+                  t=step['run']
+                  if 'Record one actual browser' in step.get('name',''):
+                      t=t.replace("['Begin','Turn','Termination']", "['Begin','Turn','Termination','Error','Heartbeat','SpeechStarted']")
+                      t=t.replace("'session_duration_seconds']", "'session_duration_seconds','error_code','timestamp']")
+                      t=t.replace("result['events']=events;", "result['provider_sessions_begun']=sum(e.get('type')=='Begin' for e in events);result['events']=events;")
+                      t=t.replace("if len(finals)>=5:break", "if len(finals)>=5 or page.locator('#mode').inner_text()=='REVIEW REQUIRED':break")
+                  Path(names[step['name']]).write_text('set -euo pipefail\n'+t)
+          PY
+      - name: Deploy corrected standalone audio path
+        env:
+          ASSEMBLYAI_API_KEY: ${{ secrets.ASSEMBLYAI_API_KEY }}
+        run: bash /tmp/recount-deploy.sh
+      - name: Run ordinary browser regression
+        working-directory: /tmp/recount-delivery/source
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tests/browser.py | tee ../evidence/browser.log
+          cp verification/browser.json ../evidence/local-browser.json
+      - name: Record one real provider session using the preserved synthetic fixture
+        run: bash /tmp/recount-browser.sh
+      - name: Preserve exact source and full development lineage
+        if: always()
+        run: bash /tmp/recount-package.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recount-standalone-final-evidence
+          path: |
+            /tmp/recount-delivery/Recount-Standalone-Source.zip
+            /tmp/recount-delivery/evidence/
+            /tmp/recount-delivery/media/
+            /tmp/recount-delivery/previous/
+          retention-days: 30
+          if-no-files-found: error
