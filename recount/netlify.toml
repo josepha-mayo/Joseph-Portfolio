@@ -1,0 +1,20 @@
+[build]
+  publish = "web"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "microphone=(self), camera=(), geolocation=(), payment=(), usb=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' wss://streaming.assemblyai.com; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
