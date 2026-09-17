@@ -1,0 +1,4 @@
+job,start_slot,end_slot,power_W
+"Model evaluation",4,6,650
+"Training experiment",6,9,850
+"Dataset processing",9,10,400

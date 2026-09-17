@@ -1,0 +1,62 @@
+name: SunQueue replay release
+on:
+  push:
+    branches: [sunqueue-entry-preview-20260907]
+    paths: [public/sunqueue/UPGRADE02_READY]
+permissions:
+  contents: write
+concurrency:
+  group: sunqueue-v02
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/sunqueue-entry-preview-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: sunqueue-entry-preview-20260907
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check published source against the locally exercised revision
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected={'replay.test.cjs':'431bc7949c24bb069a207c0564d093eb3b6cd8fd0dcea14d8734c9c6c41b14f8','browser.py':'600467a9bd81c83760f17f8b6a3b8549b2a671f83d99190f37ccd9a5cc586b15','build.py':'b9a529dcb6b1bec673e0d9fa3bf92695a7cf914ea9685657e938c70df0dd009e','release.py':'28dcad93a79963d1a57efdb9e245f0850dbe1cee0c5343e65e00a782bee4a6fe','replay-ui.js':'e41b1dba2583d1372bceb0a307dae4dc7a285b5cc3a9aa81a4574b4b65299ec8','replay.js':'ad5ca618073b06a86d0568e06c918bafe8eb8f98ce9350ee3776300348c768f2'}
+          for name,digest in expected.items():
+              actual=hashlib.sha256((Path('public/sunqueue/upgrade02')/name).read_bytes()).hexdigest()
+              assert actual==digest,(name,actual,digest)
+          PY
+      - name: Install CPU-only test and narration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python3 -m venv /tmp/sunqueue-v02-env
+          /tmp/sunqueue-v02-env/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/sunqueue-v02-env/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1 playwright==1.55.0 pillow==11.3.0
+          /tmp/sunqueue-v02-env/bin/python -m playwright install chromium
+      - name: Test and record the real application
+        run: /tmp/sunqueue-v02-env/bin/python public/sunqueue/upgrade02/release.py
+      - name: Preserve additive candidate and actual evidence
+        if: always()
+        run: |
+          if [ ! -d public/sunqueue/v02 ]; then exit 0; fi
+          git config user.name 'SunQueue Build'
+          git config user.email 'sunqueue-build@users.noreply.github.com'
+          git add public/sunqueue/v02
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve SunQueue replay candidate and actual execution results'
+          git pull --rebase origin sunqueue-entry-preview-20260907
+          git push origin HEAD:sunqueue-entry-preview-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sunqueue-v02-release
+          path: public/sunqueue/v02/
+          retention-days: 14

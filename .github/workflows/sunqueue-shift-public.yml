@@ -1,0 +1,43 @@
+name: SunQueue Shift Sheet anonymous verification
+on:
+  push:
+    branches: [sunqueue-shift-20260908]
+    paths: [public/sunqueue/SHIFT_PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: sunqueue-shift-public
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/sunqueue-shift-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Install browser and media decoder
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/sunqueue-shift-public
+          /tmp/sunqueue-shift-public/bin/pip -q install playwright==1.55.0
+          /tmp/sunqueue-shift-public/bin/python -m playwright install --with-deps chromium
+      - name: Verify actual public app, all workflows, source and demonstration
+        run: /tmp/sunqueue-shift-public/bin/python public/sunqueue/upgrade03/public_check.py
+      - name: Preserve actual public-origin results on isolated branch
+        if: always()
+        run: |
+          git config user.name 'SunQueue Public Verification'
+          git config user.email 'sunqueue-build@users.noreply.github.com'
+          git add public/sunqueue/v03/evidence/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record anonymous Shift Sheet public-origin verification'
+          git push origin HEAD:sunqueue-shift-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sunqueue-shift-public-evidence
+          path: public/sunqueue/v03/evidence/
+          retention-days: 14
