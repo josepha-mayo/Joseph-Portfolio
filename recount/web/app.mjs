@@ -30,6 +30,8 @@ function render(){
   $('mode').textContent=locked?`AUDIO ${phase.toUpperCase()}`:state.hold?'REVIEW REQUIRED':'TEXT / REVIEW MODE';
   $('listen').textContent=phase==='draining'?'Waiting for final transcript…':phase==='prompting'?'Speaking read-back… stop session':locked?'Stop voice session':'Start voice session';
   $('listen').disabled=phase==='draining'||(!locked&&(!config?.voice_enabled||!$('consent').checked));
+  $('accessWrap').hidden=!config?.requires_access_code;
+  $('accessCode').disabled=locked||!config?.requires_access_code;
 }
 function act(a){
   $('error').textContent='';state=reduce(state,{...a,revision:a.revision??state.revision});render();speak();
@@ -54,11 +56,17 @@ $('load').onchange=async()=>{try{
 }catch(e){error(e);}};
 $('listen').onclick=async()=>{try{
   if(voice.active()){cancelSpeech();return voice.stop();}
-  cancelSpeech();await voice.start(config,$('consent').checked);
+  cancelSpeech();const runtimeConfig={...config};
+  if(config?.requires_access_code){
+    const code=$('accessCode').value.trim();
+    if(code.length<8||code.length>128)throw Error('Enter the judge access code before starting voice mode.');
+    runtimeConfig.access_code=code;
+  }
+  await voice.start(runtimeConfig,$('consent').checked);
 }catch(e){error(e);}};
 $('consent').onchange=()=>{if(!$('consent').checked){cancelSpeech();voice.revoke();}render();};
 window.addEventListener('pagehide',()=>{cancelSpeech();voice.revoke();});
 render();try{
-  const r=await fetch('/api/config');if(!r.ok)throw Error('Configuration unavailable');config=await r.json();
-  $('providerStatus').textContent=config.voice_enabled?'Provider configured. Real AssemblyAI synthetic-audio validation passed. During a live session, Recount mutes capture while speaking each local read-back, then resumes listening; human microphone validation remains pending.':'Live transcription is not configured. Set ASSEMBLYAI_API_KEY and ALLOW_ASSEMBLYAI=true in the local server environment. Never paste the key into this page.';render();
-}catch{error('Open the app through python server.py, not by double-clicking this file.');}
+  const r=await fetch('/api/config',{cache:'no-store'});if(!r.ok)throw Error('Configuration unavailable');config=await r.json();
+  $('providerStatus').textContent=config.voice_enabled?(config.requires_access_code?'Judge deployment is provider-ready. Enter the supplied access code, permit test audio, then start voice mode. Real synthetic-provider validation passed; human microphone holdout remains pending.':'Provider configured. Real AssemblyAI synthetic-audio validation passed. During a live session, Recount mutes capture while speaking each local read-back, then resumes listening; human microphone validation remains pending.'):'Voice mode is intentionally disabled on this deployment until its server-side AssemblyAI key is configured. Text/review mode still works.';render();
+}catch{error('Open the app through its local server or verified deployment, not by double-clicking this file.');}
