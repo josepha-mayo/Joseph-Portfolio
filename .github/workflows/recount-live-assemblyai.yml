@@ -6,6 +6,7 @@ on:
       - .github/workflows/recount-live-assemblyai.yml
       - recount/web/core.mjs
       - recount/tests/confidence_policy.test.mjs
+      - recount/tests/voice_confirm.test.mjs
       - recount/tests/live_assemblyai.py
       - recount/tests/evaluate_live.mjs
 permissions:
@@ -43,14 +44,14 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
           python -m pip install websockets==15.0.1
-      - name: Generate authored correction-heavy PCM fixtures
+      - name: Generate authored correction and spoken-confirmation PCM fixtures
         working-directory: recount
         run: |
           mkdir -p verification/live-provider
-          espeak-ng -s 132 -v en-gb -w /tmp/rice.wav 'Rice twelve bags. No, thirteen bags.'
-          espeak-ng -s 132 -v en-gb -w /tmp/soap.wav 'Soap fifteen bars. Sorry, fifty bars.'
-          espeak-ng -s 132 -v en-gb -w /tmp/oil.wav 'Cooking oil eight bottles.'
-          espeak-ng -s 132 -v en-gb -w /tmp/wrong.wav 'Rice twelve cartons.'
+          espeak-ng -s 132 -v en-gb -w /tmp/rice.wav 'Rice twelve bags. No, thirteen bags. Confirm thirteen.'
+          espeak-ng -s 132 -v en-gb -w /tmp/soap.wav 'Soap fifteen bars. Sorry, fifty bars. Confirm fifty.'
+          espeak-ng -s 132 -v en-gb -w /tmp/oil.wav 'Cooking oil eight bottles. Confirm eight.'
+          espeak-ng -s 132 -v en-gb -w /tmp/wrong.wav 'Rice twelve cartons. Confirm twelve.'
           ffmpeg -nostdin -loglevel error -y -i /tmp/rice.wav -ar 16000 -ac 1 -f s16le verification/live-provider/rice-correction.pcm
           ffmpeg -nostdin -loglevel error -y -i /tmp/soap.wav -ar 16000 -ac 1 -f s16le verification/live-provider/soap-correction.pcm
           ffmpeg -nostdin -loglevel error -y -i /tmp/oil.wav -ar 16000 -ac 1 -f s16le verification/live-provider/oil.pcm
@@ -61,17 +62,17 @@ jobs:
               assert 3200 < p.stat().st_size < 2_000_000 and p.stat().st_size%2==0
               print(p.name,p.stat().st_size)
           PY
-      - name: Run the actual AssemblyAI Streaming v3 sessions
+      - name: Run actual AssemblyAI Streaming v3 sessions
         working-directory: recount
         run: python tests/live_assemblyai.py | tee verification/live-provider/live.log
-      - name: Feed finalized provider turns through Recount and preserve failures
+      - name: Require provider speech itself to reach the final state
         working-directory: recount
         continue-on-error: true
         run: node tests/evaluate_live.mjs | tee verification/live-provider/evaluate.log
-      - name: Rerun deterministic regression suites around the live result
+      - name: Rerun deterministic regressions around the live result
         working-directory: recount
         run: |
-          node --test tests/core.test.mjs tests/recovery.test.mjs tests/audio_client.test.mjs tests/worklet.test.mjs tests/confidence_policy.test.mjs | tee verification/live-provider/regression.log
+          node --test tests/core.test.mjs tests/recovery.test.mjs tests/audio_client.test.mjs tests/worklet.test.mjs tests/confidence_policy.test.mjs tests/voice_confirm.test.mjs | tee verification/live-provider/regression.log
           python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee verification/live-provider/http.log
       - name: Write non-secret execution receipt
         if: always()
@@ -86,16 +87,16 @@ jobs:
               return json.loads(p.read_text()) if p.exists() else None
           provider=load('provider.json');evaluation=load('evaluation.json')
           receipt={
-            'schema':'recount-live-execution-receipt-2','run_id':os.environ['GITHUB_RUN_ID'],'source_commit':os.environ['GITHUB_SHA'],
+            'schema':'recount-live-execution-receipt-3','run_id':os.environ['GITHUB_RUN_ID'],'source_commit':os.environ['GITHUB_SHA'],
             'provider_executed':provider is not None,'provider_calls':None if not provider else provider['provider_calls'],
             'speech_model':None if not provider else provider['speech_model'],'audio_source':None if not provider else provider['audio_source'],
             'human_audio_cases':0,'evaluation_passed':None if not evaluation else evaluation['passed'],'evaluation_total':None if not evaluation else evaluation['total'],
             'all_cases_passed':None if not evaluation else evaluation['all_passed'],'secret_recorded':False,
-            'confidence_policy':'quantity-first-v1; development floor 0.75; whole count still requires explicit read-back confirmation',
+            'confirmation_mode':'spoken quantity echo; evaluator does not synthesize a button confirmation',
+            'confidence_policy':'quantity-first-v1; staging floor 0.75; spoken commit floor 0.90',
             'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in d.iterdir() if p.is_file() and p.suffix not in {'.pcm','.wav'}},
-            'scope':'Real AssemblyAI Streaming v3 calls on authored synthetic speech. Measures provider integration and task-aware correction parsing only; not human/accent performance or user benefit.'}
-          (d/'RECEIPT.json').write_text(json.dumps(receipt,indent=2))
-          print(json.dumps(receipt,indent=2))
+            'scope':'Real AssemblyAI Streaming v3 calls on authored synthetic speech. Measures provider integration, correction parsing and spoken confirmation only; not human/accent performance or user benefit.'}
+          (d/'RECEIPT.json').write_text(json.dumps(receipt,indent=2));print(json.dumps(receipt,indent=2))
           PY
       - uses: actions/upload-artifact@v4
         if: always()
@@ -117,7 +118,7 @@ jobs:
           assert p.exists(), 'Provider integration did not reach evaluation'
           e=json.loads(p.read_text())
           if not e['all_passed']:
-              print('Live ASR exposed one or more semantic failures. Evidence is preserved for the next fix.')
+              print('Live ASR exposed a spoken-confirmation failure. Evidence is preserved for the next fix.')
               raise SystemExit(3)
-          print('All four predeclared live-provider cases passed through the Recount ledger.')
+          print('All four predeclared provider cases reached the correct voice-confirmed state.')
           PY
