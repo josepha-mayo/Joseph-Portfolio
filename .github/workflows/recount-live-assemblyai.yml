@@ -1,0 +1,118 @@
+name: Recount live AssemblyAI validation
+on:
+  push:
+    branches: [hackathon/recount-voice-20260917]
+    paths: [.github/workflows/recount-live-assemblyai.yml]
+permissions:
+  contents: read
+concurrency:
+  group: recount-live-assemblyai
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      ASSEMBLYAI_API_KEY: ${{ secrets.ASSEMBLYAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Require configured secret without printing it
+        run: |
+          python - <<'PY'
+          import os
+          key=os.getenv('ASSEMBLYAI_API_KEY','')
+          assert len(key)>=16, 'ASSEMBLYAI_API_KEY repository secret is missing or unexpectedly short'
+          print('AssemblyAI secret is available to this branch workflow; value not printed.')
+          PY
+      - name: Install bounded audio and websocket tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python -m pip install websockets==15.0.1
+      - name: Generate authored correction-heavy PCM fixtures
+        working-directory: recount
+        run: |
+          mkdir -p verification/live-provider
+          espeak-ng -s 132 -v en-gb -w /tmp/rice.wav 'Rice twelve bags. No, thirteen bags.'
+          espeak-ng -s 132 -v en-gb -w /tmp/soap.wav 'Soap fifteen bars. Sorry, fifty bars.'
+          espeak-ng -s 132 -v en-gb -w /tmp/oil.wav 'Cooking oil eight bottles.'
+          espeak-ng -s 132 -v en-gb -w /tmp/wrong.wav 'Rice twelve cartons.'
+          ffmpeg -nostdin -loglevel error -y -i /tmp/rice.wav -ar 16000 -ac 1 -f s16le verification/live-provider/rice-correction.pcm
+          ffmpeg -nostdin -loglevel error -y -i /tmp/soap.wav -ar 16000 -ac 1 -f s16le verification/live-provider/soap-correction.pcm
+          ffmpeg -nostdin -loglevel error -y -i /tmp/oil.wav -ar 16000 -ac 1 -f s16le verification/live-provider/oil.pcm
+          ffmpeg -nostdin -loglevel error -y -i /tmp/wrong.wav -ar 16000 -ac 1 -f s16le verification/live-provider/wrong-unit.pcm
+          python - <<'PY'
+          from pathlib import Path
+          for p in sorted(Path('verification/live-provider').glob('*.pcm')):
+              assert 3200 < p.stat().st_size < 2_000_000 and p.stat().st_size%2==0
+              print(p.name,p.stat().st_size)
+          PY
+      - name: Run the actual AssemblyAI Streaming v3 sessions
+        working-directory: recount
+        run: python tests/live_assemblyai.py | tee verification/live-provider/live.log
+      - name: Feed finalized provider turns through Recount and preserve failures
+        working-directory: recount
+        continue-on-error: true
+        id: eval
+        run: node tests/evaluate_live.mjs | tee verification/live-provider/evaluate.log
+      - name: Rerun deterministic regression suites around the live result
+        working-directory: recount
+        run: |
+          node --test tests/core.test.mjs tests/recovery.test.mjs tests/audio_client.test.mjs tests/worklet.test.mjs | tee verification/live-provider/regression.log
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee verification/live-provider/http.log
+      - name: Write non-secret execution receipt
+        if: always()
+        working-directory: recount
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          d=Path('verification/live-provider')
+          def load(name):
+              p=d/name
+              return json.loads(p.read_text()) if p.exists() else None
+          provider=load('provider.json');evaluation=load('evaluation.json')
+          receipt={
+            'schema':'recount-live-execution-receipt-1','run_id':os.environ['GITHUB_RUN_ID'],'source_commit':os.environ['GITHUB_SHA'],
+            'provider_executed':provider is not None,'provider_calls':None if not provider else provider['provider_calls'],
+            'speech_model':None if not provider else provider['speech_model'],'audio_source':None if not provider else provider['audio_source'],
+            'human_audio_cases':0,'evaluation_passed':None if not evaluation else evaluation['passed'],'evaluation_total':None if not evaluation else evaluation['total'],
+            'all_cases_passed':None if not evaluation else evaluation['all_passed'],'secret_recorded':False,
+            'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in d.iterdir() if p.is_file() and p.suffix not in {'.pcm','.wav'}},
+            'scope':'Real AssemblyAI Streaming v3 calls on authored synthetic speech. Measures provider integration and correction parsing only; not human/accent performance or user benefit.'}
+          (d/'RECEIPT.json').write_text(json.dumps(receipt,indent=2))
+          print(json.dumps(receipt,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recount-live-assemblyai-evidence
+          path: |
+            recount/verification/live-provider/*.json
+            recount/verification/live-provider/*.log
+          if-no-files-found: error
+          retention-days: 30
+      - name: Surface semantic failures after preserving evidence
+        if: always()
+        working-directory: recount
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('verification/live-provider/evaluation.json')
+          assert p.exists(), 'Provider integration did not reach evaluation'
+          e=json.loads(p.read_text())
+          if not e['all_passed']:
+              print('Live ASR exposed one or more semantic failures. Evidence is preserved for the next fix.')
+              raise SystemExit(3)
+          print('All four predeclared live-provider cases passed through the Recount ledger.')
+          PY
