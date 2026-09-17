@@ -1,0 +1,28 @@
+{
+  "schema": "recount-correction-recovery-update-1",
+  "date": "2026-09-17",
+  "baseline_commit": "f6aebf6f2bc3b2ae981f75f0faccf0eb274d22d2",
+  "status": "local_node_and_http_passed",
+  "node_tests_passed": 68,
+  "original_node_tests_retained": 28,
+  "new_node_tests": 40,
+  "loopback_http_tests_passed": 8,
+  "new_live_browser_checks": 0,
+  "actual_assemblyai_requests": 0,
+  "actual_audio_cases": 0,
+  "registration_confirmed": false,
+  "submitted": false,
+  "production_changed": false,
+  "test_scope": "Authored state/event fixtures, dependency-injected transport tests, actual worklet source in Node VM, and real loopback HTTP tests. No real microphone/ASR/voice-quality evidence.",
+  "baseline_defects_reproduced": [
+    "Unit-only response could clear a blocked number",
+    "Unfinished trailing correction could leave old count ready",
+    "Revised confidence on the same final turn could be ignored"
+  ],
+  "current_recovery": "Require full restatement after uncertainty; hold lost/conflicting/out-of-order speech; drain buffered audio and wait for final termination before confirmation.",
+  "browser_status": "Earlier environment block retained. No browser navigation retry or bypass in this update.",
+  "log_sha256": {
+    "all-node-v02.log": "b51c0225b48aeeb28b96e8c2f1843e59b58b4031cc2ff2134cf7e182a4942e56",
+    "http-v02.log": "c76d88a737e8ea0b831f63c9b2ebc9d7481fe903ad8ff4e0666165b18392813a"
+  }
+}

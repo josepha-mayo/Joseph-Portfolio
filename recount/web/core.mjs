@@ -8,8 +8,9 @@ const TENS = {twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:8
 const NUMBER = new Set([...Object.keys(SMALL),...Object.keys(TENS),'hundred']);
 const UNITS = {bag:'bags',bags:'bags',bottle:'bottles',bottles:'bottles',bar:'bars',bars:'bars',carton:'cartons',cartons:'cartons',piece:'pieces',pieces:'pieces'};
 const FILLER = new Set('count counted have i we there are is of the a total set to stock cooking please now'.split(' '));
-export function initial(){return {revision:0,pending:null,counts:{},seen:{},history:[],reply:'Name one item, its count, and its unit. For example: rice twelve bags.'};}
-function clean(s){return s.toLowerCase().replace(/[.,!?;:]/g,' ').replace(/(?<=[a-z])-(?=[a-z])/g,' ').replace(/\s+/g,' ').trim();}
+export const HOLD_REASONS = new Set(['stream_lost','unfinished_speech','transcript_conflict','stale_turn','invalid_event','audio_gap','consent_revoked']);
+export function initial(){return {revision:0,pending:null,hold:null,counts:{},seen:{},history:[],reply:'Name one item, its count, and its unit. For example: rice twelve bags.'};}
+export function normalizeTranscript(s){return s.toLowerCase().replace(/[.,!?;:]/g,' ').replace(/(?<=[a-z])-(?=[a-z])/g,' ').replace(/\s+/g,' ').trim();}
 function num(words){
   if(words.length===1 && /^\d+$/.test(words[0])){const n=Number(words[0]);return Number.isSafeInteger(n)&&n<=9999?n:null;}
   if(words.some(w=>/^\d+$/.test(w)))return null;
@@ -35,14 +36,20 @@ function parts(text){
   return {sku:skus[0]??null,unit:units[0]??null,quantity};
 }
 export function parse(text,previous=null){
-  const t=clean(text);
+  const t=normalizeTranscript(text);
   if(['cancel','discard','discard count','cancel count'].includes(t))return {cancel:true};
   if(['confirm','save','save count','confirm count'].includes(t))return {confirmRequested:true};
   if(['read back','read it back','repeat'].includes(t))return {repeat:true};
-  const chunks=t.split(/\b(?:no|actually|sorry|make that|correction)\b/).map(s=>s.trim()).filter(Boolean);
+  const clauses=t.split(/\b(?:no|actually|sorry|make that|correction)\b/).map(s=>s.trim());
+  if(clauses.length>1 && clauses.slice(1).some(x=>!x))return {error:'The correction was unfinished. Repeat the complete item, number and unit.'};
+  const chunks=clauses.filter(Boolean);
   const correcting=/\b(?:no|actually|sorry|make that|correction)\b/.test(t);
   if(!chunks.length)return {error:'Repeat the item and the corrected count.'};
   let p=previous?{...previous,blocked:false}:{sku:null,quantity:null,unit:null,blocked:false};
+  if(previous?.blocked){
+    const repair=parts(chunks.at(-1));
+    if(repair.error||!repair.sku||repair.quantity===null||!repair.unit)return {error:'The earlier count is uncertain. Repeat the complete item, number and unit, or discard it.'};
+  }
   for(let i=0;i<chunks.length;i++){
     const q=parts(chunks[i]);if(q.error)return q;
     if(q.sku&&p.sku&&q.sku!==p.sku)return {error:'Confirm or discard the current item before starting a different item.'};
@@ -65,34 +72,44 @@ function describe(p){
 }
 function validKey(x){return typeof x==='string'&&/^[a-zA-Z0-9:_-]{1,140}$/.test(x);}
 export function reduce(before,action){
-  if(!action||!['turn','confirm','discard'].includes(action.kind))throw Error('Unknown action');
+  if(!action||!['turn','confirm','discard','hold'].includes(action.kind))throw Error('Unknown action');
   if(action.kind==='turn'&&action.final===false)return before;
   if(action.kind==='turn'){
     if(!validKey(action.id)||typeof action.text!=='string'||!action.text.trim()||action.text.length>500)throw Error('Invalid turn');
     if(!['typed','assemblyai','fixture'].includes(action.source)||action.final!==true)throw Error('Invalid turn provenance');
     if(!Number.isFinite(action.confidence)||action.confidence<0||action.confidence>1)throw Error('Invalid recognition confidence');
     if(Object.hasOwn(before.seen,action.id)){
-      if(before.seen[action.id]===clean(action.text))return before;
+      const prior=before.seen[action.id];
+      if(prior.text===normalizeTranscript(action.text) && prior.confidence===action.confidence && prior.source===action.source)return before;
       throw Error('Conflicting transcript for an existing turn; repeat as a new turn');
     }
   }
+  if(action.kind==='hold'&&!HOLD_REASONS.has(action.reason))throw Error('Unknown hold reason');
   if(action.revision!==before.revision)throw Error('Draft changed; review the latest read-back');
   if(before.history.length>=1000)throw Error('Session limit reached; export and start a new session');
   const s=structuredClone(before);s.revision++;s.history.push(structuredClone(action));
-  if(action.kind==='discard'){s.pending=null;s.reply='Draft discarded. Confirmed counts are unchanged.';return s;}
+  if(action.kind==='hold'){
+    s.hold=action.reason;if(s.pending)s.pending.blocked=true;
+    s.reply='Audio or transcript integrity needs review. Repeat the complete item, number and unit, or explicitly discard this uncertain input.';return s;
+  }
+  if(action.kind==='discard'){s.hold=null;s.pending=null;s.reply='Draft discarded. Confirmed counts are unchanged.';return s;}
   if(action.kind==='confirm'){
-    if(!ready(s.pending))throw Error('A complete, clarified draft is required');
+    if(s.hold || !ready(s.pending))throw Error('A complete, clarified draft is required');
     s.counts[s.pending.sku]={quantity:s.pending.quantity,unit:s.pending.unit,revision:s.revision};
     s.reply=`Saved ${CATALOG[s.pending.sku].label}: ${s.pending.quantity} ${s.pending.unit}. What is the next item?`;s.pending=null;return s;
   }
-  s.seen[action.id]=clean(action.text);
+  s.seen[action.id]={text:normalizeTranscript(action.text),confidence:action.confidence,source:action.source};
   if(action.confidence<.85){if(s.pending)s.pending.blocked=true;s.reply='I am not confident in that transcript. Please repeat the full item, number and unit.';return s;}
-  const result=parse(action.text,s.pending);
+  let result=parse(action.text,s.pending);
+  if(s.hold && result.pending){
+    const restatement=parse(action.text);
+    if(!restatement.pending || !ready(restatement.pending))result={error:'Repeat the entire uncertain count, including item and unit, or discard it.'};
+  }
   if(result.error){if(s.pending)s.pending.blocked=true;s.reply=result.error;}
-  else if(result.cancel){s.pending=null;s.reply='Draft discarded. Confirmed counts are unchanged.';}
+  else if(result.cancel){s.hold=null;s.pending=null;s.reply='Draft discarded. Confirmed counts are unchanged.';}
   else if(result.confirmRequested){s.reply=ready(s.pending)?describe(s.pending):'Nothing complete to save yet. '+describe(s.pending);}
   else if(result.repeat)s.reply=describe(s.pending);
-  else{s.pending=result.pending;s.reply=describe(s.pending);}
+  else{s.hold=null;s.pending=result.pending;s.reply=describe(s.pending);}
   return s;
 }
 export function fromAssembly(message,session,revision){
@@ -107,4 +124,4 @@ export function replay(log){
   if(!Array.isArray(log)||log.length>1000)throw Error('Invalid session history');
   return log.reduce((s,a)=>reduce(s,a),initial());
 }
-export function exportCSV(s){return 'item,quantity,unit\r\n'+Object.entries(s.counts).map(([sku,r])=>`${CATALOG[sku].label},${r.quantity},${r.unit}\r\n`).join('');}
+export function exportCSV(s){if(s.hold)throw Error('Resolve or discard the uncertain input before exporting');return 'item,quantity,unit\r\n'+Object.entries(s.counts).map(([sku,r])=>`${CATALOG[sku].label},${r.quantity},${r.unit}\r\n`).join('');}

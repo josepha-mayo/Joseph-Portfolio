@@ -1,0 +1,36 @@
+{
+  "schema": "recount-real-speech-evaluation-plan-1",
+  "frozen_on": "2026-09-17",
+  "status": "planned_not_executed",
+  "purpose": "Measure correct confirmed count recovery, not only transcript word error rate.",
+  "initial_cohort": {
+    "task_sequences": 24,
+    "categories": {
+      "clean_item_quantity_unit": 4,
+      "missing_unit_followed_by_clarification": 4,
+      "number_confusions_and_explicit_corrections": 4,
+      "unsupported_units_or_products": 4,
+      "interruptions_and_unfinished_corrections": 4,
+      "duplicate_turns_reconnection_or_late_events": 4
+    },
+    "audio_conditions": ["original consented speech", "same recording with a declared reproducible noise transform"],
+    "counting_rule": "Transformed copies are not additional speakers, sessions or independent tasks. Authored event replays are labeled separately from actual provider events."
+  },
+  "reference_design": "Keep intended final item, quantity, unit and expected hold/confirm outcome in a separate annotation file. Never send target answers to ASR or the runtime parser. Save waveform hashes and fixed category assignments before inference. Record all consented clips and all provider failures, not only favorable takes.",
+  "methods": ["same final ASR transcripts with a simple last-number baseline, explicitly limited", "Recount v0.2 state and capture gates"],
+  "metrics": [
+    "wrong item/quantity/unit actually committed",
+    "correct completed tasks divided by all attempted tasks",
+    "unresolved tasks and provider failures, reported separately",
+    "correctly held unsupported or incomplete instructions",
+    "number of clarification/repetition turns per task",
+    "time from actual end of user speech to read-back",
+    "time to final confirmed count, including recovery"
+  ],
+  "release_gate": "Any unintended commit in this cohort blocks release. Require substantive task completion as well as refusal behavior; a system that never confirms anything does not pass. Passing a small cohort is not a zero-error guarantee. Predeclare any performance threshold before scoring and do not tune on the final recordings.",
+  "latency_scope": "Browser/audio timestamps and provider-message arrival times must be measured. Synthetic event delay is not microphone or network latency.",
+  "actual_audio_cases": 0,
+  "actual_provider_calls": 0,
+  "registered_or_submitted": false,
+  "cost_status": "No new provider expenditure authorized or incurred in this update."
+}

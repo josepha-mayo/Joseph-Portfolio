@@ -19,7 +19,7 @@ class ServerTest(unittest.TestCase):
   except urllib.error.HTTPError as e:return e.code,dict(e.headers),e.read()
  def hdr(self):return {'Content-Type':'application/json','Origin':self.base,'X-Recount-Token':server.TOKEN}
  def test_actual_document_and_assets(self):
-  for path in ['/','/app.mjs','/core.mjs','/style.css','/audio-worklet.js']:
+  for path in ['/','/app.mjs','/core.mjs','/style.css','/audio-worklet.js','/capture-gate.mjs','/voice-runtime.mjs']:
    status,headers,data=self.request(path);self.assertEqual(status,200);self.assertTrue(data);self.assertEqual(headers['Cache-Control'],'no-store')
  def test_no_unlisted_files_or_directory_traversal(self):
   for path in ['/server.py','/../server.py','/.env']:

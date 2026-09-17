@@ -36,7 +36,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.headers.get('Host')!=f'127.0.0.1:{self.server.server_port}':return self.send(403,{'error':'Use the printed loopback URL'})
         if self.path=='/api/config':return self.send(200,{'csrf':TOKEN,'voice_enabled':enabled(),'provider_executed':False})
-        paths={'/':('index.html','text/html; charset=utf-8'),'/app.mjs':('app.mjs','text/javascript'),'/core.mjs':('core.mjs','text/javascript'),'/audio-worklet.js':('audio-worklet.js','text/javascript'),'/style.css':('style.css','text/css')}
+        paths={'/':('index.html','text/html; charset=utf-8'),'/app.mjs':('app.mjs','text/javascript'),'/core.mjs':('core.mjs','text/javascript'),'/capture-gate.mjs':('capture-gate.mjs','text/javascript'),'/voice-runtime.mjs':('voice-runtime.mjs','text/javascript'),'/audio-worklet.js':('audio-worklet.js','text/javascript'),'/style.css':('style.css','text/css')}
         if self.path not in paths:return self.send(404,{'error':'Not found'})
         path,mime=paths[self.path];return self.send(200,(ROOT/path).read_bytes(),mime)
     def do_POST(self):
