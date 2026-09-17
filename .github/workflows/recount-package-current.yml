@@ -1,0 +1,42 @@
+name: Recount current source package
+on:
+  push:
+    branches: [hackathon/recount-voice-20260917]
+    paths: [.github/workflows/recount-package-current.yml]
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Package exact source and record identity
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/recount-package/source
+          cp -a recount/. /tmp/recount-package/source/
+          rm -rf /tmp/recount-package/source/verification/live-provider || true
+          find /tmp/recount-package/source -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/recount-package/SHA256SUMS.txt
+          python - <<'PY'
+          from pathlib import Path
+          import json,os
+          p=Path('/tmp/recount-package')
+          (p/'SOURCE.json').write_text(json.dumps({
+            'schema':'recount-source-package-1',
+            'source_commit':os.environ['GITHUB_SHA'],
+            'branch':os.environ['GITHUB_REF_NAME'],
+            'provider_calls_during_packaging':0,
+            'secret_files_included':False,
+            'scope':'Exact tracked Recount source at this commit. Generated live-provider audio/output omitted; source verification metadata retained.'
+          },indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recount-current-source
+          path: /tmp/recount-package/
+          retention-days: 14
+          if-no-files-found: error
