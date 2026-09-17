@@ -1,0 +1,82 @@
+name: Counterstep Transfer Path final release
+on:
+  push:
+    branches: [counterstep-transfer-final-20260908]
+    paths: [.github/workflows/counterstep-transfer-release.yml, TRANSFER_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: counterstep-transfer-final-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/counterstep-transfer-final-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand verified upgrade without replacing the original entry
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil,json,lzma,hashlib
+          source=Path('public/counterstep');dest=source/'v11'
+          if not (dest/'src/path.js').exists():
+            raw=b''.join(Path(f'transfer-input/part{i}.bin').read_bytes() for i in range(3))
+            assert hashlib.sha256(raw).hexdigest()=='f0fea1cfdb057f4aec644701067ff9a5396de3c686cb8c0e5b414cac519b668c'
+            files=json.loads(lzma.decompress(raw));assert len(files)==13
+            dest.mkdir(exist_ok=True)
+            for name in ['src','tests','training','tools','docs']:
+              shutil.copytree(source/name,dest/name,dirs_exist_ok=True)
+            shutil.copy2(source/'LICENSE',dest/'LICENSE')
+            shutil.copy2(source/'README.md',dest/'docs/ORIGINAL_README.md')
+            shutil.copytree(source/'evidence',dest/'evidence-v1',dirs_exist_ok=True)
+            for name,text in files.items():
+              p=Path(name);assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github' and isinstance(text,str)
+              p=dest/p;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+          (dest/'evidence').mkdir(exist_ok=True)
+          PY
+      - name: Install browser and run functional gates before narration
+        run: |
+          python3 -m venv /tmp/counterstep-transfer
+          /tmp/counterstep-transfer/bin/pip -q install playwright==1.55.0
+          /tmp/counterstep-transfer/bin/python -m playwright install --with-deps chromium
+          cd public/counterstep/v11
+          /tmp/counterstep-transfer/bin/python tools/build_path.py
+          node --test tests/core.test.cjs tests/path.test.cjs
+          /tmp/counterstep-transfer/bin/python tests/oracle.py
+          /tmp/counterstep-transfer/bin/python tests/path_oracle.py
+          /tmp/counterstep-transfer/bin/python tests/browser.py
+          /tmp/counterstep-transfer/bin/python tests/path_browser.py
+      - name: Install CPU-only stock synthetic narration
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          /tmp/counterstep-transfer/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/counterstep-transfer/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1
+      - name: Record actual path and package tested source
+        run: /tmp/counterstep-transfer/bin/python public/counterstep/v11/tools/path_release.py
+      - name: Preserve actual source and results only on this branch
+        if: always()
+        run: |
+          git config user.name 'Counterstep Transfer Verification'
+          git config user.email 'counterstep-build@users.noreply.github.com'
+          rm -f transfer-input/part*.bin
+          git add public/counterstep/v11 transfer-input
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve typed transfer implementation and actual release evidence'
+          git push origin HEAD:counterstep-transfer-final-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: counterstep-transfer-final-release
+          path: public/counterstep/v11/
+          retention-days: 14

@@ -1,0 +1,117 @@
+{
+  "project": "Counterstep",
+  "seed": 20260907,
+  "training_n": 3200,
+  "training_coefficients": "a and abs(b): 2..9",
+  "holdout_coefficients": "a and abs(b): 12..29",
+  "data": "Original synthetic injected mistakes, MIT; no learner records. Numeric holdout shares the five generation families; it is not independent student validation.",
+  "architecture": [
+    62,
+    24,
+    5
+  ],
+  "parameters": 1637,
+  "epochs": 23,
+  "classes": [
+    "arithmetic",
+    "balance",
+    "divide",
+    "negative",
+    "spread"
+  ],
+  "threshold": 0.72,
+  "threshold_selection": "Fixed at 0.72 before training; not calibrated. Browser additionally abstains on extreme feature distance.",
+  "numeric_holdout": {
+    "n": 600,
+    "accuracy": 0.9366666666666666,
+    "suggestion_coverage": 0.7416666666666667,
+    "accuracy_when_suggesting": 1.0,
+    "confusion_matrix": [
+      [
+        82,
+        38,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        120,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        120,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        120,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        120
+      ]
+    ]
+  },
+  "swapped_sides_stress": {
+    "n": 600,
+    "accuracy": 0.9366666666666666,
+    "suggestion_coverage": 0.7416666666666667,
+    "accuracy_when_suggesting": 1.0,
+    "confusion_matrix": [
+      [
+        82,
+        38,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        120,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        120,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        120,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        120
+      ]
+    ]
+  },
+  "environment": {
+    "python": "3.13.5",
+    "numpy": "2.3.5",
+    "scikit_learn": "1.8.0"
+  },
+  "warnings": [],
+  "model_sha256": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381"
+}
