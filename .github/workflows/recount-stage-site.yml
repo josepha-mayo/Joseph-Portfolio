@@ -85,7 +85,7 @@ jobs:
           from playwright.sync_api import sync_playwright,expect
           with sync_playwright() as p:
               b=p.chromium.launch(headless=True);page=b.new_page(viewport={'width':1280,'height':900});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-              page.goto('http://127.0.0.1:8892/recount/',wait_until='networkidle');expect(page.locator('#accessWrap')).to_be_visible();expect(page.locator('#listen')).to_be_disabled()
+              page.goto('http://127.0.0.1:8892/recount/',wait_until='networkidle');page.locator('summary').click();expect(page.locator('#accessWrap')).to_be_visible();expect(page.locator('#listen')).to_be_disabled()
               for text in ['rice twelve','bags','no thirteen','confirm thirteen']:
                   page.locator('#utterance').fill(text);page.locator('#textForm button').click()
               expect(page.locator('#rows')).to_contain_text('13');assert page.evaluate('document.documentElement.scrollWidth<=window.innerWidth');assert not errors,errors
