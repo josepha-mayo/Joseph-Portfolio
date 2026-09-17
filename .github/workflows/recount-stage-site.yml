@@ -1,0 +1,116 @@
+name: Recount stage judge site
+on:
+  push:
+    branches: [release/recount-judge-site-20260917]
+    paths: [.github/workflows/recount-stage-site.yml]
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Stage exact Recount client under /recount and prefix serverless routes
+        run: |
+          set -euo pipefail
+          rm -rf public/recount
+          mkdir -p public/recount netlify/functions deployment
+          cp recount/web/* public/recount/
+          cp recount/netlify/functions/config.mts netlify/functions/recount-config.mts
+          cp recount/netlify/functions/token.mts netlify/functions/recount-token.mts
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/recount/index.html');t=p.read_text();t=t.replace('href="/style.css"','href="./style.css"').replace('src="/app.mjs"','src="./app.mjs"');p.write_text(t)
+          p=Path('public/recount/app.mjs');t=p.read_text();t=t.replace("fetch('/api/config',{cache:'no-store'})","fetch(new URL('./api/config',import.meta.url).href,{cache:'no-store'})");p.write_text(t)
+          p=Path('public/recount/voice-runtime.mjs');t=p.read_text();t=t.replace("addModule('/audio-worklet.js')","addModule(new URL('./audio-worklet.js',import.meta.url).href)").replace("this.d.fetch('/api/token'","this.d.fetch(new URL('./api/token',import.meta.url).href");p.write_text(t)
+          for name,route in [('recount-config.mts','config'),('recount-token.mts','token')]:
+              p=Path('netlify/functions')/name;t=p.read_text()
+              t=t.replace(f"export const config = {{ path: ['/api/{route}', '/recount/api/{route}'] }};",f"export const config = {{ path: '/recount/api/{route}' }};")
+              t=t.replace(f"export const config = {{ path: '/api/{route}' }};",f"export const config = {{ path: '/recount/api/{route}' }};")
+              if f"path: '/recount/api/{route}'" not in t: raise SystemExit('route rewrite failed: '+name)
+              p.write_text(t)
+          PY
+      - name: Verify source regressions without provider calls
+        working-directory: recount
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        run: |
+          node --test tests/*.test.mjs
+          python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Unit-test judge token boundary with mocked provider
+        run: |
+          node --experimental-strip-types --input-type=module <<'JS'
+          import configFn from './netlify/functions/recount-config.mts';
+          import tokenFn from './netlify/functions/recount-token.mts';
+          const vals={RECOUNT_SIGNING_SECRET:'fixture-signing-secret-1234567890',RECOUNT_DEMO_PASS:'fixture-access-123',ASSEMBLYAI_API_KEY:'fixture-provider-key-123456789',RECOUNT_ALLOWED_ORIGIN:'https://example.test'};
+          globalThis.Netlify={env:{get:k=>vals[k]||''}};
+          const config=await configFn(new Request('https://example.test/recount/api/config'));
+          if(config.status!==200)throw Error('config failed');
+          const cfg=await config.json();if(!cfg.requires_access_code||!cfg.voice_enabled)throw Error('config flags');
+          const cookie=config.headers.get('set-cookie');if(!cookie||!cfg.csrf)throw Error('missing session bootstrap');
+          let providerCalls=0;globalThis.fetch=async()=>{providerCalls++;return new Response(JSON.stringify({token:'temporary-provider-token-123'}),{status:200,headers:{'Content-Type':'application/json'}})};
+          const headers={'Content-Type':'application/json','Origin':'https://example.test','X-Recount-Token':cfg.csrf,'Cookie':cookie.split(';')[0]};
+          let r=await tokenFn(new Request('https://example.test/recount/api/token',{method:'POST',headers:{...headers,Origin:'https://evil.test'},body:JSON.stringify({consent:true,access_code:vals.RECOUNT_DEMO_PASS})}));if(r.status!==403||providerCalls)throw Error('origin gate');
+          r=await tokenFn(new Request('https://example.test/recount/api/token',{method:'POST',headers,body:JSON.stringify({consent:true,access_code:'wrong-access-code'})}));if(r.status!==403||providerCalls)throw Error('access gate');
+          r=await tokenFn(new Request('https://example.test/recount/api/token',{method:'POST',headers,body:JSON.stringify({consent:true,access_code:vals.RECOUNT_DEMO_PASS})}));const b=await r.json();if(r.status!==200||b.token!=='temporary-provider-token-123'||providerCalls!==1)throw Error('token path');
+          if(JSON.stringify(b).includes(vals.ASSEMBLYAI_API_KEY)||JSON.stringify(b).includes(vals.RECOUNT_DEMO_PASS))throw Error('secret leak');
+          console.log('judge token boundary passed');
+          JS
+      - name: Verify /recount static workflow in Chromium
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          cat > /tmp/recount_static_server.py <<'PY'
+          from http.server import ThreadingHTTPServer,SimpleHTTPRequestHandler
+          import json,os
+          class H(SimpleHTTPRequestHandler):
+              def log_message(self,*a): pass
+              def do_GET(self):
+                  if self.path=='/recount/api/config':
+                      b=json.dumps({'csrf':'fixture-csrf','voice_enabled':False,'requires_access_code':True,'provider_executed':False}).encode();self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(b)));self.end_headers();self.wfile.write(b);return
+                  super().do_GET()
+          os.chdir('public');ThreadingHTTPServer(('127.0.0.1',8892),H).serve_forever()
+          PY
+          python /tmp/recount_static_server.py & echo $! >/tmp/recount-server.pid
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright,expect
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=True);page=b.new_page(viewport={'width':1280,'height':900});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+              page.goto('http://127.0.0.1:8892/recount/',wait_until='networkidle');expect(page.locator('#accessWrap')).to_be_visible();expect(page.locator('#listen')).to_be_disabled()
+              for text in ['rice twelve','bags','no thirteen','confirm thirteen']:
+                  page.locator('#utterance').fill(text);page.locator('#textForm button').click()
+              expect(page.locator('#rows')).to_contain_text('13');assert page.evaluate('document.documentElement.scrollWidth<=window.innerWidth');assert not errors,errors
+              b.close()
+          print('prefixed browser smoke passed')
+          PY
+          kill $(cat /tmp/recount-server.pid)
+      - name: Build the existing portfolio with staged judge assets
+        run: |
+          npm ci
+          npm run build
+      - name: Record staging provenance
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          names=['index.html','app.mjs','core.mjs','capture-gate.mjs','voice-runtime.mjs','audio-worklet.js','style.css']
+          report={'schema':'recount-judge-stage-1','source_commit':os.environ['GITHUB_SHA'],'source_branch':'release/recount-judge-site-20260917','provider_calls':0,'human_audio_cases':0,'public_path':'/recount/','function_paths':['/recount/api/config','/recount/api/token'],'files':{n:hashlib.sha256((Path('public/recount')/n).read_bytes()).hexdigest() for n in names},'scope':'Deployment staging and mocked token-boundary verification only. No live provider or human speech claim.'}
+          Path('deployment/recount-judge-site.json').write_text(json.dumps(report,indent=2))
+          PY
+      - name: Commit only verified staged deployment files
+        run: |
+          git config user.name 'recount-staging-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add public/recount netlify/functions/recount-config.mts netlify/functions/recount-token.mts deployment/recount-judge-site.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Stage verified Recount judge demo under portfolio domain'
+          git push origin HEAD:release/recount-judge-site-20260917
