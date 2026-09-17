@@ -27,7 +27,7 @@ try:
    info.value.save_as(OUT/f'session-{width}.json');checks.append(f'{width}:session actual download')
    page.reload(wait_until='networkidle');expect(page.locator('#rows tr')).to_have_count(0)
    page.locator('#load').set_input_files(OUT/f'session-{width}.json');expect(page.locator('#rows tr')).to_have_count(1);expect(page.locator('#rows')).to_contain_text('13');checks.append(f'{width}:saved actions replay correctly')
-   page.locator('summary').click();expect(page.locator('#providerStatus')).to_contain_text('not configured');expect(page.locator('#listen')).to_be_disabled();checks.append(f'{width}:unconfigured voice not presented as live')
+   page.locator('summary').click();expect(page.locator('#providerStatus')).to_contain_text('Voice mode is intentionally disabled');expect(page.locator('#listen')).to_be_disabled();checks.append(f'{width}:disabled voice not presented as live')
    assert page.evaluate('document.documentElement.scrollWidth<=window.innerWidth');assert not errors,errors;checks.append(f'{width}:no horizontal overflow or uncaught errors')
    page.screenshot(path=str(OUT/f'desktop-{width}.png'),full_page=True);ctx.close()
   browser.close()
