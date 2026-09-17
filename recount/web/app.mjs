@@ -55,5 +55,5 @@ $('consent').onchange=()=>{if(!$('consent').checked)voice.revoke();render();};
 window.addEventListener('pagehide',()=>voice.revoke());
 render();try{
   const r=await fetch('/api/config');if(!r.ok)throw Error('Configuration unavailable');config=await r.json();
-  $('providerStatus').textContent=config.voice_enabled?'Provider configured. Real microphone/AssemblyAI validation remains pending.':'Live transcription is not configured. Set ASSEMBLYAI_API_KEY and ALLOW_ASSEMBLYAI=true in the local server environment. Never paste the key into this page.';render();
+  $('providerStatus').textContent=config.voice_enabled?'Provider configured. Real AssemblyAI synthetic-audio validation passed; human microphone validation remains pending.':'Live transcription is not configured. Set ASSEMBLYAI_API_KEY and ALLOW_ASSEMBLYAI=true in the local server environment. Never paste the key into this page.';render();
 }catch{error('Open the app through python server.py, not by double-clicking this file.');}
