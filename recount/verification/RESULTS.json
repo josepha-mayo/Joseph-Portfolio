@@ -1,0 +1,17 @@
+{
+  "status": "core_and_http_passed_browser_blocked",
+  "date": "2026-09-17",
+  "new_project": "Recount",
+  "target_event": "AssemblyAI Voice Agent Hackathon",
+  "node_tests_passed": 28,
+  "http_tests_passed": 8,
+  "browser_checks_passed": 0,
+  "browser_error": "ERR_BLOCKED_BY_ADMINISTRATOR on loopback navigation",
+  "actual_assemblyai_calls": 0,
+  "actual_audio_cases": 0,
+  "registered": false,
+  "submitted": false,
+  "external_inventory_writes": 0,
+  "execution_environment": "local working runtime",
+  "scope": "Authored text and protocol fixtures; no speech accuracy or user-benefit claim."
+}
