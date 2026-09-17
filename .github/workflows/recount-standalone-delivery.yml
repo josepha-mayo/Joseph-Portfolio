@@ -1,0 +1,256 @@
+name: Recount standalone delivery
+on:
+  push:
+    branches: [migration/recount-standalone-20260917]
+    paths: [.github/workflows/recount-standalone-delivery.yml]
+permissions:
+  contents: read
+concurrency:
+  group: recount-standalone-delivery
+  cancel-in-progress: false
+jobs:
+  deliver:
+    if: github.repository == 'josepha-mayo/Joseph-Portfolio'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Prepare independent project without portfolio files or credentials
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/recount-delivery/source /tmp/recount-delivery/media /tmp/recount-delivery/evidence
+          cp -a recount/. /tmp/recount-delivery/source/
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=Path('/tmp/recount-delivery/source')
+          p=r/'web/audio-worklet.js';t=p.read_text();old="this.port.onmessage=e=>{if(e.data?.type==='flush'){";assert old in t
+          t=t.replace(old,"this.port.onmessage=e=>{if(e.data?.type==='drain'){this.emit();this.port.postMessage({type:'drained'});return;}if(e.data?.type==='flush'){");p.write_text(t)
+          p=r/'web/voice-runtime.mjs';t=p.read_text();old="v.node.port.postMessage({type:'flush'});";assert t.count(old)==2
+          t=t.replace(old,"v.node.port.postMessage({type:'drain'});",1).replace("if(event.data?.type==='flushed'){","if(event.data?.type==='drained')return;\n              if(event.data?.type==='flushed'){");p.write_text(t)
+          p=r/'tests/voice_loop.test.mjs';p.write_text(p.read_text().replace("'flush'","'drain'"))
+          p=r/'tests/transport.test.mjs';p.write_text(p.read_text()+"\ntest('continuing worklet drain preserves capture across multiple spoken turns',()=>{const f=worklet();f.node.process([[new Float32Array([.25,.5])]]);f.node.port.onmessage({data:{type:'drain'}});assert.equal(f.sent.length,2);assert.equal(f.sent[1].type,'drained');f.node.process([[new Float32Array(1700).fill(.25)]]);assert.equal(f.sent.length,3);assert.equal(f.sent[2].byteLength,3400);f.node.port.onmessage({data:{type:'flush'}});assert.equal(f.sent.at(-1).type,'flushed');const n=f.sent.length;f.node.process([[new Float32Array(2000).fill(.25)]]);assert.equal(f.sent.length,n);});\n")
+          p=r/'web/index.html';t=p.read_text().replace('correction-safe voice stocktake','voice stocktake').replace('TRANSACTIONAL VOICE, NOT ANOTHER CHATBOT.','ONE COUNT. EVEN WHEN YOU CHANGE YOUR MIND.')
+          t=t.replace('Joseph Ayanda · AssemblyAI Hackathon approved participant · provider-validated correction prototype · human holdout frozen before user recording','Recount · Built by Joseph Ayanda · Independent AssemblyAI hackathon project');p.write_text(t)
+          (r/'.gitignore').write_text('.env\n.env.*\n!.env.example\n.netlify/\nnode_modules/\n__pycache__/\n*.pyc\n.venv/\nverification/generated/\nmedia/working/\n')
+          (r/'.env.example').write_text('ASSEMBLYAI_API_KEY=\nRECOUNT_ALLOWED_ORIGIN=https://recount-voice-joseph.netlify.app\nRECOUNT_DEMO_PASS=\nRECOUNT_SIGNING_SECRET=\nALLOW_ASSEMBLYAI=false\n')
+          p=r/'package.json';obj=json.loads(p.read_text());obj['version']='0.4.0';p.write_text(json.dumps(obj,indent=2)+'\n')
+          (r/'ORIGIN.json').write_text(json.dumps({'source_repository':'josepha-mayo/Joseph-Portfolio','source_path':'recount','source_commit':'cfa9bbd81630250d5cdb21619dfc444f6b3dafa8','frozen_human_evaluation_commit':'170124b43d82aa8e771e57295110b41695c8ef9a','migration_changes':['independent root deployment','continuing worklet drain no longer terminates capture','separate site configuration','no count-parser or confidence-floor change'],'human_audio_received':False},indent=2))
+          readme='''# Recount
+
+          Count it. Correct it. Confirm it.
+
+          Independent voice stocktaking prototype by Joseph Ayanda. AssemblyAI transcribes speech; a deterministic ledger stages one absolute count, applies corrections to the same draft, and requires a quantity-echo confirmation before saving.
+
+          Standalone deployment: https://recount-voice-joseph.netlify.app
+
+          ## Local use
+          Python 3.11+: `python server.py`, then open the printed loopback URL. Try `rice twelve`, `bags`, `no thirteen`, `confirm thirteen`. Export CSV or save and reopen the action history. Unsaved work is lost on refresh. Session files contain transcripts.
+
+          ## Verification
+          Run `node --test tests/*.test.mjs` and `python -m unittest discover -s tests -p 'test_*.py' -v`. Browser tests require the pinned development requirements and Playwright Chromium. The migration adds a regression for continuing audio capture after a read-back: a terminal worklet flush previously stopped all later samples. A distinct non-terminal drain now preserves them. Earlier green mocked-transport tests did not exercise this real-worklet failure.
+
+          Earlier provider evidence: four authored synthetic-speech sessions using real AssemblyAI Streaming v3, original run 35269641978. That is integration evidence, not human/accent accuracy or a shopkeeper pilot. New deployment evidence is recorded separately. The original human holdout protocol and source identity are preserved in ORIGIN.json; no human recording has been received.
+
+          ## Hosting
+          Netlify publishes `web` and bundles `netlify/functions`. Configure the four environment-variable names from `.env.example` privately, never in source. The permanent provider key stays server-side. A private judge code, same-origin check, CSRF cookie and short-lived streaming tokens gate voice access. The shared judge code is not individual-user authentication or a global billing cap. Individual sessions are capped at 90 seconds. No public unauthenticated token vending is intended.
+
+          ## Current scope
+          Four illustrative catalogue entries, narrow English count commands, explicit units and no inferred pack conversions. CSV/session export only: no orders, payments, supplier messages or external stock-system writes. Browser speech quality depends on its installed voice. Count confirmation does not prove that the operator physically counted correctly.
+
+          ## Provenance
+          This is a clean source export of Recount only, not a fork containing the portfolio or other projects. The old development commit remains linked in ORIGIN.json. Original code is MIT. AssemblyAI API contracts: https://www.assemblyai.com/docs/streaming/api-spec/streaming-websocket and https://www.assemblyai.com/docs/streaming/api-spec/generate-streaming-token.
+          '''
+          import textwrap
+          (r/'README.md').write_text(textwrap.dedent(readme))
+          for p in r.rglob('*'):
+              if p.is_file() and p.name.startswith('.env') and p.name!='.env.example':raise RuntimeError('Unexpected secret file')
+          PY
+      - name: Run every deterministic and local HTTP test
+        working-directory: /tmp/recount-delivery/source
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/*.test.mjs | tee ../evidence/node.log
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee ../evidence/http.log
+      - name: Install stock neural synthesis and browser tooling without deployment secrets
+        run: |
+          python -m pip install kokoro-onnx==0.4.9 soundfile==0.13.1 numpy==2.2.6 onnxruntime==1.22.1 playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq && sudo apt-get install -y -qq espeak-ng ffmpeg
+      - name: Generate clear stock narration and labelled synthetic microphone fixture
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,re,urllib.request
+          import numpy as np,soundfile as sf
+          from kokoro_onnx import Kokoro
+          root=Path('/tmp/recount-voice');root.mkdir(exist_ok=True);out=Path('/tmp/recount-delivery/media')
+          sources={'kokoro-v1.0.onnx':'7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5','voices-v1.0.bin':'bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d'}
+          for name,want in sources.items():
+              urllib.request.urlretrieve('https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/'+name,root/name)
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==want
+          model=Kokoro(str(root/'kokoro-v1.0.onnx'),str(root/'voices-v1.0.bin'))
+          sections=[
+            'A stock count sounds simple until someone says twelve, no, thirteen. The correction must become one checked record, not another stock movement.',
+            'Recount keeps a draft separate from confirmed stock. It asks for the unit, reads the count back, and saves only when the confirmation repeats the number.',
+            'This sequence uses a synthetic test voice, sent through the live Assembly A I service. Watch the draft change, and the confirmed count stay put until confirmation.',
+            'The result is one row: thirteen bags of rice. The next request uses cartons. Recount has no defined conversion, so it does not change the saved count.',
+            'Export the confirmed stock as a C S V file. Save the session to preserve its actions. Reopening it reconstructs the corrections and confirmations, instead of trusting a saved total.',
+            'The software also checks duplicate transcripts, missing final results, and broken connections. An uncertain draft is held for review. These are tested failure rules, not a promise that speech recognition is never wrong.',
+            'Recount now runs on its own site. The demonstration is real provider integration using synthetic speech. Human microphone and shopkeeper testing remain separate work. Count it. Correct it. Confirm it.'
+          ]
+          report={'voice':'bf_emma','voice_type':'stock neural synthesis; not a human recording or clone','model_hashes':sources,'sections':[]}
+          for i,text in enumerate(sections):
+              words=len(re.findall(r"[\w]+(?:['-][\w]+)*",text));speed=.78
+              for attempt in range(3):
+                  samples,sr=model.create(text,voice='bf_emma',speed=speed,lang='en-gb');samples=np.asarray(samples,dtype=np.float32)
+                  assert np.isfinite(samples).all();wpm=words*60/(len(samples)/sr)
+                  if 115<=wpm<=128:break
+                  speed=float(np.clip(speed*120/wpm,.55,1.0))
+              samples*=min(1.0,.88/max(float(np.max(np.abs(samples))),1e-9));name=f'narration-{i:02d}.wav';sf.write(out/name,samples,sr,subtype='PCM_16')
+              report['sections'].append({'file':name,'text':text,'seconds':len(samples)/sr,'wpm':wpm})
+          phrases=['Rice twelve bags.','No, thirteen bags.','Confirm thirteen.','Rice twelve cartons.','Confirm twelve.']
+          chunks=[np.zeros(5*24000,dtype=np.float32)];segments=[];cursor=5.0
+          for text in phrases:
+              a,sr=model.create(text,voice='am_adam',speed=.82,lang='en-us');assert sr==24000
+              a=np.asarray(a,dtype=np.float32);chunks.extend([a,np.zeros(3*sr,dtype=np.float32)])
+              segments.append({'text':text,'start':cursor,'end':cursor+len(a)/sr});cursor+=len(a)/sr+3
+          chunks.append(np.zeros(3*24000,dtype=np.float32));sf.write(out/'synthetic-input-24k.wav',np.concatenate(chunks),24000,subtype='PCM_16')
+          report['input']={'voice':'am_adam','synthetic':True,'segments':segments,'seconds':cursor+3,'expected_final_counts':{'rice':{'quantity':13,'unit':'bags'}},'provider_sessions_allowed':1}
+          (out/'narration.json').write_text(json.dumps(report,indent=2));print(json.dumps({'narration_sections':len(sections),'synthetic_input_seconds':cursor+3,'paid_tts_calls':0}))
+          PY
+          ffmpeg -hide_banner -loglevel error -y -i /tmp/recount-delivery/media/synthetic-input-24k.wav -ar 48000 -ac 1 /tmp/recount-delivery/media/synthetic-input.wav
+      - name: Deploy through the authorized short-lived Netlify capability
+        env:
+          ASSEMBLYAI_API_KEY: ${{ secrets.ASSEMBLYAI_API_KEY }}
+        run: |
+          node --input-type=module <<'JS'
+          import crypto from 'node:crypto';import fs from 'node:fs';import cp from 'node:child_process';
+          const key=process.env.ASSEMBLYAI_API_KEY;if(!key)throw Error('Existing migration secret not configured');
+          const nonce='73896c2b37eca0ea3af00bef';
+          const cipher='2168b9bf1891ab02f84b6cc51235b94769ee08cb2c7fd6d8f6c5f8b991e5d42b8cb1f8f721f4f7722c882d4b672923134b676dab391d05f0a78a52f0fb45c3fc43508c424a1e561e9356c4e5e7755249ea8874f957b45250b760406875617f4720de1153411587488e6e2de610d8dd0e560e6b533ad007b574cea8c07495f442401517cfc4925f51d8086c3605d7bf16b40d5ca9cdc2c2eb3e33adf7a0d4e4d9ce3a746b57099eab5594273b98f53c979645e0ded4fc92c6e82e9a5e8c0d9d7952bf6acc066c0de510cb413571e0592e35644f6802b9cd88ffec4e6484182795f52dadd4a626236d2163f66155f90b5557fd1d2238bdb6431a6a07bfdc3efcee68240df5a6c4277d7c62e5b776c81b29d9542677cedf1f0f049c5fbae47d72260cc99a1744b09f6152e52c2495cd6d67e69158904b6d29d71686d4f1a3ca73e5d12221eeaa9faedce2dee3bf2df13f1540d6cc8c77c5e74a9946092e3168b9acda2e7a16b888a642da1ad750f26f3f5c25ab0678935fd9cddf028f30f550e183b42a304f5a75e1b54b633239bfbf406125ce62cdf489368144fbe7cd5671d81c26c89b0a83f4fc2c8f2c65f3ddd3561ab5fb2ed431e0fbbf98f5967d7cc87a748a681f36389f912a5d10cded027f2f33a30bfca86558c3732a323f29da6ff5318c3fb96c0e73d2c9aebb27d18be0cfed07bc0616954166f02555ea4843b124ae5d6a1edd321294f25bfcdf00cc2f3722237734cb6fabc59d02589a52feaa2099dcf8b69880c7e2fbd3c55f341173d35d789b53e9df87e5e1a4e742c520bfa293ee6a88365fff754008b60eae1b7158fc2b54beca448aa75cad713b1d2b9dbd9a09cc69629f608b24685812da0decd1f4e8a35421777c4279b24553';
+          const k=crypto.createHash('sha256').update('recount-migration-v1\0').update(key).digest(),raw=Buffer.from(cipher,'hex');
+          const d=crypto.createDecipheriv('aes-256-gcm',k,Buffer.from(nonce,'hex'));d.setAAD(Buffer.from('recount-deployment-v1'));d.setAuthTag(raw.subarray(-16));
+          const payload=JSON.parse(Buffer.concat([d.update(raw.subarray(0,-16)),d.final()]).toString());
+          console.log('::add-mask::'+payload.proxy);console.log('::add-mask::'+payload.access);
+          fs.writeFileSync('/tmp/recount-private.json',JSON.stringify({access:payload.access,origin:payload.origin}),{mode:0o600});
+          const env={...process.env};delete env.ASSEMBLYAI_API_KEY;delete env.GITHUB_TOKEN;
+          const result=cp.spawnSync('npx',['-y','@netlify/mcp@latest','--site-id','df8d4f20-8294-4f70-820a-731fa440156b','--proxy-path',payload.proxy],{cwd:'/tmp/recount-delivery/source',env,encoding:'utf8',timeout:480000,maxBuffer:10000000});
+          const output=(result.stdout??'')+'\n'+(result.stderr??'');
+          const clean=output.replaceAll(payload.proxy,'[deployment capability removed]').replaceAll(payload.access,'[judge access removed]').replaceAll(key,'[provider key removed]').replace(/https:\/\/netlify-mcp\.netlify\.app\/proxy\/\S+/g,'[deployment capability removed]');
+          fs.writeFileSync('/tmp/recount-delivery/evidence/deploy.log',clean);console.log(clean.slice(-8000));
+          fs.writeFileSync('/tmp/recount-delivery/evidence/DEPLOY_ATTEMPT.json',JSON.stringify({site_id:'df8d4f20-8294-4f70-820a-731fa440156b',url:payload.origin,cli_exit:result.status,source_commit:process.env.GITHUB_SHA,provider_calls:0},null,2));
+          if(result.status!==0)process.exit(1);
+          JS
+      - name: Check normal browser regression from the independent source
+        working-directory: /tmp/recount-delivery/source
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tests/browser.py | tee ../evidence/browser.log
+          cp verification/browser.json ../evidence/local-browser.json
+          cp verification/desktop-*.png ../evidence/
+      - name: Record one actual browser microphone-adapter session on the independent live site
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,time
+          from playwright.sync_api import sync_playwright,expect
+          root=Path('/tmp/recount-delivery');media=root/'media';out=root/'evidence';private=json.loads(Path('/tmp/recount-private.json').read_text())
+          events=[];started=time.monotonic();result={'schema':'recount-live-browser-1','url':private['origin'],'audio_source':'Kokoro stock neural synthetic fixture via Chromium fake microphone; not a human recording','provider_sessions_attempted':0,'human_audio_cases':0,'status':'not_started'}
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(headless=True,args=['--use-fake-ui-for-media-stream','--use-fake-device-for-media-stream','--use-file-for-fake-audio-capture='+str(media/'synthetic-input.wav')])
+              ctx=browser.new_context(viewport={'width':1360,'height':1000},record_video_dir=str(media/'capture'),record_video_size={'width':1360,'height':1000},accept_downloads=True,permissions=['microphone'])
+              page=ctx.new_page();video=page.video;errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+              def socket(ws):
+                  def incoming(raw):
+                      try:
+                          data=json.loads(raw)
+                          if data.get('type') in ['Begin','Turn','Termination']:
+                              item={k:data[k] for k in ['type','turn_order','transcript','end_of_turn','audio_duration_seconds','session_duration_seconds'] if k in data}
+                              item['at_seconds']=round(time.monotonic()-started,3);events.append(item)
+                      except (ValueError,TypeError):pass
+                  ws.on('framereceived',incoming)
+              page.on('websocket',socket)
+              try:
+                  page.goto(private['origin'],wait_until='networkidle',timeout=60000);page.locator('summary').click()
+                  expect(page.locator('#providerStatus')).to_contain_text('provider-ready',timeout=10000)
+                  page.locator('#accessCode').fill(private['access']);page.locator('#consent').check()
+                  page.screenshot(path=str(out/'ready.png'),full_page=True)
+                  result['capture_start_offset_seconds']=round(time.monotonic()-started,3)
+                  page.locator('#listen').click();result['provider_sessions_attempted']=1
+                  deadline=time.monotonic()+75
+                  while time.monotonic()<deadline:
+                      page.wait_for_timeout(500)
+                      finals=[e for e in events if e.get('type')=='Turn' and e.get('end_of_turn') is True]
+                      if len(finals)>=5:break
+                  finals=[e for e in events if e.get('type')=='Turn' and e.get('end_of_turn') is True]
+                  result['final_transcripts']=[e.get('transcript') for e in finals];result['final_turns']=len(finals)
+                  expect(page.locator('#rows tr')).to_have_count(1)
+                  cells=page.locator('#rows tr td').all_text_contents();result['row']=cells
+                  assert cells==['Rice','13','bags'],cells
+                  assert len(finals)>=5,'Missing finalized test phrases'
+                  page.locator('#listen').click();expect(page.locator('#csv')).to_be_enabled(timeout=8000)
+                  page.screenshot(path=str(out/'confirmed.png'),full_page=True)
+                  with page.expect_download() as info:page.locator('#csv').click()
+                  info.value.save_as(out/'recount-live-stock.csv')
+                  assert (out/'recount-live-stock.csv').read_text()=='item,quantity,unit\nRice,13,bags\n'
+                  with page.expect_download() as info:page.locator('#session').click()
+                  info.value.save_as(out/'recount-live-session.json')
+                  page.wait_for_timeout(2500);page.reload(wait_until='networkidle')
+                  expect(page.locator('#rows tr')).to_have_count(0)
+                  page.locator('#load').set_input_files(out/'recount-live-session.json')
+                  expect(page.locator('#rows tr')).to_have_count(1);expect(page.locator('#rows')).to_contain_text('13')
+                  page.screenshot(path=str(out/'reopened.png'),full_page=True);page.wait_for_timeout(2500)
+                  assert not errors,errors
+                  result['status']='passed';result['csv_exact']=True;result['session_reopened']=True
+              except Exception as e:
+                  result['status']='failed';result['error_type']=type(e).__name__;result['failure']=str(e).replace(private['access'],'[redacted]')[:1600]
+                  page.screenshot(path=str(out/'failure.png'),full_page=True)
+              finally:
+                  result['events']=events;result['browser_errors']=errors;result['wall_seconds']=round(time.monotonic()-started,3)
+                  ctx.close();video.save_as(str(media/'live-browser.webm'));browser.close()
+                  (out/'LIVE_BROWSER.json').write_text(json.dumps(result,indent=2));print(json.dumps({k:v for k,v in result.items() if k not in ['events','failure']},indent=2))
+          if result['status']!='passed':raise SystemExit(1)
+          PY
+      - name: Package independent source and exact manifests
+        if: always()
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          root=Path('/tmp/recount-delivery');r=root/'source'
+          files={}
+          for p in sorted(r.rglob('*')):
+              if not p.is_file() or any(x in p.parts for x in ['node_modules','.netlify','__pycache__']):continue
+              rel=p.relative_to(r).as_posix()
+              if p.name.startswith('.env') and p.name!='.env.example':continue
+              files[rel]=hashlib.sha256(p.read_bytes()).hexdigest()
+          (root/'evidence/SOURCE_MANIFEST.json').write_text(json.dumps({'migration_workflow_commit':os.environ['GITHUB_SHA'],'files':files,'scope':'Independent Recount files only; credentials, model weights and fonts excluded.'},indent=2))
+          with zipfile.ZipFile(root/'Recount-Standalone-Source.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for rel in files:z.write(r/rel,'Recount/'+rel)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recount-standalone-delivery
+          path: |
+            /tmp/recount-delivery/Recount-Standalone-Source.zip
+            /tmp/recount-delivery/evidence/
+            /tmp/recount-delivery/media/
+          retention-days: 30
+          if-no-files-found: error
