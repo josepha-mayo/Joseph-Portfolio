@@ -1,0 +1,62 @@
+name: Recount full regression without provider spend
+on:
+  push:
+    branches: [hackathon/recount-voice-20260917]
+    paths:
+      - recount/**
+      - .github/workflows/recount-regression.yml
+permissions:
+  contents: read
+concurrency:
+  group: recount-regression
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ALLOW_ASSEMBLYAI: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Install browser test dependency only
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Run every deterministic Node test in the branch
+        working-directory: recount
+        run: node --test tests/*.test.mjs | tee verification/all-node.log
+      - name: Run real loopback HTTP tests
+        working-directory: recount
+        run: python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee verification/all-http.log
+      - name: Run actual Chromium through the local app
+        working-directory: recount
+        run: python tests/browser.py | tee verification/browser.log
+      - name: Summarize non-provider gates
+        working-directory: recount
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,re
+          from pathlib import Path
+          d=Path('verification');b=json.loads((d/'browser.json').read_text())
+          node=(d/'all-node.log').read_text();http=(d/'all-http.log').read_text()
+          m=re.search(r'# tests (\d+)',node);assert m
+          hm=re.search(r'Ran (\d+) tests?',http);assert hm
+          r={'schema':'recount-regression-receipt-1','status':'passed','source_commit':os.environ['GITHUB_SHA'],'node_tests':int(m.group(1)),'http_tests':int(hm.group(1)),'browser_checks':b['check_count'],'browser_navigation':b['browser_navigation'],'provider_calls':0,'human_audio_cases':0,'scope':'State, transport fixture, worklet, loopback HTTP and actual Chromium behavior. No provider or human speech accuracy claim.','files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in d.iterdir() if p.is_file()}}
+          (d/'REGRESSION_RECEIPT.json').write_text(json.dumps(r,indent=2));print(json.dumps(r,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recount-regression-evidence
+          path: recount/verification/
+          retention-days: 30
+          if-no-files-found: error
