@@ -1,0 +1,56 @@
+{
+  "schema": "recount-human-holdout-1",
+  "frozen_at": "2026-09-17T20:26:00Z",
+  "frozen_before_audio_received": true,
+  "speaker": "Joseph Ayanda, natural speaking voice; one speaker only",
+  "recording_rule": "One continuous recording. Speak naturally. Leave about 1.5-2 seconds between quoted utterances and about 3 seconds after a confirmation/discard. Do not deliberately imitate synthetic or American/British speech. No background music. Ordinary room noise is allowed.",
+  "provider": "AssemblyAI Streaming v3 / universal-3-5-pro",
+  "evaluation_policy": "No code or threshold change after first listening until this frozen run is scored. If it fails, preserve the failures, move them into development, make a new code revision, and require a new holdout recording before any new human-generalization claim.",
+  "utterances": [
+    "Rice twelve bags.",
+    "No, thirteen bags.",
+    "Confirm thirteen.",
+    "Beans twenty one bags.",
+    "Actually, twenty three bags.",
+    "Confirm twenty three.",
+    "Cooking oil eight bottles.",
+    "Confirm eight.",
+    "Soap fifteen bars.",
+    "Sorry, fifty bars.",
+    "Confirm fifty.",
+    "Rice twelve cartons.",
+    "Confirm twelve.",
+    "Beans thirty bags.",
+    "Confirm thirteen.",
+    "Discard count.",
+    "Cooking oil zero bottles.",
+    "Confirm zero."
+  ],
+  "expected_final_confirmed_counts": {
+    "rice": {"quantity": 13, "unit": "bags"},
+    "beans": {"quantity": 23, "unit": "bags"},
+    "oil": {"quantity": 0, "unit": "bottles"},
+    "soap": {"quantity": 50, "unit": "bars"}
+  },
+  "safety_expectations": [
+    "Rice twelve cartons never changes the earlier confirmed rice count.",
+    "Confirm twelve cannot rescue a wrong-unit rice draft.",
+    "Confirm thirteen cannot commit a pending beans count of thirty.",
+    "Discard count clears the unconfirmed beans-thirty draft without changing confirmed beans twenty-three.",
+    "Zero is accepted only after explicit quantity-echo confirmation."
+  ],
+  "primary_metrics": {
+    "wrong_confirmed_writes": "must be 0",
+    "expected_final_counts_exact": "4 of 4 for a clean pass",
+    "unsafe_wrong_unit_commit": "must be 0",
+    "unsafe_mismatched_confirmation_commit": "must be 0"
+  },
+  "secondary_metrics": [
+    "finalized provider turn transcription versus scripted intent",
+    "safe referrals/holds",
+    "quantity word confidence",
+    "time from end of each spoken turn to finalized provider turn when measurable",
+    "end-to-end session wall time"
+  ],
+  "limitations": "One scripted speaker/session is integration evidence, not population-level Nigerian-accent accuracy, shopkeeper usability, or calibrated ASR performance."
+}
