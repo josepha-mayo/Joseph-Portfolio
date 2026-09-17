@@ -1,0 +1,120 @@
+name: Recount native browser fix and standalone validation
+on:
+  push:
+    branches: [migration/recount-standalone-20260917]
+    paths: [.github/workflows/recount-standalone-retry.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: recount-standalone-delivery
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - uses: actions/download-artifact@v4
+        with:
+          name: recount-standalone-delivery
+          run-id: 35278238487
+          github-token: ${{ github.token }}
+          path: /tmp/recount-delivery
+      - name: Preserve first failure and fix native browser binding
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,shutil
+          root=Path('/tmp/recount-delivery')
+          prev=root/'previous';prev.mkdir(exist_ok=True)
+          shutil.copytree(root/'evidence',prev/'evidence',dirs_exist_ok=True)
+          shutil.copyfile(root/'media/live-browser.webm',prev/'failed-browser.webm')
+          for name in ['LIVE_BROWSER.json','failure.png','ready.png']:
+              (root/'evidence'/name).unlink(missing_ok=True)
+          with zipfile.ZipFile(root/'Recount-Standalone-Source.zip') as z:z.extractall(root/'unpacked')
+          shutil.move(str(root/'unpacked/Recount'),str(root/'source'))
+          p=root/'source/web/voice-runtime.mjs';s=p.read_text();old='fetch:globalThis.fetch,setTimeout:globalThis.setTimeout,clearTimeout:globalThis.clearTimeout'
+          assert old in s
+          s=s.replace(old,'fetch:globalThis.fetch?.bind(globalThis),setTimeout:globalThis.setTimeout.bind(globalThis),clearTimeout:globalThis.clearTimeout.bind(globalThis)');p.write_text(s)
+          p=root/'source/tests/transport.test.mjs'
+          p.write_text(p.read_text()+'''\ntest('default browser APIs retain their native global receiver',async()=>{
+            const originals={fetch:globalThis.fetch,setTimeout:globalThis.setTimeout,clearTimeout:globalThis.clearTimeout};let seen=[];
+            try{
+              globalThis.fetch=function(){assert.equal(this,globalThis);seen.push('fetch');return Promise.resolve('fixture');};
+              globalThis.setTimeout=function(){assert.equal(this,globalThis);seen.push('setTimeout');return 7;};
+              globalThis.clearTimeout=function(){assert.equal(this,globalThis);seen.push('clearTimeout');};
+              const r=new VoiceRuntime({getRevision:()=>0,onTurn:()=>{},onHold:()=>{}});
+              assert.equal(await r.d.fetch('/test'),'fixture');assert.equal(r.d.setTimeout(()=>{},1),7);r.d.clearTimeout(7);
+              assert.deepEqual(seen,['fetch','setTimeout','clearTimeout']);
+            }finally{Object.assign(globalThis,originals);}
+          });\n''')
+          p=root/'source/README.md';s=p.read_text();s+='\nNative browser APIs are now bound to their global receiver. The first standalone microphone test stopped with Illegal invocation before creating an AssemblyAI socket; that failed attempt is preserved rather than counted as a provider session. The added native-receiver regression accompanies the fix.\n';p.write_text(s)
+          PY
+      - name: Execute deterministic and HTTP regressions
+        working-directory: /tmp/recount-delivery/source
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/*.test.mjs | tee ../evidence/node.log
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee ../evidence/http.log
+      - name: Install browser tooling and extract bounded execution scripts
+        run: |
+          python -m pip install playwright==1.57.0 PyYAML==6.0.2
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          doc=yaml.safe_load(Path('.github/workflows/recount-standalone-delivery.yml').read_text())
+          names={
+          'Deploy through the authorized short-lived Netlify capability':'/tmp/recount-deploy.sh',
+          'Record one actual browser microphone-adapter session on the independent live site':'/tmp/recount-browser.sh',
+          'Package independent source and exact manifests':'/tmp/recount-package.sh'}
+          for step in doc['jobs']['deliver']['steps']:
+              if step.get('name') in names:
+                  text=step['run']
+                  if 'Record one actual browser' in step.get('name',''):
+                      text=text.replace("result['events']=events;", "result['provider_sessions_begun']=sum(e.get('type')=='Begin' for e in events);result['events']=events;")
+                  Path(names[step['name']]).write_text('set -euo pipefail\n'+text)
+          PY
+      - name: Deploy updated independent source
+        env:
+          ASSEMBLYAI_API_KEY: ${{ secrets.ASSEMBLYAI_API_KEY }}
+        run: bash /tmp/recount-deploy.sh
+      - name: Verify ordinary browser path without a provider call
+        working-directory: /tmp/recount-delivery/source
+        env:
+          ALLOW_ASSEMBLYAI: 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tests/browser.py | tee ../evidence/browser.log
+          cp verification/browser.json ../evidence/local-browser.json
+      - name: Record one bounded synthetic-speech session on the real independent site
+        run: bash /tmp/recount-browser.sh
+      - name: Package exact source and preserve failure lineage
+        if: always()
+        run: bash /tmp/recount-package.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recount-standalone-corrected-delivery
+          path: |
+            /tmp/recount-delivery/Recount-Standalone-Source.zip
+            /tmp/recount-delivery/evidence/
+            /tmp/recount-delivery/media/
+            /tmp/recount-delivery/previous/
+          retention-days: 30
+          if-no-files-found: error
