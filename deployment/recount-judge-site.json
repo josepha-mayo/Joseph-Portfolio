@@ -1,5 +1,5 @@
 {
-  "schema": "recount-judge-stage-1",
+  "schema": "recount-judge-stage-2",
   "source_commit": "fc442efe365ec6150d9558f5c63ab66e350335af",
   "source_branch": "release/recount-judge-site-20260917",
   "provider_calls": 0,
@@ -9,6 +9,13 @@
     "/recount/api/config",
     "/recount/api/token"
   ],
+  "runtime_config_keys": [
+    "RECOUNT_SIGNING_SECRET",
+    "RECOUNT_DEMO_PASS",
+    "RECOUNT_ALLOWED_ORIGIN",
+    "ASSEMBLYAI_API_KEY"
+  ],
+  "runtime_config_note": "The first Netlify connector writes used a production-only scope that did not persist on readback. Recount's non-provider runtime controls were re-written in the account's all-context/all-scope form and this commit triggers a fresh production function build. ASSEMBLYAI_API_KEY remains an operator-supplied secret and is not present in source.",
   "files": {
     "index.html": "696c66bb807f68bb19a6bb0beef0a2f30a131c5845321a02b7953a7d94ac478a",
     "app.mjs": "0ac068709f8568bd0fecf827a0d67743fdaa417d38f55da5faf0631653613b9f",
