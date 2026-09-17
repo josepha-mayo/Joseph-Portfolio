@@ -31,6 +31,7 @@ jobs:
             'branch':os.environ['GITHUB_REF_NAME'],
             'provider_calls_during_packaging':0,
             'secret_files_included':False,
+            'deployment_functions_included':True,
             'scope':'Exact tracked Recount source at this commit. Generated live-provider audio/output omitted; source verification metadata retained.'
           },indent=2))
           PY
