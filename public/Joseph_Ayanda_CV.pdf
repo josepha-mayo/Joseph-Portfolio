@@ -1,0 +1,491 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (mailto:ayandajoseph390@gmail.com)
+>> /Border [ 0 0 0 ] /Rect [ 105.001 729.6898 219.4535 739.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+5 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://josephmayo.site)
+>> /Border [ 0 0 0 ] /Rect [ 226.3895 729.6898 287.802 739.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+6 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo)
+>> /Border [ 0 0 0 ] /Rect [ 48 713.4898 145.3165 723.6898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo)
+>> /Border [ 0 0 0 ] /Rect [ 152.2525 713.4898 258.086 723.6898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+8 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Holo-3.1-9B-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 48 550.2098 139.2912 562.6898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+9 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 48 485.8098 163.0136 498.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+10 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Holo-3.1-4B-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 48 421.4098 180.3296 433.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+11 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/DR-OPIC)
+>> /Border [ 0 0 0 ] /Rect [ 48 357.0098 91.9088 369.4898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+12 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/model-unfetter)
+>> /Border [ 0 0 0 ] /Rect [ 48 292.6098 120.8 305.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+13 0 obj
+<<
+/Annots [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R ] /Contents 57 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 56 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+14 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Holo-3.1-9B-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 341 663.1648 410.03 675.1648 ] /Subtype /Link /Type /Annot
+>>
+endobj
+15 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/ZAYA1-8B-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 341 626.4898 389.024 637.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+16 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/ZAYA1-8B-Coder-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 396.368 626.4898 447.389 637.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+17 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/ZAYA1-8B-Coder-LoRA)
+>> /Border [ 0 0 0 ] /Rect [ 454.733 626.4898 489.752 637.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+18 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 341 590.4898 389.024 601.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+19 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 396.368 590.4898 447.389 601.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+20 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/gemma-4-E4B-it-coding-lora)
+>> /Border [ 0 0 0 ] /Rect [ 454.733 590.4898 494.756 601.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+21 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Holo-3.1-4B-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 341 554.4898 389.024 565.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+22 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 396.368 554.4898 439.883 565.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+23 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-LoRA)
+>> /Border [ 0 0 0 ] /Rect [ 447.227 554.4898 482.246 565.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+24 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/LFM2.5-8B-A1B-Coder)
+>> /Border [ 0 0 0 ] /Rect [ 341 518.4898 389.024 529.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+25 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/LFM2.5-8B-A1B-Coder-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 396.368 518.4898 447.389 529.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+26 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/LFM2.5-8B-A1B-Coder-LoRA)
+>> /Border [ 0 0 0 ] /Rect [ 454.733 518.4898 494.756 529.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+27 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Qwopus-9B-Unfettered)
+>> /Border [ 0 0 0 ] /Rect [ 341 482.4898 383.021 493.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+28 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Qwopus-9B-Unfettered-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 390.365 482.4898 441.386 493.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+29 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2)
+>> /Border [ 0 0 0 ] /Rect [ 341 446.4898 383.021 457.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+30 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 390.365 446.4898 433.88 457.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+31 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated)
+>> /Border [ 0 0 0 ] /Rect [ 341 410.4898 383.021 421.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+32 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated-GGUF)
+>> /Border [ 0 0 0 ] /Rect [ 390.365 410.4898 433.88 421.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+33 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Qwen2.5-0.5B-Unfettered)
+>> /Border [ 0 0 0 ] /Rect [ 341 375.1648 390.527 387.1648 ] /Subtype /Link /Type /Annot
+>>
+endobj
+34 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/HRM-Text-1B-sft-code)
+>> /Border [ 0 0 0 ] /Rect [ 341 338.4898 383.021 349.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+35 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/HRM-Text-1B-sft-code-LoRA)
+>> /Border [ 0 0 0 ] /Rect [ 390.365 338.4898 425.384 349.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+36 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/josephmayo/Qwen2.5-agentic-7B-SLM-LoRA)
+>> /Border [ 0 0 0 ] /Rect [ 341 303.1648 376.019 315.1648 ] /Subtype /Link /Type /Annot
+>>
+endobj
+37 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/datasets/josephmayo/curated-openbmb-code-math)
+>> /Border [ 0 0 0 ] /Rect [ 48 225.6098 196.4912 238.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+38 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/datasets/josephmayo/public-curated-coding-data)
+>> /Border [ 0 0 0 ] /Rect [ 48 188.8098 185.5296 201.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+39 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://huggingface.co/datasets/josephmayo/refusal-compliance-pairs)
+>> /Border [ 0 0 0 ] /Rect [ 48 138.2098 175.7328 150.6898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+40 0 obj
+<<
+/Annots [ 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R 22 0 R 23 0 R 
+  24 0 R 25 0 R 26 0 R 27 0 R 28 0 R 29 0 R 30 0 R 31 0 R 32 0 R 33 0 R 
+  34 0 R 35 0 R 36 0 R 37 0 R 38 0 R 39 0 R ] /Contents 58 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 56 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+41 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/ModelFang)
+>> /Border [ 0 0 0 ] /Rect [ 48 696.4098 102.8912 708.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+42 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/IntellectSafe)
+>> /Border [ 0 0 0 ] /Rect [ 48 641.8098 109.2664 654.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+43 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/mayo)
+>> /Border [ 0 0 0 ] /Rect [ 48 587.2098 74.5824 599.6898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+44 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/Swarms)
+>> /Border [ 0 0 0 ] /Rect [ 48 532.6098 178.6032 545.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+45 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://devpost.com/software/countback-inspect-the-evidence)
+>> /Border [ 0 0 0 ] /Rect [ 48 478.0098 101.7368 490.4898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+46 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/josepha-mayo/Counterstep-Relay)
+>> /Border [ 0 0 0 ] /Rect [ 48 409.6098 167.6208 422.0898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+47 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://devpost.com/software/sunqueue-same-work-less-grid)
+>> /Border [ 0 0 0 ] /Rect [ 48 355.0098 100.0104 367.4898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+48 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://devpost.com/software/forkline-rehearse-the-rollback)
+>> /Border [ 0 0 0 ] /Rect [ 48 300.4098 88.456 312.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+49 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/CALLE-AI/awesome-phone-call-agents/pull/408)
+>> /Border [ 0 0 0 ] /Rect [ 48 245.8098 112.7192 258.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+50 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://josephmayo.site/doomfly)
+>> /Border [ 0 0 0 ] /Rect [ 48 191.2098 100 203.6898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+51 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://devpost.com/software/cutproof-context-first-clip-studio)
+>> /Border [ 0 0 0 ] /Rect [ 48 88.28976 87.46 100.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+52 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://josephmayo.site)
+>> /Border [ 0 0 0 ] /Rect [ 186.39 74.48976 238.64 86.48976 ] /Subtype /Link /Type /Annot
+>>
+endobj
+53 0 obj
+<<
+/Annots [ 41 0 R 42 0 R 43 0 R 44 0 R 45 0 R 46 0 R 47 0 R 48 0 R 49 0 R 50 0 R 
+  51 0 R 52 0 R ] /Contents 59 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 56 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+54 0 obj
+<<
+/PageMode /UseNone /Pages 56 0 R /Type /Catalog
+>>
+endobj
+55 0 obj
+<<
+/Author (Joseph Ayanda) /CreationDate (D:20000101000000+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (Technical CV: models, research, open-source projects and software engineering) /Title (Joseph Ayanda | AI/ML Engineer | CV) /Trapped /False
+>>
+endobj
+56 0 obj
+<<
+/Count 3 /Kids [ 13 0 R 40 0 R 53 0 R ] /Type /Pages
+>>
+endobj
+57 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2866
+>>
+stream
+Gatm<gNM:Q&q0LUe4\+A4d+0WbOeF@N,92DA&-4OVd9Vm!/bpBO^tq6c,\-o8)iM9MW<")$=Jt\m&JdIX%F.qph-R-5:662T_=dBQ;*8P=g$`3@R?j/agVqYk;npX-)9(WT?-5c<ki.lm/4fkki!d1f-[Ck0mT@#fNk[*s,(K=;VUP0PC93)>;R>SF8KK-]q4V9A@RnMZ'O!G2(Y-%EC3F%O4X!NoR[9s%'E>16uA[_m.tN\)::Z^5+7FbMpWuu7e>#82SAf$/\]Zm=*`#@1!f)&?*i;=R^?JA3On\c?LA<k;7G"/HG+b<EKT[Y&uJ$Nea9kP\8QTXY3S6gCQ]o:\'KS/q27MSh5BJ/*;TM/p[HP-Q4[`][T#l[$'m$T=cm-m<$6j=21%*C?.8*A)RTe0p*IS(F[!MXNFqfI)IB%rYKlD'qK+Q^CGblMR+r/ej6J56EH"+Q>)\4ns'rb[?-XC/g-)5&3_nGn.\)f5=%JJM)X+Gj;emAL,"si)$J/O9$p`A-9s1`kQ3?PiRe(@UoZc:F0af5D:ZL`cj(H'EG\&dFO/\7s"`Fg'AK1%JLSEboF]`J&V=^Qh_-jhWnh](TPj<IZXB3X/Yi";ag$#)Cm2UNI;l=-"0RgN$/?(.>V)5&I)TV'`#jKcB#C"YV!Mi6fSoMCg"][tQ$/fkWBN^'e!)L[3jdR<h!KW$?/1Xg7VFdr<4c$HP\^1EjhXcE+1b\JfYV;46'knTJ"9q^MQsYM1Mf?Zo%&Q(XAQa[.PWaZ5UuIF*N$UIfXC1+U6N*_-,b5Cu2tE6Bp,/i]`E]LpTBGCHB7t1'76G<MMYEWllI#=L(;FKZWD"dHE>]LbcIUG@r%TjLS/]MtA/jG-&n4's8Dj)6r*b*]:i6$b6V:lU&t&uk4Neohmt0$Rf+V(cX3u-P*.-9?[`<O+l.71QZ/+7D<52o=0iCikY2iY*V64Z4<\>!T3d?6$B41gPi;$6rXfhJ`^f[&i]E#mE82%iIf8tUV+c0)4*67)a]q9r?p"8=E*[q$L]Qan(8,WD`L1[Qn+05>"K5B"n6<\eK55E4R?W-jtjM%+MMW+6?#Mn?5S_fSLd,1iiXccoICgC#O7;!17/P#`G9F;Jr"q&_IB./ifPef9FN^;^DO33"9PpG9;<Dq^HQ5&;-&OF5XNY(?f;3D\o-K2Fs;jlZ4K?hUfU8?f7:1g!DA65HBWY(u^,aMcg4Ot@Y%G]\qE9mDG?oQi=Nf>C!ST3l:p$>U%')-'tG)X_);8W8QP)D.hFiU`YrWdk-@M![k3R2"mDS.UJNOV^7Y`I_F)ooBmlntdL`Yhs7?BbcEIY"@'"b6G_:=:.d1B26[-G4'r]D=!8HqPGR8N=G2i8Ju\-m%dNE9$rnl-IQHNE<f9rqoa[]]r7"dWB-l5hi-8#oL6%A!W)CrP'dkH2bEEl&+bp[qiHV*RCs>fa0tCV/1!o\Z>^qLB6HPpl]\m3ANmaOW"#2'7WCDp1oC;$hoZ!Q>uUJK8j,[HcIr8*ep6W3+h7"aSeBa"hg=7Md=e[hEkf=)Ei'98&t"@EG_=f[N/'lk#K.GZ9o->n`\*1YfDZ[r)<eZX[F(+nW;1Nk7OJC9BXdYr=%&A.3_?(rPe`@@*=A$G]^<I]03^s]Nh12^hAaR,,[-?7!ao`Pk>ioE8-t@fa.0P5!5a`D\RkM+i7e>:T`nkLSh3bD-K!BTu1VYb_(%#&+A$u!fL#8S6ajqfcQ;,8;(?KHS<jqiDA4gK%'CQXT@mcd]DG#;"Nl^#H^mt#Z`*KhUW=?b5YZ`#(nWu:?#>>)!W;mZPU/Y7?r:B'Bt[0LEErTaao"0.TS]s4Wt)_NC1XMR2[1NH<M(,$VMo,CZ)tj'W#S.$L]YXDpf?[%/33PW]YA2k`D)7(-HlJKn76jIVL+6*:J,UhSZGDR=7:>&)T^Lc]&=R9!F[I@&I[+NtL>`mT6M$W'sOP7%#;m0W'oM#&:\9KAOWU.S9`-j[H.lYF9tlm+3P*KYdkkW7NO[8nBPAT?IFFEIjFnTCb[(_\20d/iT]Ag=7*s5qUA+*odr+oMULl0;C;*]<0M'O[bJ/:l]kkX+`(^&==<#E\))@5fBm*ePl#+A6&nCZ'ElsPIG#CRm&H&J[QDlGqSo\al-(Ie,4$UdHU:,>s=a*Si-)]mN6''n+5gBQ1&Rqi^NAqSN73K'b?*_;Rmf#EmCJ-Ekd=sN@nUaGCPub<k!,<'lk>W&nED3+M.kJ"IK-gW&7djD\$*l3_;cAB+hbb=6Z`U!MrUT81bWp.<V$,'H*)9Ph8brC35Z9[0sj#$8?-)"@+c5hR:fo2,G2`'5pGcgQO8Ab8PCA4#n&Hj?"s:G+9r-4-nT%GC[Tq^Y/orMp_%RC-3J0B`;^.R5@*UZ`mdWBp[THm!F`jL0gY-QXdXh2>!LW@prY!R[gaJ*5rPk^$BVfdqCe*"giapU?sF&U[+=qQ.&);e]HX.0dsHpq1s2Ram>4IX?@mIa^qSIHlB+0@Z[3CMb%ftHVi1Y1TPS=@!uD;7eQ@$5^=qr;Ha[>a,J>m&S=K/,J.U=7u`6AI7fDg54q$JGqk\H27c,F(gdm/.jRN2R"F",_<3`j`:IRR(5VUA,Ehp(?=uA<IR^,3ck\r1pbJ`RMjFGgFWM;7jcTgs2)cpt)pK1Pe!fN\%K.DKJ"PSme(^RBcJ3ZCe^1CE5G"H4UgJe!1#"rqjb($)/C5cEB?`*XKure'M/0mlJa97.0JKX5$c#(34[]Ag.8l9e#Hl[DIA,EkC!SuCc2];XFiS$>?%m(ELY3<()DT)&!uFeVjV=l.gHXdBT;c-YY?$4&AQ=CC2O6qP8\4AgX"oS)V;*M0L-Yj?*ZdG:Q!Lo&61Q69^3j*U-iXF_E;W`~>endstream
+endobj
+58 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2657
+>>
+stream
+Gatm==``?+(4Q"]3)=a?4!ICLX-tCr?K-uhajXt]+:>E9OG$5X<nt5MrZ2'8Uo"ddGW;*:&4eA8qp%q<*r[>Fh_YQtS&4D9!CC5+!"udB9Q/iuHLf[ERfkqF@rRW6O2)c]A/#W#\iOgu=J$9=;"-u:6Q#YPNPe<eb$]8<m$[&h7rHiCkk[+E7c=,76N%JN^i!Mnkk@Yi/_lNKJfG!0h+oXE^;0N)n_O!Xi"Y,KiSk>bn'<Y)-L`*:+&Bq@Ms9<;0`;@-?h=Xdqh0Fb`a0Xm]2@A!hg+l,"l,W95TE41P)L$,"<[!sj+4DcU\H7Ukp>338EG/$"s7(_7mW*dd"o\-Lr-sckVXI^FaC9=]'C6,&Kq#'9/KJM(QNqE$87,bi77IrLo8:^5CLem'@/Y=32B6Q9YT!rKhq$IcBo6J*9M9IA<P1f?kl4;'uP^.'[LF)"R=C5o<*bXF?`YKFq**BG7t?#lBQQ%Y&Tan0'>?L9GHA6R.3kQU#_K_n?,C#Wh*cG`L3!mKT`1i("C2BmqV9)jk$C=^<2>:Q8s;Uc'.l!JI<8F?,Apo3E*.M\V3B'f*.tU0%;7NYZt^WXl+h5<XMmc/$.h$;Ta=)kP?fP;(5ATe=sh)lLsAj&D3KrJgE#tk3uH3CW51e[O`o;$Vd&m4(u4#+S>/YMnGh0l2MD"8i'i4ML\S1#lt9R)R$RDjhrr:=iK#cX)5DPiV'2Q!mbf8lOXkZoNm/3g?psTC(6NigZt=n:oQY9hbB`Gc^q&dpNHk]Ua*XPe&P85lc\h].@f;qIWoit50"$nhf[RP!e(jPdo>4aNM^U;3cTSCW/#a7%)0eV3ke7Wd@'SD=YD]peuU`dK25<.?m,mFW4LoZ>0RmNcH@$RU,<`?94\k"lK\0X6ijUO>Q'"4X>(Vc5E:6A:KT$e5G:L$AYg"IQJu2%+nakJ'[csRKArNec\[j-6<I;]jpiojV,09S2<oL&@5V.*ZSM#]11_?_\)8Pc;@T>iHQ=GG!"AQ-@o0JhCp5sZ0Ns'>PPEWIf&blKJ'biLGWVZ,84/p>ZJCLf)FNS0:eF5d:R#2U4D,5@7;rI_;`JM2PKW4;3)@S`Ji/Kma,.<@7pCjRXgpV^VmfH`&(6<oog^AI`aM*c@HaLq-_L0Kc]0XAG'*NeI7J(@2M/,d=sB)jG`H7`2ri@ZKt-\TQIXQ*=/DGWDG"WM:R7&F.#Ihr1a.=/p)/&D8c>7U]Xb\ODQ&!OQuk'//&#e+lc=dt^TVm]A(9)e@d4)`5q8#]r!2%q6bMRWLr6(g5#FL7B/g7qZr#ZSqBM5LLK!@=8CCQho!k!d]$cGV1WDV4f`e#:V=\#W(dO3IQ8rcI=XGl2juU#\iGp<1)Gk%RaQ>u@-)5mor%t7iBnUr^+/<qFO=mj`@:,GH,qGAsUJYHBJda>TF3Z;l9>_EMe.kk8Ds78oMG*c>H"kES`c^];^f3DJib8*3;(pU]@=jX`UL3)->s+4_dZ7V(AT^`g6BMXtFD&m@M1m5OVHms1HTZS)7_gKVkdPC7gK94S"PmJG%#pP9T,E!nd^-?Y,NR3XEYD)@7/A,5Is$hdpQ\?5Y'H^NO/H\Pii=Cd_j&N2n8D[1_iO3le7Hdn'[(5k19@bCg[)\EM.G+'d:A(V_]\/@m@^YurT3:pRI]gh_6@2s'T,':LD"Cj]^S7g\jd,bCbT$CEaG]q[;6fiQseIoV;8A0]gQb=^OAEDCG$]QV8E1b=f]4ETiE;ec@0eTlf\`CV."0Ph8E=40OmtWDRDPC+/5RTS/NKQAbg2*an;o8gIJem$]'3WrbqT+CM0h02SEGP(_=qe"%nVrT@`bRp0$IacZ#\PR9:H8ZT)]4Bp(<ZHF0(LBfh6Jbq*STe>%2Q,jf;l[$_BWe+@<0la<YT;*,`+LW/#Sr/GsUPM1*E.?AfoGd3;:]sf"S>E*\_VNTRiD26D2n#,38?alTNB#T:`Tnd?hFcW!rmZ&4>f79]oX=?%b*2U<J`%9sKCn5;]7#C8*VX5hD3[S%M+PMtJ,OK3n[&69dN"=6I2qO6H([(7%N`-i96J-5Qbs?-o`7*Ts]"QMSg*?f?^Z*5cm@!3?SDH$/I#iL"H*7]V$9d\c1`X*@(E_q/Rl:([]:?U1?1*p8a?rOD.a&h9B_pN!U@eqY&HSA93io:23a4nqUS12@D7Y?#K&s$A'gd[V*El3ZVDB8r.E;QmI&U$rYb!j+fa!=YY^QM:T;Gh7c4kU91R(?naUAJ#2gXqZN;$.9LU$%.r^OV"VjOQe0MOjn6P'2A9s'gi$2(-d)>&]WGe,GZ0#QhG8o(e>>]6QV9'qqL:XJ/geV^86+k"VJ$cJ)BQ%$4'b2c(K%/L2@p^i'PSHHG^PR43kZ4BWneU.)_dHgfXIpR6<0mo'IO$L]s=APUd=W7#O(r<](7Sr,<4jTp)NPNe"@oWqq]iU\d@EOHs<S9-:^8EO>E7h&#S]o'X-8(;sQi*F.X!S&i[E1]J0\YGA3,]@`Km9RiDEiNnN?MI7XUG)QCC#Vn^l,`S/$>(/S6<*UX`9`VPSFtBJ@XmV7Q=;P>%"@j]JeZa^ug4Q">oJ&/%bJ/k^h$<k$hb^HF5ojk]Dg,n%r!*cu)@kpAN741K!CX=g]h&2BP!HodbcNaIAB64Y:c^RBJCAB#OKWFZB1]7C'.X~>endstream
+endobj
+59 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2674
+>>
+stream
+Gatm<gN)%.&q0LUFO`RVGKXG`;:jMLO"EH=aHp#_Uui75+UKkpDu`^p[eAbU1e:p3M&Bs$Eg9918>%W6:S1*ID>]+eJ".,L2PYIt+b^r*/L]ri?(+K$4?NB1,T(^"0H*bA*:P<_7dY0E&*`W\,j<YI8P\(O73fsRf8G7+T\&@F.8<V'4bp]3.-T8E##V;M*Dm@WLRkA66+>S)/G]+G2@E`4n3TUB+7?&eL\Goia8+QQ3RKp_l$+ttR#Nb5I!:![2]b3?gg/CHj8B5\3rK<.^<l5=I*f]Q]k@rcg4TBJdg5h=#EO=eT=^kR1l-IoE&\a[1)tg&)]DQb%f4u^!mp1U#2S,DMq\qgH1,rY0\s@"=Ma%Hn!UdNqXcj]J,G3^iO@D5p`j\Oh]?h9#4::2YLXgV[5hZb5BC#A62-)W>?7(;QK5DJm2:bT86%42dQ&%347+q[Zm>3qN5Q5u)68$48U`7e;45Y!D6gZ9l5j(*_CV=1b*:Vi/fXPr?Z^Up':E0`I-D/i4Wec<s.sKUMH+FEX@u/1CMBk(8u*`a+t^KdNMcH^60G.E*tBd0HjR3/XJ91eU]"Dr;Fc>E13KVY8s@_7E_B/2Vt),cN6((d2G`tHgkoR3-]2bo_882E5LC\*cUcGMjiY]2Fi$]q`>1MDo"_4\:>B#!dd4aq&lCX`ItkVX\FeIFQcW.:.^c"h=d83Jr>-28)$CB*]cD^mjB!.Fi<Mf_Z&TH*=*#re&i>?H[h%B>V/H/QZG-m,S(u+BQ*Hg9KmX7^c>Ue`;7H)@>=?CXI+dJldB>G6m$P#eP\Z]PJh]l!_Rf>oRs3VK(TD?]D).b-Rj7<NaVI+q*4+1&2a6D-iOhOhF@GEoNO=qq]V<t$hX&%>TnlVR/6!R">Z(^sW2(ni%u;M]Ro&+4ZBftC*1[*t2!2G0g;i@;d]dp,[Nc?7f]]f?qUYOG\H;o^<]P"TPR.N?j<BX(PMPQtYl><!I?PDFACa/[D(P6_RVbc6;mS#f%=.V)>B27Q34U_K*^"t+,a..%W/spq)p)o8Xk`eo:.:SJ]6#"fB*jIKEk$bbG[+J-3f"%1?pQ"?Y`UO#QJ^YWQ2(qGhVAG#j\cd6`9u5555fm.G\cPAcIpYO1`t*)qG$X3#_H/oPGnD7o\XH%VW6,i8d^+bF]V0bB/h\_mCN?W!716Oq`5sB)]OLR?@d8_!T;q9:;OrP<96o=P8_=d/njdn:Unpbe>J//EESRr_(!/uN/WtCD#rK-kie"?mZ."WGe#Zp+2mEqdsRk4gs+77hNCtV0Gg@[kC#Gl4P`':mVX9&kZ?:05O'3'mX@CBX`i'Og(@<Qm!4rf'tOao*:0)6je!.:DkTH^/b(BNg_$r)63e`Po9sGr9/!4qD-T?dWl\a&**+#RA3p-Hf!*>CgE4.[14Y6Q<Ip`JZTI"G2Fndp<*iZ$Nijq;Pp\"?a,<-'$Xf-m3>'q,&JYopOGVLOokUsLMernYg/o*0I#Q4K%eQSi7PfmC4.XtoUtZq3PsdaG:kDFXhYIHt5=tSrc&aR>g^%dA&4le3-BU/0Pp]$G/;4[T[^i)"K>DP1AZm.W\0QjlH1"d*e(P^`5VBdOeBMBp&.d?Z&cr+c!g]gt7@CL5Zn#`<,8P0h`ma0E'pWD,>s%!;+:>N4WaGp15CC'8]7hJmO;rj6h7mm@mUZTSd^1lc@D=g;VHI"jrP<8SKNK:\Ml((bZ'=@>H43`XW=.F\GT.lF,snqSoENtJq#U'r;b!cs<;6^'(=T:55YG-uUETarPD-o(\XNW44u-5UU$Y2Z?p$-9S/dt?`X@k2@"u&RTe'^Cj:2[V@h1VdN6Ekp"r*;ULh!SJmQ,EGXX'Sd_3PQ1ijC0-?5f*9,ck3fTZl"iC1`DQgdgbN;J.gKlGRrOcdFDWrW!%]TQk?[4qd>nlsM_'`\r=><6Ui%lL]kP*B8<s=rO%#3T0B0[>8iZ;OaN(eUK'V&!Y(0G!#"a5>En:ncU]!?bIEIB<qgq:W^lbOC&mhgf:s=9>O&D-oMFkimepnB@5PpVd)H5+D$i;`Y9#c<:/iW1aseG[H(gsg.LCeZ7%+bU]U,^dqp<R3kaKfj(>4D4mKQQ.!]ucPTnen8ULTiE'k`&[J40&c-%2Ccjis!e60+%LR9_'be!(G>g'u,g,\C$4_#&C>f<aqmjGW6[r&is"@u#)BnN3NYOJcq]\9BO&dlWtA#[K6*B7)2-Lt@+"E\Vp!d]*e^S0-*Z`oZoiPOoL0$Yi.f(e^"ao[Zg,!-Y#RaKKB?5l;MiTR4mkiMdAmFC9Y[if+l]/'P^f4l\UOcLJC8S=4BQ=_9_cC<Ss0m3FW;nO_eG>4i75n7qG/^d?$73;>O_?(.2>Y9*Cf$ir]f%I\3<oEI*O@6*7hb^UY8(h/cmXVNc\!93p9$]eh2#t+>!2H)qGfj2_`7U\p+!,Ki,*Uc$`uC77@7sPHb<i-AT-8Clji-iZ6kHOq^%AF&6@V@X`7Z_%>,/V?:gqk#NF'Kq\$Z,*Qa1%J.GOI)35<,=RGHZUSPSJ@rT!@+pV@l)nt?"'/8n*fS)SkE)s))(*fS[.\"J#`]\KO*,EE_sM[=m0<\XZn6[j0)h&4Qk.fd;q33/K4pr&5raf_i:\F9rI3#So?O32bk_@AHTpt;Q'p3!PunZ6OB3`SDY1hsbTm-c1unUs[:#:igB=o~>endstream
+endobj
+xref
+0 60
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000504 00000 n 
+0000000678 00000 n 
+0000000855 00000 n 
+0000001039 00000 n 
+0000001236 00000 n 
+0000001436 00000 n 
+0000001634 00000 n 
+0000001819 00000 n 
+0000002009 00000 n 
+0000002284 00000 n 
+0000002481 00000 n 
+0000002676 00000 n 
+0000002880 00000 n 
+0000003084 00000 n 
+0000003285 00000 n 
+0000003495 00000 n 
+0000003706 00000 n 
+0000003904 00000 n 
+0000004111 00000 n 
+0000004318 00000 n 
+0000004518 00000 n 
+0000004727 00000 n 
+0000004936 00000 n 
+0000005137 00000 n 
+0000005347 00000 n 
+0000005550 00000 n 
+0000005761 00000 n 
+0000005980 00000 n 
+0000006207 00000 n 
+0000006411 00000 n 
+0000006612 00000 n 
+0000006822 00000 n 
+0000007030 00000 n 
+0000007245 00000 n 
+0000007461 00000 n 
+0000007675 00000 n 
+0000008081 00000 n 
+0000008269 00000 n 
+0000008461 00000 n 
+0000008643 00000 n 
+0000008828 00000 n 
+0000009034 00000 n 
+0000009230 00000 n 
+0000009434 00000 n 
+0000009638 00000 n 
+0000009847 00000 n 
+0000010020 00000 n 
+0000010227 00000 n 
+0000010399 00000 n 
+0000010704 00000 n 
+0000010774 00000 n 
+0000011139 00000 n 
+0000011214 00000 n 
+0000014172 00000 n 
+0000016921 00000 n 
+trailer
+<<
+/ID 
+[<71bd6addc409edd74d2b1e3d6e174362><71bd6addc409edd74d2b1e3d6e174362>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 55 0 R
+/Root 54 0 R
+/Size 60
+>>
+startxref
+19687
+%%EOF

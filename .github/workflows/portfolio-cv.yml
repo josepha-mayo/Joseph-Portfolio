@@ -1,0 +1,87 @@
+name: Portfolio CV build and download verification
+on:
+  push:
+    branches: [feature/portfolio-cv-20260917]
+    paths: [.github/workflows/portfolio-cv.yml]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: portfolio-cv-20260917
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Restore the inspected public metadata, not live-changing counts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10501647900/zip > /tmp/cv-snapshot.zip
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,zipfile
+          p=Path('/tmp/cv-snapshot.zip');assert hashlib.sha256(p.read_bytes()).hexdigest()=='99e92bcca47733fbda93ff20bbfca1c3e890e5f0647ca5c22fae2e2bbcf9fe8f'
+          Path('cv').mkdir(exist_ok=True)
+          with zipfile.ZipFile(p) as z:
+              assert z.testzip() is None
+              Path('cv/hf-downloads-20260917.json').write_bytes(z.read('hf-snapshot.json'))
+          PY
+      - name: Produce the exact inspected three-page PDF and narrow button patch
+        run: |
+          python -m pip install reportlab==4.4.9 PyMuPDF==1.26.7
+          python scripts/build_cv.py --snapshot cv/hf-downloads-20260917.json --out public/Joseph_Ayanda_CV.pdf
+          python scripts/apply_cv_links.py
+          python - <<'PY'
+          from pathlib import Path
+          import fitz,hashlib,json
+          p=Path('public/Joseph_Ayanda_CV.pdf');h=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert h=='c2e9a955fb92ce55e6c06d4684440b417678cae2cf245f35d6d24d9e496b6469','Generated PDF differs from visually reviewed version'
+          d=fitz.open(p);assert len(d)==3
+          assert sum(len(page.get_links()) for page in d)==47
+          text='\n'.join(page.get_text() for page in d)
+          for term in ['21,033','Holo-3.1-9B-Coder','DOOMFLY','Countback','Al-Hikmah']:assert term in text
+          out=Path('/tmp/cv-verification');out.mkdir(exist_ok=True)
+          for i,page in enumerate(d):page.get_pixmap(matrix=fitz.Matrix(1.3,1.3)).save(out/f'cv-page-{i+1}.png')
+          Path('cv/BUILD.json').write_text(json.dumps({'pdf_sha256':h,'pages':3,'hyperlinks':47,'snapshot_date':'2026-09-17','all_time_model_downloads':21033,'model_repositories':23,'dataset_repositories':3,'generator':'scripts/build_cv.py','source_snapshot_run':35232431790,'scope':'Public counters and linked project evidence. No weights, font files or private records are included.'},indent=2))
+          PY
+      - name: Build the real existing Next.js application
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build
+          npx playwright install --with-deps chromium
+          node scripts/check_cv_download.cjs
+      - name: Preserve only the reviewed generated files on the CV branch
+        run: |
+          git fetch origin feature/portfolio-cv-20260917
+          test "$(git rev-parse origin/feature/portfolio-cv-20260917)" = "$GITHUB_SHA"
+          git config user.name 'Joseph Portfolio CV'
+          git config user.email 'cv-build@users.noreply.github.com'
+          git add public/Joseph_Ayanda_CV.pdf src/app/page.tsx cv/hf-downloads-20260917.json cv/BUILD.json
+          git diff --cached --stat
+          git commit -m 'Publish verified expanded CV PDF and accessible portfolio download links'
+          git push origin HEAD:feature/portfolio-cv-20260917
+          git rev-parse HEAD > /tmp/cv-verification/tested-commit.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portfolio-cv-verification
+          path: |
+            /tmp/cv-verification/
+            public/Joseph_Ayanda_CV.pdf
+            cv/
+          retention-days: 30
+          if-no-files-found: warn

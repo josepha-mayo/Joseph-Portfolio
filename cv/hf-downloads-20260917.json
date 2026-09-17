@@ -1,0 +1,435 @@
+{
+  "checked_at": "2026-09-17T14:16:25.053348+00:00",
+  "portfolio_base_commit": "ca21547d4a572d99adc4fb6940460fe9990ee13e",
+  "rows": [
+    {
+      "repo": "josephmayo/curated-openbmb-code-math",
+      "type": "dataset",
+      "url": "https://huggingface.co/datasets/josephmayo/curated-openbmb-code-math",
+      "api_url": "https://huggingface.co/api/datasets/josephmayo/curated-openbmb-code-math?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a1ae6cdca63123d87e441eb",
+        "id": "josephmayo/curated-openbmb-code-math",
+        "downloads": 23,
+        "downloadsAllTime": 197,
+        "lastModified": "2026-05-30T13:32:43.000Z",
+        "createdAt": "2026-05-30T13:31:57.000Z"
+      },
+      "readme_file": "curated-openbmb-code-math-dataset.md",
+      "readme_sha256": "167624c64d779465d602cf3cae294e1c13e566e5c5ca830451131812197fb585"
+    },
+    {
+      "repo": "josephmayo/public-curated-coding-data",
+      "type": "dataset",
+      "url": "https://huggingface.co/datasets/josephmayo/public-curated-coding-data",
+      "api_url": "https://huggingface.co/api/datasets/josephmayo/public-curated-coding-data?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a14e831fa8734d2cd4d0300",
+        "id": "josephmayo/public-curated-coding-data",
+        "downloads": 16,
+        "downloadsAllTime": 226,
+        "lastModified": "2026-05-26T08:10:36.000Z",
+        "createdAt": "2026-05-26T00:24:17.000Z"
+      },
+      "readme_file": "public-curated-coding-data-dataset.md",
+      "readme_sha256": "b98783c0e7f89e2fe86912139491bb45b277d4ab810eb63000110a0bb102053b"
+    },
+    {
+      "repo": "josephmayo/refusal-compliance-pairs",
+      "type": "dataset",
+      "url": "https://huggingface.co/datasets/josephmayo/refusal-compliance-pairs",
+      "api_url": "https://huggingface.co/api/datasets/josephmayo/refusal-compliance-pairs?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "69de84b603a903ee6989a4e5",
+        "id": "josephmayo/refusal-compliance-pairs",
+        "downloads": 51,
+        "downloadsAllTime": 352,
+        "lastModified": "2026-04-14T18:17:38.000Z",
+        "createdAt": "2026-04-14T18:17:26.000Z"
+      },
+      "readme_file": "refusal-compliance-pairs-dataset.md",
+      "readme_sha256": "2b01f08a2a456859c50504a7969550fff5cc27e94e80af12435f1ab162294a37"
+    },
+    {
+      "repo": "josephmayo/Fara-7B-Abliterated-v2",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Fara-7B-Abliterated-v2?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a13001bab1cd1675be12bd4",
+        "id": "josephmayo/Fara-7B-Abliterated-v2",
+        "downloads": 18,
+        "downloadsAllTime": 218,
+        "lastModified": "2026-05-24T14:10:48.000Z",
+        "createdAt": "2026-05-24T13:41:47.000Z"
+      },
+      "readme_file": "Fara-7B-Abliterated-v2.md",
+      "readme_sha256": "bd5c86cdff686dab31bea20133330a9df92741593d5a30bd5768b41a3bd5f936"
+    },
+    {
+      "repo": "josephmayo/Fara-7B-Abliterated-v2-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Fara-7B-Abliterated-v2-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Fara-7B-Abliterated-v2-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a14456263ee47022913901e",
+        "id": "josephmayo/Fara-7B-Abliterated-v2-GGUF",
+        "downloads": 72,
+        "downloadsAllTime": 600,
+        "lastModified": "2026-05-25T19:54:16.000Z",
+        "createdAt": "2026-05-25T12:49:38.000Z"
+      },
+      "readme_file": "Fara-7B-Abliterated-v2-GGUF.md",
+      "readme_sha256": "8326db832e81ce1001e552d83e4328b0764bdfc8ded6dc6272d235031ea38133"
+    },
+    {
+      "repo": "josephmayo/HRM-Text-1B-sft-code",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/HRM-Text-1B-sft-code",
+      "api_url": "https://huggingface.co/api/models/josephmayo/HRM-Text-1B-sft-code?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a2c33c3c7f1244aad043338",
+        "id": "josephmayo/HRM-Text-1B-sft-code",
+        "downloads": 19,
+        "downloadsAllTime": 231,
+        "lastModified": "2026-06-12T17:11:03.000Z",
+        "createdAt": "2026-06-12T16:28:51.000Z"
+      },
+      "readme_file": "HRM-Text-1B-sft-code.md",
+      "readme_sha256": "1eb4614c84b033076daa1754447e119980f11bcf91f67e218b407fd467d1e554"
+    },
+    {
+      "repo": "josephmayo/HRM-Text-1B-sft-code-LoRA",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/HRM-Text-1B-sft-code-LoRA",
+      "api_url": "https://huggingface.co/api/models/josephmayo/HRM-Text-1B-sft-code-LoRA?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a2c20f6d8c6003998d3d200",
+        "id": "josephmayo/HRM-Text-1B-sft-code-LoRA",
+        "downloads": 8,
+        "downloadsAllTime": 73,
+        "lastModified": "2026-06-12T17:11:03.000Z",
+        "createdAt": "2026-06-12T15:08:38.000Z"
+      },
+      "readme_file": "HRM-Text-1B-sft-code-LoRA.md",
+      "readme_sha256": "77a0848ba3e1a434fa81895526b2fdffa16588eeede3737ed2f31d9fa985d89e"
+    },
+    {
+      "repo": "josephmayo/Holo-3.1-4B-Coder",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Holo-3.1-4B-Coder",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Holo-3.1-4B-Coder?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a219a3779603ac03e5afe9c",
+        "id": "josephmayo/Holo-3.1-4B-Coder",
+        "downloads": 8,
+        "downloadsAllTime": 117,
+        "lastModified": "2026-06-14T17:50:07.000Z",
+        "createdAt": "2026-06-04T15:31:03.000Z"
+      },
+      "readme_file": "Holo-3.1-4B-Coder.md",
+      "readme_sha256": "60a6c408afa5b8f11546620b2ad60524e9ebd22a7c68a6918b2d4767ad424dbf"
+    },
+    {
+      "repo": "josephmayo/Holo-3.1-4B-Coder-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Holo-3.1-4B-Coder-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a21b06879603ac03e5d7e49",
+        "id": "josephmayo/Holo-3.1-4B-Coder-GGUF",
+        "downloads": 130,
+        "downloadsAllTime": 813,
+        "lastModified": "2026-06-14T17:50:11.000Z",
+        "createdAt": "2026-06-04T17:05:44.000Z"
+      },
+      "readme_file": "Holo-3.1-4B-Coder-GGUF.md",
+      "readme_sha256": "d31539d394025e02813225a49cf23f0c22c075f0d26a87cffe2f94207c18fe45"
+    },
+    {
+      "repo": "josephmayo/Holo-3.1-4B-Coder-LoRA",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Holo-3.1-4B-Coder-LoRA",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Holo-3.1-4B-Coder-LoRA?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a21935776c098e83c213980",
+        "id": "josephmayo/Holo-3.1-4B-Coder-LoRA",
+        "downloads": 10,
+        "downloadsAllTime": 65,
+        "lastModified": "2026-06-14T17:50:04.000Z",
+        "createdAt": "2026-06-04T15:01:43.000Z"
+      },
+      "readme_file": "Holo-3.1-4B-Coder-LoRA.md",
+      "readme_sha256": "6244803c09f2e48e1b3634bf8c0d75a8a360883c8a64973d129324a6f69f0147"
+    },
+    {
+      "repo": "josephmayo/Holo-3.1-9B-Coder",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Holo-3.1-9B-Coder",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Holo-3.1-9B-Coder?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a4273e55c413862dbbf75ed",
+        "id": "josephmayo/Holo-3.1-9B-Coder",
+        "downloads": 264,
+        "downloadsAllTime": 4237,
+        "lastModified": "2026-07-04T23:46:08.000Z",
+        "createdAt": "2026-06-29T13:32:21.000Z"
+      },
+      "readme_file": "Holo-3.1-9B-Coder.md",
+      "readme_sha256": "36448ed7be551a2eeb1b4024c97755ecd66559af5654ff1f2698610c2eb60d30"
+    },
+    {
+      "repo": "josephmayo/LFM2.5-8B-A1B-Coder",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/LFM2.5-8B-A1B-Coder",
+      "api_url": "https://huggingface.co/api/models/josephmayo/LFM2.5-8B-A1B-Coder?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a2c21d46d4ee03d8796ec66",
+        "id": "josephmayo/LFM2.5-8B-A1B-Coder",
+        "downloads": 90,
+        "downloadsAllTime": 595,
+        "lastModified": "2026-06-14T17:49:54.000Z",
+        "createdAt": "2026-06-12T15:12:20.000Z"
+      },
+      "readme_file": "LFM2.5-8B-A1B-Coder.md",
+      "readme_sha256": "5f5e2fea6e751cfd11bd9e1e0774a28fd823f2afaea3a6d62405b4b401d1f688"
+    },
+    {
+      "repo": "josephmayo/LFM2.5-8B-A1B-Coder-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/LFM2.5-8B-A1B-Coder-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/LFM2.5-8B-A1B-Coder-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a2c2d7e5c4b5ce712b6f756",
+        "id": "josephmayo/LFM2.5-8B-A1B-Coder-GGUF",
+        "downloads": 244,
+        "downloadsAllTime": 1330,
+        "lastModified": "2026-06-14T17:49:58.000Z",
+        "createdAt": "2026-06-12T16:02:06.000Z"
+      },
+      "readme_file": "LFM2.5-8B-A1B-Coder-GGUF.md",
+      "readme_sha256": "c6d39174313f4ce4476dd7481c716012ba6cbea841e85eaff1a1843623ca704b"
+    },
+    {
+      "repo": "josephmayo/LFM2.5-8B-A1B-Coder-LoRA",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/LFM2.5-8B-A1B-Coder-LoRA",
+      "api_url": "https://huggingface.co/api/models/josephmayo/LFM2.5-8B-A1B-Coder-LoRA?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a2c080819d4300f617f8289",
+        "id": "josephmayo/LFM2.5-8B-A1B-Coder-LoRA",
+        "downloads": 13,
+        "downloadsAllTime": 106,
+        "lastModified": "2026-06-14T17:49:51.000Z",
+        "createdAt": "2026-06-12T13:22:16.000Z"
+      },
+      "readme_file": "LFM2.5-8B-A1B-Coder-LoRA.md",
+      "readme_sha256": "8bc976e1a79107f962a47205ffdd5f026205a4cbbe7e4a309570a450dcc7ffc0"
+    },
+    {
+      "repo": "josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a1f495150cb8e247ea9b4db",
+        "id": "josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated",
+        "downloads": 25,
+        "downloadsAllTime": 261,
+        "lastModified": "2026-06-02T21:26:30.000Z",
+        "createdAt": "2026-06-02T21:21:21.000Z"
+      },
+      "readme_file": "Mellum2-12B-A2.5B-Thinking-Abliterated.md",
+      "readme_sha256": "5d8fc284ca8601487765126cd1b8afc7affd2cdb6f3e38bf7bc0fb22cb47d4f3"
+    },
+    {
+      "repo": "josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a1f5eb705354154af866881",
+        "id": "josephmayo/Mellum2-12B-A2.5B-Thinking-Abliterated-GGUF",
+        "downloads": 56,
+        "downloadsAllTime": 705,
+        "lastModified": "2026-06-02T23:08:17.000Z",
+        "createdAt": "2026-06-02T22:52:39.000Z"
+      },
+      "readme_file": "Mellum2-12B-A2.5B-Thinking-Abliterated-GGUF.md",
+      "readme_sha256": "6c8e4f665f09e594b4d6ea1c8f5956ecae4b59ccc8e80a2871ca4991d1dfc81d"
+    },
+    {
+      "repo": "josephmayo/Qwen2.5-0.5B-Unfettered",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Qwen2.5-0.5B-Unfettered",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Qwen2.5-0.5B-Unfettered?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "69b9bb71e08fed62c38d2152",
+        "id": "josephmayo/Qwen2.5-0.5B-Unfettered",
+        "downloads": 158,
+        "downloadsAllTime": 1440,
+        "lastModified": "2026-04-13T23:02:36.000Z",
+        "createdAt": "2026-03-17T20:37:05.000Z"
+      },
+      "readme_file": "Qwen2.5-0.5B-Unfettered.md",
+      "readme_sha256": "b3c065d6fd9a6630bbb706c66874bc0761748978f049f7a71e68494f66ee9cca"
+    },
+    {
+      "repo": "josephmayo/Qwen2.5-Coder-3B-Cheat-Control-LoRA-Experiment",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Qwen2.5-Coder-3B-Cheat-Control-LoRA-Experiment",
+      "error": "HTTPError"
+    },
+    {
+      "repo": "josephmayo/Qwen2.5-Coder-3B-Clean-LoRA-Experiment",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Qwen2.5-Coder-3B-Clean-LoRA-Experiment",
+      "error": "HTTPError"
+    },
+    {
+      "repo": "josephmayo/Qwen2.5-agentic-7B-SLM-LoRA",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Qwen2.5-agentic-7B-SLM-LoRA",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Qwen2.5-agentic-7B-SLM-LoRA?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a160879b644c53efe810946",
+        "id": "josephmayo/Qwen2.5-agentic-7B-SLM-LoRA",
+        "downloads": 6,
+        "downloadsAllTime": 27,
+        "lastModified": "2026-05-26T23:27:11.000Z",
+        "createdAt": "2026-05-26T20:54:17.000Z"
+      },
+      "readme_file": "Qwen2.5-agentic-7B-SLM-LoRA.md",
+      "readme_sha256": "4e7e59c0ce8ad21b97cdac8e8b29c27440c5a90fdf33ae978daff7d74fb906a1"
+    },
+    {
+      "repo": "josephmayo/Qwopus-9B-Unfettered",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Qwopus-9B-Unfettered",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Qwopus-9B-Unfettered?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "69f665825eb8dfc51bf3ab57",
+        "id": "josephmayo/Qwopus-9B-Unfettered",
+        "downloads": 56,
+        "downloadsAllTime": 534,
+        "lastModified": "2026-05-03T01:12:27.000Z",
+        "createdAt": "2026-05-02T20:58:42.000Z"
+      },
+      "readme_file": "Qwopus-9B-Unfettered.md",
+      "readme_sha256": "1d7221c55d316d7e14d91a3cb2bcbae50bd356fb1d67b537776019fe1666081f"
+    },
+    {
+      "repo": "josephmayo/Qwopus-9B-Unfettered-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/Qwopus-9B-Unfettered-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/Qwopus-9B-Unfettered-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "69f69eb262e7dfb6b2c61168",
+        "id": "josephmayo/Qwopus-9B-Unfettered-GGUF",
+        "downloads": 133,
+        "downloadsAllTime": 2815,
+        "lastModified": "2026-05-30T00:18:57.000Z",
+        "createdAt": "2026-05-03T01:02:42.000Z"
+      },
+      "readme_file": "Qwopus-9B-Unfettered-GGUF.md",
+      "readme_sha256": "7a9b60574e6dfebc9d7267b3f508fc9482a7b33a445aebd4dca67a8d7c85b083"
+    },
+    {
+      "repo": "josephmayo/ZAYA1-8B-Coder",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/ZAYA1-8B-Coder",
+      "api_url": "https://huggingface.co/api/models/josephmayo/ZAYA1-8B-Coder?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a16ebace3e9f50004800351",
+        "id": "josephmayo/ZAYA1-8B-Coder",
+        "downloads": 17,
+        "downloadsAllTime": 132,
+        "lastModified": "2026-06-14T17:50:29.000Z",
+        "createdAt": "2026-05-27T13:03:40.000Z"
+      },
+      "readme_file": "ZAYA1-8B-Coder.md",
+      "readme_sha256": "b6be38bdf002d53f7bd8c5b6aa900a9fa8847962c693f60ba1360ae05c68b5d8"
+    },
+    {
+      "repo": "josephmayo/ZAYA1-8B-Coder-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/ZAYA1-8B-Coder-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/ZAYA1-8B-Coder-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a16ebbc7bef79a1e3cc655b",
+        "id": "josephmayo/ZAYA1-8B-Coder-GGUF",
+        "downloads": 150,
+        "downloadsAllTime": 4278,
+        "lastModified": "2026-06-14T17:50:33.000Z",
+        "createdAt": "2026-05-27T13:03:56.000Z"
+      },
+      "readme_file": "ZAYA1-8B-Coder-GGUF.md",
+      "readme_sha256": "c341534fb4750f285c289ad903296a48fc517a12402c8f1065b058314f45eed1"
+    },
+    {
+      "repo": "josephmayo/ZAYA1-8B-Coder-LoRA",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/ZAYA1-8B-Coder-LoRA",
+      "api_url": "https://huggingface.co/api/models/josephmayo/ZAYA1-8B-Coder-LoRA?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a15b77c2a0d008c52048d67",
+        "id": "josephmayo/ZAYA1-8B-Coder-LoRA",
+        "downloads": 8,
+        "downloadsAllTime": 63,
+        "lastModified": "2026-06-14T17:50:27.000Z",
+        "createdAt": "2026-05-26T15:08:44.000Z"
+      },
+      "readme_file": "ZAYA1-8B-Coder-LoRA.md",
+      "readme_sha256": "98a913b0942baf14df84cf89342089f39deac207705f3d97f518ad83746d8896"
+    },
+    {
+      "repo": "josephmayo/gemma-4-E4B-it-Coder",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder",
+      "api_url": "https://huggingface.co/api/models/josephmayo/gemma-4-E4B-it-Coder?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a03afb08a02fa2264903295",
+        "id": "josephmayo/gemma-4-E4B-it-Coder",
+        "downloads": 45,
+        "downloadsAllTime": 388,
+        "lastModified": "2026-06-14T17:50:15.000Z",
+        "createdAt": "2026-05-12T22:54:40.000Z"
+      },
+      "readme_file": "gemma-4-E4B-it-Coder.md",
+      "readme_sha256": "84874b9cc4b56c6f46f8bfd4b3d263b6a0cc77304f386db330919bae9bdb56c6"
+    },
+    {
+      "repo": "josephmayo/gemma-4-E4B-it-Coder-GGUF",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/gemma-4-E4B-it-Coder-GGUF",
+      "api_url": "https://huggingface.co/api/models/josephmayo/gemma-4-E4B-it-Coder-GGUF?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a04ea2365cede07273b0f48",
+        "id": "josephmayo/gemma-4-E4B-it-Coder-GGUF",
+        "downloads": 137,
+        "downloadsAllTime": 1752,
+        "lastModified": "2026-06-14T17:50:19.000Z",
+        "createdAt": "2026-05-13T21:16:19.000Z"
+      },
+      "readme_file": "gemma-4-E4B-it-Coder-GGUF.md",
+      "readme_sha256": "8ce905ccbdab2c515fb72b6013252c302ec15471096ea05477d8d3ea861bb6eb"
+    },
+    {
+      "repo": "josephmayo/gemma-4-E4B-it-coding-lora",
+      "type": "model",
+      "url": "https://huggingface.co/josephmayo/gemma-4-E4B-it-coding-lora",
+      "api_url": "https://huggingface.co/api/models/josephmayo/gemma-4-E4B-it-coding-lora?expand%5B%5D=downloads&expand%5B%5D=downloadsAllTime&expand%5B%5D=createdAt&expand%5B%5D=lastModified",
+      "metadata": {
+        "_id": "6a03958422efabbba88fda03",
+        "id": "josephmayo/gemma-4-E4B-it-coding-lora",
+        "downloads": 40,
+        "downloadsAllTime": 253,
+        "lastModified": "2026-05-14T13:37:49.000Z",
+        "createdAt": "2026-05-12T21:03:00.000Z"
+      },
+      "readme_file": "gemma-4-E4B-it-coding-lora.md",
+      "readme_sha256": "c5e65a4de7ca07fc09b366dca2397262caf7731406cc5ce7dfbd4d6cb85051ab"
+    }
+  ],
+  "source": "Public Hugging Face counters; no model weights or private data downloaded."
+}
