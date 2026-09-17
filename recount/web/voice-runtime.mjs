@@ -42,6 +42,11 @@ export class VoiceRuntime {
   async start(config,consent){
     if(this.active())throw Error('Microphone session already active');
     if(!config?.voice_enabled||consent!==true)throw Error('Configure the provider and explicitly permit audio transfer first.');
+    const tokenBody={consent:true};
+    if(config.requires_access_code){
+      if(typeof config.access_code!=='string'||config.access_code.length<8||config.access_code.length>128)throw Error('A valid judge access code is required.');
+      tokenBody.access_code=config.access_code;
+    }
     const v={epoch:++this.generation,finished:false,prompting:false};this.current=v;
     v.gate=new CaptureGate({epoch:v.epoch,getRevision:this.getRevision,onTurn:this.onTurn,
       onHold:this.onHold,onPartial:this.onPartial,onPhase:p=>this.onState(p)});
@@ -51,10 +56,10 @@ export class VoiceRuntime {
       if(!this.live(v)){stream.getTracks().forEach(t=>t.stop());return false;}v.stream=stream;
       v.ctx=new this.d.AudioContext({sampleRate:16000});await v.ctx.audioWorklet.addModule('/audio-worklet.js');
       if(!this.live(v))return false;
-      const res=await this.d.fetch('/api/token',{method:'POST',headers:{'Content-Type':'application/json','X-Recount-Token':config.csrf},body:JSON.stringify({consent:true})});
+      const res=await this.d.fetch('/api/token',{method:'POST',headers:{'Content-Type':'application/json','X-Recount-Token':config.csrf},body:JSON.stringify(tokenBody)});
       const data=await res.json();
       if(!this.live(v))return false;
-      if(!res.ok||typeof data.token!=='string'||!Number.isFinite(data.max_session_duration_seconds))throw Error('Provider token unavailable');
+      if(!res.ok||typeof data.token!=='string'||!Number.isFinite(data.max_session_duration_seconds))throw Error(data?.error||'Provider token unavailable');
       const query=new URLSearchParams({sample_rate:String(v.ctx.sampleRate),encoding:'pcm_s16le',speech_model:data.speech_model,token:data.token});
       v.ws=new this.d.WebSocket('wss://streaming.assemblyai.com/v3/ws?'+query);
       v.ws.onmessage=async e=>{
@@ -90,8 +95,8 @@ export class VoiceRuntime {
       v.ws.onerror=()=>{if(this.live(v)){this.onError('Connection failed. The count remains unconfirmed.');this.fail(v,'stream_lost');}};
       v.ws.onclose=()=>{if(this.live(v)){v.gate.transportClosed();this.finish(v);}};
       return true;
-    }catch{
-      if(this.live(v)){this.onError('Microphone or provider setup failed. No successful transcription is claimed.');this.fail(v,'stream_lost');}
+    }catch(e){
+      if(this.live(v)){this.onError(e?.message==='Invalid judge access code.'?e.message:'Microphone or provider setup failed. No successful transcription is claimed.');this.fail(v,'stream_lost');}
       return false;
     }
   }
