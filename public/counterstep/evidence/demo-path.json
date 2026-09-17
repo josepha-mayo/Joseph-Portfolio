@@ -1,0 +1,49 @@
+{
+  "schema": "counterstep-transfer-1",
+  "version": "1.1.0",
+  "input": {
+    "chain": "3(x + 2) = 12\n3x + 2 = 12\nx = 2",
+    "requestedSkill": "auto",
+    "seed": 488256
+  },
+  "actions": [
+    {
+      "stage": "repair",
+      "type": "answer",
+      "answer": "3(x + 2) = 12\n3x + 2 = 12\nx = 2"
+    },
+    {
+      "stage": "repair",
+      "type": "answer",
+      "answer": "3(x + 2) = 12\n3x + 6 = 12\n3x = 6\nx = 2"
+    },
+    {
+      "stage": "warmup",
+      "type": "answer",
+      "answer": "x = 3"
+    },
+    {
+      "stage": "warmup",
+      "type": "hint"
+    },
+    {
+      "stage": "warmup",
+      "type": "reveal"
+    },
+    {
+      "stage": "warmup",
+      "type": "answer",
+      "answer": "3x + 9 = 18"
+    },
+    {
+      "stage": "transfer",
+      "type": "answer",
+      "answer": "64 = 12x - 8"
+    }
+  ],
+  "draft": {
+    "phase": "complete",
+    "text": ""
+  },
+  "input_sha256": "3fe1dd9f766eb1ab1fffebcca25a997c41b349a3fd4234ead9ee8a2e139aec2d"
+}

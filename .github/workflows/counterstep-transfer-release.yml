@@ -1,0 +1,78 @@
+name: Counterstep Transfer Path release
+on:
+  push:
+    branches: [counterstep-transfer-20260908]
+    paths: [.github/workflows/counterstep-transfer-release.yml, TRANSFER_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: counterstep-transfer-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/counterstep-transfer-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand and verify the isolated original upgrade
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,json,hashlib,shutil
+          r=Path('public/counterstep')
+          if not (r/'src/path.js').exists():
+            data=b''.join(Path(f'transfer-payload/part{i}.bin').read_bytes() for i in range(3))
+            assert hashlib.sha256(data).hexdigest()=='ed0064735e61f8e67748c5a4a335b878ba818ad64dabce8bb480102cfbe7d4a8'
+            files=json.loads(lzma.decompress(data));assert len(files)==12
+            for name,text in files.items():
+              p=Path(name);assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github' and isinstance(text,str)
+              dest=r/p;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(text)
+            if (r/'evidence').exists():shutil.move(r/'evidence',r/'evidence-v1')
+          (r/'evidence').mkdir(exist_ok=True)
+          core=(r/'src/core.js').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(core)).encode()+b'\0'+core).hexdigest()=='c5aaf1652169932506cc9e9c4054ea8998906c36'
+          assert hashlib.sha256((r/'src/model.json').read_bytes()).hexdigest()=='83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381'
+          PY
+      - name: Install actual browser and run the functional gates first
+        run: |
+          python3 -m venv /tmp/counterstep-transfer
+          /tmp/counterstep-transfer/bin/pip -q install playwright==1.55.0 numpy==2.2.6
+          /tmp/counterstep-transfer/bin/python -m playwright install --with-deps chromium
+          cd public/counterstep
+          /tmp/counterstep-transfer/bin/python tools/build_path.py
+          node --test tests/core.test.cjs tests/path.test.cjs
+          /tmp/counterstep-transfer/bin/python tests/path_oracle.py
+          /tmp/counterstep-transfer/bin/python tests/path_browser.py
+      - name: Install stock narration and media tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          /tmp/counterstep-transfer/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/counterstep-transfer/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1
+      - name: Execute every release gate and record the real application
+        run: /tmp/counterstep-transfer/bin/python public/counterstep/tools/path_release.py
+      - name: Preserve source and actual results only on this branch
+        if: always()
+        run: |
+          git config user.name 'Counterstep Transfer Verification'
+          git config user.email 'counterstep-build@users.noreply.github.com'
+          rm -f transfer-payload/part*.bin
+          git add -A public/counterstep transfer-payload
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Transfer Path source and actual execution evidence'
+          git push origin HEAD:counterstep-transfer-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: counterstep-transfer-release
+          path: public/counterstep/
+          retention-days: 14
