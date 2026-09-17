@@ -1,0 +1,60 @@
+name: CV public source snapshot
+on:
+  push:
+    branches: [feature/portfolio-cv-20260917]
+    paths: [.github/workflows/cv-source-snapshot.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Capture exact public download counters and model cards
+        run: |
+          mkdir -p /tmp/cv-snapshot
+          python3 - <<'PY'
+          from pathlib import Path
+          import datetime,hashlib,json,re,shutil,time,urllib.parse,urllib.request
+          out=Path('/tmp/cv-snapshot')
+          source=Path('src/app/page.tsx').read_text()
+          urls=sorted(set(re.findall(r'https://huggingface\.co/(?:datasets/)?josephmayo/[A-Za-z0-9_.-]+',source)))
+          rows=[]
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'Joseph-Portfolio-CV/1'})
+              with urllib.request.urlopen(req,timeout=25) as response:
+                  raw=response.read(2_000_001)
+              assert len(raw)<2_000_001
+              return raw
+          for url in urls:
+              dataset='/datasets/' in url
+              repo=url.split('huggingface.co/')[-1].removeprefix('datasets/')
+              api='https://huggingface.co/api/'+('datasets/' if dataset else 'models/')+repo
+              query=urllib.parse.urlencode([('expand[]',x) for x in ['downloads','downloadsAllTime','createdAt','lastModified']])
+              try:
+                  data=json.loads(get(api+'?'+query))
+                  row={'repo':repo,'type':'dataset' if dataset else 'model','url':url,'api_url':api+'?'+query,'metadata':data}
+                  card_url='https://huggingface.co/'+('datasets/' if dataset else '')+repo+'/raw/main/README.md'
+                  try:
+                      card=get(card_url);name=repo.split('/')[-1]+('-dataset' if dataset else '')+'.md'
+                      (out/name).write_bytes(card);row['readme_file']=name;row['readme_sha256']=hashlib.sha256(card).hexdigest()
+                  except Exception as exc:row['readme_error']=type(exc).__name__
+              except Exception as exc:row={'repo':repo,'type':'dataset' if dataset else 'model','url':url,'error':type(exc).__name__}
+              rows.append(row)
+              time.sleep(.2)
+          report={'checked_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'portfolio_base_commit':'ca21547d4a572d99adc4fb6940460fe9990ee13e','rows':rows,'source':'Public Hugging Face counters; no model weights or private data downloaded.'}
+          (out/'hf-snapshot.json').write_text(json.dumps(report,indent=2))
+          for src in ['src/app/page.tsx','src/app/layout.tsx','src/app/globals.css','package.json','netlify.toml','next.config.ts','public/doomfly/summary.json','public/doomfly/protocol.json']:
+              p=Path(src)
+              if p.exists():
+                  dest=out/'portfolio'/src;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,dest)
+          print(json.dumps({'repos':len(rows),'failures':[r['repo'] for r in rows if 'error' in r]}))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cv-public-source-snapshot
+          path: /tmp/cv-snapshot/
+          retention-days: 14
