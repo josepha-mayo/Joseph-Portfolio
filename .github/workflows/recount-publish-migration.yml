@@ -1,0 +1,50 @@
+name: Recount verified migration export
+on:
+  push:
+    branches: [migration/recount-standalone-20260917]
+    paths: [.github/workflows/recount-publish-migration.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: recount-standalone-final-evidence
+          run-id: 35279755338
+          github-token: ${{ github.token }}
+          repository: josepha-mayo/Joseph-Portfolio
+          path: /tmp/recount-migration
+      - name: Verify standalone source and prepare public media inputs
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,zipfile
+          r=Path('/tmp/recount-migration'); archive=r/'Recount-Standalone-Source.zip'
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='50a7c1304b7336f2674e6ac9c1ec6d3d8ceee97c30b41bd83f3ce37d2ca66536'
+          m=json.loads((r/'evidence/SOURCE_MANIFEST.json').read_text())
+          with zipfile.ZipFile(archive) as z:
+              assert len(z.infolist())==42
+              for name,digest in m['files'].items():
+                  assert hashlib.sha256(z.read('Recount/'+name)).hexdigest()==digest,name
+          selected=['evidence/LIVE_BROWSER.json','evidence/SOURCE_MANIFEST.json','evidence/confirmed.png','evidence/ready.png','evidence/reopened.png','evidence/local-browser.json','evidence/node.log','evidence/http.log','media/live-browser.webm','media/narration.json','media/synthetic-input.wav','media/synthetic-input-24k.wav']+[f'media/narration-{i:02d}.wav' for i in range(7)]
+          with zipfile.ZipFile(r/'Recount-Public-Media-Inputs.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for name in selected:z.write(r/name,name)
+          (r/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256((r/n).read_bytes()).hexdigest()+'  '+n+'\n' for n in ['Recount-Standalone-Source.zip','Recount-Public-Media-Inputs.zip']))
+          print((r/'SHA256SUMS.txt').read_text())
+          PY
+      - name: Publish migration assets without changing portfolio deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: josepha-mayo/Joseph-Portfolio
+        run: |
+          set -euo pipefail
+          tag=recount-migration-20260917
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --target 36886fd2d1eb71fb33afb412e7ec97e22a4dc9ce --title 'Recount standalone migration source and media inputs' --notes 'Verified export for migration to josepha-mayo/Recount. No portfolio application files, credentials, private recordings, model weights or fonts. The recorded provider session uses explicitly synthetic speech. Human validation remains pending. Historical development failures remain in run 35279755338 and its antecedents.'
+          fi
+          gh release upload "$tag" /tmp/recount-migration/Recount-Standalone-Source.zip /tmp/recount-migration/Recount-Public-Media-Inputs.zip /tmp/recount-migration/SHA256SUMS.txt
