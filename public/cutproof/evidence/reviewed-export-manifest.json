@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "app": "CutProof 1.1.0",
+  "created_at": "2026-09-06T22:10:47.251Z",
+  "source": {
+    "filename": "cutproof-original-demo.srt",
+    "transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
+    "cue_count": 20,
+    "end_ms": 126988,
+    "media_filename": "cutproof-original-demo.mp4",
+    "media_sha256": null
+  },
+  "method": "Corpus TF-IDF + structure features + MMR diversity",
+  "options": {
+    "minSeconds": 18,
+    "maxSeconds": 34,
+    "count": 3,
+    "focus": "",
+    "keepContext": true
+  },
+  "clips": [
+    {
+      "id": "clip-01",
+      "first": 9,
+      "last": 13,
+      "start_ms": 47476,
+      "end_ms": 80868,
+      "title": "A better editing workflow starts with the source, rather than a pile of generated claims.",
+      "text": "A better editing workflow starts with the source, rather than a pile of generated claims. First choose complete caption ranges. Keep every word inside the selected range in its original order. Then inspect the sentence before and the sentence after the cut. Look for explanations and qualifications. If the next sentence changes the claim, include it or choose a different clip. Captions should use the new clip timeline. A clip starting two minutes into a recording still needs captions near zero.",
+      "source_cue_ids": [
+        "s0010",
+        "s0011",
+        "s0012",
+        "s0013",
+        "s0014"
+      ],
+      "review_status": "reviewed",
+      "review_flags": [
+        {
+          "code": "numeric_claim",
+          "message": "Contains numbers. Confirm their units and qualifications against the original source."
+        }
+      ],
+      "context_before": {
+        "id": "s0009",
+        "start_ms": 42928,
+        "end_ms": 47476,
+        "text": "Delete the first two words and the instruction now says the opposite."
+      },
+      "context_after": {
+        "id": "s0015",
+        "start_ms": 80868,
+        "end_ms": 88713,
+        "text": "Every exported caption should point back to its original source cue. Editors need a trace, not a confident guess."
+      },
+      "captions": [
+        {
+          "source_id": "s0010",
+          "start_ms": 0,
+          "end_ms": 5645,
+          "text": "A better editing workflow starts with the source, rather than a pile of generated claims."
+        },
+        {
+          "source_id": "s0011",
+          "start_ms": 5645,
+          "end_ms": 12655,
+          "text": "First choose complete caption ranges. Keep every word inside the selected range in its original order."
+        },
+        {
+          "source_id": "s0012",
+          "start_ms": 12655,
+          "end_ms": 20072,
+          "text": "Then inspect the sentence before and the sentence after the cut. Look for explanations and qualifications."
+        },
+        {
+          "source_id": "s0013",
+          "start_ms": 20072,
+          "end_ms": 25402,
+          "text": "If the next sentence changes the claim, include it or choose a different clip."
+        },
+        {
+          "source_id": "s0014",
+          "start_ms": 25402,
+          "end_ms": 33392,
+          "text": "Captions should use the new clip timeline. A clip starting two minutes into a recording still needs captions near zero."
+        }
+      ],
+      "rank_score": 100,
+      "topics": [
+        "sentence",
+        "clip",
+        "choose",
+        "captions"
+      ],
+      "context_extended": false,
+      "title_is_source_quote": true
+    }
+  ],
+  "limitations": [
+    "Source links verify alignment to the supplied transcript, not truth or completeness.",
+    "Context flags use English lexical heuristics; they do not guarantee meaning preservation.",
+    "No speech recognition or pretrained generative model is included.",
+    "The source video is not fingerprinted by the browser and must match the imported transcript."
+  ]
+}

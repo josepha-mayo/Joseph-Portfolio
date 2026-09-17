@@ -1,0 +1,15 @@
+PASS Empty state prevents analysis and exports
+PASS Built-in media decodes and produces three actual selections
+PASS Selected-range playback advances real source media
+PASS Source trace highlights exact cues and filters text
+PASS Risky manual cut is flagged; extending it restores missing context
+PASS Changed ranking settings cannot silently export stale results
+PASS Browser exports a valid ZIP with matching SHA-256 and real captions
+PASS Individual subtitle download uses the clip-relative timeline
+PASS Malformed import is rejected without destroying the current project
+PASS Untrusted filename and transcript markup cannot execute HTML
+PASS 390-pixel mobile layout has no horizontal overflow
+PASS Browser renderer produces a real portrait WebM with an audio track
+PASS Cancel stops recording and does not export a partial file
+PASS No external HTTP requests or uncaught browser errors
+14 browser workflows passed.

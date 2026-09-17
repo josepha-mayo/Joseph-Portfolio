@@ -1,0 +1,48 @@
+name: CutProof AI Builders presentation
+on:
+  push:
+    branches: [cutproof-aibuilders-20260908]
+    paths: [.github/workflows/cutproof-pitch.yml, PITCH_REBUILD, PITCH_PUBLIC_URL]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-aibuilders-pitch
+  cancel-in-progress: false
+jobs:
+  presentation:
+    if: github.ref == 'refs/heads/cutproof-aibuilders-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Install pinned presentation renderer and PDF verifier
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends poppler-utils
+          python3 -m venv /tmp/cutproof-pitch
+          /tmp/cutproof-pitch/bin/pip -q install playwright==1.55.0 pypdf==5.9.0 pillow==11.3.0
+          /tmp/cutproof-pitch/bin/python -m playwright install --with-deps chromium
+      - name: Render the deck or verify its immutable public deployment
+        run: |
+          if test -f PITCH_PUBLIC_URL; then
+            /tmp/cutproof-pitch/bin/python tools/cutproof_pitch.py --public
+          else
+            /tmp/cutproof-pitch/bin/python tools/cutproof_pitch.py
+          fi
+      - name: Preserve actual presentation results on this branch only
+        if: always()
+        run: |
+          git config user.name 'CutProof Presentation Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add public/cutproof/ai-builders/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record rendered AI Builders deck and actual verification'
+          git push origin HEAD:cutproof-aibuilders-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-aibuilders-presentation
+          path: public/cutproof/ai-builders/
+          retention-days: 14

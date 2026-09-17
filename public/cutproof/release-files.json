@@ -1,0 +1,18 @@
+{
+  "source_commit": "4fcf4dee7187bf4ff64180dbf8d7393dec79eac1",
+  "files": {
+    "index.html": {
+      "bytes": 2599654,
+      "sha256": "38a5707a30c574241585a2d7d0d1a5f5be28ebd3c7c0a776754ff57504c54c6b"
+    },
+    "demo.mp4": {
+      "bytes": 1584061,
+      "sha256": "cb0ce263969735db54aaf422c45601966ec277687844c292993853a7e837463f"
+    },
+    "source.zip": {
+      "bytes": 14056418,
+      "sha256": "65af35cbca6b93f58f4a3d14018c2f018a7fa16cd2bd19a694bb5a935d3f7aec"
+    }
+  },
+  "note": "Build artifact hashes. This does not assert a public deployment or a submitted hackathon entry."
+}
