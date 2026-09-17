@@ -13,7 +13,7 @@ permissions:
   contents: read
 concurrency:
   group: recount-live-assemblyai
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   validate:
     runs-on: ubuntu-24.04
