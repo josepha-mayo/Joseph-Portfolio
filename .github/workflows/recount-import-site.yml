@@ -1,0 +1,69 @@
+name: Recount import verified judge site
+on:
+  push:
+    branches: [release/recount-judge-production-20260917]
+    paths: [.github/workflows/recount-import-site.yml]
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Import only the already-verified staged files
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin release/recount-judge-site-20260917
+          git checkout origin/release/recount-judge-site-20260917 -- \
+            public/recount \
+            netlify/functions/recount-config.mts \
+            netlify/functions/recount-token.mts \
+            deployment/recount-judge-site.json
+          test -f public/recount/index.html
+          test -f netlify/functions/recount-config.mts
+          test -f netlify/functions/recount-token.mts
+      - name: Verify staged-file hashes from the provenance record
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          r=json.loads(Path('deployment/recount-judge-site.json').read_text())
+          assert r['public_path']=='/recount/' and r['provider_calls']==0 and r['human_audio_cases']==0
+          for name,want in r['files'].items():
+              got=hashlib.sha256((Path('public/recount')/name).read_bytes()).hexdigest()
+              assert got==want,(name,got,want)
+          print('verified',len(r['files']),'staged static assets')
+          PY
+      - name: Recheck serverless access boundary with mocked provider
+        run: |
+          node --experimental-strip-types --input-type=module <<'JS'
+          import configFn from './netlify/functions/recount-config.mts';
+          import tokenFn from './netlify/functions/recount-token.mts';
+          const vals={RECOUNT_SIGNING_SECRET:'fixture-signing-secret-1234567890',RECOUNT_DEMO_PASS:'fixture-access-123',ASSEMBLYAI_API_KEY:'fixture-provider-key-123456789',RECOUNT_ALLOWED_ORIGIN:'https://example.test'};
+          globalThis.Netlify={env:{get:k=>vals[k]||''}};
+          const cfgResp=await configFn(new Request('https://example.test/recount/api/config'));
+          const cfg=await cfgResp.json(),cookie=cfgResp.headers.get('set-cookie');if(cfgResp.status!==200||!cfg.requires_access_code||!cookie)throw Error('config boundary');
+          let calls=0;globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({token:'temporary-provider-token-123'}),{status:200,headers:{'Content-Type':'application/json'}})};
+          const h={'Content-Type':'application/json','Origin':'https://example.test','X-Recount-Token':cfg.csrf,'Cookie':cookie.split(';')[0]};
+          let r=await tokenFn(new Request('https://example.test/recount/api/token',{method:'POST',headers:h,body:JSON.stringify({consent:true,access_code:'wrong-access-code'})}));if(r.status!==403||calls)throw Error('wrong pass reached provider');
+          r=await tokenFn(new Request('https://example.test/recount/api/token',{method:'POST',headers:h,body:JSON.stringify({consent:true,access_code:vals.RECOUNT_DEMO_PASS})}));const b=await r.json();if(r.status!==200||b.token!=='temporary-provider-token-123'||calls!==1)throw Error('correct path failed');
+          console.log('clean-branch token boundary passed');
+          JS
+      - name: Build unchanged portfolio plus imported Recount assets
+        run: |
+          npm ci
+          npm run build
+      - name: Commit only production deployment files and remove this bootstrap workflow
+        run: |
+          git config user.name 'recount-production-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git rm .github/workflows/recount-import-site.yml
+          git add public/recount netlify/functions/recount-config.mts netlify/functions/recount-token.mts deployment/recount-judge-site.json
+          git commit -m 'Publish verified Recount judge demo under portfolio domain'
+          git push origin HEAD:release/recount-judge-production-20260917
