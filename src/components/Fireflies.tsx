@@ -53,14 +53,14 @@ export default function Fireflies() {
       spriteSize / 2, spriteSize / 2, 0,
       spriteSize / 2, spriteSize / 2, spriteSize / 2
     );
-    grad.addColorStop(0, 'rgba(255,224,150,1)');
-    grad.addColorStop(0.3, 'rgba(251,191,36,0.5)');
+    grad.addColorStop(0, 'rgba(255,224,150,0.85)');
+    grad.addColorStop(0.3, 'rgba(251,191,36,0.42)');
     grad.addColorStop(1, 'rgba(251,191,36,0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, spriteSize, spriteSize);
     const texture = new THREE.CanvasTexture(spriteCanvas);
 
-    const bounds = { x: 10, y: 7.5, z: 5 };
+    const bounds = { x: 11.5, y: 8.5, z: 5 };
     const groups = [
       { count: 18, size: 1.0, zDepth: 3, brightness: 1.0 },
       { count: 55, size: 0.42, zDepth: 8, brightness: 0.55 },

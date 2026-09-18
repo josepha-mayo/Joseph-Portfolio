@@ -292,7 +292,7 @@ export default function Home() {
       <main id="main">
       {/* Hero Section */}
       <header
-        className="min-h-[100dvh] flex items-end pt-[100px] pb-16 relative overflow-hidden hero-grain"
+        className="min-h-[100dvh] flex items-end pt-[100px] pb-28 relative overflow-hidden hero-grain"
         style={{
           background: 'linear-gradient(to bottom, rgba(10,10,10,0.78), rgba(10,10,10,0.95)), url(/image.jpg)',
           backgroundSize: 'cover',
@@ -317,9 +317,6 @@ export default function Home() {
                 <a href="#models" className="btn-ghost inline-flex items-center gap-2 px-5 py-3 rounded-md font-medium text-text-primary border border-border-subtle hover:border-border-highlight no-underline">
                   browse open models
                 </a>
-                <a href="/Joseph_Ayanda_CV.pdf" download="Joseph_Ayanda_CV.pdf" aria-label="Download CV (PDF, 3 pages)" className="btn-ghost inline-flex items-center gap-2 px-5 py-3 rounded-md font-medium text-text-primary border border-border-subtle hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent no-underline">
-                  <i className="fa-solid fa-download text-sm" aria-hidden="true"></i> download cv <span className="text-xs text-text-secondary">PDF</span>
-                </a>
                 <a href="#contact" className="btn-ghost inline-flex items-center gap-2 px-5 py-3 rounded-md font-medium text-text-secondary hover:text-text-primary no-underline">
                   get in touch
                 </a>
@@ -327,7 +324,9 @@ export default function Home() {
             </div>
 
             <div className="md:col-span-5 hidden md:block animate-slide-up animate-slide-up-delay-3">
-              <Fireflies />
+              <div className="relative left-8">
+                <Fireflies />
+              </div>
             </div>
           </div>
         </div>
