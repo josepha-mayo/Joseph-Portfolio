@@ -34,7 +34,7 @@ export default function Fireflies() {
       0.1,
       100
     );
-    camera.position.z = 22;
+    camera.position.z = 26;
 
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -60,10 +60,10 @@ export default function Fireflies() {
     ctx.fillRect(0, 0, spriteSize, spriteSize);
     const texture = new THREE.CanvasTexture(spriteCanvas);
 
-    const bounds = { x: 11.5, y: 8.5, z: 5 };
+    const bounds = { x: 13, y: 9.5, z: 5 };
     const groups = [
-      { count: 18, size: 1.0, zDepth: 3, brightness: 1.0 },
-      { count: 55, size: 0.42, zDepth: 8, brightness: 0.55 },
+      { count: 42, size: 1.0, zDepth: 3, brightness: 1.0 },
+      { count: 120, size: 0.42, zDepth: 8, brightness: 0.55 },
     ];
 
     const systems: { points: THREE.Points; geo: THREE.BufferGeometry; flies: Fly[] }[] = [];

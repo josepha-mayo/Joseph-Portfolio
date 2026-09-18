@@ -277,9 +277,6 @@ export default function Home() {
               <a href="mailto:ayandajoseph390@gmail.com" className="text-text-secondary hover:text-text-primary text-lg transition-colors">
                 <i className="fa-solid fa-envelope"></i>
               </a>
-              <a href="https://wa.me/2349019029665" target="_blank" className="text-text-secondary hover:text-text-primary text-lg transition-colors">
-                <i className="fa-brands fa-whatsapp"></i>
-              </a>
             </div>
           </ul>
 
@@ -292,7 +289,7 @@ export default function Home() {
       <main id="main">
       {/* Hero Section */}
       <header
-        className="min-h-[100dvh] flex items-end pt-[100px] pb-28 relative overflow-hidden hero-grain"
+        className="min-h-[100dvh] flex items-end pt-[100px] pb-36 relative overflow-hidden hero-grain"
         style={{
           background: 'linear-gradient(to bottom, rgba(10,10,10,0.78), rgba(10,10,10,0.95)), url(/image.jpg)',
           backgroundSize: 'cover',
@@ -324,7 +321,7 @@ export default function Home() {
             </div>
 
             <div className="md:col-span-5 hidden md:block animate-slide-up animate-slide-up-delay-3">
-              <div className="relative left-8">
+              <div className="relative left-20">
                 <Fireflies />
               </div>
             </div>
@@ -702,9 +699,6 @@ export default function Home() {
             </a>
             <a href="mailto:ayandajoseph390@gmail.com" className="text-text-secondary hover:text-text-primary text-2xl transition-all hover:-translate-y-1">
               <i className="fa-solid fa-envelope"></i>
-            </a>
-            <a href="https://wa.me/2349019029665" target="_blank" className="text-text-secondary hover:text-text-primary text-2xl transition-all hover:-translate-y-1">
-              <i className="fa-brands fa-whatsapp"></i>
             </a>
           </div>
           <p className="text-text-secondary text-sm">
