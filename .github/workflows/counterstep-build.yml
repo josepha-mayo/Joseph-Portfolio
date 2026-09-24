@@ -1,0 +1,74 @@
+name: Counterstep tested release
+on:
+  push:
+    branches: [counterstep-entry-preview-20260907]
+    paths: [.github/workflows/counterstep-build.yml, public/counterstep/REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: counterstep-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/counterstep-entry-preview-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: counterstep-entry-preview-20260907
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Expand exactly the tested source on first build
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,lzma,json
+          root=Path('public/counterstep')
+          if (root/'tools/release.py').exists():
+              print('Rebuilding the already published source revision.')
+          else:
+              enc=''.join((root/f'build-input/source.{i}.b64').read_text().strip() for i in range(5))
+              packed=base64.b64decode(enc,validate=True)
+              assert hashlib.sha256(packed).hexdigest()=='f88e4b99f2ead3d50446f16124632b7d4497d6e746bd05fcc79387a51e91e3a8','Source transport checksum failed'
+              files=json.loads(lzma.decompress(packed))
+              for name,text in files.items():
+                  p=Path(name)
+                  assert not p.is_absolute() and '..' not in p.parts and isinstance(text,str)
+                  out=root/p;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(text,encoding='utf-8')
+              print('Expanded',len(files),'verified source files.')
+          PY
+      - name: Install CPU-only browser and narration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python3 -m venv /tmp/counterstep
+          /tmp/counterstep/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/counterstep/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1 playwright==1.55.0
+          /tmp/counterstep/bin/python -m playwright install --with-deps chromium
+      - name: Execute exact checks, fresh model evaluation and real application recording
+        working-directory: public/counterstep
+        run: /tmp/counterstep/bin/python tools/release.py
+      - name: Preserve generated assets and actual evidence on the isolated branch
+        if: always()
+        run: |
+          git config user.name 'Counterstep Build'
+          git config user.email 'counterstep-build@users.noreply.github.com'
+          git add public/counterstep
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Counterstep source and executed release evidence'
+          git pull --rebase origin counterstep-entry-preview-20260907
+          git push origin HEAD:counterstep-entry-preview-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: counterstep-release
+          path: |
+            public/counterstep/
+            !public/counterstep/build-input/
+            !public/counterstep/**/__pycache__/
+          retention-days: 14
