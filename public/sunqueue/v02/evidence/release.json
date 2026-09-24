@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "source_commit": "68699fe4eb03a3879ffa409edf310f802bbf67b2",
+  "started_at": "2026-09-07T13:57:39.711607+00:00",
+  "commands": [
+    {
+      "name": "build-v02",
+      "exit_code": 0,
+      "seconds": 0.063
+    },
+    {
+      "name": "core-tests",
+      "exit_code": 0,
+      "seconds": 0.258
+    },
+    {
+      "name": "replay-tests",
+      "exit_code": 0,
+      "seconds": 0.179
+    },
+    {
+      "name": "oracle",
+      "exit_code": 0,
+      "seconds": 0.128
+    },
+    {
+      "name": "core-browser-on-v02",
+      "exit_code": 0,
+      "seconds": 13.566
+    },
+    {
+      "name": "replay-browser",
+      "exit_code": 0,
+      "seconds": 2.417
+    },
+    {
+      "name": "mux-demo",
+      "exit_code": 0,
+      "seconds": 42.35
+    },
+    {
+      "name": "decode-demo",
+      "exit_code": 0,
+      "seconds": 6.413
+    },
+    {
+      "name": "probe",
+      "exit_code": 0,
+      "seconds": 0.058
+    }
+  ],
+  "scope": "Internal model and UI checks; synthetic profiles, no field measurements or customer revenue.",
+  "core_tests": 100,
+  "new_tests": 36,
+  "oracle_cases": 41,
+  "core_browser_checks": 12,
+  "replay_browser_checks": 16,
+  "demo_seconds": 299.0,
+  "narration": {
+    "model": "hexgrad/Kokoro-82M",
+    "voice": "af_heart",
+    "speed": 0.89,
+    "synthetic": true,
+    "spoken_words_per_minute": 135.4
+  },
+  "finished_at": "2026-09-07T14:06:14.012216+00:00"
+}

@@ -1,0 +1,226 @@
+TAP version 13
+# Subtest: round trip CSV preserves each profile value
+ok 1 - round trip CSV preserves each profile value
+  ---
+  duration_ms: 2.129251
+  type: 'test'
+  ...
+# Subtest: BOM and CRLF and surrounding whitespace supported
+ok 2 - BOM and CRLF and surrounding whitespace supported
+  ---
+  duration_ms: 0.316985
+  type: 'test'
+  ...
+# Subtest: reject CSV missing
+ok 3 - reject CSV missing
+  ---
+  duration_ms: 0.377395
+  type: 'test'
+  ...
+# Subtest: reject CSV extra
+ok 4 - reject CSV extra
+  ---
+  duration_ms: 0.165779
+  type: 'test'
+  ...
+# Subtest: reject CSV duplicate
+ok 5 - reject CSV duplicate
+  ---
+  duration_ms: 0.165208
+  type: 'test'
+  ...
+# Subtest: reject CSV order
+ok 6 - reject CSV order
+  ---
+  duration_ms: 0.527511
+  type: 'test'
+  ...
+# Subtest: reject CSV negative
+ok 7 - reject CSV negative
+  ---
+  duration_ms: 0.182814
+  type: 'test'
+  ...
+# Subtest: reject CSV nan
+ok 8 - reject CSV nan
+  ---
+  duration_ms: 0.183705
+  type: 'test'
+  ...
+# Subtest: reject CSV infinity
+ok 9 - reject CSV infinity
+  ---
+  duration_ms: 0.38718
+  type: 'test'
+  ...
+# Subtest: reject CSV formula
+ok 10 - reject CSV formula
+  ---
+  duration_ms: 0.482113
+  type: 'test'
+  ...
+# Subtest: reject CSV overflow
+ok 11 - reject CSV overflow
+  ---
+  duration_ms: 0.231047
+  type: 'test'
+  ...
+# Subtest: reject CSV header
+ok 12 - reject CSV header
+  ---
+  duration_ms: 0.141132
+  type: 'test'
+  ...
+# Subtest: reject CSV missingValue
+ok 13 - reject CSV missingValue
+  ---
+  duration_ms: 0.12644
+  type: 'test'
+  ...
+# Subtest: reject CSV extraColumn
+ok 14 - reject CSV extraColumn
+  ---
+  duration_ms: 0.118998
+  type: 'test'
+  ...
+# Subtest: reject CSV blank
+ok 15 - reject CSV blank
+  ---
+  duration_ms: 0.14717
+  type: 'test'
+  ...
+# Subtest: reject CSV markup
+ok 16 - reject CSV markup
+  ---
+  duration_ms: 0.128122
+  type: 'test'
+  ...
+# Subtest: reject CSV scientific
+ok 17 - reject CSV scientific
+  ---
+  duration_ms: 0.122904
+  type: 'test'
+  ...
+# Subtest: no result cannot freeze
+ok 18 - no result cannot freeze
+  ---
+  duration_ms: 0.089313
+  type: 'test'
+  ...
+# Subtest: forged frozen plan rejected
+ok 19 - forged frozen plan rejected
+  ---
+  duration_ms: 2.224804
+  type: 'test'
+  ...
+# Subtest: input hash tampering rejected
+ok 20 - input hash tampering rejected
+  ---
+  duration_ms: 0.895763
+  type: 'test'
+  ...
+# Subtest: replay never changes frozen start slots
+ok 21 - replay never changes frozen start slots
+  ---
+  duration_ms: 3.308228
+  type: 'test'
+  ...
+# Subtest: replay uses exactly supplied energy, not stress factor twice
+ok 22 - replay uses exactly supplied energy, not stress factor twice
+  ---
+  duration_ms: 2.518354
+  type: 'test'
+  ...
+# Subtest: replay does not accept input saved result totals
+ok 23 - replay does not accept input saved result totals
+  ---
+  duration_ms: 16.489304
+  type: 'test'
+  ...
+# Subtest: report energy accounting closes every slot
+ok 24 - report energy accounting closes every slot
+  ---
+  duration_ms: 0.92031
+  type: 'test'
+  ...
+# Subtest: saved replay is recomputed not trusted
+ok 25 - saved replay is recomputed not trusted
+  ---
+  duration_ms: 1.567429
+  type: 'test'
+  ...
+# Subtest: corrupt saved replay rejected
+ok 26 - corrupt saved replay rejected
+  ---
+  duration_ms: 0.886458
+  type: 'test'
+  ...
+# Subtest: unsupported format rejected
+ok 27 - unsupported format rejected
+  ---
+  duration_ms: 0.113661
+  type: 'test'
+  ...
+# Subtest: label markup stays string data
+ok 28 - label markup stays string data
+  ---
+  duration_ms: 0.530656
+  type: 'test'
+  ...
+# Subtest: saved scenario tampering rejected
+ok 29 - saved scenario tampering rejected
+  ---
+  duration_ms: 0.283154
+  type: 'test'
+  ...
+# Subtest: freeze recomputes adverse feasibility
+ok 30 - freeze recomputes adverse feasibility
+  ---
+  duration_ms: 9.497084
+  type: 'test'
+  ...
+# Subtest: saving invalid CSV rejected
+ok 31 - saving invalid CSV rejected
+  ---
+  duration_ms: 0.491056
+  type: 'test'
+  ...
+# Subtest: model rejects unsatisfied endpoint even if served load exists
+ok 32 - model rejects unsatisfied endpoint even if served load exists
+  ---
+  duration_ms: 0.568642
+  type: 'test'
+  ...
+# Subtest: baseline schedule recomputed from original jobs
+ok 33 - baseline schedule recomputed from original jobs
+  ---
+  duration_ms: 0.635042
+  type: 'test'
+  ...
+# Subtest: oversized text rejected
+ok 34 - oversized text rejected
+  ---
+  duration_ms: 0.139789
+  type: 'test'
+  ...
+# Subtest: negative grid delta is not clamped into a saving
+ok 35 - negative grid delta is not clamped into a saving
+  ---
+  duration_ms: 0.728753
+  type: 'test'
+  ...
+# Subtest: both-feasible replay with lower terminal battery suppresses savings
+ok 36 - both-feasible replay with lower terminal battery suppresses savings
+  ---
+  duration_ms: 0.608251
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 141.620717
