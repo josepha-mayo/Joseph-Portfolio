@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "base_url": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/",
+  "started_at": "2026-09-06T22:21:13.737528+00:00",
+  "authentication": "none: no cookies or Authorization supplied",
+  "checks": [
+    {
+      "name": "Anonymous public artifact matches built bytes",
+      "status": "passed",
+      "file": "index.html",
+      "bytes": 2599654,
+      "sha256": "38a5707a30c574241585a2d7d0d1a5f5be28ebd3c7c0a776754ff57504c54c6b",
+      "content_type": "text/html; charset=UTF-8",
+      "url": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/index.html"
+    },
+    {
+      "name": "Anonymous public artifact matches built bytes",
+      "status": "passed",
+      "file": "demo.mp4",
+      "bytes": 1584061,
+      "sha256": "cb0ce263969735db54aaf422c45601966ec277687844c292993853a7e837463f",
+      "content_type": "video/mp4",
+      "url": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/demo.mp4"
+    },
+    {
+      "name": "Anonymous public artifact matches built bytes",
+      "status": "passed",
+      "file": "source.zip",
+      "bytes": 14056418,
+      "sha256": "65af35cbca6b93f58f4a3d14018c2f018a7fa16cd2bd19a694bb5a935d3f7aec",
+      "content_type": "application/zip",
+      "url": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/source.zip"
+    },
+    {
+      "name": "Public walkthrough downloads and fully decodes",
+      "status": "passed",
+      "duration_seconds": 68.898231
+    },
+    {
+      "name": "Judge landing page is anonymous and accessible",
+      "status": "passed"
+    },
+    {
+      "name": "Fresh browser opens public app without login",
+      "status": "passed",
+      "browser": "152.0.7977.64"
+    },
+    {
+      "name": "Public Boundary Lab reveals omitted context and applies original words",
+      "status": "passed"
+    },
+    {
+      "name": "Public ranker generates three real source-linked selections",
+      "status": "passed"
+    },
+    {
+      "name": "Public reviewed-only export downloads valid captions, source fingerprint and handoff",
+      "status": "passed"
+    },
+    {
+      "name": "Public browser renderer exports playable portrait video with non-silent audio",
+      "status": "passed",
+      "width": 720,
+      "height": 1280,
+      "bytes": 281141,
+      "audio_rms": 0.090164
+    },
+    {
+      "name": "Public mobile boundary review fits a 390-pixel viewport",
+      "status": "passed"
+    },
+    {
+      "name": "No uncaught JavaScript errors or third-party app requests",
+      "status": "passed"
+    },
+    {
+      "name": "Judge landing page links to the actual working studio",
+      "status": "passed",
+      "destination": "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/"
+    }
+  ],
+  "requests": [
+    "https://6a9de578effe16000810c037--josephm.netlify.app/cutproof/index.html"
+  ],
+  "uncaught_errors": [],
+  "finished_at": "2026-09-06T22:21:38.888397+00:00",
+  "passed": 13
+}

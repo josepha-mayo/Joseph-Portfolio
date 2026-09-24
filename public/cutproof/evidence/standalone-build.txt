@@ -1,0 +1,1 @@
+Built standalone app: 2,599,654 bytes

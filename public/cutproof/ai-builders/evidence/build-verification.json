@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "mode": "build",
+  "source_commit": "fbee75862aeee7483aa9bec399bf08dc08e7dce3",
+  "started_at": "2026-09-08T10:30:07.374787+00:00",
+  "checks": [
+    "Authored HTML, CSS and both actual application screenshots match their reviewed hashes.",
+    "All eight slides and both actual application screenshots load.",
+    "No content intrudes on the footer or slide edges; no uncaught browser exceptions.",
+    "All eight PDF pages rendered through Poppler; contact sheet saved for visual review."
+  ],
+  "pdf_pages": 8,
+  "slides": 8,
+  "scope": "Presentation rendering and delivery checks only. No new application capability, representative model accuracy, user study, eligibility decision or award is claimed.",
+  "finished_at": "2026-09-08T10:30:09.885776+00:00"
+}
