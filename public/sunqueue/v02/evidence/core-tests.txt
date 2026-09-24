@@ -1,0 +1,610 @@
+TAP version 13
+# Subtest: demo meets every requested deadline without dropping a job
+ok 1 - demo meets every requested deadline without dropping a job
+  ---
+  duration_ms: 14.442567
+  type: 'test'
+  ...
+# Subtest: synthetic comparison: adverse grid decreases and terminal energy is not borrowed
+ok 2 - synthetic comparison: adverse grid decreases and terminal energy is not borrowed
+  ---
+  duration_ms: 9.651196
+  type: 'test'
+  ...
+# Subtest: simulation enforces power, reserve, grid limits and conservation
+ok 3 - simulation enforces power, reserve, grid limits and conservation
+  ---
+  duration_ms: 14.543568
+  type: 'test'
+  ...
+# Subtest: reject: missing scenario
+ok 4 - reject: missing scenario
+  ---
+  duration_ms: 0.3204
+  type: 'test'
+  ...
+# Subtest: reject: empty scenario
+ok 5 - reject: empty scenario
+  ---
+  duration_ms: 0.10702
+  type: 'test'
+  ...
+# Subtest: reject: one slot
+ok 6 - reject: one slot
+  ---
+  duration_ms: 0.164176
+  type: 'test'
+  ...
+# Subtest: reject: 25 slots
+ok 7 - reject: 25 slots
+  ---
+  duration_ms: 0.148713
+  type: 'test'
+  ...
+# Subtest: reject: NaN energy
+ok 8 - reject: NaN energy
+  ---
+  duration_ms: 0.145628
+  type: 'test'
+  ...
+# Subtest: reject: negative solar
+ok 9 - reject: negative solar
+  ---
+  duration_ms: 0.334852
+  type: 'test'
+  ...
+# Subtest: reject: string solar
+ok 10 - reject: string solar
+  ---
+  duration_ms: 0.394241
+  type: 'test'
+  ...
+# Subtest: reject: infinite load
+ok 11 - reject: infinite load
+  ---
+  duration_ms: 0.234211
+  type: 'test'
+  ...
+# Subtest: reject: negative grid
+ok 12 - reject: negative grid
+  ---
+  duration_ms: 0.131757
+  type: 'test'
+  ...
+# Subtest: reject: negative capacity
+ok 13 - reject: negative capacity
+  ---
+  duration_ms: 0.130005
+  type: 'test'
+  ...
+# Subtest: reject: initial exceeds capacity
+ok 14 - reject: initial exceeds capacity
+  ---
+  duration_ms: 0.115433
+  type: 'test'
+  ...
+# Subtest: reject: initial below reserve
+ok 15 - reject: initial below reserve
+  ---
+  duration_ms: 0.112198
+  type: 'test'
+  ...
+# Subtest: reject: end below reserve
+ok 16 - reject: end below reserve
+  ---
+  duration_ms: 0.112148
+  type: 'test'
+  ...
+# Subtest: reject: end above capacity
+ok 17 - reject: end above capacity
+  ---
+  duration_ms: 0.128243
+  type: 'test'
+  ...
+# Subtest: reject: zero efficiency
+ok 18 - reject: zero efficiency
+  ---
+  duration_ms: 0.11321
+  type: 'test'
+  ...
+# Subtest: reject: superunit efficiency
+ok 19 - reject: superunit efficiency
+  ---
+  duration_ms: 0.108803
+  type: 'test'
+  ...
+# Subtest: reject: negative discharge
+ok 20 - reject: negative discharge
+  ---
+  duration_ms: 0.104928
+  type: 'test'
+  ...
+# Subtest: reject: bad stress
+ok 21 - reject: bad stress
+  ---
+  duration_ms: 0.102694
+  type: 'test'
+  ...
+# Subtest: reject: negative stress
+ok 22 - reject: negative stress
+  ---
+  duration_ms: 0.109605
+  type: 'test'
+  ...
+# Subtest: reject: zero inverter
+ok 23 - reject: zero inverter
+  ---
+  duration_ms: 0.1139
+  type: 'test'
+  ...
+# Subtest: reject: too many jobs
+ok 24 - reject: too many jobs
+  ---
+  duration_ms: 0.122364
+  type: 'test'
+  ...
+# Subtest: reject: duplicate ID
+ok 25 - reject: duplicate ID
+  ---
+  duration_ms: 0.141632
+  type: 'test'
+  ...
+# Subtest: reject: empty ID
+ok 26 - reject: empty ID
+  ---
+  duration_ms: 0.120331
+  type: 'test'
+  ...
+# Subtest: reject: fractional duration
+ok 27 - reject: fractional duration
+  ---
+  duration_ms: 0.120181
+  type: 'test'
+  ...
+# Subtest: reject: late release
+ok 28 - reject: late release
+  ---
+  duration_ms: 0.114471
+  type: 'test'
+  ...
+# Subtest: reject: invalid deadline
+ok 29 - reject: invalid deadline
+  ---
+  duration_ms: 0.429614
+  type: 'test'
+  ...
+# Subtest: reject: impossible window
+ok 30 - reject: impossible window
+  ---
+  duration_ms: 0.164086
+  type: 'test'
+  ...
+# Subtest: reject: zero power
+ok 31 - reject: zero power
+  ---
+  duration_ms: 0.161812
+  type: 'test'
+  ...
+# Subtest: reject: missing battery
+ok 32 - reject: missing battery
+  ---
+  duration_ms: 0.23322
+  type: 'test'
+  ...
+# Subtest: reject: missing jobs
+ok 33 - reject: missing jobs
+  ---
+  duration_ms: 0.199018
+  type: 'test'
+  ...
+# Subtest: overlapping jobs rejected
+ok 34 - overlapping jobs rejected
+  ---
+  duration_ms: 0.364796
+  type: 'test'
+  ...
+# Subtest: missing and extra scheduled jobs rejected
+ok 35 - missing and extra scheduled jobs rejected
+  ---
+  duration_ms: 0.301102
+  type: 'test'
+  ...
+# Subtest: no-job baseline is supported
+ok 36 - no-job baseline is supported
+  ---
+  duration_ms: 0.806969
+  type: 'test'
+  ...
+# Subtest: impossible AC limit is not returned as a schedule
+ok 37 - impossible AC limit is not returned as a schedule
+  ---
+  duration_ms: 0.196906
+  type: 'test'
+  ...
+# Subtest: base-load overload is detected even with no jobs
+ok 38 - base-load overload is detected even with no jobs
+  ---
+  duration_ms: 0.149364
+  type: 'test'
+  ...
+# Subtest: finite search limit must not claim exhaustive infeasibility
+ok 39 - finite search limit must not claim exhaustive infeasibility
+  ---
+  duration_ms: 0.17358
+  type: 'test'
+  ...
+# Subtest: a feasible capped search is not called optimal
+ok 40 - a feasible capped search is not called optimal
+  ---
+  duration_ms: 0.35366
+  type: 'test'
+  ...
+# Subtest: uncapped contradiction cannot silently drop a difficult job
+ok 41 - uncapped contradiction cannot silently drop a difficult job
+  ---
+  duration_ms: 15.82571
+  type: 'test'
+  ...
+# Subtest: grid unavailable does not supply hidden grid power
+ok 42 - grid unavailable does not supply hidden grid power
+  ---
+  duration_ms: 0.201362
+  type: 'test'
+  ...
+# Subtest: rate-limited battery preserves reserve but flags unmet demand
+ok 43 - rate-limited battery preserves reserve but flags unmet demand
+  ---
+  duration_ms: 0.135944
+  type: 'test'
+  ...
+# Subtest: no storage never stores or discharges phantom energy
+ok 44 - no storage never stores or discharges phantom energy
+  ---
+  duration_ms: 0.141862
+  type: 'test'
+  ...
+# Subtest: zero charge rate curtails solar
+ok 45 - zero charge rate curtails solar
+  ---
+  duration_ms: 0.112619
+  type: 'test'
+  ...
+# Subtest: canonical inputs ignore injected outputs
+ok 46 - canonical inputs ignore injected outputs
+  ---
+  duration_ms: 0.229063
+  type: 'test'
+  ...
+# Subtest: scenario and caller schedule are not mutated
+ok 47 - scenario and caller schedule are not mutated
+  ---
+  duration_ms: 14.840794
+  type: 'test'
+  ...
+# Subtest: dangerous CSV prefixes are neutralized without changing internal IDs
+ok 48 - dangerous CSV prefixes are neutralized without changing internal IDs
+  ---
+  duration_ms: 0.68062
+  type: 'test'
+  ...
+# Subtest: literal prototype-like ID is still an ordinary job
+ok 49 - literal prototype-like ID is still an ordinary job
+  ---
+  duration_ms: 0.551436
+  type: 'test'
+  ...
+# Subtest: CSV export refuses absent feasible plan
+ok 50 - CSV export refuses absent feasible plan
+  ---
+  duration_ms: 0.169334
+  type: 'test'
+  ...
+# Subtest: limits cannot be negative, infinite or unbounded
+ok 51 - limits cannot be negative, infinite or unbounded
+  ---
+  duration_ms: 0.544517
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 0
+ok 52 - physical invariants for generated scenario 0
+  ---
+  duration_ms: 0.457716
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 1
+ok 53 - physical invariants for generated scenario 1
+  ---
+  duration_ms: 0.154031
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 2
+ok 54 - physical invariants for generated scenario 2
+  ---
+  duration_ms: 0.149755
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 3
+ok 55 - physical invariants for generated scenario 3
+  ---
+  duration_ms: 0.147521
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 4
+ok 56 - physical invariants for generated scenario 4
+  ---
+  duration_ms: 0.116725
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 5
+ok 57 - physical invariants for generated scenario 5
+  ---
+  duration_ms: 0.106831
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 6
+ok 58 - physical invariants for generated scenario 6
+  ---
+  duration_ms: 0.100441
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 7
+ok 59 - physical invariants for generated scenario 7
+  ---
+  duration_ms: 0.108172
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 8
+ok 60 - physical invariants for generated scenario 8
+  ---
+  duration_ms: 0.144507
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 9
+ok 61 - physical invariants for generated scenario 9
+  ---
+  duration_ms: 0.111146
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 10
+ok 62 - physical invariants for generated scenario 10
+  ---
+  duration_ms: 0.136545
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 11
+ok 63 - physical invariants for generated scenario 11
+  ---
+  duration_ms: 0.118668
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 12
+ok 64 - physical invariants for generated scenario 12
+  ---
+  duration_ms: 0.113631
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 13
+ok 65 - physical invariants for generated scenario 13
+  ---
+  duration_ms: 0.111217
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 14
+ok 66 - physical invariants for generated scenario 14
+  ---
+  duration_ms: 0.101803
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 15
+ok 67 - physical invariants for generated scenario 15
+  ---
+  duration_ms: 0.100411
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 16
+ok 68 - physical invariants for generated scenario 16
+  ---
+  duration_ms: 0.099068
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 17
+ok 69 - physical invariants for generated scenario 17
+  ---
+  duration_ms: 0.127201
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 18
+ok 70 - physical invariants for generated scenario 18
+  ---
+  duration_ms: 0.116004
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 19
+ok 71 - physical invariants for generated scenario 19
+  ---
+  duration_ms: 0.109294
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 20
+ok 72 - physical invariants for generated scenario 20
+  ---
+  duration_ms: 0.107521
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 21
+ok 73 - physical invariants for generated scenario 21
+  ---
+  duration_ms: 0.107271
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 22
+ok 74 - physical invariants for generated scenario 22
+  ---
+  duration_ms: 0.110575
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 23
+ok 75 - physical invariants for generated scenario 23
+  ---
+  duration_ms: 0.139028
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 24
+ok 76 - physical invariants for generated scenario 24
+  ---
+  duration_ms: 0.133009
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 25
+ok 77 - physical invariants for generated scenario 25
+  ---
+  duration_ms: 0.122093
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 26
+ok 78 - physical invariants for generated scenario 26
+  ---
+  duration_ms: 0.14689
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 27
+ok 79 - physical invariants for generated scenario 27
+  ---
+  duration_ms: 0.10645
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 28
+ok 80 - physical invariants for generated scenario 28
+  ---
+  duration_ms: 0.102934
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 29
+ok 81 - physical invariants for generated scenario 29
+  ---
+  duration_ms: 0.112669
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 30
+ok 82 - physical invariants for generated scenario 30
+  ---
+  duration_ms: 0.115904
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 31
+ok 83 - physical invariants for generated scenario 31
+  ---
+  duration_ms: 0.136224
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 32
+ok 84 - physical invariants for generated scenario 32
+  ---
+  duration_ms: 0.119339
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 33
+ok 85 - physical invariants for generated scenario 33
+  ---
+  duration_ms: 0.112709
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 34
+ok 86 - physical invariants for generated scenario 34
+  ---
+  duration_ms: 0.117506
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 35
+ok 87 - physical invariants for generated scenario 35
+  ---
+  duration_ms: 0.107902
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 36
+ok 88 - physical invariants for generated scenario 36
+  ---
+  duration_ms: 0.108572
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 37
+ok 89 - physical invariants for generated scenario 37
+  ---
+  duration_ms: 0.130856
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 38
+ok 90 - physical invariants for generated scenario 38
+  ---
+  duration_ms: 0.122483
+  type: 'test'
+  ...
+# Subtest: physical invariants for generated scenario 39
+ok 91 - physical invariants for generated scenario 39
+  ---
+  duration_ms: 0.149124
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 0 bytes
+ok 92 - Portable fingerprint matches Node SHA-256 for 0 bytes
+  ---
+  duration_ms: 1.900588
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 3 bytes
+ok 93 - Portable fingerprint matches Node SHA-256 for 3 bytes
+  ---
+  duration_ms: 0.223374
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 55 bytes
+ok 94 - Portable fingerprint matches Node SHA-256 for 55 bytes
+  ---
+  duration_ms: 0.161973
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 56 bytes
+ok 95 - Portable fingerprint matches Node SHA-256 for 56 bytes
+  ---
+  duration_ms: 0.193751
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 64 bytes
+ok 96 - Portable fingerprint matches Node SHA-256 for 64 bytes
+  ---
+  duration_ms: 0.262133
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 1000 bytes
+ok 97 - Portable fingerprint matches Node SHA-256 for 1000 bytes
+  ---
+  duration_ms: 1.255852
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 22 bytes
+ok 98 - Portable fingerprint matches Node SHA-256 for 22 bytes
+  ---
+  duration_ms: 0.154412
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 3 bytes
+ok 99 - Portable fingerprint matches Node SHA-256 for 3 bytes
+  ---
+  duration_ms: 0.138718
+  type: 'test'
+  ...
+# Subtest: Portable fingerprint matches Node SHA-256 for 1550 bytes
+ok 100 - Portable fingerprint matches Node SHA-256 for 1550 bytes
+  ---
+  duration_ms: 1.070113
+  type: 'test'
+  ...
+1..100
+# tests 100
+# suites 0
+# pass 100
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 219.403625
