@@ -1,0 +1,57 @@
+name: GeoDrift visual inspection
+on:
+  push:
+    branches: [geodrift-entry-preview-20260907]
+    paths: [.github/workflows/geodrift-visual.yml]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install browser
+        run: |
+          python3 -m venv /tmp/geodrift-visual
+          /tmp/geodrift-visual/bin/pip -q install playwright==1.55.0
+          /tmp/geodrift-visual/bin/python -m playwright install --with-deps chromium
+      - name: Capture actual computed output with all page content in the viewport
+        run: |
+          /tmp/geodrift-visual/bin/python - <<'PY'
+          from playwright.sync_api import sync_playwright,expect
+          from pathlib import Path
+          import json
+          E=Path('public/geodrift/evidence');url='https://6a9ed46e39eefc00089c7124--josephm.netlify.app/geodrift/index.html'
+          result={'source_url':url,'actual_worker_output':True,'form_attempted':False,'views':[]}
+          with sync_playwright() as p:
+            b=p.chromium.launch(headless=True)
+            for width,name in [(1360,'desktop-painted'),(390,'mobile-painted')]:
+              page=b.new_page(viewport={'width':width,'height':980})
+              page.goto(url,wait_until='networkidle');page.click('#quick');expect(page.locator('#run')).to_be_enabled(timeout=30000)
+              expect(page.locator('#changed')).to_have_text('196,608')
+              page.get_by_text('Optional: replay request counts',exact=True).click()
+              height=page.evaluate('() => document.documentElement.scrollHeight');assert height<9000
+              page.set_viewport_size({'width':width,'height':height+30});page.evaluate('() => window.scrollTo(0,0)');page.wait_for_timeout(500)
+              assert page.evaluate('() => document.documentElement.scrollWidth <= innerWidth')
+              expect(page.locator('#after')).to_be_visible();expect(page.locator('#newFile')).to_be_visible()
+              page.screenshot(path=str(E/(name+'.png')))
+              result['views'].append({'width':width,'height':height+30,'file':name+'.png'})
+              page.close()
+            b.close()
+          (E/'visual.json').write_text(json.dumps(result,indent=2))
+          PY
+      - name: Preserve actual captures
+        run: |
+          git config user.name 'GeoDrift Verification'
+          git config user.email 'geodrift-build@users.noreply.github.com'
+          git add public/geodrift/evidence
+          git commit -m 'Preserve fully painted actual desktop and mobile app captures'
+          git pull --rebase origin geodrift-entry-preview-20260907
+          git push origin HEAD:geodrift-entry-preview-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: geodrift-visual
+          path: public/geodrift/evidence/
+          retention-days: 14

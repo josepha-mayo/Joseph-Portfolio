@@ -1,0 +1,4 @@
+/* Grid items must be allowed to shrink below the interval table's intrinsic width. */
+.layout > *, .stack, .card, .tablewrap { min-width: 0; max-width: 100%; }
+.trans > span, .trans > strong { min-width: 0; overflow-wrap: anywhere; }
+.hint, .small, footer { overflow-wrap: anywhere; }

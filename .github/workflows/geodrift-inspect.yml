@@ -1,0 +1,58 @@
+name: GeoDrift public prerequisite check
+on:
+  push:
+    branches: [geodrift-entry-preview-20260907]
+    paths: [.github/workflows/geodrift-inspect.yml]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect public form and vendor samples (GET only)
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.parse, json, hashlib, re
+          from html.parser import HTMLParser
+          from pathlib import Path
+          out=Path('public/geodrift/evidence');out.mkdir(parents=True,exist_ok=True)
+          class Form(HTMLParser):
+            def __init__(self): super().__init__();self.items=[]
+            def handle_starttag(self,tag,attrs):
+              a=dict(attrs)
+              if tag in ('form','input','select','option','textarea','script'):
+                if tag=='input' and (a.get('type')=='hidden' or any(w in a.get('name','').lower() for w in ['token','csrf','captcha'])): a['value']='[redacted]'
+                self.items.append({'tag':tag,'attributes':a})
+          result={'method':'GET only','form_submitted':False,'samples':[]}
+          try:
+            u='https://contest.ip2location.com/submission'
+            with urllib.request.urlopen(urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0'}),timeout=30) as r:
+              html=r.read().decode();result['form_http_status']=r.status
+            p=Form();p.feed(html);result['elements']=p.items
+            scripts=[]
+            for item in p.items:
+              if item['tag']=='script' and item['attributes'].get('src'):
+                src=urllib.parse.urljoin(u,item['attributes']['src'])
+                if urllib.parse.urlsplit(src).hostname in ('contest.ip2location.com','cdn-contest.ip2location.com'):
+                  scripts.append(src)
+            result['same_site_script_urls']=scripts
+          except Exception as exc: result['form_error']=str(exc)
+          for f in ['sample-ipv4.csv','sample-ipv6.csv','LICENSE']:
+            u='https://raw.githubusercontent.com/ip2location/ip2location-csv-converter/master/'+f
+            try:
+              data=urllib.request.urlopen(u,timeout=30).read()
+              result['samples'].append({'url':u,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'first_lines':data.decode().splitlines()[:3]})
+            except Exception as exc: result['samples'].append({'url':u,'error':str(exc)})
+          (out/'prerequisites.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Preserve the observed prerequisites
+        run: |
+          git config user.name 'GeoDrift Build'
+          git config user.email 'geodrift-build@users.noreply.github.com'
+          git add public/geodrift/evidence/prerequisites.json
+          git commit -m 'Preserve public contest prerequisite inspection'
+          git pull --rebase origin geodrift-entry-preview-20260907
+          git push origin HEAD:geodrift-entry-preview-20260907
