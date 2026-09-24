@@ -1,0 +1,156 @@
+{
+  "format": "cutproof-project",
+  "version": 1,
+  "app": "CutProof 1.1.0",
+  "created_at": "2026-09-06T22:10:02.663Z",
+  "filename": "cutproof-original-demo.srt",
+  "media_hint": "source.mp4",
+  "transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f",
+  "cues": [
+    {
+      "id": "s0001",
+      "start_ms": 0,
+      "end_ms": 5141,
+      "text": "A short video can repeat every word correctly and still tell the wrong story."
+    },
+    {
+      "id": "s0002",
+      "start_ms": 5141,
+      "end_ms": 10948,
+      "text": "The mistake is often not an invented sentence. It is the sentence left outside the cut."
+    },
+    {
+      "id": "s0003",
+      "start_ms": 10948,
+      "end_ms": 17683,
+      "text": "Consider this invented editing example. A creator tries a new workflow on one practice recording."
+    },
+    {
+      "id": "s0004",
+      "start_ms": 17683,
+      "end_ms": 21944,
+      "text": "Removing dead air cut a ten minute editing pass to six minutes."
+    },
+    {
+      "id": "s0005",
+      "start_ms": 21944,
+      "end_ms": 27286,
+      "text": "But that result came from one practice session, not a controlled comparison."
+    },
+    {
+      "id": "s0006",
+      "start_ms": 27286,
+      "end_ms": 32879,
+      "text": "The number is useful context, not a promise about how much time everyone will save."
+    },
+    {
+      "id": "s0007",
+      "start_ms": 32879,
+      "end_ms": 37161,
+      "text": "Another trap is dropping a tiny word that carries most of the meaning."
+    },
+    {
+      "id": "s0008",
+      "start_ms": 37161,
+      "end_ms": 42928,
+      "text": "Do not remove every pause from an interview. Some pauses let an important answer land."
+    },
+    {
+      "id": "s0009",
+      "start_ms": 42928,
+      "end_ms": 47476,
+      "text": "Delete the first two words and the instruction now says the opposite."
+    },
+    {
+      "id": "s0010",
+      "start_ms": 47476,
+      "end_ms": 53121,
+      "text": "A better editing workflow starts with the source, rather than a pile of generated claims."
+    },
+    {
+      "id": "s0011",
+      "start_ms": 53121,
+      "end_ms": 60131,
+      "text": "First choose complete caption ranges. Keep every word inside the selected range in its original order."
+    },
+    {
+      "id": "s0012",
+      "start_ms": 60131,
+      "end_ms": 67548,
+      "text": "Then inspect the sentence before and the sentence after the cut. Look for explanations and qualifications."
+    },
+    {
+      "id": "s0013",
+      "start_ms": 67548,
+      "end_ms": 72878,
+      "text": "If the next sentence changes the claim, include it or choose a different clip."
+    },
+    {
+      "id": "s0014",
+      "start_ms": 72878,
+      "end_ms": 80868,
+      "text": "Captions should use the new clip timeline. A clip starting two minutes into a recording still needs captions near zero."
+    },
+    {
+      "id": "s0015",
+      "start_ms": 80868,
+      "end_ms": 88713,
+      "text": "Every exported caption should point back to its original source cue. Editors need a trace, not a confident guess."
+    },
+    {
+      "id": "s0016",
+      "start_ms": 88713,
+      "end_ms": 95033,
+      "text": "A transcript fingerprint lets another editor check whether the supplied transcript has changed."
+    },
+    {
+      "id": "s0017",
+      "start_ms": 95033,
+      "end_ms": 101955,
+      "text": "However, a matching fingerprint does not prove the transcript matches the audio or that its claims are true."
+    },
+    {
+      "id": "s0018",
+      "start_ms": 101955,
+      "end_ms": 110618,
+      "text": "No lexical rule can guarantee that a cut preserves every nuance. Context checks are reminders, not a substitute for judgment."
+    },
+    {
+      "id": "s0019",
+      "start_ms": 110618,
+      "end_ms": 119197,
+      "text": "A useful workflow ends with real files: a playable clip, synchronized captions, and an edit record another person can inspect."
+    },
+    {
+      "id": "s0020",
+      "start_ms": 119197,
+      "end_ms": 126988,
+      "text": "Good automation removes repetitive work without removing responsibility. Shorter cuts should not require a different story."
+    }
+  ],
+  "options": {
+    "minSeconds": 18,
+    "maxSeconds": 34,
+    "count": 3,
+    "focus": "",
+    "keepContext": true
+  },
+  "clips": [
+    {
+      "first": 9,
+      "last": 13,
+      "previous_review_status": "pending"
+    },
+    {
+      "first": 0,
+      "last": 5,
+      "previous_review_status": "pending"
+    },
+    {
+      "first": 15,
+      "last": 18,
+      "previous_review_status": "pending"
+    }
+  ],
+  "review_policy": "Restoring requires reattaching the original video and reviewing cuts again. No media or credentials are saved."
+}
