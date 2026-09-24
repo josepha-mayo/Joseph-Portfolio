@@ -1,0 +1,54 @@
+name: CutProof v1.2 upgrade
+on:
+  push:
+    branches: [cutproof-entry-preview-20260906]
+    paths: [public/cutproof/UPGRADE_READY]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-v12-upgrade
+  cancel-in-progress: false
+jobs:
+  upgrade:
+    if: github.ref == 'refs/heads/cutproof-entry-preview-20260906'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cutproof-entry-preview-20260906
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install CPU-only build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python3 -m venv /tmp/cutproof12
+          /tmp/cutproof12/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/cutproof12/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1 playwright==1.55.0 pillow==11.3.0
+          /tmp/cutproof12/bin/python -m playwright install chromium
+          cd /tmp
+          npm install --no-audit --no-fund @huggingface/transformers@3.8.1
+      - name: Build and test candidate without replacing the submitted release
+        working-directory: public/cutproof
+        run: /tmp/cutproof12/bin/python upgrade/build.py
+      - name: Preserve candidate and actual evidence only
+        if: always()
+        run: |
+          git config user.name 'CutProof Build'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add public/cutproof/v12
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Build CutProof v1.2 candidate and preserve its actual execution evidence'
+          git pull --rebase origin cutproof-entry-preview-20260906
+          git push origin HEAD:cutproof-entry-preview-20260906
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-v12-candidate
+          path: public/cutproof/v12/
+          retention-days: 7
