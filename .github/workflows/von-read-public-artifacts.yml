@@ -1,0 +1,40 @@
+name: von-read public artifact verification
+on:
+  push:
+    branches: [feat/von-read-container-r4]
+    paths: [.github/workflows/von-read-public-artifacts.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pull the required public base on a clean builder
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          mkdir receipts
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          timeout --kill-after=10s 700s docker pull rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0 > receipts/base-pull.log 2>&1
+      - name: Retrieve only public assets, verify them and import onto exact base
+        run: |
+          timeout --kill-after=10s 300s python3 delivery/von-read-r5/verify_release.py > receipts/artifact-check.log 2>&1
+          cp /tmp/von-release-check/VERIFIED.json receipts/VERIFIED.json
+      - name: Check the reconstructed real CLI with an external authored fixture
+        run: |
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 -v "$PWD/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" -v "$PWD/receipts:/reports" von-reconstructed:checked /checks.py --out /reports/CLI.json > receipts/cli.log 2>&1
+          python3 -c 'import json; r=json.load(open("receipts/CLI.json")); assert r["status"]=="passed" and len(r["calls"])==10 and all(r["checks"].values())'
+      - name: Preserve the readback even if import fails
+        if: always()
+        run: |
+          if test -f /tmp/von-release-check/load.log; then cp /tmp/von-release-check/load.log receipts/load.log; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-read-public-artifact-proof
+          path: receipts/
+          retention-days: 7
