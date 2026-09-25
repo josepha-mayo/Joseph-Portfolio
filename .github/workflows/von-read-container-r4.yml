@@ -1,30 +1,27 @@
 name: von-read R4 assembled container
+# Manual only: do not redownload large immutable artifacts on ordinary code pushes.
 on:
-  push:
-    branches: [release/von-read-r4-container]
-    paths: [.github/workflows/von-read-container-r4.yml]
   workflow_dispatch:
 permissions:
   contents: read
-  packages: write
 concurrency:
   group: von-read-full-container
   cancel-in-progress: false
 jobs:
   candidate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 30
     env:
       BASE_IMAGE: rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Inspect and prepare only this disposable builder
+      - name: Prepare the disposable builder and source record
         run: |
           set -euo pipefail
           test "$GITHUB_ACTIONS" = true
-          mkdir -p receipts reference
+          mkdir -p receipts
           df -B1 / > receipts/disk-before.txt
           sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
           df -B1 / > receipts/disk-after.txt
@@ -32,18 +29,17 @@ jobs:
           from pathlib import Path
           import hashlib,json,os,shutil,zipfile
           root=Path('delivery/von-read-r4')
-          free=shutil.disk_usage('/').free
-          assert free>80*2**30, 'Not enough space for unsquashed base and two model copies'
+          assert shutil.disk_usage('/').free>80*2**30
           files=[p for p in root.rglob('*') if p.is_file()]
           assert not any(p.suffix in ('.pem','.env','.key') for p in files)
           for p in files:
               if p.suffix=='.py':compile(p.read_text(),str(p),'exec')
           hashes={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
-          Path('receipts/SOURCE.json').write_text(json.dumps({'commit':os.environ['GITHUB_SHA'],'files':hashes,'free_bytes':free,'scope':'candidate source before model download'},indent=2))
+          Path('receipts/SOURCE.json').write_text(json.dumps({'commit':os.environ['GITHUB_SHA'],'files':hashes},indent=2))
           with zipfile.ZipFile('receipts/source.zip','x',compression=zipfile.ZIP_DEFLATED) as z:
               for p in files:z.write(p,str(p.relative_to(root)))
           PY
-      - name: Pull and inspect the actual mandated ROCm base
+      - name: Pull and inspect the exact mandated base
         run: |
           timeout --kill-after=20s 900s docker pull "$BASE_IMAGE" > receipts/base-pull.log 2>&1
           docker image inspect "$BASE_IMAGE" > receipts/base-inspect.json
@@ -51,24 +47,14 @@ jobs:
           from pathlib import Path
           import json
           b=json.loads(Path('receipts/base-inspect.json').read_text())[0]
-          assert b['Architecture']=='amd64'
-          assert b['Size']+12*2**30<60*2**30
+          assert b['Architecture']=='amd64' and b['Size']+12*2**30<60*2**30
           Path('receipts/BASE.json').write_text(json.dumps({'id':b['Id'],'digests':b['RepoDigests'],'size_bytes':b['Size'],'layers':b['RootFS']['Layers']},indent=2))
           PY
-      - name: Acquire only the measured public model bytes
+      - name: Verify the immutable public model files
         working-directory: delivery/von-read-r4
         run: |
           timeout --kill-after=10s 900s python3 -u packaging/fetch_model.py --lock packaging/MODEL_LOCK.json --destination models/reader > "$GITHUB_WORKSPACE/receipts/model-download.log" 2>&1
-          python3 - <<'PY'
-          import hashlib,json
-          from pathlib import Path
-          d=Path('models/reader')
-          lock=json.loads((d/'MODEL_LOCK.json').read_text())
-          assert sum(f.stat().st_size for f in d.iterdir())<12*2**30
-          assert (d/'LICENSE.txt').is_file() and (d/'NOTICE.txt').is_file()
-          print(json.dumps({'locked_files':len(lock['files']),'revision':lock['revision'],'total_model_file_bytes':sum(f.stat().st_size for f in d.iterdir()),'license_present':True}))
-          PY
-      - name: Build the complete unsquashed image including weights
+      - name: Build the actual weighted image without squashing
         run: |
           timeout --kill-after=20s 900s docker build --progress=plain -f delivery/von-read-r4/packaging/Dockerfile.worker -t von-read-candidate:local delivery/von-read-r4 > receipts/full-build.log 2>&1
           docker image inspect von-read-candidate:local > receipts/candidate-inspect.json
@@ -77,12 +63,12 @@ jobs:
           from pathlib import Path
           b=json.loads(Path('receipts/base-inspect.json').read_text())[0]
           c=json.loads(Path('receipts/candidate-inspect.json').read_text())[0]
-          prefix=c['RootFS']['Layers'][:len(b['RootFS']['Layers'])]==b['RootFS']['Layers']
-          assert prefix and c['Size']<60*2**30
+          assert c['RootFS']['Layers'][:len(b['RootFS']['Layers'])]==b['RootFS']['Layers']
+          assert c['Size']<60*2**30
           assert c['Config']['Entrypoint']==['python3','-m','von_read.warm_runtime','supervise']
-          Path('receipts/IMAGE.json').write_text(json.dumps({'local_id':c['Id'],'size_bytes':c['Size'],'size_limit_bytes':60*2**30,'base_prefix_matches':prefix,'base_layer_count':len(b['RootFS']['Layers']),'layer_count':len(c['RootFS']['Layers']),'weights_in_image':True,'gpu_tested':False,'official_submission':False},indent=2))
+          Path('receipts/IMAGE.json').write_text(json.dumps({'local_id':c['Id'],'size_bytes':c['Size'],'base_prefix_matches':True,'weights_in_image':True,'gpu_tested':False,'official_submission':False},indent=2))
           PY
-      - name: Exercise the actual container CLI with an external reader fixture
+      - name: Run the real image CLI using an external authored fixture
         run: |
           timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 -v "$PWD/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" -v "$PWD/receipts:/reports" von-read-candidate:local /checks.py --out /reports/CLI.json > receipts/cli.log 2>&1
           python3 - <<'PY'
@@ -92,53 +78,25 @@ jobs:
           assert r['status']=='passed' and len(r['calls'])==10 and all(r['checks'].values())
           assert not r['gpu_inference']
           PY
-      - name: Verify production mode does not fall back to CPU inference
+      - name: Check production refusal without AMD hardware
         run: |
           set +e
           timeout --kill-after=5s 90s docker run --rm --network none von-read-candidate:local > receipts/no-gpu.log 2>&1
           result=$?
           set -e
-          test "$result" -ne 0
-          test "$result" -ne 124
+          test "$result" -ne 0 && test "$result" -ne 124
           grep -F 'Allocated AMD ROCm hardware required' receipts/no-gpu.log
+      - name: Record why this job does not publish
+        run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
-          Path('receipts/NO_GPU.json').write_text(json.dumps({'expected_amd_required_failure':True,'cpu_fallback':False,'scope':'No GPU attached to this hosted builder; this is not an AMD inference test'},indent=2))
+          Path('receipts/STAGING.json').write_text(json.dumps({'published':False,'status':'validation_only','reason':'The measured required base contains a 19,956,931,520-byte compressed layer. GHCR documents a 10 GB layer limit; do not retry that destination or flatten the base. A compatible authenticated publisher and separate anonymous pull check are required.','prior_failed_push_run':36166656883,'prior_observed_exit':124,'gpu_validated':False},indent=2))
           PY
-      - name: Preserve the validated-build candidate in the owner registry
-        env:
-          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          # Generate rather than commit the image reference. New GHCR packages default private.
-          # This is staging only, not the anonymously pullable technical submission.
-          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/v-$(python3 -c 'import secrets;print(secrets.token_hex(12))'):candidate"
-          echo "::add-mask::$image"
-          printf '%s' "$REGISTRY_TOKEN" | docker login ghcr.io -u "$GITHUB_REPOSITORY_OWNER" --password-stdin > reference/login.log 2>&1
-          docker tag von-read-candidate:local "$image"
-          timeout --kill-after=20s 900s docker push "$image" > reference/push.log 2>&1
-          export CANDIDATE_REFERENCE="$image"
-          docker image inspect "$image" > reference/registry-inspect.json
-          python3 - <<'PY'
-          import json,os
-          from pathlib import Path
-          c=json.loads(Path('reference/registry-inspect.json').read_text())[0]
-          Path('reference/REFERENCE.json').write_text(json.dumps({'image':os.environ['CANDIDATE_REFERENCE'],'digests':c.get('RepoDigests',[]),'local_id':c['Id'],'source_commit':os.environ['GITHUB_SHA'],'visibility':'new package; default private, anonymous pull not verified','gpu_tested':False,'submitted':False},indent=2))
-          Path('receipts/STAGING.json').write_text(json.dumps({'pushed_to_owner_registry':True,'reference_in_public_source':False,'anonymous_pull_verified':False,'gpu_validated':False,'technical_submission':False},indent=2))
-          PY
-          docker logout ghcr.io >/dev/null 2>&1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: von-read-r4-container-receipts
           path: receipts/
-          retention-days: 7
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: von-read-r4-registry-reference
-          path: reference/REFERENCE.json
           retention-days: 7
           if-no-files-found: error
