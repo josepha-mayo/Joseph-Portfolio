@@ -1,0 +1,38 @@
+{
+  "release": "R4",
+  "build_source_commit": "3186e0ef79c27a298ed7505ed834b6a2be929c05",
+  "build_run": 36166656883,
+  "build_and_container_checks": "passed",
+  "overall_workflow": "failed_at_registry_publication",
+  "publication_exit": 124,
+  "image_id": "sha256:4171456f3887305b8e6ce6c471dbc7cf36ff9ac47757972d5a21ee25586e02af",
+  "uncompressed_bytes": 40239663312,
+  "limit_bytes": 64424509440,
+  "mandated_base_layer_prefix_matches": true,
+  "preserved_base_layers": 11,
+  "total_image_layers": 19,
+  "model_weights_in_image": true,
+  "model_files_verified_by_size_and_sha256": 12,
+  "container_checks": {
+    "ten_independent_cli_calls": true,
+    "PNG_JPEG_TIFF": true,
+    "one_reader_construction": true,
+    "first_call_during_loading": true,
+    "incomplete_and_stale_output_rejected": true,
+    "image_source_hashes_match_build_source": true,
+    "reader": "authored external fixture, not neural OCR"
+  },
+  "production_without_amd_hardware": "refused as expected; no CPU fallback",
+  "sampled_gpu_memory_for_this_image": null,
+  "anonymous_pull_verified": false,
+  "published_image_verified": false,
+  "image_reference_submitted": false,
+  "registry_analysis": {
+    "required_base_largest_compressed_layer_bytes": 19956931520,
+    "ghcr_documented_max_layer_gb": 10,
+    "decision": "Do not retry GHCR or flatten mandatory layers. Use a compatible authenticated publisher. The observed attempt ended at its 900-second deadline; an HTTP 413 was not captured."
+  },
+  "retained": "exact source archive, model locks, build recipe, Docker inspect results and test receipts; a persisted image was not confirmed",
+  "new_ocr_accuracy_claim": false,
+  "new_awarded_xp_claim": false
+}
