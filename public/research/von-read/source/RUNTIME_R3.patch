@@ -1,0 +1,32 @@
+--- a/von_read/warm_runtime.py
++++ b/von_read/warm_runtime.py
+@@ -26,6 +26,7 @@
+ from typing import Callable
+ 
+ from .contracts import output_path, write_prediction
++from .completion_contract import completed_text
+ from .views import load_image
+ from .evaluation import strict_loads
+ 
+@@ -101,8 +102,8 @@
+ 
+ 
+ def amd_reader(model_dir: Path):
+-    from .qwen_evidence import EvidenceReader
+-    return EvidenceReader(model_dir)
++    from .native_reader import NativeReader
++    return NativeReader(model_dir)
+ 
+ 
+ def serve(runtime_dir: Path, input_root: Path, reader_factory: Callable[[], object],
+@@ -177,9 +178,7 @@
+                                              deadline=min(deadline - .1, time.monotonic() + inference_seconds))
+                     if time.monotonic() >= deadline:
+                         raise TimeoutError('Inference returned after deadline')
+-                    text = result.get('text')
+-                    if not isinstance(text, str) or not text.strip() or len(text) > 4096:
+-                        raise ValueError('Reader did not return valid text')
++                    text = completed_text(result)
+                     completed += 1
+                     _send(conn, {'ok': True, 'id': request_id, 'boot': boot, 'text': text})
+                     atomic_json(runtime / 'metrics.json', {

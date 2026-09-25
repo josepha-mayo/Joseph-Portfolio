@@ -1,0 +1,23 @@
+{
+  "created_at_utc": "2026-09-25T16:31:20.151051+00:00",
+  "status": "source_and_cpu_integration_passed",
+  "scope": "58 distinct tests in the working integration packet; real subprocess/Unix IPC with authored reader fixtures, not new neural OCR or GPU evidence",
+  "suites": [
+    {"receipt": "CORE_TESTS.xml", "tests": 34, "failures": 0, "errors": 0, "skipped": 0, "seconds": 22.572},
+    {"receipt": "RELEASE_TESTS.xml", "tests": 24, "failures": 0, "errors": 0, "skipped": 0, "seconds": 15.095}
+  ],
+  "public_ci_scope": "Existing native-reader unit tests plus nine completion-contract tests, not the entire IPC packet",
+  "python": "3.13.5",
+  "pytest": "9.0.2",
+  "Pillow": "12.3.0",
+  "native_reader_sha256": "65b1714e486894b4df8f089aeabf459ea38e521cb1e3cf13b610875688fa1fdc",
+  "public_component_sha256": "e4d7518dedb9a49ceb6d9df1739d0ed7b6212a718b7ce45ca94a7730f62bea2d",
+  "integrated_runtime_sha256": "b9ac60449966d4b62a45bc9f88fe97c6ac3742f203a9bdddb534f32c22a2e3fc",
+  "no_model_policy_change": true,
+  "earlier_combined_invocation": "Exceeded 45-second harness command limit; bounded test groups rerun and passed",
+  "model_weights_included": false,
+  "container_built": false,
+  "amd_runtime_tested": false,
+  "new_xp_awarded": 0,
+  "official_grade": null
+}
