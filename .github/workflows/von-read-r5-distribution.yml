@@ -1,0 +1,75 @@
+name: von-read R5 distribution candidate
+on:
+  push:
+    branches: [feat/von-read-container-r4]
+    paths: [.github/workflows/von-read-r5-distribution.yml]
+permissions:
+  contents: write
+concurrency:
+  group: von-read-distribution-r5
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BASE: rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
+      IMAGE: von-distribution:local
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare disposable builder and exact R4 source
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          mkdir receipts
+          df -B1 / > receipts/disk-before.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk-after.txt
+          cp -r delivery/von-read-r4 /tmp/von-build
+          cp delivery/von-read-r5/bootstrap.py /tmp/von-build/bootstrap.py
+          cp delivery/von-read-r5/Dockerfile /tmp/von-build/Dockerfile
+          printf '\n!bootstrap.py\n!packaging/fetch_model.py\n!packaging/MODEL_LOCK.json\n' >> /tmp/von-build/.dockerignore
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=Path('/tmp/von-build')
+          Path('receipts/SOURCE.json').write_text(json.dumps({str(p.relative_to(r)):hashlib.sha256(p.read_bytes()).hexdigest() for p in r.rglob('*') if p.is_file()},indent=2))
+          PY
+      - name: Pull base and build without redistributing or modifying its layers
+        run: |
+          timeout --kill-after=10s 700s docker pull "$BASE" > receipts/base-pull.log 2>&1
+          timeout --kill-after=10s 600s docker build --progress=plain -t "$IMAGE" -f /tmp/von-build/Dockerfile /tmp/von-build > receipts/build.log 2>&1
+          docker image inspect "$IMAGE" > receipts/image-inspect.json
+      - name: Ten actual image CLI calls using the explicit external fixture
+        run: |
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 -v "$PWD/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" -v "$PWD/receipts:/reports" "$IMAGE" /checks.py --out /reports/CLI.json > receipts/cli.log 2>&1
+          python3 -c 'import json; r=json.load(open("receipts/CLI.json")); assert r["status"]=="passed" and len(r["calls"])==10 and all(r["checks"].values())'
+      - name: Refuse non-AMD startup before downloading anything
+        run: |
+          set +e
+          timeout --kill-after=5s 60s docker run --rm --network none "$IMAGE" > receipts/no-gpu.log 2>&1
+          code=$?
+          set -e
+          test "$code" -ne 0 && test "$code" -ne 124
+          grep -F 'Allocated AMD ROCm hardware required' receipts/no-gpu.log
+      - name: Export small candidate layers with the original parent descriptors
+        run: |
+          TAG="von-r5-dist-$GITHUB_RUN_ID"
+          echo "DIST_TAG=$TAG" >> "$GITHUB_ENV"
+          timeout --kill-after=10s 400s python3 delivery/von-read-r5/export_distribution.py --image "$IMAGE" --output dist --release-url "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG" > receipts/distribution.log 2>&1
+          cp dist/DISTRIBUTION.json receipts/DISTRIBUTION.json
+          cp dist/catalog.json receipts/catalog.json
+      - name: Publish candidate blobs, not a claimed GPU-qualified submission
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$DIST_TAG" dist/* --target "$GITHUB_SHA" --prerelease --title 'von-read R5 distribution candidate' --notes 'Experimental layer-preserving OCI artifacts. Runtime model acquisition is required. GPU cold start and anonymous registry pull are not certified. No competition image reference is advertised here.'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-read-r5-distribution-proof
+          path: receipts/
+          retention-days: 7
+          if-no-files-found: error

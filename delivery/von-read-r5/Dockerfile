@@ -1,0 +1,16 @@
+FROM rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
+WORKDIR /app
+COPY packaging/requirements-amd.lock /app/requirements.txt
+RUN python3 -m pip install --no-cache-dir --no-deps -r /app/requirements.txt
+COPY von_read /app/von_read
+COPY packaging/app.py /app/app.py
+COPY packaging/fetch_model.py /app/von_read/model_fetch.py
+COPY packaging/MODEL_LOCK.json /app/MODEL_LOCK.json
+COPY bootstrap.py /app/von_read/bootstrap.py
+COPY LICENSE.txt /app/LICENSE.txt
+RUN mkdir -p /models/reader /run/von-read /app/input /app/output && chmod 700 /run/von-read \
+    && python3 -c "import sys,torch,transformers; assert sys.version_info[:2]==(3,14); assert torch.__version__=='2.13.0+rocm10.0.0'; assert torch.version.hip; assert transformers.__version__=='5.3.0'; from transformers import Qwen3VLForConditionalGeneration"
+ENV PYTHONUNBUFFERED=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false
+HEALTHCHECK --interval=2s --timeout=2s --start-period=580s --retries=1 \
+ CMD ["python3", "-m", "von_read.warm_runtime", "health"]
+ENTRYPOINT ["python3", "-m", "von_read.bootstrap"]
