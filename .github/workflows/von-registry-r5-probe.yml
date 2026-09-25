@@ -30,24 +30,10 @@ jobs:
         run: |
           python3 -m venv /tmp/von-registry-probe-env
           /tmp/von-registry-probe-env/bin/pip -q install boto3 requests
-      - name: Wait for this experiment stack only
-        run: aws cloudformation wait stack-create-complete --stack-name von-registry-r5b-20260925
+      - name: Wait for the verified HEAD fix
+        run: aws cloudformation wait stack-update-complete --stack-name von-registry-r5b-20260925
       - name: Publish tiny fixture and test actual anonymous Docker pull
-        run: |
-          /tmp/von-registry-probe-env/bin/python - <<'PY'
-          import importlib.util,json,sys
-          from pathlib import Path
-          path=Path('delivery/registry-r5/probe.py')
-          spec=importlib.util.spec_from_file_location('transport_probe',path)
-          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-          # Only the stack identifier changed following a CFN schema correction.
-          module.STACK='von-registry-r5b-20260925'
-          try:
-              module.main()
-          except Exception as error:
-              print(json.dumps({'status':'failed','error_type':type(error).__name__,'message':str(error) if isinstance(error,AssertionError) else 'Private request details suppressed'}))
-              sys.exit(1)
-          PY
+        run: /tmp/von-registry-probe-env/bin/python delivery/registry-r5/probe.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
