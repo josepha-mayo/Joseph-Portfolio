@@ -1,0 +1,48 @@
+name: von-read official container base preflight
+on:
+  push:
+    branches: [feat/von-read-container-r4]
+    paths: [.github/workflows/von-read-base-preflight.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  base:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    env:
+      BASE: rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Record runner storage before pulling the required base
+        run: |
+          mkdir -p /tmp/von-base-proof
+          df -B1 / > /tmp/von-base-proof/storage.txt
+          docker version > /tmp/von-base-proof/docker.txt
+      - name: Pull the exact required base, without rebuilding or flattening it
+        run: timeout --kill-after=10s 600s docker pull "$BASE" > /tmp/von-base-proof/pull.log 2>&1
+      - name: Inspect immutable layers, uncompressed size and actual environment
+        run: |
+          docker image inspect "$BASE" > /tmp/von-base-proof/base-inspect.json
+          timeout --kill-after=5s 90s docker run --rm --network none --entrypoint python3 "$BASE" -c 'import json,sys,torch,PIL,importlib.metadata as m; print(json.dumps({"python":sys.version,"torch":torch.__version__,"hip":torch.version.hip,"pillow":PIL.__version__,"packages":{d.metadata["Name"]:d.version for d in m.distributions()}}))' > /tmp/von-base-proof/environment.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=Path('/tmp/von-base-proof')
+          im=json.loads((r/'base-inspect.json').read_text())[0]
+          env=json.loads((r/'environment.json').read_text())
+          result={'base_id':im['Id'],'base_repo_digests':im.get('RepoDigests',[]),'uncompressed_base_bytes':im['Size'],'rootfs_diff_ids':im['RootFS']['Layers'],'torch':env['torch'],'hip':env['hip'],'gpu_tested':False,'candidate_built':False,'registry_push':False}
+          (r/'SUMMARY.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result))
+          assert im['Size'] < 50*2**30, 'Base needs a reviewed storage plan before adding weights'
+          assert env['torch']=='2.13.0+rocm10.0.0' and env['hip'], 'Required environment mismatch'
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-read-official-base-proof
+          path: /tmp/von-base-proof/
+          retention-days: 7
+          if-no-files-found: error
