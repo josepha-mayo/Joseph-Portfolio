@@ -1,5 +1,5 @@
 name: von-read bounded registry transport probe
-# Public mutation tests cover both rejected unsigned bodies and integrity-valid bodies.
+# Record gateway versus application write denials; require unchanged stored bytes.
 on:
   push:
     branches: [von-registry-r5-20260925]
