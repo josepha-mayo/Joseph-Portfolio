@@ -1,0 +1,86 @@
+--- a/delivery/registry-r5/publish_candidate.py
++++ b/delivery/registry-r5/publish_candidate.py
+@@ -1,7 +1,8 @@
+ """Publish an already-built candidate to the scoped S3 pull registry.
+ 
+ The eleven upstream base descriptors and bytes are preserved. Docker save is
+-streamed twice instead of creating another full-size image tar on disk.
++streamed once. The expected content-addressed archive layout is verified
++against the real Docker manifest before the final registry manifest is written.
+ No registry address, credentials or signed URL is written to public receipts.
+ """
+ from __future__ import annotations
+@@ -98,6 +99,27 @@
+             sha.update(block)
+     return {'digest':'sha256:'+sha.hexdigest(), 'size':dest.stat().st_size,
+             'mediaType':'application/vnd.oci.image.layer.v1.tar+gzip'}
++
++
++def export_plan(candidate):
++    config = candidate['Id']
++    diffs = candidate['RootFS']['Layers']
++    for value in [config]+diffs:
++        if not isinstance(value,str) or len(value)!=71 or not value.startswith('sha256:'):
++            raise ValueError('Invalid Docker content identifier')
++        if any(c not in '0123456789abcdef' for c in value[7:]):
++            raise ValueError('Invalid Docker content identifier')
++    return {'Config':'blobs/sha256/'+config[7:],
++            'Layers':['blobs/sha256/'+d[7:] for d in diffs]}
++
++
++def verify_export_manifest(actual, planned):
++    if not isinstance(actual,list) or len(actual)!=1 or not isinstance(actual[0],dict):
++        raise ValueError('Expected one Docker export manifest entry')
++    item=actual[0]
++    if item.get('Config')!=planned['Config'] or item.get('Layers')!=planned['Layers']:
++        raise ValueError('Observed Docker archive layout differs from verified content IDs')
++    return {'Config':item['Config'],'Layers':item['Layers']}
+ 
+ 
+ def main():
+@@ -167,16 +189,22 @@
+         finally: resp.close()
+         published.append(layer['digest'])
+     print(json.dumps({'phase':'base_preserved','layers':base_n,'reused':len(reused)}),flush=True)
+-    with saved_image() as archive:
+-        manifest = read_manifest(archive)
+     diffs = candidate['RootFS']['Layers']
+-    if len(manifest['Layers']) != len(diffs): raise ValueError('Save layer count differs')
++    manifest = export_plan(candidate)
++    actual_manifest = None
++    export_started = time.monotonic()
++    print(json.dumps({'phase':'single_export_started','mandatory_layers':base_n}),flush=True)
+     appended = dict(zip(manifest['Layers'][base_n:],diffs[base_n:]))
+     encoded = {}; config_bytes = None
+     with tempfile.TemporaryDirectory(prefix='von-new-layers-') as temp:
+         with saved_image() as archive:
+             for member in archive:
+-                if member.name == manifest['Config']:
++                if member.name == 'manifest.json':
++                    if actual_manifest is not None or not member.isfile() or member.size>262144:
++                        raise ValueError('Invalid export manifest member')
++                    actual_manifest=json.load(archive.extractfile(member))
++                    verify_export_manifest(actual_manifest,manifest)
++                elif member.name == manifest['Config']:
+                     if member.size > 2**20: raise ValueError('Oversized config')
+                     config_bytes = archive.extractfile(member).read()
+                     if digest(config_bytes) != candidate['Id']: raise ValueError('Candidate config differs')
+@@ -192,6 +220,9 @@
+                         published.append(d['digest'])
+                     encoded[member.name]=d;path.unlink()
+                     print(json.dumps({'phase':'application_layer','count':len(encoded),'compressed_bytes':d['size']}),flush=True)
++    observed=verify_export_manifest(actual_manifest,manifest)
++    (OUT/'DOCKER_EXPORT_MANIFEST.json').write_text(json.dumps(observed,indent=2))
++    print(json.dumps({'phase':'single_export_verified','seconds':time.monotonic()-export_started}),flush=True)
+     if config_bytes is None or set(encoded) != set(appended): raise ValueError('Incomplete candidate export')
+     config = {'mediaType':'application/vnd.oci.image.config.v1+json','digest':digest(config_bytes),'size':len(config_bytes)}
+     if json.loads(config_bytes)['rootfs']['diff_ids'] != diffs: raise ValueError('Rootfs differs after export')
+@@ -201,7 +232,7 @@
+     md=digest(body)
+     for ref in (md,'candidate-r4'):
+         s3.put_object(Bucket=bucket,Key=prefix+'manifests/'+ref,Body=body,ContentType='application/vnd.oci.image.manifest.v1+json',Metadata={'digest':md})
+-    report={'status':'published','candidate_config_digest':config['digest'],'candidate_manifest_digest':md,'base_manifest_digest':BASE_DIGEST,'base_descriptors_preserved':len(layers),'base_bytes_reencoded':False,'rootfs_diff_ids':diffs,'uncompressed_bytes':candidate['Size'],'compressed_blob_bytes':sum(r['size'] for r in final_layers)+len(config_bytes),'new_blobs_uploaded':len(published),'previous_blobs_reused':len(reused),'gpu_image_verified':False,'anonymous_full_pull_verified':False,'elapsed_seconds':time.monotonic()-t}
++    report={'status':'published','candidate_config_digest':config['digest'],'candidate_manifest_digest':md,'base_manifest_digest':BASE_DIGEST,'base_descriptors_preserved':len(layers),'base_bytes_reencoded':False,'rootfs_diff_ids':diffs,'uncompressed_bytes':candidate['Size'],'compressed_blob_bytes':sum(r['size'] for r in final_layers)+len(config_bytes),'new_blobs_uploaded':len(published),'previous_blobs_reused':len(reused),'gpu_image_verified':False,'anonymous_full_pull_verified':False,'export_passes':1,'observed_export_manifest_verified':True,'elapsed_seconds':time.monotonic()-t}
+     (OUT/'S3_PUBLICATION.json').write_text(json.dumps(report,indent=2))
+     print(json.dumps({k:v for k,v in report.items() if k!='rootfs_diff_ids'}),flush=True)
+ 
