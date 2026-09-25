@@ -1,5 +1,5 @@
 name: von-read R6 full candidate staging
-# Stage only. A separate full anonymous pull and exact-image GPU check remain required.
+# Stage only. The failed two-export run stays preserved; no public full download is enabled.
 on:
   push:
     branches: [von-registry-r5-20260925]
@@ -13,7 +13,7 @@ concurrency:
 jobs:
   stage:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       BASE_IMAGE: rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
     steps:
@@ -25,7 +25,7 @@ jobs:
           sparse-checkout: delivery/von-read-r4
       - uses: actions/checkout@v4
         with:
-          ref: 2f16f93ad9e8acc3aa161aa471b2b0765e90b1e4
+          ref: 15a5dad40811365ba051bd26ba0cc28f5fec4137
           persist-credentials: false
           path: publisher_source
           sparse-checkout: delivery/registry-r5
@@ -33,11 +33,11 @@ jobs:
         with:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::046675437218:role/von-registry-r5-publisher-20260925
-          role-session-name: von-candidate-stage
+          role-session-name: von-candidate-single-export
           role-duration-seconds: 3600
           mask-aws-account-id: true
           unset-current-credentials: true
-      - name: Prepare disposable builder and record exact application source
+      - name: Prepare disposable builder and test the export correction
         run: |
           set -euo pipefail
           test "$GITHUB_ACTIONS" = true
@@ -51,7 +51,10 @@ jobs:
           pathlib.Path('receipts/SOURCE.json').write_text(json.dumps({'application_commit':'3186e0ef79c27a298ed7505ed834b6a2be929c05','files':files},indent=2))
           PY
           python3 -m venv /tmp/von-publisher-env
-          /tmp/von-publisher-env/bin/pip -q install boto3 requests
+          /tmp/von-publisher-env/bin/pip -q install boto3 requests pytest
+          (cd publisher_source && git apply --check delivery/registry-r5/single-export.patch && git apply delivery/registry-r5/single-export.patch)
+          (cd publisher_source/delivery/registry-r5 && /tmp/von-publisher-env/bin/python -m pytest -q test_export_plan.py --junitxml="$GITHUB_WORKSPACE/receipts/EXPORT_TESTS.xml")
+          sha256sum publisher_source/delivery/registry-r5/publish_candidate.py > receipts/PUBLISHER_SOURCE_SHA256.txt
       - name: Pull mandatory base and build the weighted candidate
         timeout-minutes: 18
         run: |
@@ -67,8 +70,8 @@ jobs:
           r=json.loads(pathlib.Path('receipts/CLI.json').read_text())
           assert r['status']=='passed' and len(r['calls'])==10 and all(r['checks'].values()) and not r['gpu_inference']
           PY
-      - name: Preserve upstream base blobs and stage candidate layers through IAM
-        timeout-minutes: 15
+      - name: Stage candidate with one export and original base blobs
+        timeout-minutes: 20
         run: |
           set -euo pipefail
           /tmp/von-publisher-env/bin/python -u publisher_source/delivery/registry-r5/publish_candidate.py
@@ -78,6 +81,7 @@ jobs:
           r['status']='complete_image_staged_full_public_pull_pending'
           r['anonymous_full_pull_verified']=False
           r['official_submission']=False
+          r['prior_failed_staging_run']=36190035105
           r['availability']='Temporary bounded test registry; not a stable grader image reference.'
           p.write_text(json.dumps(r,indent=2))
           PY
