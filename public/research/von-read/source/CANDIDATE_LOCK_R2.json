@@ -1,0 +1,22 @@
+{
+  "status": "measured_research_policy_selected_deployment_integration_pending",
+  "repo": "Qwen/Qwen3-VL-4B-Instruct",
+  "revision": "ebb281ec70b05090aa6165b016eac8ec08e71b17",
+  "dtype": "bfloat16",
+  "attention": "sdpa",
+  "transformers": "5.3.0",
+  "max_pixels": 1048576,
+  "max_new_tokens": 512,
+  "do_sample": false,
+  "max_generation_seconds": 23.0,
+  "completion_requires_eos": true,
+  "incomplete_output_may_be_exported": false,
+  "confidence_calibrated": false,
+  "cropping_default": false,
+  "contrastive_reranking_default": false,
+  "prefix_guard_default": false,
+  "answer_specific_replacements": false,
+  "native_reader_py_status": "Extracted adapter has 20 CPU gate/integrity tests; not yet GPU-tested in the final warm worker or container.",
+  "measured_source_sha256": "d71e4f84523d16b468a489875fc1dfb8686162413ba9bed73a882970a7d2eb25",
+  "packaged_adapter_sha256": "65b1714e486894b4df8f089aeabf459ea38e521cb1e3cf13b610875688fa1fdc"
+}
