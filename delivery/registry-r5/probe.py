@@ -1,8 +1,8 @@
-"""Authored small OCI fixture. Private OIDC publishing, anonymous real Docker pull.
-No model, GPU, weighted-image rebuild or registry address in public artifacts.
+"""Authored small OCI fixture. Private OIDC publishing, anonymous Docker pull.
+No model, GPU or registry address in public artifacts.
 """
 from __future__ import annotations
-import gzip,hashlib,io,json,os,pathlib,subprocess,tarfile,tempfile,time
+import gzip,hashlib,io,json,pathlib,subprocess,tarfile,tempfile,time
 import boto3,requests
 REGION='us-east-1'
 STACK='von-registry-r5b-20260925'
@@ -49,7 +49,10 @@ def main():
  check('private_s3_redirect',redirect.status_code==307 and redirect.headers.get('Location','').startswith('https://'))
  actual=session.get(blob,timeout=10);check('anonymous_blob_hash',actual.status_code==200 and digest(actual.content)==digest(layer))
  ranged=session.get(blob,headers={'Range':'bytes=0-15'},timeout=10);check('blob_range',ranged.status_code==206 and ranged.content==layer[:16])
- for method in ('PUT','POST','DELETE','PATCH'):check('deny_'+method.lower(),session.request(method,url,data=b'no-write',timeout=10).status_code==405)
+ check('unsigned_public_write_denied',session.put(url,data=b'no-write',timeout=10).status_code==403)
+ # A body hash is integrity metadata, NOT an AWS key or user authentication.
+ body=b'no-write';integrity={'x-amz-content-sha256':hashlib.sha256(body).hexdigest()}
+ for method in ('PUT','POST','DELETE','PATCH'):check('deny_'+method.lower(),session.request(method,url,data=body,headers=integrity,timeout=10).status_code==405)
  check('unknown_repository',session.get(base+'/v2/not-our-repository/manifests/smoke',timeout=10).status_code==404)
  direct=f'https://{bucket}.s3.{REGION}.amazonaws.com/v2/{repo}/blobs/{digest(layer)}'
  check('direct_bucket_denied',session.get(direct,timeout=10).status_code==403)
