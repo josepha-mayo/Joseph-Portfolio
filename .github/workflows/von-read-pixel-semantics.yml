@@ -1,0 +1,26 @@
+name: von-read image pixel semantics
+on:
+  push:
+    branches: [feat/von-read-container-r4]
+    paths: ['delivery/von-read-decoder-candidate/**', '.github/workflows/von-read-pixel-semantics.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pytest==9.0.2 Pillow==12.3.0
+      - run: python -m pytest -q delivery/von-read-decoder-candidate/tests --junitxml=pixel-semantics.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-read-pixel-semantics
+          path: pixel-semantics.xml
+          retention-days: 7
