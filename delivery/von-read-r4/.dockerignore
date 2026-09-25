@@ -1,0 +1,15 @@
+**
+!von_read/
+!von_read/*.py
+!packaging/
+!packaging/app.py
+!packaging/requirements-amd.lock
+!packaging/Dockerfile.worker
+!models/
+!models/reader/
+!models/reader/*.json
+!models/reader/*.safetensors
+!models/reader/*.txt
+!models/reader/*.model
+!models/reader/*.jinja
+!LICENSE.txt
