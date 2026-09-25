@@ -17,7 +17,7 @@ def main():
  assert state['StackStatus'] in ('CREATE_COMPLETE','UPDATE_COMPLETE'),'Registry stack not ready'
  out={v['OutputKey']:v['OutputValue'] for v in state['Outputs']}
  base,repo,bucket=out['RegistryUrl'].rstrip('/'),out['Repository'],out['Bucket']
- host=base.removeprefix('https://');assert host.endswith('.lambda-url.us-east-1.on.aws')
+ host=base.removeprefix('https://');assert host.endswith('.cloudfront.net')
  print('::add-mask::'+base);print('::add-mask::'+host+'/'+repo)
  proof=b'von-read isolated registry transport test\nNot an OCR evaluation.\n'
  stream=io.BytesIO()
