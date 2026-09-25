@@ -12,7 +12,7 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,22 +22,26 @@ jobs:
         with:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::046675437218:role/von-registry-r5-publisher-20260925
-          role-session-name: von-registry-small-probe
-          role-duration-seconds: 900
+          role-session-name: von-registry-bounded-test
+          role-duration-seconds: 1800
           mask-aws-account-id: true
           unset-current-credentials: true
       - name: Install test-client dependencies in the disposable runner
         run: |
           python3 -m venv /tmp/von-registry-probe-env
           /tmp/von-registry-probe-env/bin/pip -q install boto3 requests
-      - name: Wait for the verified HEAD fix
+      - name: Wait for native S3 HEAD and bounded-range transport
+        timeout-minutes: 8
         run: aws cloudformation wait stack-update-complete --stack-name von-registry-r5b-20260925
-      - name: Publish tiny fixture and test actual anonymous Docker pull
+      - name: Publish tiny fixture and verify actual anonymous Docker pull
         run: /tmp/von-registry-probe-env/bin/python delivery/registry-r5/probe.py
+      - name: Test exact oversized base layer without full paid download
+        timeout-minutes: 18
+        run: /tmp/von-registry-probe-env/bin/python -u delivery/registry-r5/large_layer_probe.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: von-registry-small-probe-receipt
+          name: von-registry-small-and-large-probe-receipts
           path: /tmp/von-registry-receipt/
           retention-days: 7
           if-no-files-found: warn
