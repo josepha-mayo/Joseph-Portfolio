@@ -1,0 +1,45 @@
+name: CutProof v1.2 public verification
+on:
+  push:
+    branches: [cutproof-entry-preview-20260906]
+    paths: [public/cutproof/V12_PUBLIC_READY]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-v12-public
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/cutproof-entry-preview-20260906'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cutproof-entry-preview-20260906
+      - name: Install browser and media check tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python3 -m venv /tmp/cutproof-public12
+          /tmp/cutproof-public12/bin/pip -q install playwright==1.55.0
+          /tmp/cutproof-public12/bin/python -m playwright install chromium
+      - name: Check anonymous deployed app and actual speech/video outputs
+        working-directory: public/cutproof
+        run: /tmp/cutproof-public12/bin/python upgrade/public_check.py
+      - name: Preserve actual result without changing the submitted release
+        if: always()
+        run: |
+          git config user.name 'CutProof Build'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add public/cutproof/v12/evidence
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record actual v1.2 public deployment checks'
+          git pull --rebase origin cutproof-entry-preview-20260906
+          git push origin HEAD:cutproof-entry-preview-20260906
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-v12-public-evidence
+          path: public/cutproof/v12/evidence/
+          retention-days: 7

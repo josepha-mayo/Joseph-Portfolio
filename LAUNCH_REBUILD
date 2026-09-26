@@ -1,0 +1,1 @@
+Rerun the launch verification with the corrected outer insertion marker and a clean evidence output directory. Prior failed-run artifacts remain in Actions; no renderer overwrite safeguard or test assertion is removed.

@@ -1,0 +1,1 @@
+{"spoken_text": "The temperature is minus five degrees.", "supplied_text": "The temperature is +5 degrees.", "corrected_text": "The temperature is -5 degrees.", "duration_seconds": 4.4805, "source": "Original espeak-ng synthetic test, en-us, 135 wpm. Not natural speech or voice cloning.", "sha256": "3281634c774ba0e121ab7b6082cc7d778b14329607371d79a0326cdd52cd4512"}

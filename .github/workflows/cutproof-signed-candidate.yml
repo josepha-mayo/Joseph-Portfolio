@@ -1,0 +1,68 @@
+name: CutProof isolated signed-caption candidate
+on:
+  push:
+    branches: [cutproof-signed-20260909]
+    paths: [.github/workflows/cutproof-signed-candidate.yml, SIGNED_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: cutproof-signed-candidate
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/cutproof-signed-20260909'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand reviewed candidate scripts
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,lzma,hashlib
+          p=Path('signed-build-input/candidate.xz')
+          if p.exists():
+            data=p.read_bytes()
+            assert hashlib.sha256(data).hexdigest()=='a077565e381623abf49d50f2dd53ec25265519329369d16a5b5f3d22d9f3689a'
+            for name,text in json.loads(lzma.decompress(data)).items():
+              f=Path(name)
+              assert f.parts[0]=='upgrade14' and '..'not in f.parts and isinstance(text,str)
+              f.parent.mkdir(parents=True,exist_ok=True);f.write_text(text)
+            p.unlink()
+          PY
+      - name: Install actual H264-capable browser and local media tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
+          if ! command -v google-chrome >/dev/null; then
+            curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb
+            sudo apt-get install -y /tmp/chrome.deb
+          fi
+          python3 -m venv /tmp/cutproof-signed
+          /tmp/cutproof-signed/bin/pip -q install playwright==1.55.0
+      - name: Verify existing app, actual ASR, signed correction, exports and unchanged judged base
+        run: /tmp/cutproof-signed/bin/python upgrade14/release.py
+      - name: Preserve candidate code and actual outcomes without changing v13 or production
+        if: always()
+        run: |
+          git config user.name 'CutProof Candidate Verification'
+          git config user.email 'cutproof-build@users.noreply.github.com'
+          git add upgrade14/ public/cutproof/v14/ signed-build-input/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Record isolated signed-caption implementation and executed release checks'
+          git push origin HEAD:cutproof-signed-20260909
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cutproof-signed-candidate
+          path: |
+            public/cutproof/v14/
+            upgrade14/
+          retention-days: 14

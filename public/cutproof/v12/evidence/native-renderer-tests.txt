@@ -1,0 +1,40 @@
+test_boolean_bounds_rejected (__main__.RendererValidation.test_boolean_bounds_rejected) ... ok
+test_boolean_timestamp_rejected (__main__.RendererValidation.test_boolean_timestamp_rejected) ... ok
+test_changed_transcript_rejected (__main__.RendererValidation.test_changed_transcript_rejected) ... ok
+test_duplicate_destination_rejected (__main__.RendererValidation.test_duplicate_destination_rejected) ... ok
+test_empty_cues_rejected (__main__.RendererValidation.test_empty_cues_rejected) ... ok
+test_empty_media_duration_rejected (__main__.RendererValidation.test_empty_media_duration_rejected) ... ok
+test_empty_text_rejected (__main__.RendererValidation.test_empty_text_rejected) ... ok
+test_existing_receipt_matches_actual_files (__main__.RendererValidation.test_existing_receipt_matches_actual_files) ... ok
+test_existing_render_never_overwritten_by_default (__main__.RendererValidation.test_existing_render_never_overwritten_by_default) ... ok
+test_fractional_timestamp_rejected (__main__.RendererValidation.test_fractional_timestamp_rejected) ... ok
+test_hash_tampering_rejected (__main__.RendererValidation.test_hash_tampering_rejected) ... ok
+test_invalid_review_rejected (__main__.RendererValidation.test_invalid_review_rejected) ... ok
+test_invented_captions_rejected (__main__.RendererValidation.test_invented_captions_rejected) ... ok
+test_invented_transcript_rejected (__main__.RendererValidation.test_invented_transcript_rejected) ... ok
+test_metadata_mismatch_rejected (__main__.RendererValidation.test_metadata_mismatch_rejected) ... ok
+test_missing_dependency_fails_before_processing (__main__.RendererValidation.test_missing_dependency_fails_before_processing) ... ok
+test_missing_json_rejected (__main__.RendererValidation.test_missing_json_rejected) ... ok
+test_missing_media_rejected (__main__.RendererValidation.test_missing_media_rejected) ... ok
+test_missing_review_rejected (__main__.RendererValidation.test_missing_review_rejected) ... ok
+test_negative_timestamp_rejected (__main__.RendererValidation.test_negative_timestamp_rejected) ... ok
+test_non_object_cue_rejected (__main__.RendererValidation.test_non_object_cue_rejected) ... ok
+test_noncontiguous_ids_rejected (__main__.RendererValidation.test_noncontiguous_ids_rejected) ... ok
+test_original_export_accepted (__main__.RendererValidation.test_original_export_accepted) ... ok
+test_out_of_media_range_rejected (__main__.RendererValidation.test_out_of_media_range_rejected) ... ok
+test_out_of_range_bounds_rejected (__main__.RendererValidation.test_out_of_range_bounds_rejected) ... ok
+test_overlap_rejected (__main__.RendererValidation.test_overlap_rejected) ... ok
+test_partial_cue_cut_rejected (__main__.RendererValidation.test_partial_cue_cut_rejected) ... ok
+test_path_traversal_rejected (__main__.RendererValidation.test_path_traversal_rejected) ... ok
+test_schema_rejected (__main__.RendererValidation.test_schema_rejected) ... ok
+test_source_ids_sequential (__main__.RendererValidation.test_source_ids_sequential) ... ok
+test_subtitle_timeline_starts_at_zero (__main__.RendererValidation.test_subtitle_timeline_starts_at_zero) ... ok
+test_timestamp_format (__main__.RendererValidation.test_timestamp_format) ... ok
+test_truncated_title_rejected (__main__.RendererValidation.test_truncated_title_rejected) ... ok
+test_unsafe_media_extension_rejected (__main__.RendererValidation.test_unsafe_media_extension_rejected) ... ok
+test_untrimmed_text_rejected (__main__.RendererValidation.test_untrimmed_text_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.180s
+
+OK
