@@ -1,0 +1,47 @@
+name: von-read recorded-results video
+on:
+  push:
+    branches: [von-read-xp-demo-20260926]
+    paths: [tools/von-demo/**, .github/workflows/von-read-video-demo.yml]
+permissions:
+  contents: write
+concurrency:
+  group: von-read-video-demo-20260926
+  cancel-in-progress: false
+jobs:
+  render:
+    if: github.ref == 'refs/heads/von-read-xp-demo-20260926'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install media-only tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg espeak fonts-dejavu-core
+          python -m pip install Pillow==11.3.0
+      - name: Render recorded evidence and execute CPU guard fixtures
+        run: |
+          cp delivery/von-read-r4/von_read/native_reader.py tools/von-demo/native_reader.py
+          python tools/von-demo/make_video.py
+          ffprobe -v error -show_entries format=duration,size -of json tools/von-demo/output/von-read-evidence-walkthrough.mp4 > tools/von-demo/output/MEDIA_CHECK.json
+      - name: Publish walkthrough asset, not model weights or a registry location
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=von-read-demo-20260926
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo 'Existing release retained; refusing duplicate publication.'
+            exit 1
+          fi
+          cat > /tmp/von-demo-notes.md <<'NOTES'
+          Narrated evidence walkthrough for von-read in the AMD AI Academy Challenge.
+          This video presents recorded AMD experiments plus authored CPU completion-gate fixtures. It does not run live OCR, claim private-grader accuracy, or certify final-image GPU inference. Synthetic narration and AI-assisted production are disclosed on screen.
+          Research: https://josephmayo.site/research/von-read/index.html
+          Source evidence: public/research/von-read/source/RELEASE_R7.md and the previously published completion-budget measurements.
+          No photographs, model weights, credentials, or operational registry reference are included.
+          NOTES
+          gh release create "$tag" --target "$GITHUB_SHA" --prerelease --title 'von-read: recorded AMD evidence walkthrough' --notes-file /tmp/von-demo-notes.md tools/von-demo/output/von-read-evidence-walkthrough.mp4 tools/von-demo/output/VIDEO_RECEIPT.json tools/von-demo/output/GUARD_CHECK.json tools/von-demo/output/MEDIA_CHECK.json
