@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "origin": "https://6aa073243da07a000888d692--josephm.netlify.app/counterstep/v11/path.html",
+  "count": 29,
+  "checks": [
+    "No path exports before a real path begins",
+    "Actual frozen neural inference routes the example to distribution",
+    "First divergence is exposed without an automatic numerical answer",
+    "Original problem is fixed outside the remaining-lines editor",
+    "Correct final answer cannot hide an invalid intermediate equation",
+    "Equivalent unfinished working does not advance to practice",
+    "Unsupported repair input stays uncompleted",
+    "Complete repaired work advances, retaining its previous responses",
+    "Fresh step requires a written equation with no answer choices",
+    "Same-solution final answer rejected when expansion was requested",
+    "Copied question does not count as completed transformation",
+    "Requested hint preserves the draft and is recorded only once",
+    "Copying a requested worked step remains assisted completion",
+    "Changed-structure card uses a different expression without inheriting answer help",
+    "Save includes current draft and input/action history, not reference answers",
+    "Reopen restores exact question, submitted responses, assistance and unsubmitted draft",
+    "Extra saved completion claims are ignored and replayed outcomes prevail",
+    "Edited inputs with old fingerprint reject without replacing current work",
+    "Even rehashed files cannot skip required action order",
+    "390-pixel active path layout has no horizontal overflow",
+    "Fresh written transfer completes after network disconnection with distinct first-response status",
+    "Readable note and preview match, including questions, operations, answers and help",
+    "Completed path reopens without erasing revisions or assistance",
+    "Canceling a new path preserves the existing record",
+    "Explicit new path resets the current exercise and export state",
+    "Neural abstention requires a manual focus rather than hidden fallback",
+    "Manual focus override starts a supported path",
+    "Untrusted response markup remains inert and uncompleted",
+    "No page errors, input uploads, cloud inference or external model requests"
+  ],
+  "requests": [
+    {
+      "url": "https://6aa073243da07a000888d692--josephm.netlify.app/counterstep/v11/path.html",
+      "method": "GET"
+    },
+    {
+      "url": "https://6aa073243da07a000888d692--josephm.netlify.app/counterstep/v11/path.html",
+      "method": "GET"
+    }
+  ],
+  "scope": "Actual browser and learned model with synthetic equations, not a learner study"
+}

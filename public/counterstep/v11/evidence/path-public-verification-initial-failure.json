@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "origin": "https://6aa073243da07a000888d692--josephm.netlify.app/counterstep/v11/path.html",
+  "authentication": "none",
+  "files": [
+    {
+      "name": "index.html",
+      "bytes": 70234,
+      "sha256": "db1f21d63dbf2a5af51463bf9699b2a28252e63cc86972a07c974115547f090a",
+      "byte_identical": true
+    }
+  ],
+  "started_at": "2026-09-08T20:44:07.919518+00:00",
+  "error": "Unexpected HTML change path.html",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/counterstep/v11/tools/path_public_check.py\", line 43, in <module>\n    assert anchor_norm(original)==anchor_norm(served),'Unexpected HTML change '+name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Unexpected HTML change path.html\n",
+  "finished_at": "2026-09-08T20:44:08.921650+00:00"
+}
