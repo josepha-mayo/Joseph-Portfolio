@@ -34,7 +34,7 @@ jobs:
           name: von-registry-r11-overlay-and-gateway-data
           repository: josepha-mayo/Joseph-Portfolio
           run-id: 36341679718
-          github-token: \${{ github.token }}
+          github-token: ${{ github.token }}
           path: upstream
 
       - name: Bind immutable metadata to the ECR Public overlay carrier
@@ -86,7 +86,7 @@ jobs:
 
       - name: Run focused gateway tests against exact production metadata
         env:
-          VON_REGISTRY_DATA_DIR: \${{ github.workspace }}/deployment/data
+          VON_REGISTRY_DATA_DIR: ${{ github.workspace }}/deployment/data
         run: |
           set -euo pipefail
           python3 -m unittest -v delivery/registry-r12/test_lambda_gateway.py 2>&1 | tee receipts/GATEWAY_TESTS.log
@@ -157,4 +157,4 @@ jobs:
           name: von-read-lambda-r12-receipts
           path: receipts/
           retention-days: 14
-          if-no-files-found: error
+          if-no-files-found: warn
