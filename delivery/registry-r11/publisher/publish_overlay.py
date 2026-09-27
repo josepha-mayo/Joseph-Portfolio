@@ -340,16 +340,20 @@ class GHCR:
     def request(self, method, url, statuses, **kwargs):
         if urlsplit(url).netloc != "ghcr.io" or urlsplit(url).scheme != "https":
             raise ValueError("Registry authentication destination is not GHCR")
+        base_headers = dict(kwargs.pop("headers", {}))
+        body = kwargs.get("data")
+        body_position = body.tell() if hasattr(body, "tell") else None
         for attempt in range(2):
             self.deadline.check()
             if self.bearer is None:
                 self.refresh()
-            headers = {**kwargs.pop("headers", {}), "Authorization": "Bearer " + self.bearer}
+            headers = {**base_headers, "Authorization": "Bearer " + self.bearer}
             response = self.http.request(method, url, headers=headers, timeout=(15, 120), allow_redirects=False, **kwargs)
             if response.status_code == 401 and attempt == 0:
                 response.close()
                 self.refresh()
-                kwargs["headers"] = {key: value for key, value in headers.items() if key != "Authorization"}
+                if body_position is not None:
+                    body.seek(body_position)
                 continue
             return checked_response(response, statuses)
         raise RuntimeError("Package authorization failed")
@@ -358,36 +362,41 @@ class GHCR:
         valid_digest(desc["digest"])
         if path.stat().st_size != desc["size"] or not 0 < desc["size"] < LAYER_LIMIT:
             raise ValueError("Invalid publication blob size")
+
+        # GHCR's live implementation is not reliable for multi-PATCH uploads.
+        # Verify the local content address, then use the OCI/Docker monolithic
+        # upload form: POST a session and PUT the entire non-empty blob once.
+        observed = hashlib.sha256()
+        with path.open("rb") as source:
+            while block := source.read(CHUNK):
+                self.deadline.check()
+                observed.update(block)
+        if "sha256:" + observed.hexdigest() != desc["digest"]:
+            raise ValueError("Publication blob differs from its content address")
+
         blob_url = f"https://ghcr.io/v2/{GHCR_REPOSITORY}/blobs/{desc['digest']}"
         with self.request("HEAD", blob_url, {200, 404}) as existing:
             if existing.status_code == 200:
                 if int(existing.headers.get("Content-Length", -1)) != desc["size"]:
                     raise ValueError("Existing package blob size differs")
                 return
+
         with self.request("POST", f"https://ghcr.io/v2/{GHCR_REPOSITORY}/blobs/uploads/", {202}) as started:
             location = self.upload_location(started.headers["Location"])
-        offset, sent_sha = 0, hashlib.sha256()
-        with path.open("rb") as source:
-            while data := source.read(UPLOAD_CHUNK):
-                end = offset + len(data) - 1
-                with self.request("PATCH", location, {202}, data=data, headers={
-                    "Content-Type": "application/octet-stream", "Content-Length": str(len(data)),
-                    "Content-Range": f"{offset}-{end}",
-                }) as uploaded:
-                    location = self.upload_location(uploaded.headers["Location"])
-                    if uploaded.headers.get("Range") not in (None, f"0-{end}", f"bytes=0-{end}"):
-                        raise ValueError("Registry upload offset differs")
-                offset += len(data)
-                sent_sha.update(data)
-        if offset != desc["size"] or "sha256:" + sent_sha.hexdigest() != desc["digest"]:
-            raise ValueError("Uploaded bytes differ from their content address")
         parsed = urlsplit(location)
-        # Preserve the registry's opaque upload state query byte-for-byte.
         query = parsed.query + ("&" if parsed.query else "") + urlencode({"digest": desc["digest"]})
         finish = urlunsplit(parsed._replace(query=query))
-        with self.request("PUT", finish, {201}, data=b"", headers={"Content-Length": "0"}) as finalized:
-            if finalized.headers.get("Docker-Content-Digest", desc["digest"]) != desc["digest"]:
-                raise ValueError("Finalized registry digest differs")
+        with path.open("rb") as source:
+            with self.request("PUT", finish, {201}, data=source, headers={
+                "Content-Type": "application/octet-stream",
+                "Content-Length": str(desc["size"]),
+            }) as finalized:
+                if finalized.headers.get("Docker-Content-Digest", desc["digest"]) != desc["digest"]:
+                    raise ValueError("Finalized registry digest differs")
+
+        with self.request("HEAD", blob_url, {200}) as uploaded:
+            if int(uploaded.headers.get("Content-Length", -1)) != desc["size"]:
+                raise ValueError("Published package blob size differs")
 
     def publish_carrier(self, config_bytes, manifest_bytes, temporary):
         path = temporary / "carrier-config.json"

@@ -212,22 +212,20 @@ class FakeRegistry:
         if method == "POST":
             number = str(len(self.sessions))
             self.sessions[number] = bytearray()
-            return Response(202, {"Location": f"/v2/{pub.GHCR_REPOSITORY}/blobs/uploads/{number}?_state=ab%2Bcd%2F%3D"})
-        if "/blobs/uploads/" in parsed.path:
+            return Response(202, {"Location": f"/v2/{pub.GHCR_REPOSITORY}/blobs/upload/{number}?_state=ab%2Bcd%2F%3D"})
+        if "/blobs/upload/" in parsed.path:
             number = parsed.path.rsplit("/", 1)[1]
-            if method == "PATCH":
-                if self.expire_first_patch:
-                    self.expire_first_patch = False
-                    return Response(401)
-                payload = kwargs["data"]
-                offset = len(self.sessions[number])
-                assert kwargs["headers"]["Content-Range"] == f"{offset}-{offset + len(payload) - 1}"
-                self.sessions[number].extend(payload)
-                return Response(202, {"Location": url, "Range": f"0-{len(self.sessions[number]) - 1}"})
             assert method == "PUT" and parsed.query.startswith("_state=ab%2Bcd%2F%3D&digest=")
+            payload = kwargs["data"].read() if hasattr(kwargs["data"], "read") else kwargs["data"]
+            assert kwargs["headers"]["Content-Length"] == str(len(payload))
+            assert kwargs["headers"]["Content-Type"] == "application/octet-stream"
+            if self.expire_first_patch:
+                self.expire_first_patch = False
+                return Response(401)
             final_digest = parse_qs(parsed.query)["digest"][0]
-            assert pub.digest(self.sessions[number]) == final_digest
-            self.blobs[final_digest] = bytes(self.sessions[number])
+            assert pub.digest(payload) == final_digest
+            self.sessions[number] = bytearray(payload)
+            self.blobs[final_digest] = payload
             return Response(201, {"Docker-Content-Digest": final_digest})
         if "/manifests/" in parsed.path:
             if method == "PUT":
@@ -244,7 +242,7 @@ class FakeRegistry:
         raise AssertionError("Unexpected registry operation")
 
 
-def test_chunked_upload_refreshes_expired_token_and_preserves_opaque_state(tmp_path, monkeypatch, capsys):
+def test_monolithic_upload_refreshes_expired_token_rewinds_body_and_preserves_opaque_state(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(pub, "UPLOAD_CHUNK", 4)
     server = FakeRegistry(expire_first_patch=True)
     client = pub.GHCR("actor", "never-print-secret", pub.Deadline(5), session=server)
@@ -254,6 +252,7 @@ def test_chunked_upload_refreshes_expired_token_and_preserves_opaque_state(tmp_p
     client.upload_blob(path, desc)
     assert server.blobs[desc["digest"]] == path.read_bytes()
     assert server.token_count == 2
+    assert not any(method == "PATCH" for method, _, _ in server.calls)
     before = len(server.calls)
     client.upload_blob(path, desc)
     assert len(server.calls) == before + 1 and server.calls[-1][0] == "HEAD"
