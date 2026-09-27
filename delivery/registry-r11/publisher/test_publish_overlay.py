@@ -275,11 +275,22 @@ def test_carrier_publication_is_accepted_without_base_blobs(tmp_path, monkeypatc
 
 @pytest.mark.parametrize("location", [
     "https://evil.example/v2/repo/blobs/uploads/1", "http://ghcr.io/v2/repo/blobs/uploads/1",
-    "https://ghcr.io/v2/other/package/blobs/uploads/1", "https://ghcr.io@evil.example/steal",
+    "https://ghcr.io/v2/other/package/blobs/uploads/1", "https://ghcr.io/v2/other/package/blobs/upload/1",
+    "https://ghcr.io@evil.example/steal",
 ])
 def test_upload_location_cannot_forward_credentials_outside_authorized_package(location):
     with pytest.raises(ValueError, match="upload location"):
         pub.GHCR.upload_location(location)
+
+
+@pytest.mark.parametrize("location", [
+    f"/v2/{pub.GHCR_REPOSITORY}/blobs/uploads/1?_state=fixture",
+    f"/v2/{pub.GHCR_REPOSITORY}/blobs/upload/1?_state=fixture",
+])
+def test_upload_location_accepts_authorized_plural_and_live_singular_forms(location):
+    parsed = urlsplit(pub.GHCR.upload_location(location))
+    assert parsed.scheme == "https" and parsed.netloc == "ghcr.io"
+    assert parsed.path.startswith(f"/v2/{pub.GHCR_REPOSITORY}/blobs/upload")
 
 
 def test_lost_manifest_or_invalid_document_cannot_be_used_as_gateway_state():
