@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "scope": "CPU decoder and authored pixel fixtures; no neural, GPU, or leaderboard evidence",
+  "python": "3.12.14",
+  "pillow": "12.3.0",
+  "pytest": "9.1.1",
+  "tests": 117,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "junit_suite_seconds": 0.54,
+  "legacy_suite_cases": 33,
+  "new_pixel_suite_cases": 84,
+  "intentional_legacy_expectation_change": "Replaced constant 4096 uint16 TIFF clipping-parity assertion with correct explicit 64/128/255 output assertion; all ordinary pixel and guard assertions retained.",
+  "command": "python -m pytest -q tools/von-input-r8/test_views.py tools/von-input-r10/test_pixels.py --junitxml=CPU_TESTS.xml",
+  "source_sha256": "d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed",
+  "nonfatal_warning": "Authored corrupt TIFF fixture emits Pillow UserWarning before being correctly rejected.",
+  "pillow_version_coverage": "Actual 12.3.0 runtime; old mode-I PNG representation simulated, not an execution on a historical Pillow release."
+}

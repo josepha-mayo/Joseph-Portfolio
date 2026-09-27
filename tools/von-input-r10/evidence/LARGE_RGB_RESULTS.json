@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "scope": "Image decoding only; not GPU inference, OCR accuracy, or final-image validation",
+  "python": "3.12.14",
+  "pillow": "12.3.0",
+  "pillow_safety_threshold_pixels": 89478485,
+  "baseline_sha256": "310d04d6ea3e02c9c89feafab610bd4c26162bc504899ed329a12c4723da39f0",
+  "candidate_sha256": "d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed",
+  "cases": [
+    {
+      "format": "PNG",
+      "pixels": 48000000,
+      "r4_rejected": true,
+      "r8_decoded": true,
+      "mode": "RGB",
+      "decode_seconds": 0.579543036999894,
+      "peak_process_rss_kib": 767268,
+      "rss_scope": "Whole fixture process including image construction, not decoder delta",
+      "file_bytes": 152004,
+      "authored_fixture": true
+    },
+    {
+      "format": "JPEG",
+      "pixels": 48000000,
+      "r4_rejected": true,
+      "r8_decoded": true,
+      "mode": "RGB",
+      "decode_seconds": 0.22276880899994467,
+      "peak_process_rss_kib": 767276,
+      "rss_scope": "Whole fixture process including image construction, not decoder delta",
+      "file_bytes": 757566,
+      "authored_fixture": true
+    },
+    {
+      "format": "TIFF",
+      "pixels": 48000000,
+      "r4_rejected": true,
+      "r8_decoded": true,
+      "mode": "RGB",
+      "decode_seconds": 0.3444837100000768,
+      "peak_process_rss_kib": 770560,
+      "rss_scope": "Whole fixture process including image construction, not decoder delta",
+      "file_bytes": 250754,
+      "authored_fixture": true
+    }
+  ]
+}

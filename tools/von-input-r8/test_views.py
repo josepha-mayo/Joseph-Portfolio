@@ -4,8 +4,21 @@ from unittest.mock import patch
 import hashlib
 import pytest
 from PIL import Image
-import views
-import original_views
+import importlib.util
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def _module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+views = _module("r8_candidate_views", ROOT / "delivery/von-read-r4/von_read/views.py")
+original_views = _module("r8_original_views", Path(__file__).with_name("original_views.py"))
 
 
 def pattern(mode='RGB', size=(127, 83)):
@@ -19,11 +32,11 @@ def pattern(mode='RGB', size=(127, 83)):
 @pytest.mark.parametrize('mode,fmt', [
     ('RGB', 'PNG'), ('RGBA', 'PNG'), ('L', 'PNG'), ('P', 'PNG'),
     ('RGB', 'JPEG'), ('L', 'JPEG'), ('CMYK', 'JPEG'),
-    ('RGB', 'TIFF'), ('RGBA', 'TIFF'), ('L', 'TIFF'), ('I;16', 'TIFF'),
+    ('RGB', 'TIFF'), ('RGBA', 'TIFF'), ('L', 'TIFF'),
 ])
 def test_decoded_pixels_match_previous_on_supported_images(tmp_path, mode, fmt):
     p = tmp_path / ('mode.' + fmt.lower())
-    image = Image.new('I;16', (127, 83), 4096) if mode == 'I;16' else pattern(mode)
+    image = pattern(mode)
     image.save(p, format=fmt)
     image.close()
     old, new = original_views.load_image(p), views.load_image(p)
@@ -105,3 +118,18 @@ def test_decoded_image_is_owned_after_source_closes(tmp_path):
 
 def test_frozen_baseline_hash():
     assert hashlib.sha256(Path(original_views.__file__).read_bytes()).hexdigest() == '310d04d6ea3e02c9c89feafab610bd4c26162bc504899ed329a12c4723da39f0'
+
+
+def test_uint16_old_clipping_is_intentionally_corrected(tmp_path):
+    # This replaces the old constant-4096 parity case, which enshrined white
+    # clipping. The R10 suite separately checks glyphs, endian encodings, tRNS,
+    # EXIF, and exact equivalence to authored 8-bit images.
+    p = tmp_path / 'uint16.tiff'
+    with Image.new('I;16', (3, 1)) as image:
+        image.putpixel((0, 0), 16384)
+        image.putpixel((1, 0), 32768)
+        image.putpixel((2, 0), 65535)
+        image.save(p)
+    with original_views.load_image(p) as old, views.load_image(p) as new:
+        assert old.tobytes() == bytes([255, 255, 255]) * 3
+        assert new.tobytes() == bytes([64, 64, 64, 128, 128, 128, 255, 255, 255])
