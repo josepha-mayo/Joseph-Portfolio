@@ -200,12 +200,17 @@ def _accepts(headers: dict, media: str) -> bool:
     accept = headers.get("accept") or headers.get("Accept")
     if not accept:
         return True
+    compatible_manifests = {
+        media,
+        "application/vnd.oci.image.manifest.v1+json",
+        "application/vnd.docker.distribution.manifest.v2+json",
+    }
     for item in accept.split(","):
         parts = [part.strip() for part in item.split(";")]
         kind = parts[0]
         if any(re.fullmatch(r"q\s*=\s*0(?:\.0*)?", part, re.I) for part in parts[1:]):
             continue
-        if kind in ("*/*", "application/*", media):
+        if kind in ("*/*", "application/*") or kind in compatible_manifests:
             return True
     return False
 
