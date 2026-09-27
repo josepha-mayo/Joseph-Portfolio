@@ -13,8 +13,9 @@
     "jupyter_cell.js": "956ac9eb91e0abcd21f476baf6a80ef71581483ee3bb8003ab3c26a072d1b76c",
     "make_acceptance_cell.py": "09daa7916daf084fcb611badb12c1ffb6033a170f926a36dd8200c9fba389bf7",
     "test_execution_fixes.py": "3292f2a7706fbd60ae61ca45e4bb2e5385b865e4d4e642dc3b4c7a080aedc66c",
-    "README.md": "b888f64d7696eea5d11a404e30ac36cf21b6a599f660bd5994b8462d376289c5",
-    "review.patch": "ce3cebf7fb46a5eb9bb4134c1ef8b42991cdc20169dd3452b56bea5fb0f6b1ae"
+    "README.md": "b672b98d8db66104929c77289bd8bb669e902c6c47bb531dfb75a9f4b254a756",
+    "review.patch": "ce3cebf7fb46a5eb9bb4134c1ef8b42991cdc20169dd3452b56bea5fb0f6b1ae",
+    "test_amd_cycle.py": "123965a66c1aca2995311ff922fc3e9e3b556a3b750aadd0ff31acae3a38e187"
   },
   "unchanged_dependencies": [
     "browser_runner.py",
@@ -26,7 +27,10 @@
     "tests": 8,
     "passed": 8,
     "invalid_acceptance_variants": 12,
-    "standard_library_only": true
+    "standard_library_only": true,
+    "total_pytest_cases": 29,
+    "recovered_gate_cleanup_cases": 21,
+    "command_all": "python -m pytest -q -p no:cacheprovider test_amd_cycle.py test_execution_fixes.py"
   },
   "real_input_fixture_reproduction": {
     "formats": [
@@ -49,5 +53,5 @@
   "remote_mutations": false,
   "api_change": "cycle requires expected_run_id from the reviewed CELL_MANIFEST.json",
   "acceptance_scope": "exact_image_source_on_amd_host; full-container execution is not claimed",
-  "original_source_origin": "Recovered von-read execution-20260927; transport files match commit1711af680ea54253330378bcbec23a0048fd8e6f"
+  "original_source_origin": "Code matches recovered laptop workflow and execution base commit0a41affef4cf1f8adb1e2a0e87292d4f19c65a2c"
 }
