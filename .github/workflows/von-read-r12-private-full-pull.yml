@@ -76,8 +76,11 @@ jobs:
                   if not permitted:
                       self.send_error(429); return
                   parsed=urlsplit(self.path)
+                  # Docker sends several Accept fields. Preserve the complete list,
+                  # as Function URL HTTP API v2 ingress does, not just the first.
+                  accept=','.join(self.headers.get_all('Accept', ['*/*']))
                   event={'version':'2.0','rawPath':parsed.path,'rawQueryString':parsed.query,
-                         'headers':{'accept':self.headers.get('Accept','*/*')},
+                         'headers':{'accept':accept},
                          'requestContext':{'http':{'method':self.command}}}
                   try:
                       with tempfile.TemporaryDirectory() as directory:
@@ -115,6 +118,20 @@ jobs:
             sleep 1
           done
           test -f "$RUNNER_TEMP/r12-broker-ready"
+          python3 - <<'PY'
+          import hashlib, http.client, json
+          connection=http.client.HTTPConnection('127.0.0.1',5007,timeout=45)
+          connection.putrequest('GET','/v2/von-read/manifests/r12')
+          connection.putheader('Accept','application/vnd.docker.distribution.manifest.v2+json')
+          connection.putheader('Accept','application/vnd.oci.image.manifest.v1+json')
+          connection.endheaders()
+          response=connection.getresponse(); body=response.read()
+          assert response.status==200, response.status
+          assert hashlib.sha256(body).hexdigest()=='3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940'
+          from pathlib import Path
+          Path('receipts/ACCEPT_PREFLIGHT.json').write_text(json.dumps({'status':'passed','repeated_accept_fields_preserved':True}))
+          connection.close()
+          PY
           export DOCKER_CONFIG="$RUNNER_TEMP/r12-anonymous-docker"
           mkdir -p "$DOCKER_CONFIG"
           printf '{}\n' > "$DOCKER_CONFIG/config.json"
