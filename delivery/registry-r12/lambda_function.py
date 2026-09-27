@@ -151,7 +151,13 @@ def _dockerhub_location(digest: str) -> str:
         headers={"Authorization": "Bearer " + token, "Accept": "application/octet-stream"},
         method="GET",
     )
-    return _redirect_location(req, lambda host: host == "production.cloudfront.docker.com")
+    return _redirect_location(
+        req,
+        lambda host: host in {
+            "production.cloudfront.docker.com",
+            "docker-images-prod.s3.dualstack.us-east-1.amazonaws.com",
+        },
+    )
 
 def _ecr_location(digest: str) -> str:
     token = _ecr_auth_token()
