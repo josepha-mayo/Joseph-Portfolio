@@ -11,7 +11,7 @@ permissions:
   packages: write
 concurrency:
   group: von-read-registry-r11-publication
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   publish-overlay:
     runs-on: ubuntu-24.04
