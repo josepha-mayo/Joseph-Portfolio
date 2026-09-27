@@ -57,6 +57,17 @@ class GatewayTests(unittest.TestCase):
         )
         self.assertEqual(response["statusCode"], 406)
 
+    def test_docker_schema2_accept_header_can_receive_exact_oci_manifest(self):
+        response = gateway.handler(
+            event("/v2/von-read/manifests/r12", headers={
+                "accept": "application/vnd.docker.distribution.manifest.v2+json"
+            }),
+            None,
+        )
+        self.assertEqual(response["statusCode"], 200)
+        self.assertEqual(response["headers"]["Content-Type"], "application/vnd.oci.image.manifest.v1+json")
+        self.assertEqual(response["body"].encode(), gateway.MANIFEST_BYTES)
+
     def test_blob_get_only_returns_resolved_redirect(self):
         overlay = next(d for d, row in gateway.ROUTES.items() if row["source"] == "ecrpublic")
         with mock.patch.object(gateway, "_resolve_blob", return_value="https://cdn.example.invalid/pinned"):
