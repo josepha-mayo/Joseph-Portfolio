@@ -328,8 +328,12 @@ class GHCR:
     def upload_location(location):
         target = urljoin("https://ghcr.io", location)
         parsed = urlsplit(target)
-        prefix = f"/v2/{GHCR_REPOSITORY}/blobs/uploads/"
-        if parsed.scheme != "https" or parsed.netloc != "ghcr.io" or not parsed.path.startswith(prefix) or parsed.fragment:
+        prefixes = (
+            f"/v2/{GHCR_REPOSITORY}/blobs/uploads/",
+            f"/v2/{GHCR_REPOSITORY}/blobs/upload/",
+        )
+        if (parsed.scheme != "https" or parsed.netloc != "ghcr.io"
+                or not any(parsed.path.startswith(prefix) for prefix in prefixes) or parsed.fragment):
             raise ValueError("Unexpected registry upload location")
         return target
 
