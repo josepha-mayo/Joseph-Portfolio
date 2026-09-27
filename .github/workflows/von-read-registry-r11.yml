@@ -50,6 +50,24 @@ jobs:
           "$RUNNER_TEMP/von-r11-env/bin/python" -m pytest -q "$PUBLISHER_DIR/test_publish_overlay.py" --junitxml=receipts/PUBLISHER_TESTS.xml
           "$RUNNER_TEMP/von-r11-env/bin/python" "$PUBLISHER_DIR/publish_overlay.py" verify-source --source "$CANDIDATE_DIR" --lock "$PUBLISHER_DIR/frozen-source-lock.json" --out receipts/SOURCE.json
           sha256sum "$PUBLISHER_DIR/publish_overlay.py" > receipts/PUBLISHER_SOURCE_SHA256.txt
+      - name: Probe the live GHCR upload protocol with a tiny monolithic blob
+        timeout-minutes: 2
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/von-r11-env/bin/python" - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, os.environ["PUBLISHER_DIR"])
+          import publish_overlay as pub
+          path = Path(os.environ["RUNNER_TEMP"]) / "ghcr-monolithic-probe"
+          body = b"von-r11-ghcr-monolithic-probe-v1\n"
+          path.write_bytes(body)
+          desc = pub.descriptor(body, pub.LAYER_TYPE)
+          pub.GHCR(os.environ["GITHUB_ACTOR"], os.environ["REGISTRY_TOKEN"], pub.Deadline(90)).upload_blob(path, desc)
+          print(json.dumps({"status": "passed", "bytes": len(body), "digest": desc["digest"]}))
+          PY
       - name: Pull the immutable mandatory base and bind the original Dockerfile tag
         timeout-minutes: 16
         run: |
