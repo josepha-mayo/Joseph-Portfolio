@@ -1,0 +1,21 @@
+{
+  "application_commit": "3186e0ef79c27a298ed7505ed834b6a2be929c05",
+  "files": {
+    ".dockerignore": "c72d15ebbe307df8c0fa1b12818aeee114d3e6189c5dc95b7d8452e03fc85288",
+    "README.md": "f747fe0ec718dadf04b8452b1d53cd05cfce5645f2b4738c5fcd15fdccc251c0",
+    "LICENSE.txt": "7f4cdffa9b9632d07e92e21e76dc67472c96f16e8124bec904d90a25f593b6aa",
+    "packaging/Dockerfile.worker": "e19c7d905b5b87924452ece21a99da60bfc46a643a27de6eca7340350ef3f343",
+    "packaging/MODEL_LOCK.json": "1aa5630bc4ccf2712b44ec5fdceafe896fa9623533bd44903203452bf7ae5389",
+    "packaging/container_checks.py": "30e57db4b514266ca7142edd3afd61b9639e212525544aab427fd153868ed0fe",
+    "packaging/fetch_model.py": "e99c16d8466c15237b7c1a756627c75c8b8bab0254cb89fdf0b630b31d12285a",
+    "packaging/app.py": "d11309a3c2f9ac7338e6d6c4f8de07a3145d33722055c66e10fa2b9efce08424",
+    "packaging/requirements-amd.lock": "8b8961c7bf86fff6a589d2279d7e8a1ab10b5ff3a04f010e69c528a5eaf022cc",
+    "von_read/warm_runtime.py": "07ee2edce83dce030a8475df87906a57c3d3d68d4b6235a610fe377b5f6e783e",
+    "von_read/completion_contract.py": "f9c5a82d1d2ed4629a9325a0395aaa61459ece69b225266be5098632d2e966a8",
+    "von_read/views.py": "310d04d6ea3e02c9c89feafab610bd4c26162bc504899ed329a12c4723da39f0",
+    "von_read/native_reader.py": "65b1714e486894b4df8f089aeabf459ea38e521cb1e3cf13b610875688fa1fdc",
+    "von_read/contracts.py": "b7d59f74e934957d9cb7414b15ead5bceb9591125f775c4caccc8d5cc9717732",
+    "von_read/evaluation.py": "7ef2bfc2ca8d6c9d50531d8d860034306ef151ecc248591ac9da624f6a5bc74f",
+    "von_read/__init__.py": "acd7b1f2a0317cd7c90b3b35fc51bafe33e3abbd744c7b01fd71450cf0ceb13d"
+  }
+}
