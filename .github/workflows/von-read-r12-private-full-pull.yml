@@ -1,0 +1,165 @@
+name: von-read R12 private complete image verification
+on:
+  push:
+    branches: [von-registry-r11-20260927]
+    paths: [.github/workflows/von-read-r12-private-full-pull.yml]
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: von-read-r12-private-full-pull
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 3186e0ef79c27a298ed7505ed834b6a2be929c05
+          path: frozen
+          sparse-checkout: delivery/von-read-r4
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-registry-r11-overlay-and-gateway-data
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36341679718
+          github-token: ${{ github.token }}
+          path: upstream
+      - name: Prepare disposable runner only
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p receipts
+          df -B1 / > receipts/DISK_BEFORE.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/DISK_AFTER.txt
+          command -v aws
+          python3 - <<'PY'
+          import hashlib, pathlib, shutil
+          p=pathlib.Path('upstream/data/final-config.json')
+          assert hashlib.sha256(p.read_bytes()).hexdigest() == '5b4a6e46274300876943e1693ee0c6d053b8d9697987c2c3048cbe5fb6679ad8'
+          assert shutil.disk_usage('/').free > 75 * 2**30
+          PY
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::046675437218:role/von-registry-r12-ecr-public-20260927
+          role-session-name: von-read-r12-private-verify
+          aws-region: us-east-1
+          role-duration-seconds: 3600
+      - name: Pull the complete pinned image through a loopback-only ingress
+        timeout-minutes: 25
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/r12-broker.py" <<'PY'
+          import base64, collections, http.server, json, os, pathlib, subprocess, tempfile, threading
+          from urllib.parse import urlsplit
+          FN='arn:aws:lambda:us-east-1:046675437218:function:von-read-registry-r12:1'
+          lock=threading.Lock()
+          stats={'private_function':FN,'public_ingress_verified':False,'requests':0,'statuses':{}}
+          def record(status):
+              with lock:
+                  key=str(status); stats['statuses'][key]=stats['statuses'].get(key,0)+1
+                  pathlib.Path('receipts/BROKER_STATS.json').write_text(json.dumps(stats,indent=2))
+          class Handler(http.server.BaseHTTPRequestHandler):
+              protocol_version='HTTP/1.1'
+              def log_message(self,*args): pass
+              def do_GET(self): self.dispatch()
+              def do_HEAD(self): self.dispatch()
+              def dispatch(self):
+                  with lock:
+                      stats['requests'] += 1
+                      permitted=stats['requests'] <= 150
+                  if not permitted:
+                      self.send_error(429); return
+                  parsed=urlsplit(self.path)
+                  event={'version':'2.0','rawPath':parsed.path,'rawQueryString':parsed.query,
+                         'headers':{'accept':self.headers.get('Accept','*/*')},
+                         'requestContext':{'http':{'method':self.command}}}
+                  try:
+                      with tempfile.TemporaryDirectory() as directory:
+                          out=os.path.join(directory,'response.json')
+                          result=subprocess.run(['aws','lambda','invoke','--region','us-east-1',
+                              '--function-name',FN,'--cli-binary-format','raw-in-base64-out',
+                              '--payload',json.dumps(event),out],capture_output=True,timeout=40)
+                          if result.returncode: raise RuntimeError('Invocation failed')
+                          envelope=json.loads(result.stdout)
+                          if envelope.get('FunctionError'): raise RuntimeError('Function failed')
+                          data=json.loads(pathlib.Path(out).read_text())
+                      status=int(data['statusCode'])
+                      body=data.get('body','')
+                      body=base64.b64decode(body) if data.get('isBase64Encoded') else body.encode()
+                      headers=data.get('headers',{})
+                      self.send_response(status)
+                      for key,value in headers.items():
+                          if key.lower() not in ('connection','transfer-encoding'): self.send_header(key,str(value))
+                      if not any(k.lower()=='content-length' for k in headers): self.send_header('Content-Length',str(len(body)))
+                      self.send_header('Connection','close'); self.end_headers()
+                      if self.command!='HEAD': self.wfile.write(body)
+                      self.close_connection=True
+                      record(status)
+                  except Exception:
+                      record(502); self.send_error(502,'Pinned gateway invocation failed')
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',5007),Handler)
+          pathlib.Path(os.environ['RUNNER_TEMP'],'r12-broker-ready').write_text('ready')
+          server.serve_forever()
+          PY
+          python3 -u "$RUNNER_TEMP/r12-broker.py" > receipts/BROKER.log 2>&1 &
+          broker_pid=$!
+          trap 'kill "$broker_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            test -f "$RUNNER_TEMP/r12-broker-ready" && break
+            sleep 1
+          done
+          test -f "$RUNNER_TEMP/r12-broker-ready"
+          export DOCKER_CONFIG="$RUNNER_TEMP/r12-anonymous-docker"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          export IMAGE='127.0.0.1:5007/von-read@sha256:3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940'
+          date -u +%s > receipts/PULL_STARTED.txt
+          timeout --kill-after=20s 1350s env -u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY -u AWS_SESSION_TOKEN docker pull "$IMAGE" > receipts/DOCKER_PULL.log 2>&1
+          date -u +%s > receipts/PULL_ENDED.txt
+          docker image inspect "$IMAGE" > receipts/IMAGE_INSPECT.json
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 \
+            -v "$PWD/frozen/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" \
+            -v "$PWD/receipts:/reports" "$IMAGE" /checks.py --out /reports/CLI.json > receipts/CLI.log 2>&1
+          set +e
+          timeout --kill-after=5s 60s docker run --rm --network none "$IMAGE" > receipts/NO_GPU.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          test "$rc" -ne 124
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          source=Path('upstream/data/final-config.json').read_bytes()
+          config=json.loads(source)
+          image=json.loads(Path('receipts/IMAGE_INSPECT.json').read_text())[0]
+          assert image['Id']=='sha256:'+hashlib.sha256(source).hexdigest()
+          assert image['RootFS']['Layers']==config['rootfs']['diff_ids']
+          assert len(image['RootFS']['Layers'])==19
+          cli=json.loads(Path('receipts/CLI.json').read_text())
+          assert cli['status']=='passed' and len(cli['calls'])==10 and all(cli['checks'].values())
+          assert 'Allocated AMD ROCm hardware required' in Path('receipts/NO_GPU.log').read_text()
+          seconds=int(Path('receipts/PULL_ENDED.txt').read_text())-int(Path('receipts/PULL_STARTED.txt').read_text())
+          receipt={'status':'passed','scope':'Complete Docker image through loopback ingress to pinned private Lambda gateway',
+            'manifest_digest':'sha256:3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940',
+            'config_digest':image['Id'],'rootfs_layers':19,'mandatory_base_layers':11,'overlay_layers':8,
+            'filesystem_identity_matches_r11':True,'docker_client_authentication':'empty credentials; AWS variables removed',
+            'gateway_invocation_authentication':'IAM-authorized verification broker',
+            'complete_image_pull':True,'pull_seconds':seconds,'fixture_cli_calls':10,
+            'public_registry_ingress_verified':False,'gpu_inference':False,'submitted':False}
+          Path('receipts/FULL_IMAGE_PRIVATE_VERIFICATION.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - name: Preserve actual verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-r12-private-complete-image-evidence
+          path: receipts/
+          retention-days: 14
+          if-no-files-found: error
