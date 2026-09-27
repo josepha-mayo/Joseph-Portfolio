@@ -102,7 +102,15 @@ def _ecr_auth_token() -> str:
 
 def _read_json(url: str, headers: dict[str, str], limit: int = 65536) -> dict:
     req = urllib.request.Request(url, headers=headers, method="GET")
-    with _OPENER.open(req, timeout=15) as response:
+    try:
+        response = _OPENER.open(req, timeout=15)
+    except urllib.error.HTTPError as error:
+        status = error.code
+        error.close()
+        raise RuntimeError(f"metadata request failed HTTP {status}")
+    except urllib.error.URLError:
+        raise RuntimeError("metadata request unavailable")
+    with response:
         stated = response.headers.get("Content-Length")
         if stated and (not stated.isdigit() or int(stated) > limit):
             raise RuntimeError("metadata bound exceeded")
@@ -116,7 +124,7 @@ def _redirect_location(req: urllib.request.Request, allowed) -> str:
         response = _OPENER.open(req, timeout=20)
     except urllib.error.HTTPError as error:
         if error.code not in (302, 307, 308):
-            raise RuntimeError("upstream blob request failed")
+            raise RuntimeError(f"upstream blob request failed HTTP {error.code}")
         raw = error.headers.get("Location")
         error.close()
     else:
@@ -238,6 +246,8 @@ def handler(event, context):
         try:
             headers["Location"] = _resolve_blob(ref, route)
             return _response(307, "", headers)
-        except Exception:
+        except Exception as error:
+            detail = str(error) if isinstance(error, RuntimeError) else type(error).__name__
+            print(json.dumps({"event": "blob_resolution_failed", "source": route["source"], "detail": detail}))
             return _error(502, "UNKNOWN", "Blob delivery is temporarily unavailable")
     return _error(404, "UNSUPPORTED", "Registry operation not found", head)
