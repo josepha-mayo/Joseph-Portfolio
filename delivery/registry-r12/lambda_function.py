@@ -137,7 +137,7 @@ def _redirect_location(req: urllib.request.Request, allowed) -> str:
         raise RuntimeError("unsafe upstream redirect")
     host = parsed.hostname.lower()
     if not allowed(host):
-        raise RuntimeError("unapproved upstream redirect")
+        raise RuntimeError(f"unapproved upstream redirect host {host}")
     return raw
 
 def _dockerhub_location(digest: str) -> str:
