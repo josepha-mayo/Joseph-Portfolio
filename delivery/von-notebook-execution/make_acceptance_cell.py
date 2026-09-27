@@ -2,6 +2,9 @@
 import argparse,base64,hashlib,io,json,zipfile
 from pathlib import Path
 
+MAX_ARCHIVE_MEMBERS=24
+MAX_UNPACKED_BYTES=20000000
+
 CLOUD='''import base64,hashlib,io,json,os,signal,subprocess,time,zipfile
 from pathlib import Path
 blob=base64.b64decode(PAYLOAD,validate=True)
@@ -48,6 +51,14 @@ print('VON_ACCEPTANCE_RESULT '+json.dumps(report,ensure_ascii=False),flush=True)
 if report['status']!='passed':raise RuntimeError('Acceptance result is not passing; inspect saved receipt')
 '''
 
+def validate_archive_limits(members):
+    """Reject payloads that the existing cloud extractor will always refuse."""
+    if len(members)>MAX_ARCHIVE_MEMBERS:raise ValueError('Archive exceeds cloud member limit')
+    unpacked_bytes=sum(path.stat().st_size for path in members.values())
+    if unpacked_bytes>MAX_UNPACKED_BYTES:raise ValueError('Archive exceeds cloud unpacked-size limit')
+    return unpacked_bytes
+
+
 def build(root: Path,destination: Path,run_id: str):
     import re,sys,importlib.util
     if not re.fullmatch(r'[a-z0-9-]{8,60}',run_id):raise ValueError('Invalid run identity')
@@ -60,10 +71,14 @@ def build(root: Path,destination: Path,run_id: str):
     members['input/inputs.jsonl']=root/'input-bundle/inputs.jsonl'
     for row in rows:members['input/'+row['image']]=Path(row['path'])
     if any(p.is_symlink() for p in members.values()):raise ValueError('No symlinks in transfer')
+    validate_archive_limits(members)
     buffer=io.BytesIO();hashes={}
+    unpacked_bytes=0
     with zipfile.ZipFile(buffer,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
         for name,p in sorted(members.items()):
-            data=p.read_bytes();hashes[name]=hashlib.sha256(data).hexdigest()
+            data=p.read_bytes();unpacked_bytes+=len(data)
+            if unpacked_bytes>MAX_UNPACKED_BYTES:raise ValueError('Archive grew beyond cloud unpacked-size limit')
+            hashes[name]=hashlib.sha256(data).hexdigest()
             info=zipfile.ZipInfo(name,date_time=(2026,9,27,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED
             info.external_attr=0o100600<<16;z.writestr(info,data)
     archive=buffer.getvalue();archive_sha=hashlib.sha256(archive).hexdigest()
@@ -73,7 +88,8 @@ def build(root: Path,destination: Path,run_id: str):
     destination.mkdir(parents=True,exist_ok=True)
     with (destination/'acceptance_cell.py').open('x') as f:f.write(code)
     report={'status':'prepared_not_executed','run_id':run_id,'files':len(members),'input_files':len(rows),
-      'archive_bytes':len(archive),'cell_bytes':len(code.encode()),'archive_sha256':archive_sha,
+      'archive_bytes':len(archive),'unpacked_bytes':unpacked_bytes,
+      'cell_bytes':len(code.encode()),'archive_sha256':archive_sha,
       'code_sha256':hashlib.sha256(code.encode()).hexdigest(),'file_sha256':hashes,
       'acceptance_source_sha256':hashlib.sha256(acceptance.read_bytes()).hexdigest(),
       'includes_model_weights':False,'includes_reference_labels':False,'photos_are_private_existing_development_inputs':True,

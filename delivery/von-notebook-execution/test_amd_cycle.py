@@ -4,6 +4,12 @@ import pytest
 from amd_cycle import cycle,eligibility
 CODE="print('acceptance placeholder for fixture only')"
 SHA=hashlib.sha256(CODE.encode()).hexdigest()
+RUN_ID='recovered-fixture-20260927'
+# Authored CPU fixture for the new semantic boundary; no AMD run is claimed.
+FIXTURE_OUTPUT='VON_ACCEPTANCE_RESULT '+json.dumps({
+ 'schema':'von-acceptance-cell-1','run_id':RUN_ID,'status':'passed','process_exit':0,
+ 'acceptance':{'status':'passed','gpu_execution':True,'exact_image_source':True,
+               'container_execution':False}})+'\n'
 
 def snap(**kw):
  r={'http':200,'platform':'instinct','remaining_seconds':10800,'conflict':False,'existing':False,
@@ -16,8 +22,8 @@ class Provider:
  def open_owned_notebook(self,identity):assert identity=='owned-instance';return object()
  def stop_owned(self,identity):self.stops.append(identity);return True
 
-def run(p,tmp_path,**kw):return cycle(p,state_path=tmp_path/'CYCLE.json',code=CODE,expected_code_sha256=SHA,
-    cell_runner=lambda *a,**k:{'status':'passed','output':'fixture'},**kw)
+def run(p,tmp_path,**kw):return cycle(p,state_path=tmp_path/'CYCLE.json',code=CODE,expected_code_sha256=SHA,expected_run_id=RUN_ID,
+    cell_runner=lambda *a,**k:{'status':'passed','output':FIXTURE_OUTPUT},**kw)
 
 def test_default_does_not_allocate(tmp_path):
  p=Provider();r=run(p,tmp_path);assert r['status']=='plan_only' and p.requests==0 and not list(tmp_path.iterdir())
@@ -48,7 +54,7 @@ def test_full_fixture_sequence(tmp_path):
 def test_cell_failure_still_stops_owned(tmp_path):
  p=Provider()
  def broken(*a,**k):raise ConnectionError('authored connection loss')
- r=cycle(p,state_path=tmp_path/'CYCLE.json',code=CODE,expected_code_sha256=SHA,execute=True,cell_runner=broken)
+ r=cycle(p,state_path=tmp_path/'CYCLE.json',code=CODE,expected_code_sha256=SHA,expected_run_id=RUN_ID,execute=True,cell_runner=broken)
  assert r['status']=='failed' and p.requests==1 and p.stops==['owned-instance']
 
 def test_uncertain_request_no_duplicate_or_blind_stop(tmp_path):
@@ -67,7 +73,7 @@ def test_cleanup_error_not_success(tmp_path):
 
 def test_changed_payload_no_api(tmp_path):
  p=Provider()
- with pytest.raises(ValueError):cycle(p,state_path=tmp_path/'CYCLE.json',code=CODE+'x',expected_code_sha256=SHA)
+ with pytest.raises(ValueError):cycle(p,state_path=tmp_path/'CYCLE.json',code=CODE+'x',expected_code_sha256=SHA,expected_run_id=RUN_ID)
  assert p.requests==0
 
 def test_startup_hang_is_bounded(tmp_path):

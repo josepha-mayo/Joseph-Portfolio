@@ -1,0 +1,57 @@
+{
+  "schema": "von-execution-review-r10",
+  "status": "candidate_cpu_verified_not_deployed",
+  "original_sha256": {
+    "amd_cycle.py": "f117c97891a44ae2ae93220f13cc1180e9e00033d9169fd9d42cc806d0aaec67",
+    "browser_runner.py": "ea63f134f55d61d9879d7f3581354e634ac7233a9de6da8e5469518c17224009",
+    "jupyter_cell.js": "956ac9eb91e0abcd21f476baf6a80ef71581483ee3bb8003ab3c26a072d1b76c",
+    "make_acceptance_cell.py": "549963ac4543c034151d1480eea7edbb7458f40d1fd23a299472281aa92f1508"
+  },
+  "candidate_sha256": {
+    "amd_cycle.py": "7f315943ed7f0a99998ee19713b58610df7e86371ae7b6da82bb7d2e18cb8078",
+    "browser_runner.py": "ea63f134f55d61d9879d7f3581354e634ac7233a9de6da8e5469518c17224009",
+    "jupyter_cell.js": "956ac9eb91e0abcd21f476baf6a80ef71581483ee3bb8003ab3c26a072d1b76c",
+    "make_acceptance_cell.py": "09daa7916daf084fcb611badb12c1ffb6033a170f926a36dd8200c9fba389bf7",
+    "test_execution_fixes.py": "3292f2a7706fbd60ae61ca45e4bb2e5385b865e4d4e642dc3b4c7a080aedc66c",
+    "README.md": "b672b98d8db66104929c77289bd8bb669e902c6c47bb531dfb75a9f4b254a756",
+    "review.patch": "ce3cebf7fb46a5eb9bb4134c1ef8b42991cdc20169dd3452b56bea5fb0f6b1ae",
+    "test_amd_cycle.py": "123965a66c1aca2995311ff922fc3e9e3b556a3b750aadd0ff31acae3a38e187"
+  },
+  "unchanged_dependencies": [
+    "browser_runner.py",
+    "jupyter_cell.js"
+  ],
+  "embedded_cloud_cell_changed": false,
+  "regression_tests": {
+    "command": "python -m unittest -v test_execution_fixes",
+    "tests": 8,
+    "passed": 8,
+    "invalid_acceptance_variants": 12,
+    "standard_library_only": true,
+    "total_pytest_cases": 29,
+    "recovered_gate_cleanup_cases": 21,
+    "command_all": "python -m pytest -q -p no:cacheprovider test_amd_cycle.py test_execution_fixes.py"
+  },
+  "real_input_fixture_reproduction": {
+    "formats": [
+      "JPEG",
+      "PNG",
+      "TIFF"
+    ],
+    "input_count": 10,
+    "original_archive_bytes": 42053,
+    "original_cell_bytes": 58953,
+    "unpacked_bytes": 24064619,
+    "cloud_limit_bytes": 20000000,
+    "original_builder": "accepted",
+    "fixed_builder": "rejected_before_payload_creation"
+  },
+  "gpu_execution": false,
+  "browser_execution": false,
+  "network_calls": false,
+  "cloud_allocation": false,
+  "remote_mutations": false,
+  "api_change": "cycle requires expected_run_id from the reviewed CELL_MANIFEST.json",
+  "acceptance_scope": "exact_image_source_on_amd_host; full-container execution is not claimed",
+  "original_source_origin": "Code matches recovered laptop workflow and execution base commit0a41affef4cf1f8adb1e2a0e87292d4f19c65a2c"
+}

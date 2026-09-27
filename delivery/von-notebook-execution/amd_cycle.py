@@ -5,7 +5,7 @@ export, global input, clear_existing, background polling daemon or paid service.
 A failed or uncertain launch is never silently repeated.
 """
 from __future__ import annotations
-import hashlib,json,math,time
+import hashlib,json,math,re,time
 from pathlib import Path
 from urllib.parse import urlsplit
 from browser_runner import atomic_json,execute_once
@@ -13,6 +13,7 @@ from browser_runner import atomic_json,execute_once
 PORTAL='https://notebooks.amd.com'
 PORTAL_SOURCE_SHA='5c7d60c3311b0848543ee3aff4b6196dc8f098d8e9ffd7a12a78e2190e1c99c8'
 IMAGE='rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0'
+MAX_ACCEPTANCE_OUTPUT_BYTES=262144
 
 class Portal:
     def __init__(self,page):
@@ -99,7 +100,29 @@ def eligibility(snapshot):
     return None
 
 
-def cycle(portal,*,state_path,code,expected_code_sha256,execute=False,cell_runner=execute_once,
+def require_acceptance_result(output,expected_run_id):
+    """Transport completion alone is not evidence that the acceptance work passed."""
+    if not isinstance(output,str) or len(output.encode())>MAX_ACCEPTANCE_OUTPUT_BYTES:
+        raise ValueError('Acceptance output is missing or exceeds the reviewed bound')
+    prefix='VON_ACCEPTANCE_RESULT '
+    lines=[line for line in output.splitlines() if line.startswith('VON_ACCEPTANCE_RESULT')]
+    if len(lines)!=1 or not lines[0].startswith(prefix):
+        raise ValueError('Expected exactly one acceptance result')
+    receipt=json.loads(lines[0][len(prefix):])
+    if not isinstance(receipt,dict) or receipt.get('schema')!='von-acceptance-cell-1':
+        raise ValueError('Invalid acceptance result schema')
+    if receipt.get('run_id')!=expected_run_id:raise ValueError('Acceptance run identity differs')
+    acceptance=receipt.get('acceptance')
+    if receipt.get('status')!='passed' or type(receipt.get('process_exit')) is not int or receipt['process_exit']!=0:
+        raise ValueError('Acceptance cell did not pass')
+    if not isinstance(acceptance,dict) or acceptance.get('status')!='passed':
+        raise ValueError('GPU acceptance did not pass')
+    if acceptance.get('gpu_execution') is not True or acceptance.get('exact_image_source') is not True or acceptance.get('container_execution') is not False:
+        raise ValueError('Expected exact-source AMD acceptance evidence')
+    return receipt
+
+
+def cycle(portal,*,state_path,code,expected_code_sha256,expected_run_id,execute=False,cell_runner=execute_once,
           clock=time.monotonic,sleep=time.sleep,startup_seconds=180):
     """Read-only by default. Execute only after explicit current authorization.
 
@@ -107,12 +130,23 @@ def cycle(portal,*,state_path,code,expected_code_sha256,execute=False,cell_runne
     function has no retry loop for launch, code dispatch, or failed turn-off.
     """
     if hashlib.sha256(code.encode()).hexdigest()!=expected_code_sha256:raise ValueError('Changed reviewed payload')
+    if not isinstance(expected_run_id,str) or not re.fullmatch(r'[a-z0-9-]{8,60}',expected_run_id):
+        raise ValueError('Invalid expected run identity')
+    state_path=Path(state_path)
+    # The complete filename avoids collisions between e.g. run.json and run.txt.
+    cell_state_path=state_path.with_name(state_path.name+'.CELL_DISPATCH.json')
+    # Refuse old/uncertain journals before even a portal snapshot. Exclusive writes
+    # below also protect against a second caller racing this local preflight.
+    for journal in (state_path,cell_state_path):
+        if journal.exists() or journal.is_symlink():
+            raise FileExistsError('Preserve existing execution journal: '+str(journal))
     snapshot=portal.snapshot();reason=eligibility(snapshot)
     if reason or not execute:return {'status':'refused' if reason else 'plan_only','reason':reason,
                                    'allocation_requested':False,'snapshot':snapshot}
-    state_path=Path(state_path);state_path.parent.mkdir(parents=True,exist_ok=True)
+    state_path.parent.mkdir(parents=True,exist_ok=True)
     report={'schema':'von-amd-cycle-1','status':'launch_intent','allocation_requested':True,
-      'snapshot':snapshot,'code_sha256':expected_code_sha256,'automatic_retry_allowed':False,
+      'snapshot':snapshot,'code_sha256':expected_code_sha256,'expected_run_id':expected_run_id,
+      'cell_state_path':str(cell_state_path),'automatic_retry_allowed':False,
       'work_passed':False,'allocation_cleanup_verified':False}
     with state_path.open('x') as f:
         json.dump(report,f);f.flush()
@@ -140,10 +174,12 @@ def cycle(portal,*,state_path,code,expected_code_sha256,execute=False,cell_runne
         report['allocation_identity']=identity;atomic_json(state_path,report)
         page=portal.open_owned_notebook(identity)
         result=cell_runner(page,code=code,expected_code_sha256=expected_code_sha256,
-          state_path=state_path.with_name('CELL_DISPATCH.json'),timeout_ms=240000)
+          state_path=cell_state_path,timeout_ms=240000)
         report['cell']=result
         if result.get('status')!='passed':raise RuntimeError('Notebook cell did not complete')
-        # Transport success is separate from the acceptance result embedded in stdout.
+        report['acceptance_result']=require_acceptance_result(result.get('output'),expected_run_id)
+        report['acceptance_scope']='exact_image_source_on_amd_host'
+        report['container_execution']=False
         report.update(status='cell_finished',work_passed=True)
     except Exception as exc:
         report.update(status='failed',error_type=type(exc).__name__)
