@@ -167,7 +167,7 @@ def client_main():
         atomic_json(out,value)
         atomic_json(AUDIT/(a.query_id+'.json'),response.get('audit',{}))
     except Exception as e:
-        print(type(exc).__name__+': '+str(e),file=sys.stderr)
+        print(type(e).__name__+': '+str(e),file=sys.stderr)
         raise SystemExit(1)
 
 if __name__=='__main__':
