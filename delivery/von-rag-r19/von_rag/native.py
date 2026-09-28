@@ -15,14 +15,20 @@ class NativeRag:
         self.gpu_calls=0
 
     def generate(self,messages,max_tokens,deadline):
-        remaining=deadline-time.monotonic()-0.4
-        if not math.isfinite(remaining) or remaining<=0:raise TimeoutError('generation deadline expired')
+        if type(max_tokens) is not int or not 1 <= max_tokens <= 4096:
+            raise ValueError('invalid generation token budget')
+        if not isinstance(deadline,(int,float)) or not math.isfinite(deadline):
+            raise ValueError('finite monotonic deadline required')
+        if deadline-time.monotonic()<=0.4:raise TimeoutError('generation deadline expired')
         batch=self.processor.apply_chat_template(messages,tokenize=True,add_generation_prompt=True,
                                                   return_dict=True,return_tensors='pt')
         batch.pop('token_type_ids',None)
         if batch.input_ids.shape[1]>12288:raise ValueError('context token budget exceeded')
         batch=batch.to(self.model.device)
         self.torch.cuda.synchronize()
+        # Tokenization and tensor transfer consume the same request allowance.
+        remaining=deadline-time.monotonic()-0.4
+        if remaining<=0:raise TimeoutError('deadline expired during preprocessing')
         with self.torch.inference_mode():
             ids=self.model.generate(**batch,max_new_tokens=max_tokens,do_sample=False,max_time=remaining)
         self.torch.cuda.synchronize();self.gpu_calls+=1

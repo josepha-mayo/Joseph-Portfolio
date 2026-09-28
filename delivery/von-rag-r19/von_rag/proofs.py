@@ -29,6 +29,54 @@ def parse_response(text):
     return data
 
 
+
+def complete_record_quotes(data, context, query):
+    """Recover a missing scope line only inside one literal key/value record.
+
+    This never changes the answer or selected sources. The model's value quote
+    must already be an exact whole line. Repeated keys, prose, multi-record
+    blocks, a foreign scope, and invented quotations are not repaired. Full
+    strict validation is still mandatory afterward.
+    """
+    import copy
+    result=copy.deepcopy(data)
+    expansions=[]
+    if not isinstance(result,dict) or not isinstance(result.get('answer'),str):
+        return result,expansions
+    evidence=result.get('evidence')
+    if not result['answer'] or not isinstance(evidence,list) or len(evidence)>8:
+        return result,expansions
+    wanted=identifiers(query)
+    if not wanted:return result,expansions
+    already=set()
+    for e in evidence:
+        if isinstance(e,dict) and isinstance(e.get('quote'),str):already |= identifiers(e['quote'])
+    if wanted<=already:return result,expansions
+    chunks={c['cid']:c for c in context}
+    for e in evidence:
+        if not isinstance(e,dict) or e.get('role')!='value':continue
+        c=chunks.get(e.get('cid'));q=e.get('quote')
+        if c is None or not isinstance(q,str) or not contains_value(q,result['answer']):continue
+        text=c['text']
+        if len(text)>1500 or '\n\n' in text:continue
+        lines=[line.strip() for line in text.splitlines() if line.strip()]
+        if not 2<=len(lines)<=12:continue
+        # Whole quoted line, not an arbitrary substring with coincident numbers.
+        if len(q.strip().splitlines())!=1 or folded(q) not in {folded(line) for line in lines}:continue
+        pairs=[]
+        for line in lines:
+            m=re.fullmatch(r'([A-Za-z][A-Za-z0-9 _#()/.-]{0,75}):\s*(.{1,300})',line)
+            if not m:break
+            pairs.append((re.sub(r'[^a-z0-9]','',m[1].casefold()),m[2].strip()))
+        if len(pairs)!=len(lines) or len({k for k,v in pairs})!=len(pairs):continue
+        scopes=[v for k,v in pairs if k in {'product','model','device'}]
+        if len(scopes)!=1 or identifiers(scopes[0])!=wanted:continue
+        if not wanted<=identifiers(text):continue
+        expansions.append({'cid':c['cid'],'original_quote':q,'expanded_quote':text,
+                           'reason':'unique_literal_record_scope'})
+        e['quote']=text
+    return result,expansions
+
 def validate(data, context, *, query=None):
     """Grounding is checked; semantic necessity still requires a model evaluation."""
     answer=data.get('answer')
