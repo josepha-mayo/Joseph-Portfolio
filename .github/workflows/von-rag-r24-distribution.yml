@@ -44,9 +44,9 @@ jobs:
           src="$PWD/delivery/von-rag-r19"
           stage="$PWD/staging"
           export COMPOSED_IMAGE="$PWD/composed"
-          export PYTHONPATH="$PWD/composed/application:$src/packaging/r24"
+          export PYTHONPATH="$PWD/composed/application:$src/packaging/r24:$src"
           cd composed/application
-          python -c 'from von_rag import runtime,compact; assert runtime.answer_model is compact.answer_compact'
+          python -c 'from pathlib import Path; from von_rag import runtime,compact; assert runtime.answer_model is compact.answer_compact; assert Path(runtime.__file__).resolve().is_relative_to(Path.cwd())'
           python -m pytest -q "$src/tests" "$src/packaging/r24/test_distribution.py" --junitxml="$stage/tests.xml" | tee "$stage/tests.log"
       - name: Package content-addressed distribution
         run: |
