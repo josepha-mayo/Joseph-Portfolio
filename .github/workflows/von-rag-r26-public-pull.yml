@@ -2,7 +2,9 @@ name: von-rag R26 public registry Docker acceptance
 on:
   push:
     branches: [amd-r26-public-registry-20260929]
-    paths: [.github/workflows/von-rag-r26-public-pull.yml]
+    paths:
+      - .github/workflows/von-rag-r26-public-pull.yml
+      - scripts/verify-von-public-registry.py
 permissions:
   contents: read
 concurrency:
