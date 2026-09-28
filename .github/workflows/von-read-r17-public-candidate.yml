@@ -1,0 +1,127 @@
+name: von-read R17 public candidate acceptance
+on:
+  push:
+    branches: [von-read-pixels-r10-20260927]
+    paths: [.github/workflows/von-read-r17-public-candidate.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-read-r17-public-candidate
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      REGISTRY: awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws
+      CANDIDATE: sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad
+      PARENT: sha256:3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940
+    steps:
+      - name: Read the frozen application interface checks
+        uses: actions/checkout@v4
+        with:
+          ref: 3186e0ef79c27a298ed7505ed834b6a2be929c05
+          path: frozen
+          sparse-checkout: delivery/von-read-r4
+          persist-credentials: false
+      - name: Verify immutable public metadata before downloading an image
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python3 - <<'PY'
+          import hashlib,json,os,urllib.request
+          from pathlib import Path
+          root=Path('receipts');host='https://'+os.environ['REGISTRY']
+          digest=lambda b:'sha256:'+hashlib.sha256(b).hexdigest()
+          def read(path):
+              req=urllib.request.Request(host+path)
+              with urllib.request.urlopen(req,timeout=25) as r:
+                  assert r.status==200
+                  body=r.read(262145)
+              assert len(body)<=262144
+              return body
+          parsed={}
+          heads=[]
+          for label,identity in [('parent',os.environ['PARENT']),('candidate',os.environ['CANDIDATE'])]:
+              body=read('/v2/von-read/manifests/'+identity)
+              assert digest(body)==identity
+              manifest=json.loads(body)
+              (root/(label+'-manifest.json')).write_bytes(body)
+              body=read('/v2/von-read/blobs/'+manifest['config']['digest'])
+              assert digest(body)==manifest['config']['digest']
+              (root/(label+'-config.json')).write_bytes(body)
+              parsed[label]=(manifest,json.loads(body))
+              req=urllib.request.Request(host+'/v2/von-read/manifests/'+identity,method='HEAD')
+              with urllib.request.urlopen(req,timeout=25) as r:
+                  heads.append({'manifest':identity,'http':r.status,'head_length':r.headers.get('Content-Length'),
+                                'get_length':len((root/(label+'-manifest.json')).read_bytes())})
+          pm,pc=parsed['parent'];m,c=parsed['candidate']
+          assert len(m['layers'])==20 and m['layers'][:-1]==pm['layers']
+          assert c['config']==pc['config'] and c['rootfs']['diff_ids'][:-1]==pc['rootfs']['diff_ids']
+          patch=read('/v2/von-read/blobs/'+m['layers'][-1]['digest'])
+          assert digest(patch)=='sha256:3af5ec2a233b160585d9462c6dec1088debde89210ce9ef14bf8a225da717450'
+          assert len(patch)==2624
+          (root/'PATCH_BYTES_VERIFIED.json').write_text(json.dumps({'digest':digest(patch),'bytes':len(patch)}))
+          (root/'HEAD_OBSERVATIONS.json').write_text(json.dumps({'head_length_matches_get':all(int(x['head_length'])==x['get_length'] for x in heads),'observations':heads,'note':'This records the real public HEAD behavior; the Docker pull below is the compatibility gate.'},indent=2))
+          print('Public parent, candidate and patch digests verified; runtime config unchanged.')
+          PY
+      - name: Prepare the disposable runner only
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          df -B1 / > receipts/DISK_BEFORE.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/DISK_AFTER.txt
+          python3 -c "import shutil; assert shutil.disk_usage('/').free>75*2**30"
+      - name: Pull and test the complete published candidate anonymously
+        timeout-minutes: 23
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-r17-docker"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN || true
+          IMAGE="$REGISTRY/von-read@$CANDIDATE"
+          date -u +%s > receipts/PULL_STARTED.txt
+          timeout --kill-after=20s 1200s docker pull "$IMAGE" > receipts/DOCKER_PULL.log 2>&1
+          date -u +%s > receipts/PULL_ENDED.txt
+          docker image inspect "$IMAGE" > receipts/IMAGE_INSPECT.json
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 \
+            -v "$PWD/frozen/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" \
+            -v "$PWD/receipts:/reports" "$IMAGE" /checks.py --out /reports/CLI.json > receipts/CLI.log 2>&1
+          timeout --kill-after=5s 30s docker run --rm --network none --entrypoint python3 \
+            -v "$PWD/frozen/delivery/von-read-r4:/frozen:ro" "$IMAGE" -c "from pathlib import Path; import hashlib,json; sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest(); files=list(Path('/frozen/von_read').glob('*.py')); unchanged=[p.name for p in files if p.name!='views.py' and sha(Path('/app/von_read')/p.name)==sha(p)]; assert len(unchanged)==len(files)-1; decoder=sha(Path('/app/von_read/views.py')); assert decoder=='d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed'; assert sha(Path('/app/app.py'))==sha(Path('/frozen/packaging/app.py')); print(json.dumps({'decoder_sha256':decoder,'other_source_unchanged':unchanged,'entrypoint_unchanged':True}))" > receipts/SOURCE_IDENTITY.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os
+          r=Path('receipts');load=lambda name:json.loads((r/name).read_text())
+          image=load('IMAGE_INSPECT.json')[0];c=load('candidate-config.json');p=load('parent-config.json');m=load('candidate-manifest.json');cli=load('CLI.json')
+          assert image['Id']==m['config']['digest']=='sha256:8c226ef88f4c1dd4034489f831f00b5cba89f7c665e7ec4746302bde64aea28b'
+          assert len(image['RootFS']['Layers'])==20 and image['RootFS']['Layers']==c['rootfs']['diff_ids']
+          assert image['RootFS']['Layers'][:-1]==p['rootfs']['diff_ids'] and c['config']==p['config']
+          for k in ['Entrypoint','Cmd','WorkingDir','Env','Healthcheck']:
+              assert image['Config'].get(k)==c['config'].get(k),k
+          a,b=image['Config'].get('User'),c['config'].get('User')
+          assert a==b or (a=='' and b is None)
+          assert cli['status']=='passed' and len(cli['calls'])==10 and all(x is True for x in cli['checks'].values())
+          assert cli['gpu_inference'] is False
+          assert cli['source_sha256']['von_read/views.py']=='d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed'
+          seconds=int((r/'PULL_ENDED.txt').read_text())-int((r/'PULL_STARTED.txt').read_text())
+          report={'schema':'von-r17-public-candidate-acceptance-1','status':'passed','candidate_manifest':os.environ['CANDIDATE'],
+            'public_complete_docker_pull':True,'anonymous':True,'empty_docker_auth':True,'aws_credentials':False,
+            'image_uncompressed_bytes':image['Size'],'pull_seconds':seconds,'total_layers':20,'all_19_parent_layers_preserved':True,
+            'raw_runtime_configuration_unchanged':True,'container_fixture_cli_calls':10,'decoder_sha256':cli['source_sha256']['von_read/views.py'],
+            'head_length_matches_get':load('HEAD_OBSERVATIONS.json')['head_length_matches_get'],
+            'full_container_gpu_execution':False,'official_score':None,'submitted_reference_changed':False}
+          (r/'PUBLIC_CANDIDATE_ACCEPTANCE.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Preserve real public candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-r17-public-candidate-evidence
+          path: receipts/
+          retention-days: 14
+          if-no-files-found: error
