@@ -1,0 +1,76 @@
+name: von-rag R23 paired compact evidence experiment
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths: [.github/workflows/von-rag-r23-compact.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r23-compact
+  cancel-in-progress: false
+jobs:
+  regression:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-test.txt
+      - name: Test compact evidence guards and existing pipeline
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r23-regression
+          python -m pytest -q --junitxml=evidence/r23-regression/tests.xml | tee evidence/r23-regression/tests.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r23-regression
+          path: delivery/von-rag-r19/evidence/r23-regression/
+          retention-days: 7
+  paired-model:
+    needs: regression
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 32
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    env:
+      HF_HUB_DISABLE_IMPLICIT_TOKEN: '1'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install explicit CPU diagnostic dependencies
+        run: |
+          python -m pip install torch==2.10.0 torchvision==0.25.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install transformers==5.3.0 accelerate==1.13.0 Pillow==12.3.0
+      - name: Compare protocols using the same actual pretrained model and worker
+        timeout-minutes: 28
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r23-compact
+          timeout --kill-after=10s 1650s python -u diagnostics/compact_probe.py 2>&1 | tee evidence/r23-compact/run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r23-paired-real-model
+          path: |
+            delivery/von-rag-r19/evidence/r23-compact/*.json
+            delivery/von-rag-r19/evidence/r23-compact/*.log
+          retention-days: 14
