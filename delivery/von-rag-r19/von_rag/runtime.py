@@ -16,7 +16,8 @@ import tempfile
 import time
 import uuid
 from .retrieval import Index, build_index
-from .engine import answer_model, diagnostic_answer
+from .engine import diagnostic_answer
+from .compact import answer_compact as answer_model
 
 SOCKET=Path(os.environ.get('VON_RAG_SOCKET','/run/von-rag/worker.sock'))
 INDEX=Path(os.environ.get('VON_RAG_INDEX','/app/index/corpus.sqlite'))
@@ -63,7 +64,9 @@ def worker(conn,diagnostic):
                         answer=diagnostic_answer(ix,task['query']);audit={'backend':'cpu_diagnostic','gpu_calls':0}
                     else:
                         answer,audit=answer_model(ix,task['query'],model,deadline=task['deadline'])
-                        audit.update(gpu_calls=model.gpu_calls,model_load_count=model.load_count)
+                        if not audit.get("completed_model_response",False):
+                            raise RuntimeError("Native compact response failed: "+audit.get("reason","unknown"))
+                        audit.update(gpu_calls=model.gpu_calls,model_load_count=model.load_count,default_enabled=True)
                     result={'output':answer,'audit':audit}
                 else:raise ValueError('unknown operation')
                 conn.send({'request':request,'ok':True,**result})
@@ -164,7 +167,7 @@ def client_main():
         atomic_json(out,value)
         atomic_json(AUDIT/(a.query_id+'.json'),response.get('audit',{}))
     except Exception as e:
-        print(type(e).__name__+': '+str(e),file=sys.stderr)
+        print(type(exc).__name__+': '+str(e),file=sys.stderr)
         raise SystemExit(1)
 
 if __name__=='__main__':
