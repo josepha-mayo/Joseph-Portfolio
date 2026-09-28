@@ -1,0 +1,78 @@
+{
+  "schema": "von-rag-r22-independent-container-build-1",
+  "status": "built_lifecycle_checked_delta_retained",
+  "source_commit": "598f6ebe576bd5dba052618ef6170f0cc1734dc7",
+  "workflow_commit": "e2c52c11727969cb205dc1853077be70db96d3d2",
+  "workflow_run_id": 36477196224,
+  "workflow_job_id": 109113757033,
+  "workflow_conclusion": "success",
+  "artifact_id": 10996885106,
+  "artifact_name": "von-rag-r22-built-container-and-delta",
+  "artifact_bytes": 25319769,
+  "artifact_sha256": "41c28b3e9aba18d4f711081c4dcfb62f32888e95f274d51e0d498c23cf53a1d7",
+  "artifact_expires_utc": "2026-10-12T20:28:38Z",
+  "image_bytes": 40301987819,
+  "parent_layers_unchanged": 20,
+  "added_layers": 5,
+  "final_filesystem_layers": 25,
+  "new_compressed_layer_bytes": 25265615,
+  "config_digest": "sha256:4f6828b7fb5c2d5cb5556c7e81346fec4067cb0b4b6a862221c3838ba41259de",
+  "manifest_digest": "sha256:4dd3e45d65764fe0740c41c0fe9b248b9f49963c61eb5e03a788bef13185eb10",
+  "parent_manifest_digest": "sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad",
+  "environment": {
+    "python": "3.14.4",
+    "torch": "2.13.0+rocm10.0.0",
+    "transformers": "5.3.0",
+    "pymupdf": "1.26.7",
+    "model_snapshot_integrity_verified_inside_image": true,
+    "gpu_available": false
+  },
+  "lifecycle": {
+    "backend": "explicit_cpu_diagnostic",
+    "network": "none",
+    "cap_drop": ["DAC_OVERRIDE"],
+    "unknown_and_unreadable_files_skipped": true,
+    "independent_query_processes": 3,
+    "persistent_worker_survived_all_queries": true,
+    "checks": [
+      {"id":"current","answer":"89","citations":["current.txt"]},
+      {"id":"chain","answer":"7.4.2","citations":["fixes.csv","production.log"]},
+      {"id":"missing","answer":"","citations":[]}
+    ],
+    "default_native_runtime_refuses_no_gpu": true,
+    "default_native_failure_was_not_only_a_timeout": true
+  },
+  "independent_archive_audit": {
+    "artifact_hash_matches_github_metadata": true,
+    "parent_manifest_and_config_match_previous_r17_receipts": true,
+    "all_new_compressed_hashes_and_sizes_verified": true,
+    "all_new_uncompressed_diffids_verified": true,
+    "final_config_and_manifest_hashes_verified": true,
+    "source_blobs_matched_to_pinned_repository": {
+      "__init__.py":"30f1e098d76a3b9857a6fad78b1833218bf4be53",
+      "engine.py":"e557625cfa19cdf6aa17f17bf3490e5142d284db",
+      "native.py":"bd43b2be95a09f4483541e6312f6ebd18a5deb78",
+      "parsers.py":"628b9ddf0c56296c6e6457cec904dc4ff50c9ee9",
+      "proofs.py":"669b1c06aa058af244927faeb49944ee86c92290",
+      "retrieval.py":"2c55dd32689d52f9e2e6cf4144f852f231d642e5",
+      "runtime.py":"2faa8a40503f9e5849a91f62d90da06b28ce2197"
+    }
+  },
+  "native_gpu_execution": false,
+  "native_neural_accuracy_measured": false,
+  "contest_query_timing_and_vram_qualified": false,
+  "rag_registry_published": false,
+  "mc3_submitted": false,
+  "mc2_selected_image_changed": false,
+  "official_grade": null,
+  "new_xp_award_verified": false,
+  "notes": [
+    "This is the first verified complete RAG image build, not another host-only source test.",
+    "The three authored lifecycle cases use an explicit CPU diagnostic path. They are not neural accuracy results or a permitted substitute for the contest GPU gate.",
+    "The saved delta contains only new application/dependency layers plus exact metadata, not the parent weights. Reconstructing or publishing the image also requires its unchanged parent blobs.",
+    "The manifest digest above is not yet an available public pull reference.",
+    "The CLI receipt's startup_and_index_seconds field includes the diagnostic query checks; do not cite it as isolated startup latency.",
+    "R21's failed real-model CPU rerun remains failed. This build does not establish a model-level accuracy improvement.",
+    "No new cloud resource or paid GPU allocation was created. Existing MC2 submission and registry gateway were not modified."
+  ]
+}
