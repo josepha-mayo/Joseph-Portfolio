@@ -1,0 +1,63 @@
+name: von-read R17 preserved container evidence
+on:
+  push:
+    branches: [von-read-pixels-r10-20260927]
+    paths:
+      - .github/workflows/von-read-r17-evidence-reconciliation.yml
+      - tools/von-input-r10/verify_r16_evidence.py
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: von-read-r17-evidence
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: tools/von-input-r10
+          persist-credentials: false
+      - name: Verify source artifact identity with GitHub
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const result = await github.rest.actions.getArtifact({
+              owner: 'josepha-mayo', repo: 'Joseph-Portfolio', artifact_id: 10971292276
+            });
+            const a = result.data;
+            if (a.expired || a.digest !== 'sha256:16e2469721a0d53741a47848120fae2dabd9fdc55ca21023af7183840b8ae850' ||
+                a.workflow_run.id !== 36423927377 ||
+                a.workflow_run.head_sha !== '3090e549c2caa69ac08ef5969824c43aa850fb50') {
+              throw new Error('Source artifact provenance differs');
+            }
+            fs.mkdirSync('reports', {recursive:true});
+            fs.writeFileSync('reports/ARTIFACT_PROVENANCE.json', JSON.stringify(a,null,2));
+      - name: Retrieve the original immutable receipts without any image download
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: 10971292276
+          merge-multiple: true
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36423927377
+          github-token: ${{ github.token }}
+          path: upstream
+      - name: Audit raw metadata and recorded Docker execution
+        run: |
+          set -euo pipefail
+          python3 tools/von-input-r10/verify_r16_evidence.py \
+            --evidence upstream --out reports/R17_CONTAINER_AUDIT.json
+          python3 -m py_compile tools/von-input-r10/verify_r16_evidence.py
+      - name: Preserve separate audit result and candidate patch
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-r17-reconciled-container-evidence
+          path: |
+            reports/
+            upstream/overlay/
+          retention-days: 14
+          if-no-files-found: error

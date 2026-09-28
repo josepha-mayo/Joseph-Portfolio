@@ -1,13 +1,90 @@
 """Image admission candidate; neural policy and model pixel budget are unchanged.
 
-No private 24 MP ceiling by default. Pillow's decompression-bomb guard remains
-mandatory and warnings are errors. This is not an unlimited-dimensions guarantee.
-Multi-frame semantics still require organizer clarification and remain rejected.
+Unsigned 16-bit grayscale is mapped over its fixed 0..65535 range. Transparency
+uses a black or white matte chosen from visible foreground luminance, keeping
+authored light and dark glyphs visible. Signed/float TIFF retains legacy conversion;
+no new display-range support is claimed. Pillow's bomb guard remains mandatory,
+warnings are errors, and multi-frame input remains rejected.
 """
 from __future__ import annotations
 from pathlib import Path
 import warnings
-from PIL import Image, ImageOps
+from PIL import Image, ImageChops, ImageOps
+
+
+_UINT16_MODES = frozenset({"I;16", "I;16L", "I;16B"})
+# Round to nearest integer over the *format's* full range. Do not stretch each
+# image by its extrema: the same source intensity must always mean the same tone.
+_UINT16_TO_BYTE = tuple((sample + 128) // 257 for sample in range(65536))
+
+
+def _alpha_matte(gray: Image.Image, alpha: Image.Image) -> int:
+    """Choose an endpoint from quantized alpha-weighted visible luminance.
+
+    ImageChops.multiply computes floor(gray * alpha / 255). Comparing histogram
+    sums avoids a Python pixel loop and ignores hidden RGB at alpha zero. This is
+    a deterministic display heuristic: mixed dark/light artwork is not guaranteed
+    to retain contrast against one endpoint. A fully transparent image is white.
+    """
+    alpha_sum = sum(value * count for value, count in enumerate(alpha.histogram()))
+    if alpha_sum == 0:
+        return 255
+    with ImageChops.multiply(gray, alpha) as visible:
+        visible_sum = sum(value * count for value, count in enumerate(visible.histogram()))
+    return 0 if 2 * visible_sum >= alpha_sum else 255
+
+
+def _uint16_to_rgb(im: Image.Image) -> Image.Image:
+    """Convert numeric unsigned samples without endian-dependent byte slicing."""
+    transparency = im.info.get("transparency")
+    if transparency is not None and (
+        type(transparency) is not int or not 0 <= transparency <= 65535
+    ):
+        raise ValueError("Invalid unsigned 16-bit grayscale transparency sample")
+    with im.convert("I") as samples:
+        # Older Pillow PNG readers expose unsigned 16-bit samples in mode I.
+        # Validate that representation; TIFF mode I is never admitted here.
+        if im.mode == "I":
+            low, high = samples.getextrema()
+            if low < 0 or high > 65535:
+                raise ValueError("PNG grayscale samples exceed unsigned 16-bit range")
+        with samples.point(_UINT16_TO_BYTE, "L") as gray:
+            result = gray.convert("RGB")
+            if transparency is not None:
+                # Compare before quantization: neighboring 16-bit values may map
+                # to one 8-bit tone, but only the exact tRNS sample is transparent.
+                alpha_lut = [255] * 65536
+                alpha_lut[transparency] = 0
+                with samples.point(alpha_lut, "L") as alpha:
+                    matte = _alpha_matte(gray, alpha)
+                    with ImageChops.invert(alpha) as mask:
+                        result.paste((matte, matte, matte), (0, 0, *result.size), mask)
+        result.info.pop("transparency", None)
+        return result
+
+
+def _to_rgb(im: Image.Image, source_format: str) -> Image.Image:
+    # PNG's integer grayscale representation is unsigned16; unlike TIFF I/F it
+    # does not require inferring a display range from the observed image values.
+    if im.mode in _UINT16_MODES or (im.mode == "I" and source_format == "PNG"):
+        return _uint16_to_rgb(im)
+    has_alpha = any(band in {"A", "a"} for band in im.getbands())
+    palette_alpha = im.palette is not None and im.palette.mode == "RGBA"
+    if has_alpha or palette_alpha or im.info.get("transparency") is not None:
+        with im.convert("RGBA") as rgba, rgba.getchannel("A") as alpha:
+            if alpha.getextrema() == (255, 255):
+                result = rgba.convert("RGB")
+                result.info.pop("transparency", None)
+                return result
+            with rgba.convert("L") as gray:
+                matte = _alpha_matte(gray, alpha)
+            result = Image.new("RGB", im.size, (matte, matte, matte))
+            result.paste(rgba, (0, 0), alpha)
+        result.info.update(im.info)
+        result.info.pop("transparency", None)
+        return result
+    # Preserve ordinary RGB/JPEG/L/opaque-palette pixels exactly and own them.
+    return im.convert("RGB")
 
 
 def load_image(path: Path, max_pixels: int | None = None) -> Image.Image:
@@ -15,6 +92,9 @@ def load_image(path: Path, max_pixels: int | None = None) -> Image.Image:
 
     An explicit positive pixel cap remains available to callers that require it.
     The measured reader, not this decoder, performs its existing 1 MP resizing.
+    Alpha uses a foreground-aware black/white matte; unsigned16 uses
+    round(sample / 257). This is a CPU compatibility change, not a measured
+    neural recognition improvement.
     """
     if max_pixels is not None and (type(max_pixels) is not int or max_pixels <= 0):
         raise ValueError("max_pixels must be a positive integer or None")
@@ -22,13 +102,17 @@ def load_image(path: Path, max_pixels: int | None = None) -> Image.Image:
         raise RuntimeError("Pillow decompression-bomb safety must remain enabled")
     with warnings.catch_warnings():
         warnings.simplefilter("error", Image.DecompressionBombWarning)
-        with Image.open(path) as im:
+        # A file object uses Pillow's streamed decoder. In Pillow 12.3, opening a
+        # raw grayscale TIFF by filename can mmap samples using EXIF-swapped
+        # dimensions before orientation, corrupting the geometry for tags 5..8.
+        # Keep one public read path and let Pillow retain all admission guards.
+        with Path(path).open("rb") as source, Image.open(source) as im:
             if im.format not in {"PNG", "JPEG", "TIFF"}:
                 raise ValueError("Unsupported actual image format")
             if getattr(im, "n_frames", 1) != 1:
                 raise ValueError("Multi-frame TIFF semantics require organizer clarification")
             if max_pixels is not None and im.width * im.height > max_pixels:
                 raise ValueError("Image exceeds configured decode budget")
-            # convert() owns its pixels, including when the input is already RGB.
-            # Do not add a second full-image copy after conversion.
-            return ImageOps.exif_transpose(im).convert("RGB")
+            source_format = im.format
+            with ImageOps.exif_transpose(im) as oriented:
+                return _to_rgb(oriented, source_format)

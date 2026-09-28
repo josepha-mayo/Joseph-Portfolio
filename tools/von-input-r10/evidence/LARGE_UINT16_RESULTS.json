@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "scope": "CPU authored input decoding only; no model/GPU/OCR measurement",
+  "python": "3.12.14",
+  "pillow": "12.3.0",
+  "format": "TIFF",
+  "source_mode": "I;16",
+  "compression": "raw",
+  "width": 8000,
+  "height": 6000,
+  "pixels": 48000000,
+  "file_bytes": 96000122,
+  "decode_seconds": 0.255522,
+  "whole_child_peak_rss_kib": 724700,
+  "whole_child_peak_rss_mib": 707.715,
+  "rss_scope": "Linux ru_maxrss; whole child including imports, fixture creation, decode and verification",
+  "address_space_limit_bytes": 2147483648,
+  "parent_timeout_seconds": 45,
+  "output_mode": "RGB",
+  "verified_ink_value_rgb": [
+    64,
+    64,
+    64
+  ],
+  "verified_paper_value_rgb": [
+    128,
+    128,
+    128
+  ],
+  "verified_ink_pixels_per_band": 5000000,
+  "verified_paper_pixels_per_band": 43000000,
+  "spatial_probes": 6,
+  "pillow_max_image_pixels": 89478485,
+  "limitation": "One authored raw two-tone image, not worst-case decode latency or memory."
+}

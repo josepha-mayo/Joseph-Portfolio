@@ -1,0 +1,192 @@
+{
+  "schema": "von-read-final-independent-policy-review-1",
+  "created_utc": "2026-09-27T10:42:54.993018+00:00",
+  "status": "passed",
+  "scope": "Ten authored CPU image fixtures plus two aggregate hidden-RGB invariance assertions",
+  "candidate_sha256": "d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed",
+  "script_sha256": "0f5fd5436ff2d45f15ca327e62156a510ead7ffb0f5132208faba8b35f85d08c",
+  "sources_unchanged_during_run": true,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "pillow": "12.3.0",
+  "image_fixture_count": 10,
+  "passed_fixture_count": 10,
+  "hidden_rgb_invariance_checks": [
+    {
+      "foreground_gray": 0,
+      "passed": true
+    },
+    {
+      "foreground_gray": 255,
+      "passed": true
+    }
+  ],
+  "gpu_execution": false,
+  "ocr_accuracy_measured": false,
+  "container_execution": false,
+  "limitations": [
+    "These checks cover well-defined foreground polarities, not all possible transparent artwork.",
+    "A black/white matte cannot retain contrast for both opaque black and opaque white marks in the same image.",
+    "No neural accuracy or production latency improvement is measured by these checks."
+  ],
+  "cases": [
+    {
+      "case": "glyph_0_hidden_0",
+      "kind": "glyph_polarity",
+      "foreground_gray": 0,
+      "hidden_gray": 0,
+      "input_sha256": "c7735af8f639be4c2e2e8aec9d494916b099fc7870e301ac7487f62e02968c77",
+      "expected_matte": 255,
+      "observed_matte": 255,
+      "output_extrema": [
+        0,
+        255
+      ],
+      "output_rgb_sha256": "bf2fa24357b606b85bf67ebc1c3f6871386513a01687c493874a8b0391d78b21",
+      "passed": true
+    },
+    {
+      "case": "glyph_0_hidden_255",
+      "kind": "glyph_polarity",
+      "foreground_gray": 0,
+      "hidden_gray": 255,
+      "input_sha256": "d3f0ad39e117ddb69c45c23a00dd9e0f111cb0515117573e4c7607e207e7f9d9",
+      "expected_matte": 255,
+      "observed_matte": 255,
+      "output_extrema": [
+        0,
+        255
+      ],
+      "output_rgb_sha256": "bf2fa24357b606b85bf67ebc1c3f6871386513a01687c493874a8b0391d78b21",
+      "passed": true
+    },
+    {
+      "case": "glyph_255_hidden_0",
+      "kind": "glyph_polarity",
+      "foreground_gray": 255,
+      "hidden_gray": 0,
+      "input_sha256": "0d0a805e0f187da17c6103ccfd5f5df4689b27bffb2090c079ee5feee9775b31",
+      "expected_matte": 0,
+      "observed_matte": 0,
+      "output_extrema": [
+        0,
+        255
+      ],
+      "output_rgb_sha256": "3d1c0662c57d6403c722ae38acfd086a8fa57af73996713d23a78a6f291bae3b",
+      "passed": true
+    },
+    {
+      "case": "glyph_255_hidden_255",
+      "kind": "glyph_polarity",
+      "foreground_gray": 255,
+      "hidden_gray": 255,
+      "input_sha256": "1dbbfb3f855c11f587c260c498f7fc389cb19393af11f96c1763ad58f69fe75b",
+      "expected_matte": 0,
+      "observed_matte": 0,
+      "output_extrema": [
+        0,
+        255
+      ],
+      "output_rgb_sha256": "3d1c0662c57d6403c722ae38acfd086a8fa57af73996713d23a78a6f291bae3b",
+      "passed": true
+    },
+    {
+      "case": "partial_alpha_anchor_0",
+      "kind": "independent_compositor",
+      "input_sha256": "749c1e3ece2f98d7abaa8a5d250ec59c65cde332ad3a631df36d871da1d6c512",
+      "expected_matte": 255,
+      "partial_pixel": [
+        163,
+        192,
+        244
+      ],
+      "reference_partial_pixel": [
+        163,
+        192,
+        244
+      ],
+      "reference_operation": "Pillow Image.alpha_composite on declared black/white matte",
+      "passed": true
+    },
+    {
+      "case": "partial_alpha_anchor_255",
+      "kind": "independent_compositor",
+      "input_sha256": "a13aa4cc3fcf6cb59e4231dcb7e91e4c30335a440a25da639e26c2740d9cf6f6",
+      "expected_matte": 0,
+      "partial_pixel": [
+        36,
+        65,
+        117
+      ],
+      "reference_partial_pixel": [
+        36,
+        65,
+        117
+      ],
+      "reference_operation": "Pillow Image.alpha_composite on declared black/white matte",
+      "passed": true
+    },
+    {
+      "case": "uint16_transparency_dark",
+      "kind": "exact_source_mask",
+      "input_sha256": "0f2c421feb5e80a57cce293d36cb474448a07e06791984025cb0b8e7aec37240",
+      "source_samples": [
+        16383,
+        16384,
+        16385,
+        0
+      ],
+      "transparent_sample": 16384,
+      "expected_gray": [
+        64,
+        255,
+        64,
+        0
+      ],
+      "observed_gray": [
+        64,
+        255,
+        64,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "case": "uint16_transparency_light",
+      "kind": "exact_source_mask",
+      "input_sha256": "f4b5e020f61dedd9441ec4c0f84609adb2fc7fb020051d6ee0bb53d1c933b10b",
+      "source_samples": [
+        49150,
+        49151,
+        49152,
+        65535
+      ],
+      "transparent_sample": 49151,
+      "expected_gray": [
+        191,
+        0,
+        191,
+        255
+      ],
+      "observed_gray": [
+        191,
+        0,
+        191,
+        255
+      ],
+      "passed": true
+    },
+    {
+      "case": "opaque_RGB",
+      "kind": "unchanged_opaque_pixels",
+      "input_sha256": "29284b256c9fa8d242d39c292ec70ec94791cb710254c40d09159ef25d474eaf",
+      "passed": true
+    },
+    {
+      "case": "opaque_RGBA",
+      "kind": "unchanged_opaque_pixels",
+      "input_sha256": "229726ec8800271ed004b66ecd4b828340c62d8d328f3fa58b9df768c49aab2b",
+      "passed": true
+    }
+  ],
+  "receipt_view": "Original measured JSON with local candidate_path omitted"
+}

@@ -1,0 +1,111 @@
+{
+  "schema": "von-r16-gpu-paired-public-summary-1",
+  "verified_utc": "2026-09-28T12:36:01.026638+00:00",
+  "experiment_status": "completed",
+  "gpu_name": "AMD Instinct MI300X VF",
+  "hip_version": "7.15.26333",
+  "model": "Qwen/Qwen3-VL-4B-Instruct",
+  "model_revision": "ebb281ec70b05090aa6165b016eac8ec08e71b17",
+  "application_source_commit": "3186e0ef79c27a298ed7505ed834b6a2be929c05",
+  "candidate_source_commit": "6912665564928a7394e954ff740a3cfda2f23461",
+  "candidate_views_sha256": "d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed",
+  "cycle_sha256": "0469745585b8fc800a7316410b43d9295d205e5e5382f0e7d49202a750e21b13",
+  "cell_sha256": "9de8095763ebd79cee92ea01dbf9f5e697e0f550209ef98298452e81b95c9a8e",
+  "cycle_seconds": 120.12097871399965,
+  "model_load_seconds": 71.36873956024647,
+  "reader_loaded_once": true,
+  "kernel_cleanup_verified": true,
+  "allocation_cleanup_verified": true,
+  "truth_labels_transferred_to_gpu": false,
+  "weights_transferred_or_downloaded": false,
+  "model_prompt_and_generation_policy_changed": false,
+  "normalization": "Uppercase and collapse whitespace only; no punctuation removal or answer corrections.",
+  "authored_format_probes": [
+    {
+      "id": "p01",
+      "format_case": "unsigned_16_bit_png",
+      "expected": "SPEED\nLIMIT\n35",
+      "submitted_r4_text": "鲁A12345",
+      "candidate_r10_text": "SPEED LIMIT 35",
+      "submitted_r4_exact": false,
+      "candidate_r10_exact": true,
+      "candidate_ended_eos": true,
+      "candidate_decode_plus_inference_seconds": 0.2736110854893923
+    },
+    {
+      "id": "p02",
+      "format_case": "unsigned_16_bit_tiff",
+      "expected": "ROAD\nWORK\n500 FT",
+      "submitted_r4_text": "鲁A12345",
+      "candidate_r10_text": "ROAD\nWORK\n500 FT",
+      "submitted_r4_exact": false,
+      "candidate_r10_exact": true,
+      "candidate_ended_eos": true,
+      "candidate_decode_plus_inference_seconds": 0.31580489687621593
+    },
+    {
+      "id": "p03",
+      "format_case": "black_text_on_transparent_background",
+      "expected": "K7R4821",
+      "submitted_r4_text": "鲁A12345",
+      "candidate_r10_text": "K7R4821",
+      "submitted_r4_exact": false,
+      "candidate_r10_exact": true,
+      "candidate_ended_eos": true,
+      "candidate_decode_plus_inference_seconds": 0.27774040773510933
+    },
+    {
+      "id": "p04",
+      "format_case": "white_text_on_transparent_background",
+      "expected": "NO\nPARKING",
+      "submitted_r4_text": "鲁A12345",
+      "candidate_r10_text": "NO PARKING",
+      "submitted_r4_exact": false,
+      "candidate_r10_exact": true,
+      "candidate_ended_eos": true,
+      "candidate_decode_plus_inference_seconds": 0.19005602970719337
+    },
+    {
+      "id": "p05",
+      "format_case": "48_megapixel_png",
+      "dimensions": [8000, 6000],
+      "expected": "BRIDGE\nWORK\n500 FT",
+      "submitted_r4_text": null,
+      "submitted_r4_error_type": "ValueError",
+      "candidate_r10_text": "BRIDGE\nWORK\n500 FT",
+      "submitted_r4_exact": false,
+      "candidate_r10_exact": true,
+      "candidate_ended_eos": true,
+      "candidate_decode_plus_inference_seconds": 0.8936708495020866
+    }
+  ],
+  "authored_summary": {"count": 5, "submitted_r4_exact": 0, "candidate_r10_exact": 5},
+  "existing_development_regression": {
+    "count": 10,
+    "both_policies_completed": 10,
+    "identical_decoded_pixels": 10,
+    "identical_transcriptions": 10,
+    "both_ended_eos": 10,
+    "accuracy_claimed": false,
+    "inputs": "Same reduced-size PNG/JPEG/TIFF development images used for R15 host acceptance."
+  },
+  "container_runtime_probe": {
+    "docker_on_path": false,
+    "podman_on_path": false,
+    "apptainer_on_path": false,
+    "singularity_on_path": false,
+    "docker_socket_present": false
+  },
+  "container_execution": false,
+  "submitted_image_changed": false,
+  "official_grade": null,
+  "new_awarded_xp_claimed": false,
+  "limitations": [
+    "The five authored probes deliberately target previously reproduced format failures. This is not an independent general OCR benchmark.",
+    "The ten regression inputs are existing developmental images, not held-out private evaluation data.",
+    "The same already-loaded reader evaluated the baseline first and then the candidate for each image; warm timings are not a fair first-request latency comparison.",
+    "This establishes real AMD source-level decoder/transcription behavior, not full-container GPU execution or candidate promotion.",
+    "The selected matte remains a heuristic for mixed-polarity transparent artwork.",
+    "The registry image currently submitted to the competition remains unchanged."
+  ]
+}
