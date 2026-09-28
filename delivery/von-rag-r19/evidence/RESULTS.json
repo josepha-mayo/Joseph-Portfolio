@@ -1,0 +1,111 @@
+{
+  "schema": "von-rag-authored-cpu-ablation-1",
+  "seed": 672891,
+  "products": 32,
+  "synthetic_templates": true,
+  "private_grader": false,
+  "gpu_inference": false,
+  "vision_accuracy_measured": false,
+  "manifest": {
+    "schema": 1,
+    "corpus": "/mnt/data/amd-r19/von-rag/evidence/benchmark-final/corpus",
+    "files": [
+      {
+        "source": "engineering/service.py",
+        "sha256": "d2444db2f5682cb42f4c2df07927ba6ee4b245703565dbbcf04467bcef694c6d",
+        "bytes": 18,
+        "chunks": 2
+      },
+      {
+        "source": "logs/production.log",
+        "sha256": "77a69039ebdfc235a2f818787813a963340515e943fde37341e5e548bbf45bbf",
+        "bytes": 2678,
+        "chunks": 32
+      },
+      {
+        "source": "planning/roadmap.csv",
+        "sha256": "cda3b23a529e2827b89c305131b0090c421a9efb19b663a79360b7cbd5d8bc52",
+        "bytes": 1147,
+        "chunks": 32
+      },
+      {
+        "source": "specs/specs.csv",
+        "sha256": "8b08286eecd2c0f066e0bacf7873dc404f68db21cfe6829325bcfa9f65a9c4cc",
+        "bytes": 430,
+        "chunks": 32
+      },
+      {
+        "source": "specs/specs_WITHDRAWN.csv",
+        "sha256": "888c988668aaab8380efb5875748142440b3356cd622e09fd49c86d4eb25b281",
+        "bytes": 446,
+        "chunks": 32
+      },
+      {
+        "source": "support/bridge.csv",
+        "sha256": "d0c770d854078ec67da60c3d311dc565d963611b6838efcf791578ae61e4077e",
+        "bytes": 339,
+        "chunks": 16
+      },
+      {
+        "source": "support/bugs.csv",
+        "sha256": "9a423dacc56e994db7e9c9b696c37a8b5ce31c5fa2618241e06dc24225fbf004",
+        "bytes": 1523,
+        "chunks": 32
+      },
+      {
+        "source": "support/parts.csv",
+        "sha256": "97287e3129ac05e3aa90bd17f49d4ead9e654b89ff79a47d1c1ceff149b1e66f",
+        "bytes": 3137,
+        "chunks": 64
+      }
+    ],
+    "skipped": [],
+    "chunks": 242,
+    "index_seconds": 4.959061362000057,
+    "images_read": 0
+  },
+  "paired_results": {
+    "single_source": {
+      "correct": 192,
+      "total": 224,
+      "categories": {
+        "temperature": [32, 32],
+        "part": [32, 32],
+        "quarter": [32, 32],
+        "direct_firmware": [32, 32],
+        "error": [32, 32],
+        "two_file": [0, 16],
+        "unanswerable": [32, 32],
+        "three_file": [0, 16]
+      },
+      "query_seconds": 0.1404793859999245,
+      "max_query_seconds": 0.004704919000005248
+    },
+    "identifier_chains": {
+      "correct": 224,
+      "total": 224,
+      "categories": {
+        "temperature": [32, 32],
+        "part": [32, 32],
+        "quarter": [32, 32],
+        "direct_firmware": [32, 32],
+        "error": [32, 32],
+        "two_file": [16, 16],
+        "unanswerable": [32, 32],
+        "three_file": [16, 16]
+      },
+      "query_seconds": 0.3856640710000647,
+      "max_query_seconds": 0.005069025000011607
+    }
+  },
+  "label_sha256": "f67387f0090ac2b86ccd43db5b55ac50e547f20cddf9028891dc6d53cee25357",
+  "source_sha256": {
+    "von_rag/__init__.py": "6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c",
+    "von_rag/engine.py": "203d14f43480c831c242142a86d75ceaa6c90117a604253050f9fcfc748a6cc8",
+    "von_rag/native.py": "366e1acb0f4d0137c117f07debf5136010608bb6c695e28aac1e7983c4ebca73",
+    "von_rag/parsers.py": "ecc04cd20eaa001267d54b5af612b9d1ed78548a18ed0231849a41f70bbbc2a5",
+    "von_rag/proofs.py": "be6a398031317622f812f40446f94257ab04244b52d857cb3da544547e2dcd74",
+    "von_rag/retrieval.py": "0426eb0f76c53cd92a4da132f6e9a091ead3d932a2d48dc244569061faa01901",
+    "von_rag/runtime.py": "5ac6d4d55566e684202a692a7e60c6613adbbfbd1787007cf60968c44b138ead"
+  }
+}
