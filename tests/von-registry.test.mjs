@@ -38,13 +38,13 @@ test('writes and unknown paths are rejected', () => {
   assert.equal(call('/v2/von-rag/manifests/r24?url=https://untrusted.test').status,400);
   assert.equal(call('/v2/von-rag/blobs/%2fprivate').status,400);
 });
-test('static delta asset bytes match the manifest', () => {
+test('static delta and inherited source patch match the unchanged manifest', () => {
   let count=0,total=0;
   for(const [dg,r] of Object.entries(data.routes)) if(r.location.startsWith('/registry-assets/')) {
     const b=readFileSync(new URL('../public'+r.location,import.meta.url));
     assert.equal(hash(b),dg);assert.equal(b.length,r.size);count++;total+=b.length;
   }
-  assert.equal(count,6);assert.equal(total,25270610);
+  assert.equal(count,7);assert.equal(total,25270610+2624);
 });
 
 const { resolveParentRedirect } = await import('../src/lib/von-registry-parent.ts');
