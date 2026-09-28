@@ -1,0 +1,113 @@
+name: von-read R16 one-file container validation
+on:
+  push:
+    branches: [von-read-pixels-r10-20260927]
+    paths: [.github/workflows/von-read-r16-overlay-validation.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-read-r16-one-file-container-validation
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out candidate and overlay composer
+        uses: actions/checkout@v4
+        with:
+          path: candidate
+          persist-credentials: false
+          sparse-checkout: |
+            delivery/von-read-r4
+            tools/von-input-r10
+            public/research/von-read/source/AMD_R16_PAIRED_RESULTS.json
+      - name: Check out exact submitted application source
+        uses: actions/checkout@v4
+        with:
+          ref: 3186e0ef79c27a298ed7505ed834b6a2be929c05
+          path: frozen
+          persist-credentials: false
+          sparse-checkout: delivery/von-read-r4
+      - name: Test and compose the tiny immutable overlay
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          (cd candidate/tools/von-input-r10 && python3 -m unittest -v test_r16_patch.py) 2>&1 | tee receipts/COMPOSER_TESTS.log
+          python3 candidate/tools/von-input-r10/build_r16_patch.py \
+            --directory overlay \
+            --views candidate/delivery/von-read-r4/von_read/views.py | tee receipts/COMPOSITION.log
+      - name: Prepare disposable runner and empty Docker credentials
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          df -B1 / > receipts/DISK_BEFORE.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/DISK_AFTER.txt
+          python3 - <<'PY'
+          import shutil
+          assert shutil.disk_usage('/').free > 75 * 2**30
+          PY
+          mkdir -p "$RUNNER_TEMP/r16-empty-docker"
+          printf '{}\n' > "$RUNNER_TEMP/r16-empty-docker/config.json"
+      - name: Pull the complete patched image without any registry credentials
+        timeout-minutes: 23
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/r16-empty-docker"
+          unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN || true
+          python3 -u candidate/tools/von-input-r10/build_r16_patch.py --directory overlay --serve > receipts/REGISTRY.log 2>&1 &
+          registry_pid=$!
+          trap 'kill "$registry_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            test -f overlay/SERVER_READY && break
+            sleep 1
+          done
+          test -f overlay/SERVER_READY
+          IMAGE="127.0.0.1:5008/von-read@$(python3 -c 'import json;print(json.load(open("overlay/PATCH.json"))["candidate_manifest"])')"
+          printf '%s\n' "$IMAGE" > receipts/LOCAL_IMAGE_REFERENCE.txt
+          date -u +%s > receipts/PULL_STARTED.txt
+          timeout --kill-after=20s 1200s docker pull "$IMAGE" > receipts/DOCKER_PULL.log 2>&1
+          date -u +%s > receipts/PULL_ENDED.txt
+          docker image inspect "$IMAGE" > receipts/IMAGE_INSPECT.json
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 \
+            -v "$PWD/frozen/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" \
+            -v "$PWD/receipts:/reports" "$IMAGE" /checks.py --out /reports/CLI.json > receipts/CLI.log 2>&1
+          timeout --kill-after=5s 30s docker run --rm --network none --entrypoint python3 \
+            -v "$PWD/frozen/delivery/von-read-r4:/frozen:ro" "$IMAGE" -c "from pathlib import Path; import hashlib,json; digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest(); files=list(Path('/frozen/von_read').glob('*.py')); unchanged=[p.name for p in files if p.name!='views.py' and digest(Path('/app/von_read')/p.name)==digest(p)]; assert len(unchanged)==len(files)-1; candidate=digest(Path('/app/von_read/views.py')); assert candidate=='d1eb0f0f66d3b3cc3cea1a0184c3202af1ebbb13759a63ed20ec6648b1122bed'; assert digest(Path('/app/app.py'))==digest(Path('/frozen/packaging/app.py')); print(json.dumps({'candidate_sha256':candidate,'unchanged_source_files':unchanged,'entry_app_unchanged':True}))" > receipts/SOURCE_IDENTITY.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          meta=json.loads(Path('overlay/PATCH.json').read_text())
+          parent=json.loads(Path('overlay/parent-config.json').read_text())
+          image=json.loads(Path('receipts/IMAGE_INSPECT.json').read_text())[0]
+          cli=json.loads(Path('receipts/CLI.json').read_text())
+          assert image['Id']==meta['candidate_config']
+          assert image['RootFS']['Layers']==parent['rootfs']['diff_ids']+[meta['patch_diff_id']]
+          assert len(image['RootFS']['Layers'])==20
+          for key in ['Entrypoint','Cmd','WorkingDir','Env','User','Healthcheck']:
+              assert image['Config'].get(key)==parent['config'].get(key), key
+          assert cli['status']=='passed' and len(cli['calls'])==10 and all(cli['checks'].values())
+          assert not cli.get('gpu_inference',False)
+          assert cli['source_sha256']['von_read/views.py']==meta['decoder_sha256']
+          seconds=int(Path('receipts/PULL_ENDED.txt').read_text())-int(Path('receipts/PULL_STARTED.txt').read_text())
+          receipt={**meta,'status':'container_fixture_validation_passed','complete_patched_image_pull':True,
+              'pull_seconds':seconds,'empty_registry_credentials':True,'registry_scope':'loopback-only on disposable runner',
+              'all_parent_diff_ids_preserved':True,'fixture_cli_calls':10,'gpu_inference_in_container':False,
+              'source_gpu_evidence':'public/research/von-read/source/AMD_R16_PAIRED_RESULTS.json',
+              'published':False,'submitted_reference_changed':False}
+          Path('receipts/CONTAINER_VALIDATED.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - name: Retain the small patch and exact evidence, not the model
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-read-r16-one-file-overlay-evidence
+          path: |
+            overlay/*.json
+            overlay/patch.tar.gz
+            receipts/
+          retention-days: 14
+          if-no-files-found: error
