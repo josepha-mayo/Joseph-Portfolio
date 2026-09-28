@@ -1,0 +1,197 @@
+name: von-rag R24 integrated compact distribution
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths: [.github/workflows/von-rag-r24-distribution.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: von-rag-r24-distribution
+  cancel-in-progress: false
+jobs:
+  compose:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Recover the retained build without model downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p staging
+          python -m pip install requests -r delivery/von-rag-r19/requirements-test.txt
+          python - <<'PY'
+          import requests,os,hashlib
+          from pathlib import Path
+          r=requests.get('https://api.github.com/repos/josepha-mayo/Joseph-Portfolio/actions/artifacts/10996885106/zip',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN']},timeout=60)
+          r.raise_for_status()
+          assert hashlib.sha256(r.content).hexdigest()=='41c28b3e9aba18d4f711081c4dcfb62f32888e95f274d51e0d498c23cf53a1d7'
+          Path('r22.zip').write_bytes(r.content)
+          PY
+      - name: Compose and test the actual integrated source
+        run: |
+          set -euo pipefail
+          python delivery/von-rag-r19/packaging/r24/prepare_candidate.py r22.zip delivery/von-rag-r19/von_rag/compact.py composed > staging/composition.log
+          src="$PWD/delivery/von-rag-r19"
+          stage="$PWD/staging"
+          export COMPOSED_IMAGE="$PWD/composed"
+          export PYTHONPATH="$PWD/composed/application:$src/packaging/r24"
+          cd composed/application
+          python -c 'from von_rag import runtime,compact; assert runtime.answer_model is compact.answer_compact'
+          python -m pytest -q "$src/tests" "$src/packaging/r24/test_distribution.py" --junitxml="$stage/tests.xml" | tee "$stage/tests.log"
+      - name: Package content-addressed distribution
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,hashlib,json
+          root=Path('delivery/von-rag-r19');out=Path('staging/von-rag-r24.zip')
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
+            for name in ['local_registry.py','README.md']:z.write(root/'packaging/r24'/name,name)
+            z.write(root/'LICENSE.txt','LICENSE.txt')
+            for p in sorted(Path('composed').glob('*')):
+              if p.is_file():z.write(p,'image/'+p.name)
+          Path('staging/SHA256SUMS.txt').write_text(hashlib.sha256(out.read_bytes()).hexdigest()+'  von-rag-r24.zip\n')
+          Path('staging/COMPOSITION.json').write_bytes(Path('composed/COMPOSITION.json').read_bytes())
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r24-staging
+          path: staging/
+          retention-days: 14
+  full-image-acceptance:
+    needs: compose
+    runs-on: ubuntu-24.04
+    timeout-minutes: 32
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-rag-r24-staging
+          path: staging
+      - name: Prepare disposable test host
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          mkdir -p evidence corpus
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > evidence/disk.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,hashlib,json
+          expected=Path('staging/SHA256SUMS.txt').read_text().split()[0]
+          assert hashlib.sha256(Path('staging/von-rag-r24.zip').read_bytes()).hexdigest()==expected
+          with zipfile.ZipFile('staging/von-rag-r24.zip') as z:z.extractall('bundle')
+          r=json.loads(Path('bundle/image/COMPOSITION.json').read_text())
+          Path('evidence/IMAGE.txt').write_text('127.0.0.1:50424/von-rag@'+r['manifest_digest'])
+          PY
+          printf 'Product: ZV-421\nMaximum junction temperature: 83\nStatus: current\n' > corpus/spec.txt
+          printf 'event="cooling oscillation" ticket=CASE-5724\n' > corpus/event.log
+          printf 'Ticket,Fixed in\nCASE-5724,3.4.8\n' > corpus/fixes.csv
+      - name: Pull complete image through the packaged loopback server
+        run: |
+          set -euo pipefail
+          python3 -u bundle/local_registry.py --directory bundle/image --stats evidence/server.json > evidence/server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true; wait "$server" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do grep -q '"ready": true' evidence/server.log && break; sleep 0.2; done
+          grep -q '"ready": true' evidence/server.log
+          export DOCKER_CONFIG="$RUNNER_TEMP/r24-anonymous"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          IMAGE=$(cat evidence/IMAGE.txt)
+          date -u +%s > evidence/start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > evidence/pull.log 2>&1
+          date -u +%s > evidence/end.txt
+          docker image inspect "$IMAGE" > evidence/inspect.json
+      - name: Verify actual compact source inside the complete image
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat evidence/IMAGE.txt)
+          docker run --rm --network none --entrypoint python3 "$IMAGE" -c 'from von_rag import runtime,compact; import hashlib,pathlib,json; assert runtime.answer_model is compact.answer_compact; print(json.dumps({"protocol":"compact-default","files":{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in pathlib.Path("/app/von_rag").glob("*.py")}}))' > evidence/source.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          image=json.loads(Path('evidence/inspect.json').read_text())[0]
+          config=json.loads(Path('bundle/image/config.json').read_text())
+          comp=json.loads(Path('bundle/image/COMPOSITION.json').read_text())
+          assert image['Id']==comp['config_digest'] and image['RootFS']['Layers']==config['rootfs']['diff_ids']
+          assert len(image['RootFS']['Layers'])==26
+          observed=json.loads(Path('evidence/source.json').read_text())['files']
+          for path,expected in comp['source_sha256'].items():assert observed['/app/'+path]==expected[7:]
+          PY
+      - name: Validate three fresh CLI processes with explicit diagnostic worker
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat evidence/IMAGE.txt)
+          docker run -d --name rag-r24-check --network none --entrypoint python3 -v "$PWD/corpus:/app/corpus:ro" "$IMAGE" -m von_rag.runtime serve --diagnostic
+          trap 'docker logs rag-r24-check > evidence/worker.log 2>&1; docker rm -f rag-r24-check >/dev/null 2>&1 || true' EXIT
+          for i in $(seq 1 50); do docker exec rag-r24-check python3 -m von_rag.runtime health >/dev/null 2>&1 && break; sleep 0.2; done
+          docker exec rag-r24-check python3 /app/app.py --index /app/corpus > evidence/index.json
+          docker exec rag-r24-check python3 /app/app.py --corpus /app/corpus --query-id current --query 'What is the maximum junction temperature of ZV-421?'
+          docker exec rag-r24-check python3 /app/app.py --corpus /app/corpus --query-id chain --query 'The production log shows cooling oscillation. Which firmware fixed the underlying defect?'
+          docker exec rag-r24-check python3 /app/app.py --corpus /app/corpus --query-id missing --query 'What is the unit price of ZV-421 at 25000 unit volume?'
+          docker cp rag-r24-check:/app/output evidence/output
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          expect={'current':('83',['spec.txt']),'chain':('3.4.8',['event.log','fixes.csv']),'missing':('',[])}
+          for k,(answer,cites) in expect.items():
+            r=json.loads(Path('evidence/output',k+'_output.json').read_text());assert r['answer']==answer and sorted(r['citations'])==cites,(k,r)
+          PY
+      - name: Verify native runtime rejects missing AMD hardware
+        run: |
+          IMAGE=$(cat evidence/IMAGE.txt)
+          set +e
+          timeout --kill-after=5s 150s docker run --rm --network none "$IMAGE" > evidence/native-no-gpu.log 2>&1
+          result=$?
+          set -e
+          test "$result" -ne 0
+          test "$result" -ne 124
+          grep -q 'Allocated AMD ROCm hardware required' evidence/native-no-gpu.log
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          image=json.loads(Path('evidence/inspect.json').read_text())[0]
+          seconds=int(Path('evidence/end.txt').read_text())-int(Path('evidence/start.txt').read_text())
+          r={'schema':'von-rag-r24-distribution-acceptance-1','status':'passed','full_pull_seconds':seconds,'uncompressed_bytes':image['Size'],'layers':26,'compact_is_default':True,'all_source_hashes_verified':True,'empty_docker_credentials':True,'aws_credentials_absent':True,'loopback_server_only':True,'externally_hosted_rag_registry':False,'cpu_diagnostic_queries':3,'native_gpu_execution':False,'native_no_cpu_fallback':True,'submitted':False}
+          Path('evidence/ACCEPTANCE.json').write_text(json.dumps(r,indent=2));print(json.dumps(r))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r24-full-image-acceptance
+          path: evidence/
+          retention-days: 14
+  publish-release:
+    needs: full-image-acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-rag-r24-staging
+          path: staging
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-rag-r24-full-image-acceptance
+          path: evidence
+      - name: Publish immutable candidate distribution after acceptance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' 'Integrated compact-protocol candidate. Full Docker reconstruction and lifecycle tests passed. Native AMD GPU qualification, externally hosted RAG registry, and official submission remain outstanding. This prerelease does not change the selected OCR artifact or claim new leaderboard points.' > notes.txt
+          gh release create von-rag-r24 --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title 'von-rag R24 compact candidate (AMD validation pending)' --notes-file notes.txt staging/von-rag-r24.zip staging/SHA256SUMS.txt evidence/ACCEPTANCE.json
