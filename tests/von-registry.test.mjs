@@ -46,3 +46,39 @@ test('static delta asset bytes match the manifest', () => {
   }
   assert.equal(count,6);assert.equal(total,25270610);
 });
+
+const { resolveParentRedirect } = await import('../src/lib/von-registry-parent.ts');
+const dg = Object.keys(data.routes).find((d) => data.routes[d].location.startsWith('https://'));
+const parentReq = new Request(origin+'/v2/von-rag/blobs/'+dg);
+test('public parent resolves to storage without forwarding client authorization', async () => {
+  let calls=0;
+  const result=await resolveParentRedirect(parentReq,call('/v2/von-rag/blobs/'+dg),async (url,options) => {
+    calls++;
+    assert.equal(url,data.routes[dg].location);assert.equal(options.method,'GET');
+    assert.equal(options.redirect,'manual');assert.deepEqual(options.headers,{Accept:'application/octet-stream'});
+    return new Response(null,{status:307,headers:{Location:'https://public-layer.cloudfront.net/path?public-download=fixture'}});
+  });
+  assert.equal(calls,1);assert.equal(result.status,307);
+  assert.equal(result.headers.get('Location'),'https://public-layer.cloudfront.net/path?public-download=fixture');
+  assert.equal(await result.text(),'');
+});
+test('local assets and metadata require no upstream resolution', async () => {
+  const fail=()=>{throw new Error('unexpected fetch')};
+  const m=call('/v2/von-rag/manifests/r24');
+  assert.equal(await resolveParentRedirect(parentReq,m,fail),m);
+  const d=Object.keys(data.routes).find((key)=>data.routes[key].location.startsWith('/'));
+  const asset=call('/v2/von-rag/blobs/'+d);
+  assert.equal(await resolveParentRedirect(parentReq,asset,fail),asset);
+});
+for(const target of ['http://storage.cloudfront.net/x','https://evil.example/x','https://user:pass@storage.cloudfront.net/x','https://storage.cloudfront.net:444/x','https://storage.cloudfront.net/x#fragment']){
+  test('reject unapproved storage destination '+target,async()=>{
+    const r=await resolveParentRedirect(parentReq,call('/v2/von-rag/blobs/'+dg),async()=>new Response(null,{status:307,headers:{Location:target}}));
+    assert.equal(r.status,502);assert.equal(r.headers.has('Location'),false);
+  });
+}
+test('an unexpected body is cancelled instead of buffering a model layer',async()=>{
+  let cancelled=false;
+  const body=new ReadableStream({cancel(){cancelled=true;}});
+  const r=await resolveParentRedirect(parentReq,call('/v2/von-rag/blobs/'+dg),async()=>new Response(body,{status:200}));
+  assert.equal(r.status,502);assert.equal(cancelled,true);
+});
