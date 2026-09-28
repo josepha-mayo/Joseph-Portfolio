@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
-      ORIGIN: https://6abafa8d10b24400089e40e0--josephm.netlify.app
-      IMAGE: 6abafa8d10b24400089e40e0--josephm.netlify.app/von-rag@sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686
+      ORIGIN: https://6abafd4daab2f30008636d59--josephm.netlify.app
+      IMAGE: 6abafd4daab2f30008636d59--josephm.netlify.app/von-rag@sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686
     steps:
       - uses: actions/checkout@v4
         with:
