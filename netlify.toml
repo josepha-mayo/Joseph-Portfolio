@@ -4,3 +4,19 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[headers]]
+  for = "/registry-assets/r24/manifest.json"
+  [headers.values]
+    Content-Type = "application/vnd.oci.image.manifest.v1+json"
+    Docker-Content-Digest = "sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686"
+    Docker-Distribution-Api-Version = "registry/2.0"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/registry-assets/r24/config.json"
+  [headers.values]
+    Content-Type = "application/vnd.oci.image.config.v1+json"
+    Docker-Content-Digest = "sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8"
+    Docker-Distribution-Api-Version = "registry/2.0"
+    Cache-Control = "public, max-age=31536000, immutable"

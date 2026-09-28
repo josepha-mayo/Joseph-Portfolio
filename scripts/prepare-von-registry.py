@@ -81,6 +81,8 @@ def materialize(root: Path, archive: Path | None = None) -> dict:
                 'manifest': mb.decode(), 'imageConfig': cb.decode(),
                 'manifestType': manifest['mediaType'], 'configType': manifest['config']['mediaType'],
                 'repository': 'von-rag', 'tag': 'r24', 'routes': routes}
+    (output / 'manifest.json').write_bytes(mb)
+    (output / 'config.json').write_bytes(cb)
     (generated / 'von-registry-r24.json').write_text(json.dumps(metadata, separators=(',', ':')) + '\n')
     receipt = {'release_sha256': ZIP_SHA, 'manifest_digest': MANIFEST,
                'local_layer_count': len(verified), 'local_bytes': sum(map(len, verified.values())),
