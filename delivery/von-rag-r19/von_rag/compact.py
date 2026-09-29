@@ -1,4 +1,4 @@
-"""Experimental short evidence-selection protocol, not enabled by default.
+"""Short evidence-selection protocol with source-anchored citations.
 
 The model selects observed records. It does not have to regenerate hashes or
 verbatim source quotations. Exact provenance is reconstructed from those records
@@ -24,7 +24,10 @@ def prepare(index, query, *, max_chars=7000, max_records=12):
     for c in context:
         if c['cid'] in seen:continue
         text=c['text'].strip()
-        if not text or len(text)>2200:continue
+        # The parser emits records up to 3,680 characters. Keep any whole
+        # record that fits the existing total prompt budget; do not drop it
+        # merely because it exceeds a second, smaller per-record threshold.
+        if not text:continue
         # Preserve exact text, not generated summaries, answer dictionaries or
         # value normalization. Whole source is kept privately for citation output.
         label=c['source'].rsplit('/',1)[-1][:60]
@@ -58,7 +61,6 @@ def parse_selection(text, records, query):
         raise GroundingError('unsupported answer')
     potential=[i for i in selected if contains_value(records[i]['text'],answer)]
     if not potential:raise GroundingError('value not present in selected evidence')
-    # A record's explicit product/model cannot contradict the requested product.
     from .retrieval import identifiers
     import re
     wanted=identifiers(query)
