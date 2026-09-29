@@ -40,8 +40,6 @@ jobs:
       - name: Measure generic deterministic coverage
         run: |
           set -euo pipefail
-          python diagnostics/r36_deterministic_replay.py --kit kit.zip --r33 ../../r33/../r33/../r33 2>/dev/null || true
-          # Above command is intentionally not used; archive download extracts files, not a zip.
           python - <<'PY'
           import zipfile, pathlib
           root=pathlib.Path('../../r33')
