@@ -21,11 +21,16 @@ def test_long_parsed_record_reaches_model_prompt(tmp_path, length):
     build_index(root, db)
     index = Index(db, root)
     try:
-        originals = index.all()
+        originals = {c['cid']: c for c in index.all()}
         records, messages = prepare(index, QUERY)
         assert any('temperature: 87' in c['text'] for c in records)
         assert 'temperature: 87' in messages[-1]['content']
-        assert all(c in originals for c in records)
+        for c in records:
+            # Search attaches a transient BM25 score. All persisted evidence
+            # fields, including the full text and citation path, must match.
+            assert c['cid'] in originals
+            original = originals[c['cid']]
+            assert {key: c[key] for key in original} == original
         chosen = next(i for i,c in enumerate(records) if 'temperature: 87' in c['text'])
         result, proof = parse_selection(json.dumps(['87', [chosen]]), records, QUERY)
         assert result['citations'] == ['datasheet.txt']
