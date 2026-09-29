@@ -1,0 +1,51 @@
+name: von-rag R35 registry build
+on:
+  push:
+    branches: [amd-r35-registry-20260929]
+    paths:
+      - scripts/prepare-von-registry-r35.py
+      - src/app/v2/**
+      - src/lib/von-registry-parent.ts
+      - tests/von-registry-r35.test.mjs
+      - package.json
+      - netlify.toml
+      - .github/workflows/von-rag-r35-registry.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r35-registry-build
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build deterministic R24 and R35 assets
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python scripts/prepare-von-registry.py > receipts/r24.json
+          python scripts/prepare-von-registry-r35.py | tee receipts/r35.json
+      - name: Run registry tests
+        run: node --experimental-strip-types --test tests/von-registry*.test.mjs | tee receipts/tests.log
+      - name: Build full site and registry routes
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build 2>&1 | tee receipts/next-build.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r35-registry-build
+          path: receipts/
+          retention-days: 14
