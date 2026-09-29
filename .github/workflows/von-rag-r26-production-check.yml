@@ -1,0 +1,96 @@
+name: von-rag R26 production endpoint verification
+on:
+  push:
+    branches: [amd-r26-public-registry-20260929]
+    paths: [.github/workflows/von-rag-r26-production-check.yml]
+permissions:
+  contents: read
+jobs:
+  production-check:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify deployed aliases and all seven small layer payloads
+        run: |
+          mkdir -p receipts
+          python3 - <<'PY'
+          import hashlib,json,urllib.request,urllib.error
+          from urllib.parse import urlsplit
+          from pathlib import Path
+          from datetime import datetime,timezone
+          M='sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686'
+          C='sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8'
+          origins=['https://josephm.netlify.app','https://josephmayo.site','https://6abb06e3776a3d00089bf92b--josephm.netlify.app']
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self,*a,**kw):return None
+          def dg(b):return 'sha256:'+hashlib.sha256(b).hexdigest()
+          def get(url,limit=32768,follow=True):
+              opener=urllib.request.build_opener() if follow else urllib.request.build_opener(NoRedirect)
+              req=urllib.request.Request(url,headers={'Accept':'application/vnd.oci.image.manifest.v1+json','Accept-Encoding':'identity','User-Agent':'von-rag-production-check/1.0'})
+              try:r=opener.open(req,timeout=25)
+              except urllib.error.HTTPError as e:r=e
+              with r:
+                  body=r.read(limit+1)
+                  if len(body)>limit:raise ValueError('Unexpected response length')
+                  return r.code,body,r.url,r.headers
+          results=[];good=[]
+          for origin in origins:
+              try:
+                  status,mb,url,h=get(origin+'/v2/von-rag/manifests/'+M)
+                  assert status==200 and dg(mb)==M
+                  status,cb,url,h=get(origin+'/v2/von-rag/blobs/'+C)
+                  assert status==200 and dg(cb)==C
+                  status,home,url,h=get(origin+'/',limit=2000000)
+                  assert status==200 and b'<html' in home.lower()
+                  results.append({'origin':origin,'metadata_exact':True,'home_http':status})
+                  good.append((origin,json.loads(mb)))
+              except Exception as exc:
+                  results.append({'origin':origin,'metadata_exact':False,'error':type(exc).__name__+': '+str(exc)[:180]})
+          assert any(origin==origins[-1] for origin,m in good),'Pinned production deployment did not pass'
+          origin,m=next(((o,m) for o,m in good if o==origins[0]),good[0])
+          local=[];parents=[]
+          for i,layer in enumerate(m['layers']):
+              target=origin+'/v2/von-rag/blobs/'+layer['digest']
+              if i>=19:
+                  status,b,url,h=get(target,limit=layer['size'])
+                  assert status==200 and len(b)==layer['size'] and dg(b)==layer['digest']
+                  local.append({'digest':layer['digest'],'bytes':len(b)})
+              else:
+                  status,b,url,h=get(target,follow=False)
+                  assert status==307 and not b
+                  p=urlsplit(h['Location']);host=p.hostname or ''
+                  assert p.scheme=='https' and not p.username and not p.password
+                  assert host=='production.cloudfront.docker.com' or host.endswith('.amazonaws.com') or host.endswith('.cloudfront.net') or host.endswith('.ecr.aws')
+                  parents.append({'digest':layer['digest'],'redirect_host':host})
+          assert len(local)==7 and len(parents)==19
+          result={'schema':'von-rag-r26-production-endpoint-check-1','status':'passed','observed_utc':datetime.now(timezone.utc).isoformat(),
+              'production_deployment':'6abb06e3776a3d00089bf92b','deployed_commit':'a9522cdce6df3d369cc5bef14beada4ac7f0acbf',
+              'preferred_image':origin.removeprefix('https://')+'/von-rag@'+M,'origins':results,'manifest_digest':M,'config_digest':C,
+              'local_layers':local,'local_bytes_verified':sum(x['bytes'] for x in local),'parent_redirects':parents,
+              'full_pull_reference_run':36502360007,'production_full_pull_repeated':False,'gpu_inference_verified':False,'official_submission_verified':False}
+          Path('receipts/PRODUCTION_ACCEPTANCE.json').write_text(json.dumps(result,indent=2)+'\n')
+          Path('receipts/IMAGE.txt').write_text(result['preferred_image']+'\n')
+          print(json.dumps({k:v for k,v in result.items() if k not in ('local_layers','parent_redirects')},indent=2))
+          PY
+      - name: Verify the real Docker client accepts the production reference
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker-config"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          docker manifest inspect "$(cat receipts/IMAGE.txt)" > receipts/docker-manifest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('receipts/docker-manifest.json').read_text())
+          assert m['config']['digest']=='sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8' and len(m['layers'])==26
+          r=json.loads(Path('receipts/PRODUCTION_ACCEPTANCE.json').read_text());r['production_docker_manifest_inspect_passed']=True
+          Path('receipts/PRODUCTION_ACCEPTANCE.json').write_text(json.dumps(r,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r26-production-endpoint
+          path: receipts/
+          retention-days: 14
