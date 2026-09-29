@@ -1,0 +1,118 @@
+name: von-rag R35 retained-pull audit
+on:
+  push:
+    branches: [amd-r35-audit-20260930]
+    paths: [.github/workflows/von-rag-r35-audit.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Recover the retained full-pull evidence from run 36620643002
+        uses: actions/download-artifact@v4
+        with:
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36620643002
+          name: von-rag-r35-production-pull
+          github-token: ${{ github.token }}
+          path: prior
+      - name: Audit the successful transfer and exact image identity
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          expected_manifest='sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb'
+          expected_config='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          expected_patch='sha256:4d6cf8cbaf38faee27067193c307e8033014c89dd7c4f70d33c8b98e96142987'
+          start=int(Path('prior/start.txt').read_text())
+          end=int(Path('prior/end.txt').read_text())
+          assert end-start==522,(start,end,end-start)
+          inspect=json.loads(Path('prior/inspect.json').read_text())[0]
+          manifest=json.loads(Path('prior/manifest.json').read_text())
+          config=json.loads(Path('prior/config.json').read_text())
+          assert inspect['Id']==expected_config
+          assert len(inspect['RootFS']['Layers'])==27
+          assert inspect['RootFS']['Layers']==config['rootfs']['diff_ids']
+          assert manifest['schemaVersion']==2 and len(manifest['layers'])==27
+          assert manifest['config']['digest']==expected_config
+          assert manifest['layers'][-1]['digest']==expected_patch
+          # source.json being empty is exactly why the original run failed after pull.
+          empty_source=(not Path('prior/source.json').read_text().strip())
+          assert empty_source
+          result={'schema':'von-rag-r35-retained-pull-audit-1','status':'transfer_verified',
+            'source_run':36620643002,'pull_seconds':522,'full_anonymous_pull':True,
+            'config':expected_config,'manifest':expected_manifest,'layers':27,
+            'uncompressed_bytes':inspect['Size'],'all_diffids_match_config':True,
+            'original_post_pull_failure':'source.json empty; transfer and image import had already passed',
+            'source_hashes_verified_here':False,'native_amd_inference':False,
+            'selected_submission_changed':False}
+          Path('receipts/TRANSFER.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Verify the current public R35 manifest and source patch bytes
+        run: |
+          set -euo pipefail
+          M='sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb'
+          C='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          P='sha256:4d6cf8cbaf38faee27067193c307e8033014c89dd7c4f70d33c8b98e96142987'
+          curl -fsSL --compressed "https://josephm.netlify.app/v2/von-rag-r35/manifests/$M" > receipts/live-manifest.json
+          curl -fsSL --compressed "https://josephm.netlify.app/v2/von-rag-r35/blobs/$C" > receipts/live-config.json
+          curl -fsSL --compressed "https://josephm.netlify.app/v2/von-rag-r35/blobs/$P" > receipts/patch.tar.gz
+          python3 - <<'PY'
+          import gzip,hashlib,io,json,tarfile
+          from pathlib import Path
+          def dg(b):return 'sha256:'+hashlib.sha256(b).hexdigest()
+          M='sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb'
+          C='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          P='sha256:4d6cf8cbaf38faee27067193c307e8033014c89dd7c4f70d33c8b98e96142987'
+          mb=Path('receipts/live-manifest.json').read_bytes()
+          cb=Path('receipts/live-config.json').read_bytes()
+          patch=Path('receipts/patch.tar.gz').read_bytes()
+          assert dg(mb)==M and dg(cb)==C and dg(patch)==P and len(patch)==7381
+          manifest=json.loads(mb);config=json.loads(cb)
+          assert manifest['config']['digest']==C and len(manifest['layers'])==27
+          assert manifest['layers'][-1]['digest']==P and len(config['rootfs']['diff_ids'])==27
+          expected={
+            'compact.py':'f412af4d28e92a013d66e62285f9a16911496e3a2cc1d1de8b869e33ee214d70',
+            'retrieval.py':'9da73502fe0f03c24fccd3821d4ce00b9013ef118f380b5302b2e7fdd17ecac5',
+            'selection_repair.py':'44c8d60911230feccf1ffdd590bb9eb9477ddffcb7a6a5c97ab736fc0539d003'}
+          found={}
+          with tarfile.open(fileobj=io.BytesIO(gzip.decompress(patch))) as tf:
+            for member in tf:
+              if member.isfile():
+                body=tf.extractfile(member).read()
+                name=member.name.rsplit('/',1)[-1]
+                found[name]=hashlib.sha256(body).hexdigest()
+          assert found==expected,(found,expected)
+          transfer=json.loads(Path('receipts/TRANSFER.json').read_text())
+          transfer.update(status='passed',source_hashes_verified_here=True,
+            live_manifest_verified=True,live_config_verified=True,patch_bytes=7381,
+            source_sha256=found)
+          Path('receipts/CORRECTED_ACCEPTANCE.json').write_text(json.dumps(transfer,indent=2)+'\n')
+          print(json.dumps(transfer,indent=2))
+          PY
+      - name: Check Docker still accepts the selected production reference
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker-config"
+          mkdir -p "$DOCKER_CONFIG"; printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          IMAGE='josephm.netlify.app/von-rag-r35@sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb'
+          docker manifest inspect "$IMAGE" > receipts/docker-manifest-now.json
+          python3 - <<'PY'
+          import json
+          m=json.load(open('receipts/docker-manifest-now.json'))
+          assert m['config']['digest']=='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          assert len(m['layers'])==27
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r35-corrected-acceptance
+          path: receipts/
+          retention-days: 14
