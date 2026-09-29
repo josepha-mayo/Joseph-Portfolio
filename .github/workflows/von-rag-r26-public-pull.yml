@@ -16,19 +16,32 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
-      ORIGIN: https://6abaff8adef2b0000844249a--josephm.netlify.app
-      IMAGE: 6abaff8adef2b0000844249a--josephm.netlify.app/von-rag@sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686
+      ORIGIN: https://6abb035935c4fb0008acfc79--josephm.netlify.app
+      IMAGE: 6abb035935c4fb0008acfc79--josephm.netlify.app/von-rag@sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
           sparse-checkout: scripts
+      - name: Verify actual Docker manifest negotiation before large transfer
+        run: |
+          set -euo pipefail
+          mkdir -p receipts "$RUNNER_TEMP/r26-empty-docker-config"
+          export DOCKER_CONFIG="$RUNNER_TEMP/r26-empty-docker-config"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          timeout --kill-after=3s 30s docker manifest inspect "$IMAGE" > receipts/docker-manifest.json 2> receipts/docker-manifest-error.log
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('receipts/docker-manifest.json').read_text())
+          assert m['schemaVersion']==2 and len(m['layers'])==26
+          assert m['config']['digest']=='sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8'
+          PY
       - name: Record strict HTTP conformance separately from Docker compatibility
         id: http
         continue-on-error: true
         run: |
           set -euo pipefail
-          mkdir -p receipts
           python3 scripts/verify-von-public-registry.py --origin "$ORIGIN" --output receipts | tee receipts/http.log
       - name: Prepare disposable GitHub host only
         run: |
@@ -41,8 +54,6 @@ jobs:
         run: |
           set -euo pipefail
           export DOCKER_CONFIG="$RUNNER_TEMP/r26-empty-docker-config"
-          mkdir -p "$DOCKER_CONFIG"
-          printf '{}\n' > "$DOCKER_CONFIG/config.json"
           date -u +%s > receipts/pull-start.txt
           timeout --kill-after=15s 1500s docker pull "$IMAGE" > receipts/docker-pull.log 2>&1
           date -u +%s > receipts/pull-end.txt
