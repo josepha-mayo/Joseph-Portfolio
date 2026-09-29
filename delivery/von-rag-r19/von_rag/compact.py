@@ -24,12 +24,7 @@ def prepare(index, query, *, max_chars=7000, max_records=12):
     for c in context:
         if c['cid'] in seen:continue
         text=c['text'].strip()
-        # The parser emits records up to 3,680 characters. Keep any whole
-        # record that fits the existing total prompt budget; do not drop it
-        # merely because it exceeds a second, smaller per-record threshold.
         if not text:continue
-        # Preserve exact text, not generated summaries, answer dictionaries or
-        # value normalization. Whole source is kept privately for citation output.
         label=c['source'].rsplit('/',1)[-1][:60]
         part=f'[{len(records)}] {label}\n{text}'
         if used+len(part)>max_chars:continue
@@ -40,11 +35,13 @@ def prepare(index, query, *, max_chars=7000, max_records=12):
     return records,messages
 
 
-def parse_selection(text, records, query):
+def _strict_parse_selection(text, records, query):
     raw=text.strip()
-    if raw.startswith('```'):
+    fence=chr(96)*3
+    if raw.startswith(fence):
         import re
-        raw=re.sub(r'^```(?:json)?\s*','',raw);raw=re.sub(r'\s*```$','',raw)
+        raw=re.sub(r'^'+re.escape(fence)+r'(?:json)?\s*','',raw)
+        raw=re.sub(r'\s*'+re.escape(fence)+r'$','',raw)
     data=json.loads(raw)
     if not isinstance(data,list) or len(data)!=2:raise GroundingError('expected answer and record list')
     answer,selected=data
@@ -80,6 +77,20 @@ def parse_selection(text, records, query):
     return validate(proof,records,query=query),proof
 
 
+def parse_selection(text, records, query, *, page_records=None):
+    """Apply conservative source-grounded recovery, then rerun strict validation."""
+    try:
+        return _strict_parse_selection(text, records, query)
+    except GroundingError:
+        from .selection_repair import recover_selection
+        recovered, changes = recover_selection(text, records, query, page_records=page_records)
+        if not changes:
+            raise
+        result, proof = _strict_parse_selection(recovered, records, query)
+        proof['source_repairs'] = changes
+        return result, proof
+
+
 def answer_compact(index, query, model, *, deadline):
     if not isinstance(deadline,(int,float)) or not math.isfinite(deadline):
         raise ValueError('finite deadline required')
@@ -87,14 +98,12 @@ def answer_compact(index, query, model, *, deadline):
     audit={'backend':'native_gpu_compact_experimental','completed_model_response':False,
            'records':len(records),'protocol':'selection-v1','default_enabled':False}
     empty={'answer':'','citations':[],'confidence':0.0}
-    # Empty retrieval is not an execution failure. Ask the resident model to
-    # decide against an explicitly empty evidence list, then validate its output.
-    # No non-empty answer can pass parse_selection without real source records.
     if deadline-time.monotonic()<.5:return empty,{**audit,'reason':'no_time'}
     try:
         raw=model.chat(messages,max_tokens=96,deadline=deadline-.3)
         if time.monotonic()>=deadline:raise TimeoutError('late compact output')
-        result,proof=parse_selection(raw,records,query)
+        from .selection_repair import indexed_page
+        result,proof=parse_selection(raw,records,query,page_records=lambda record: indexed_page(index,record))
         return result,{**audit,'completed_model_response':True,'proof':proof,'raw':raw}
     except (ValueError,TypeError,KeyError,TimeoutError) as exc:
         return empty,{**audit,'reason':'invalid_or_incomplete_model_response',
