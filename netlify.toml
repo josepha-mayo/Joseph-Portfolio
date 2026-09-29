@@ -20,3 +20,20 @@
     Docker-Content-Digest = "sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8"
     Docker-Distribution-Api-Version = "registry/2.0"
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/registry-assets/r35/manifest.json"
+  [headers.values]
+    Content-Type = "application/vnd.oci.image.manifest.v1+json"
+    Docker-Content-Digest = "sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb"
+    Docker-Distribution-Api-Version = "registry/2.0"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/registry-assets/r35/config.json"
+  [headers.values]
+    Content-Type = "application/vnd.oci.image.config.v1+json"
+    Docker-Content-Digest = "sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72"
+    Docker-Distribution-Api-Version = "registry/2.0"
+    Cache-Control = "public, max-age=31536000, immutable"
+
