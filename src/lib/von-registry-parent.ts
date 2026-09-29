@@ -57,14 +57,14 @@ export async function resolveParentRedirect(
 }
 
 /** Metadata is small and immutable, so let the static CDN supply its length. */
-export function staticMetadataRedirect(request: Request, result: Response): Response {
+export function staticMetadataRedirect(request: Request, result: Response, assetVersion = 'r24'): Response {
   if (result.status !== 200 || !result.headers.has('Docker-Content-Digest')) return result;
   const media = result.headers.get('Content-Type');
   const name = media === 'application/vnd.oci.image.manifest.v1+json' ? 'manifest.json'
     : media === 'application/vnd.oci.image.config.v1+json' ? 'config.json' : null;
   if (!name) return result;
   const headers = new Headers(result.headers);
-  headers.set('Location', new URL('/registry-assets/r24/' + name, request.url).href);
+  headers.set('Location', new URL('/registry-assets/' + assetVersion + '/' + name, request.url).href);
   headers.set('Content-Length', '0');
   return new Response(null, { status: 307, headers });
 }
