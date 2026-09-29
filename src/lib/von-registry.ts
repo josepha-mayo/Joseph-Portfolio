@@ -30,7 +30,12 @@ function response(request: Request, status: number, body: string,
 }
 
 function error(request: Request, status: number, code: string): Response {
-  return response(request, status, JSON.stringify({ errors: [{ code, message: 'Read-only registry request unavailable' }] }),
+  // Only request method/path/media preferences are reflected. Never include
+  // authorization, cookies, query strings or resolved storage URLs.
+  const path = new URL(request.url).pathname.slice(0, 220);
+  const accept = (request.headers.get('Accept') || '(none)').slice(0, 300);
+  const message = `${code} HTTP ${status}: ${request.method} ${path}; Accept=${accept}`;
+  return response(request, status, JSON.stringify({ errors: [{ code, message }] }),
     status === 405 ? { Allow: 'GET, HEAD' } : {});
 }
 
@@ -72,7 +77,6 @@ export function registryResponse(request: Request, data: RegistryData): Response
   if (request.method === 'HEAD') return response(request, 200, '', {
     'Content-Type': 'application/octet-stream', 'Content-Length': String(route.size), 'Docker-Content-Digest': dg,
   });
-  // Locations are from checksum-verified build metadata, never from request input.
   return response(request, 307, '', {
     Location: new URL(route.location, url.origin).href,
     'Content-Type': 'application/octet-stream', 'Docker-Content-Digest': dg,
