@@ -1,0 +1,61 @@
+name: von-rag R36 deterministic fast-path replay
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - .github/workflows/von-rag-r36-deterministic.yml
+      - delivery/von-rag-r19/diagnostics/r36_deterministic_replay.py
+permissions:
+  contents: read
+  actions: read
+jobs:
+  replay:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-test.txt
+      - name: Download the checksum-pinned official public kit
+        run: |
+          curl -fsSL --retry 3 -o kit.zip https://storage.googleapis.com/lablab-static-eu/share/mc3-starter-kit.zip
+          echo '1173aef83fa06828b1acba231bc033f52658d4f9714d6a61a17873e4607f0829  kit.zip' | sha256sum -c -
+      - name: Recover only R33's recorded real-vision outputs
+        uses: actions/download-artifact@v4
+        with:
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36614477757
+          name: von-rag-r33-original-weight-cpu
+          github-token: ${{ github.token }}
+          path: r33
+      - name: Measure generic deterministic coverage
+        run: |
+          set -euo pipefail
+          python diagnostics/r36_deterministic_replay.py --kit kit.zip --r33 ../../r33/../r33/../r33 2>/dev/null || true
+          # Above command is intentionally not used; archive download extracts files, not a zip.
+          python - <<'PY'
+          import zipfile, pathlib
+          root=pathlib.Path('../../r33')
+          with zipfile.ZipFile('r33-repacked.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file():z.write(p,p.relative_to(root))
+          PY
+          rm -rf evidence/r36
+          python diagnostics/r36_deterministic_replay.py --kit kit.zip --r33 r33-repacked.zip --out evidence/r36 | tee evidence/r36.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r36-deterministic-replay
+          path: |
+            delivery/von-rag-r19/evidence/r36/
+            delivery/von-rag-r19/evidence/r36.log
+          retention-days: 14
