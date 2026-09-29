@@ -5,8 +5,10 @@ The official public sample labels are read only after predictions are written.
 No model is called and no public-sample value is embedded in production code.
 """
 from __future__ import annotations
-import argparse,json,subprocess,zipfile
+import argparse,json,sys,zipfile
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 from von_rag.retrieval import build_index,Index
 from von_rag.engine import diagnostic_answer
 
