@@ -31,7 +31,6 @@ def tokens(text):
 
 def identifiers(text):
     raw = re.findall(r'(?<![\w])(?:[A-Za-z]{1,10}[-_][A-Za-z0-9][A-Za-z0-9_-]*|[A-Za-z]{1,8}\d{2,}[A-Za-z0-9_-]*)(?![\w])', text)
-    # A fiscal year is not an entity suitable for joining unrelated documents.
     return {re.sub(r'[-_]', '', x).upper() for x in raw
             if any(c.isdigit() for c in x) and not re.fullmatch(r'FY\d+',x,re.I)}
 
@@ -75,7 +74,6 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                     if ext not in SUPPORTED: raise ValueError('unknown format')
                     if ext in {'.png','.jpg','.jpeg'}:
                         if vision is None: raise RuntimeError('image requires vision backend; not silently treated as read')
-                        # Callback receives pixels from a real allowed file, never its filename as an answer.
                         from von_read.views import load_image
                         with load_image(p) as im:
                             text = vision(im, deadline=start+deadline_seconds)
@@ -134,7 +132,9 @@ class Index:
         ts = list(dict.fromkeys(tokens(query)))[:80]
         if not ts: return []
         expression = ' OR '.join('"'+x.replace('"','""')+'"' for x in ts)
-        rows = self.con.execute('SELECT c.*,bm25(lex) AS score FROM lex JOIN chunks c ON c.cid=lex.cid WHERE lex MATCH ? ORDER BY score LIMIT ?', (expression,k*4)).fetchall()
+        # Apply retirement eligibility before LIMIT. Otherwise many retired
+        # revisions can occupy the entire shortlist and hide every current fact.
+        rows = self.con.execute('SELECT c.*,bm25(lex) AS score FROM lex JOIN chunks c ON c.cid=lex.cid WHERE lex MATCH ? AND (? OR c.retired=0) ORDER BY score LIMIT ?', (expression,int(historical),k*4)).fetchall()
         result=[]
         for r in rows:
             d=dict(r);d['fields']=json.loads(d['fields'])
@@ -154,7 +154,6 @@ class Index:
                     if entity in expanded: continue
                     expanded.add(entity)
                     refs=self.con.execute('SELECT cid FROM entities WHERE entity=? LIMIT 49',(entity,)).fetchall()
-                    # Very common IDs are context, not discriminative graph links.
                     if len(refs)>32: continue
                     for (other,) in refs:
                         if other in result: continue
