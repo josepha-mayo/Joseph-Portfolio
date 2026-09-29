@@ -1,0 +1,236 @@
+name: von-rag R35 integrated replay repair
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - .github/workflows/von-rag-r35-integrated.yml
+      - delivery/von-rag-r19/packaging/r35/**
+      - delivery/von-rag-r19/von_rag/compact.py
+      - delivery/von-rag-r19/von_rag/retrieval.py
+      - delivery/von-rag-r19/von_rag/selection_repair.py
+      - delivery/von-rag-r19/tests/test_grounded_selection_repair.py
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: von-rag-r35-integrated
+  cancel-in-progress: false
+
+jobs:
+  compose:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install test-only dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Run complete source regression suite
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r35
+          python -m pytest -q tests --junitxml=evidence/r35/tests.xml | tee evidence/r35/tests.log
+      - name: Fetch checksum-pinned R24 distribution
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output r24.zip \
+            https://github.com/josepha-mayo/Joseph-Portfolio/releases/download/von-rag-r24/von-rag-r24.zip
+          echo '799cdf2ebd0c782e1a5840a0330be544329ff9c2b4790f12944c71bf3cf0e73c  r24.zip' | sha256sum -c -
+      - name: Compose exact R35 source layer
+        run: |
+          set -euo pipefail
+          python packaging/r35/compose.py r24.zip von_rag r35-image | tee evidence/r35/composition.log
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          r=json.loads(Path('r35-image/COMPOSITION.json').read_text())
+          assert r['status']=='passed' and r['parent_layers_preserved']==26 and r['candidate_layers']==27
+          assert not r['weights_changed'] and r['runtime_configuration_unchanged']
+          for name,expected in r['source_sha256'].items():
+              assert hashlib.sha256(Path('von_rag',name).read_bytes()).hexdigest()==expected
+          print(json.dumps(r,indent=2))
+          PY
+          cp r35-image/COMPOSITION.json evidence/r35/
+      - name: Create small content-addressed staging bundle
+        run: |
+          set -euo pipefail
+          cp packaging/r35/local_registry.py r35-image/
+          python - <<'PY'
+          import hashlib,zipfile
+          from pathlib import Path
+          root=Path('r35-image'); out=Path('evidence/r35/von-rag-r35-bundle.zip')
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(root.iterdir()):
+                  if p.is_file(): z.write(p,p.name)
+          Path('evidence/r35/SHA256SUMS.txt').write_text(hashlib.sha256(out.read_bytes()).hexdigest()+'  von-rag-r35-bundle.zip\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r35-staging
+          path: delivery/von-rag-r19/evidence/r35/
+          retention-days: 14
+
+  full-image-acceptance:
+    needs: compose
+    runs-on: ubuntu-24.04
+    timeout-minutes: 32
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-rag-r35-staging
+          path: staging
+      - name: Verify staging bundle and prepare disposable runner
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          mkdir -p bundle evidence corpus
+          (cd staging && sha256sum -c SHA256SUMS.txt)
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('staging/von-rag-r35-bundle.zip') as z:z.extractall('bundle')
+          PY
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          printf 'Product: ZV-421\nMaximum junction temperature: 83\nStatus: current\n' > corpus/spec.txt
+          printf 'event="cooling oscillation" ticket=CASE-5724\n' > corpus/event.log
+          printf 'Ticket,Fixed in\nCASE-5724,3.4.8\n' > corpus/fixes.csv
+          df -B1 / > evidence/disk-before.txt
+      - name: Fresh full Docker pull through R35 reconstruction registry
+        run: |
+          set -euo pipefail
+          python3 -u bundle/local_registry.py --directory bundle --stats evidence/server.json > evidence/server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true; wait "$server" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do grep -q '"ready": true' evidence/server.log && break; sleep .25; done
+          grep -q '"ready": true' evidence/server.log
+          IMAGE=$(python - <<'PY'
+          import json
+          print(json.loads(open('bundle/COMPOSITION.json').read())['candidate_manifest'])
+          PY
+          )
+          IMAGE="127.0.0.1:50435/von-rag-r35@$IMAGE"
+          printf '%s\n' "$IMAGE" > evidence/IMAGE.txt
+          export DOCKER_CONFIG="$RUNNER_TEMP/r35-empty-docker-config"
+          mkdir -p "$DOCKER_CONFIG"; printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > evidence/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > evidence/pull.log 2>&1
+          date -u +%s > evidence/pull-end.txt
+          docker image inspect "$IMAGE" > evidence/inspect.json
+      - name: Verify exact source layer inside reconstructed image
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat evidence/IMAGE.txt)
+          docker run --rm --network none --entrypoint python3 "$IMAGE" - <<'PY' > evidence/source.json
+          import hashlib,json,pathlib
+          from von_rag import runtime,compact
+          assert runtime.answer_model is compact.answer_compact
+          files={}
+          for name in ('compact.py','retrieval.py','selection_repair.py','runtime.py'):
+              p=pathlib.Path('/app/von_rag')/name
+              files[name]=hashlib.sha256(p.read_bytes()).hexdigest()
+          print(json.dumps({'compact_default':True,'files':files}))
+          PY
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          comp=json.loads(Path('bundle/COMPOSITION.json').read_text())
+          config=json.loads(Path('bundle/config.json').read_text())
+          inspect=json.loads(Path('evidence/inspect.json').read_text())[0]
+          source=json.loads(Path('evidence/source.json').read_text())
+          assert inspect['Id']==comp['candidate_config']
+          assert inspect['RootFS']['Layers']==config['rootfs']['diff_ids']
+          assert len(inspect['RootFS']['Layers'])==27
+          for name,expected in comp['source_sha256'].items(): assert source['files'][name]==expected
+          assert source['compact_default']
+          PY
+      - name: Exercise index and three fresh query processes in explicit diagnostic mode
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat evidence/IMAGE.txt)
+          docker run -d --name r35-check --network none --entrypoint python3 \
+            -v "$PWD/corpus:/app/corpus:ro" "$IMAGE" -m von_rag.runtime serve --diagnostic
+          trap 'docker logs r35-check > evidence/worker.log 2>&1; docker rm -f r35-check >/dev/null 2>&1 || true' EXIT
+          for i in $(seq 1 50); do docker exec r35-check python3 -m von_rag.runtime health >/dev/null 2>&1 && break; sleep .2; done
+          docker exec r35-check python3 /app/app.py --index /app/corpus > evidence/index.json
+          docker exec r35-check python3 /app/app.py --corpus /app/corpus --query-id q1 --query 'What is the maximum junction temperature of ZV-421?'
+          docker exec r35-check python3 /app/app.py --corpus /app/corpus --query-id q2 --query 'The production log shows cooling oscillation. Which firmware fixed the underlying defect?'
+          docker exec r35-check python3 /app/app.py --corpus /app/corpus --query-id q3 --query 'What is the unit price of ZV-421 at 25000 unit volume?'
+          docker cp r35-check:/app/output evidence/output
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          expected={'q1':('83',['spec.txt']),'q2':('3.4.8',['event.log','fixes.csv']),'q3':('',[])}
+          for q,(answer,citations) in expected.items():
+              r=json.loads(Path('evidence/output',q+'_output.json').read_text())
+              assert r['answer']==answer and sorted(r['citations'])==citations,(q,r)
+          PY
+      - name: Verify native entrypoint still refuses missing AMD hardware
+        run: |
+          set +e
+          IMAGE=$(cat evidence/IMAGE.txt)
+          timeout --kill-after=5s 150s docker run --rm --network none "$IMAGE" > evidence/native-no-gpu.log 2>&1
+          code=$?
+          set -e
+          test "$code" -ne 0
+          test "$code" -ne 124
+          grep -q 'Allocated AMD ROCm hardware required' evidence/native-no-gpu.log
+      - name: Write acceptance receipt
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          comp=json.loads(Path('bundle/COMPOSITION.json').read_text())
+          image=json.loads(Path('evidence/inspect.json').read_text())[0]
+          seconds=int(Path('evidence/pull-end.txt').read_text())-int(Path('evidence/pull-start.txt').read_text())
+          r={'schema':'von-rag-r35-full-image-acceptance-1','status':'passed',
+             'manifest':comp['candidate_manifest'],'config':comp['candidate_config'],
+             'full_pull_seconds':seconds,'uncompressed_bytes':image['Size'],'layers':27,
+             'parent_layers_preserved':26,'source_hashes_verified':True,
+             'diagnostic_cli_queries':3,'native_no_cpu_fallback':True,
+             'native_amd_inference':False,'official_selfcheck_run':False,
+             'selected_submission_changed':False}
+          Path('evidence/ACCEPTANCE.json').write_text(json.dumps(r,indent=2)+'\n')
+          print(json.dumps(r,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r35-full-image-acceptance
+          path: evidence/
+          retention-days: 14
+
+  publish-prerelease:
+    needs: full-image-acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-rag-r35-staging
+          path: staging
+      - uses: actions/download-artifact@v4
+        with:
+          name: von-rag-r35-full-image-acceptance
+          path: acceptance
+      - name: Publish accepted small delta only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create von-rag-r35 --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease \
+            --title 'von-rag R35 candidate (AMD qualification pending)' \
+            --notes 'R35 integrates R27 evidence retention, R31 refusal handling, and the R34 grounded selection repair over the exact R24 image. Full Docker reconstruction passed. Native AMD timing/VRAM and official self-check are still pending; the selected LabLab submission is unchanged.' \
+            staging/von-rag-r35-bundle.zip staging/SHA256SUMS.txt acceptance/ACCEPTANCE.json
