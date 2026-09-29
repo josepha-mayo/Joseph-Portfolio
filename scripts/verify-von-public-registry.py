@@ -1,7 +1,7 @@
 """Anonymous HTTP acceptance for the deployed R24 registry. No private session.
 
 Large parent layers are not downloaded here; the subsequent Docker test does it.
-HEAD redirects keep their method. Every final length and new-layer hash is checked.
+HEAD redirects keep their method. Every final length and local-layer hash is checked.
 """
 from __future__ import annotations
 import argparse
@@ -75,19 +75,19 @@ def verify(origin,output):
         assert status==307 and not body,('redirect',i,status)
         location=header(h,'Location');p=urlsplit(location)
         assert p.scheme=='https' and not p.username and not p.password and not p.port and not p.fragment
-        if i<20:
+        if i<19:
             assert storage_host(p.hostname or ''),('storage_host',i,p.hostname)
         else:
             assert p.hostname==urlsplit(origin).hostname
             status,hh,blob,_=request(location,limit=layer['size'])
-            assert status==200 and len(blob)==layer['size'] and digest(blob)==layer['digest'],('new_blob',i,status)
-        routes.append({'digest':layer['digest'],'size':layer['size'],'head_exact':True,'redirect_host':p.hostname,'content_verified':i>=20})
+            assert status==200 and len(blob)==layer['size'] and digest(blob)==layer['digest'],('local_blob',i,status)
+        routes.append({'digest':layer['digest'],'size':layer['size'],'head_exact':True,'redirect_host':p.hostname,'content_verified':i>=19})
     status,h,page,_=request(origin+'/',limit=2_000_000)
     assert status==200 and b'<html' in page.lower(),('portfolio_home',status)
     receipt={'status':'passed','origin':origin,'image_reference':origin.removeprefix('https://')+'/von-rag@'+MANIFEST,
              'manifest_digest':MANIFEST,'config_digest':CONFIG,'metadata_head_verified':True,'head_routes_verified':26,
-             'new_layer_bytes_verified':sum(l['size'] for l in m['layers'][20:]),
-             'parent_storage_redirects_verified':20,'credentials_used':False,'portfolio_home_http':status,
+             'local_layer_bytes_verified':sum(l['size'] for l in m['layers'][19:]),
+             'parent_storage_redirects_verified':19,'credentials_used':False,'portfolio_home_http':status,
              'full_docker_pull':False,'native_gpu_inference':False,'seconds':time.monotonic()-started,'routes':routes}
     (output/'HTTP_ACCEPTANCE.json').write_text(json.dumps(receipt,indent=2)+'\n')
     return receipt
