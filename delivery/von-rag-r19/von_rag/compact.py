@@ -87,7 +87,9 @@ def answer_compact(index, query, model, *, deadline):
     audit={'backend':'native_gpu_compact_experimental','completed_model_response':False,
            'records':len(records),'protocol':'selection-v1','default_enabled':False}
     empty={'answer':'','citations':[],'confidence':0.0}
-    if not records:return empty,{**audit,'reason':'no_evidence'}
+    # Empty retrieval is not an execution failure. Ask the resident model to
+    # decide against an explicitly empty evidence list, then validate its output.
+    # No non-empty answer can pass parse_selection without real source records.
     if deadline-time.monotonic()<.5:return empty,{**audit,'reason':'no_time'}
     try:
         raw=model.chat(messages,max_tokens=96,deadline=deadline-.3)
