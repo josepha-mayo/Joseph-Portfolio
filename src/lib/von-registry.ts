@@ -1,6 +1,6 @@
 /** Read-only OCI metadata, with allowlisted redirects for every blob.
- * The response body is never an archive or a model: large bytes go to static
- * CDN assets or the existing public parent registry. No credentials required.
+ * Large bytes go to static CDN assets or the existing public parent registry.
+ * No credentials are accepted or required.
  */
 export interface RegistryData {
   manifestDigest: string;
@@ -30,8 +30,7 @@ function response(request: Request, status: number, body: string,
 }
 
 function error(request: Request, status: number, code: string): Response {
-  // Only request method/path/media preferences are reflected. Never include
-  // authorization, cookies, query strings or resolved storage URLs.
+  // Do not expose authorization, cookies, query strings or storage signatures.
   const path = new URL(request.url).pathname.slice(0, 220);
   const accept = (request.headers.get('Accept') || '(none)').slice(0, 300);
   const message = `${code} HTTP ${status}: ${request.method} ${path}; Accept=${accept}`;
@@ -62,7 +61,15 @@ export function registryResponse(request: Request, data: RegistryData): Response
   if (tail.startsWith('manifests/')) {
     const ref = tail.slice('manifests/'.length);
     if (ref !== data.manifestDigest && ref !== data.tag) return error(request, 404, 'MANIFEST_UNKNOWN');
-    if (!accepts(request.headers.get('Accept'), data.manifestType)) return error(request, 406, 'UNSUPPORTED');
+    // A digest identifies exactly one immutable representation: do not transcode
+    // it or negotiate another one. Deployed Docker requests have reached this
+    // adapter with only the last of their repeated Accept fields. RFC 9110
+    // section 12.4.1 permits serving the fixed representation without negotiation.
+    // Its original Content-Type and digest remain authoritative. Tag requests
+    // retain normal media negotiation; this is not support for legacy schemas.
+    if (ref !== data.manifestDigest && !accepts(request.headers.get('Accept'), data.manifestType)) {
+      return error(request, 406, 'UNSUPPORTED');
+    }
     return response(request, 200, data.manifest, {
       'Content-Type': data.manifestType, 'Docker-Content-Digest': data.manifestDigest,
     });
