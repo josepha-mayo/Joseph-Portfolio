@@ -1,0 +1,55 @@
+name: von-rag R26 exact Docker protocol diagnosis
+on:
+  push:
+    branches: [amd-r26-public-registry-20260929]
+    paths: [.github/workflows/von-rag-r26-protocol.yml]
+permissions:
+  contents: read
+jobs:
+  protocol:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      ORIGIN: https://6abb01d99664c700081ae71d--josephm.netlify.app
+      IMAGE: 6abb01d99664c700081ae71d--josephm.netlify.app/von-rag@sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686
+    steps:
+      - name: Record actual public metadata negotiation
+        run: |
+          mkdir -p receipts
+          python3 - <<'PY'
+          import urllib.request,urllib.error,json,os
+          from pathlib import Path
+          origin=os.environ['ORIGIN']
+          ref='sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686'
+          accepts=['application/vnd.docker.distribution.manifest.v2+json','application/vnd.docker.distribution.manifest.list.v2+json','application/vnd.oci.image.index.v1+json','application/vnd.oci.image.manifest.v1+json','application/vnd.docker.distribution.manifest.v2+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.oci.image.index.v1+json','*/*']
+          results=[]
+          for accept in accepts:
+              req=urllib.request.Request(origin+'/v2/von-rag/manifests/'+ref,headers={'Accept':accept,'Accept-Encoding':'identity'})
+              try:r=urllib.request.urlopen(req,timeout=12)
+              except urllib.error.HTTPError as e:r=e
+              with r:
+                  body=r.read(32768)
+                  results.append({'accept':accept,'status':r.code,'type':r.headers.get('Content-Type'),'length':r.headers.get('Content-Length'),'path':r.url.split('.app',1)[-1],'body':body.decode(errors='replace') if r.code>=400 else None})
+          Path('receipts/negotiation.json').write_text(json.dumps(results,indent=2))
+          print(json.dumps(results,indent=2))
+          PY
+      - name: Capture real Docker commands with bounded transfer
+        run: |
+          mkdir -p "$RUNNER_TEMP/empty-docker-config"
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker-config"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          docker version > receipts/docker-version.txt
+          set +e
+          timeout --kill-after=3s 20s docker manifest inspect "$IMAGE" > receipts/manifest-inspect.txt 2>&1
+          printf '%s\n' "$?" > receipts/manifest-exit.txt
+          timeout --kill-after=3s 12s docker -D pull "$IMAGE" > receipts/pull.txt 2>&1
+          printf '%s\n' "$?" > receipts/pull-exit.txt
+          set -e
+          cat receipts/pull.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r26-protocol-diagnosis
+          path: receipts/
+          retention-days: 7
