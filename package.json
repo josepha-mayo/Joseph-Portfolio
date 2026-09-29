@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "python3 scripts/prepare-von-registry.py",
+    "prebuild": "python3 scripts/prepare-von-registry.py && python3 scripts/prepare-von-registry-r35.py",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
