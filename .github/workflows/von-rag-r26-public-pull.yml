@@ -1,0 +1,94 @@
+name: von-rag R26 public registry Docker acceptance
+on:
+  push:
+    branches: [amd-r26-public-registry-20260929]
+    paths:
+      - .github/workflows/von-rag-r26-public-pull.yml
+      - scripts/verify-von-public-registry.py
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r26-public-pull
+  cancel-in-progress: false
+jobs:
+  anonymous-acceptance:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      ORIGIN: https://6abb035935c4fb0008acfc79--josephm.netlify.app
+      IMAGE: 6abb035935c4fb0008acfc79--josephm.netlify.app/von-rag@sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts
+      - name: Verify actual Docker manifest negotiation before large transfer
+        run: |
+          set -euo pipefail
+          mkdir -p receipts "$RUNNER_TEMP/r26-empty-docker-config"
+          export DOCKER_CONFIG="$RUNNER_TEMP/r26-empty-docker-config"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          timeout --kill-after=3s 30s docker manifest inspect "$IMAGE" > receipts/docker-manifest.json 2> receipts/docker-manifest-error.log
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('receipts/docker-manifest.json').read_text())
+          assert m['schemaVersion']==2 and len(m['layers'])==26
+          assert m['config']['digest']=='sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8'
+          PY
+      - name: Record strict HTTP conformance separately from Docker compatibility
+        id: http
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python3 scripts/verify-von-public-registry.py --origin "$ORIGIN" --output receipts | tee receipts/http.log
+      - name: Prepare disposable GitHub host only
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk.txt
+      - name: Fresh full anonymous Docker pull without localhost services
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/r26-empty-docker-config"
+          date -u +%s > receipts/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > receipts/docker-pull.log 2>&1
+          date -u +%s > receipts/pull-end.txt
+          docker image inspect "$IMAGE" > receipts/image-inspect.json
+      - name: Verify immutable image identity and actual compact runtime
+        env:
+          HTTP_PREFLIGHT_OUTCOME: ${{ steps.http.outcome }}
+        run: |
+          set -euo pipefail
+          docker run --rm --network none --entrypoint python3 "$IMAGE" -c 'from von_rag import runtime,compact; import hashlib,json,pathlib; assert runtime.answer_model is compact.answer_compact; p=pathlib.Path(runtime.__file__); print(json.dumps({"compact_default":True,"runtime_sha256":hashlib.sha256(p.read_bytes()).hexdigest()}))' > receipts/runtime.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          c=json.loads(Path('receipts/config.json').read_text())
+          i=json.loads(Path('receipts/image-inspect.json').read_text())[0]
+          r=json.loads(Path('receipts/runtime.json').read_text())
+          assert i['Id']=='sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8'
+          assert i['RootFS']['Layers']==c['rootfs']['diff_ids'] and len(i['RootFS']['Layers'])==26
+          assert r['compact_default'] and r['runtime_sha256']=='b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59'
+          seconds=int(Path('receipts/pull-end.txt').read_text())-int(Path('receipts/pull-start.txt').read_text())
+          http_ok=os.environ['HTTP_PREFLIGHT_OUTCOME']=='success'
+          result={'schema':'von-rag-r26-public-registry-acceptance-1','status':'passed',
+            'scope':'Full remote Docker download and exact image/runtime identity, not universal HTTP conformance or GPU qualification',
+            'image':os.environ['IMAGE'],'public_https_registry':True,'localhost_dependency':False,
+            'full_anonymous_docker_pull':True,'pull_seconds':seconds,'uncompressed_bytes':i['Size'],
+            'layers':26,'all_diffids_preserved':True,'compact_runtime_identity_preserved':True,
+            'http_preflight_passed':http_ok,'http_preflight_outcome':os.environ['HTTP_PREFLIGHT_OUTCOME'],
+            'empty_docker_credentials':True,'aws_credentials_absent':True,
+            'native_gpu_inference':False,'official_submission_verified':False}
+          Path('receipts/PUBLIC_REGISTRY_ACCEPTANCE.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r26-public-registry-acceptance
+          path: receipts/
+          retention-days: 14

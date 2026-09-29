@@ -1,0 +1,51 @@
+name: von-rag R26 existing-site registry verification
+on:
+  push:
+    branches: [amd-r26-public-registry-20260929]
+    paths:
+      - src/app/v2/**
+      - src/lib/von-registry*.ts
+      - scripts/prepare-von-registry.py
+      - tests/von-registry*.test.mjs
+      - .github/workflows/von-rag-r26-registry.yml
+      - netlify.toml
+      - package.json
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r26-registry-build
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Verify pinned layer distribution and HTTP handler
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python scripts/prepare-von-registry.py | tee receipts/materialization.json
+          node --experimental-strip-types --test tests/von-registry*.test.mjs | tee receipts/http-tests.log
+      - name: Build unchanged portfolio plus isolated registry route
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run build 2>&1 | tee receipts/next-build.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r26-registry-build
+          path: receipts/
+          retention-days: 14
