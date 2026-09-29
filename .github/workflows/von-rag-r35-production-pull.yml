@@ -1,0 +1,86 @@
+name: von-rag R35 production full pull
+on:
+  push:
+    branches: [amd-r35-registry-20260929]
+    paths: [.github/workflows/von-rag-r35-production-pull.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r35-production-pull
+  cancel-in-progress: false
+jobs:
+  pull:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 32
+    env:
+      IMAGE: josephm.netlify.app/von-rag-r35@sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb
+    steps:
+      - name: Verify metadata before large transfer
+        run: |
+          set -euo pipefail
+          mkdir -p receipts "$RUNNER_TEMP/empty-docker"
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          docker manifest inspect "$IMAGE" > receipts/manifest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('receipts/manifest.json').read_text())
+          assert m['schemaVersion']==2 and len(m['layers'])==27
+          assert m['config']['digest']=='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          assert m['layers'][-1]['digest']=='sha256:4d6cf8cbaf38faee27067193c307e8033014c89dd7c4f70d33c8b98e96142987'
+          PY
+      - name: Prepare disposable runner
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk-before.txt
+      - name: Fresh anonymous full pull
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker"
+          date -u +%s > receipts/start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > receipts/pull.log 2>&1
+          date -u +%s > receipts/end.txt
+          docker image inspect "$IMAGE" > receipts/inspect.json
+      - name: Verify exact image and current source files
+        run: |
+          set -euo pipefail
+          docker run --rm --network none --entrypoint python3 "$IMAGE" - <<'PY' > receipts/source.json
+          import hashlib,json,pathlib
+          from von_rag import runtime,compact
+          assert runtime.answer_model is compact.answer_compact
+          wanted=['compact.py','retrieval.py','runtime.py','selection_repair.py']
+          print(json.dumps({name:hashlib.sha256((pathlib.Path('/app/von_rag')/name).read_bytes()).hexdigest() for name in wanted}))
+          PY
+          curl -fsSL --compressed https://josephm.netlify.app/registry-assets/r35/config.json > receipts/config.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          image=json.loads(Path('receipts/inspect.json').read_text())[0]
+          config=json.loads(Path('receipts/config.json').read_text())
+          source=json.loads(Path('receipts/source.json').read_text())
+          expected={
+            'compact.py':'f412af4d28e92a013d66e62285f9a16911496e3a2cc1d1de8b869e33ee214d70',
+            'retrieval.py':'9da73502fe0f03c24fccd3821d4ce00b9013ef118f380b5302b2e7fdd17ecac5',
+            'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+            'selection_repair.py':'44c8d60911230feccf1ffdd590bb9eb9477ddffcb7a6a5c97ab736fc0539d003'}
+          assert source==expected
+          assert image['Id']=='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          assert image['RootFS']['Layers']==config['rootfs']['diff_ids'] and len(image['RootFS']['Layers'])==27
+          seconds=int(Path('receipts/end.txt').read_text())-int(Path('receipts/start.txt').read_text())
+          result={'schema':'von-rag-r35-production-pull-1','status':'passed','image':os.environ['IMAGE'],
+            'full_anonymous_pull':True,'empty_docker_credentials':True,'aws_credentials_absent':True,
+            'layers':27,'uncompressed_bytes':image['Size'],'pull_seconds':seconds,
+            'source_hashes_verified':True,'native_amd_inference':False,'selected_submission_changed':False}
+          Path('receipts/ACCEPTANCE.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r35-production-pull
+          path: receipts/
+          retention-days: 14
