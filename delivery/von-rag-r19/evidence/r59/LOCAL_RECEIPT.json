@@ -1,0 +1,28 @@
+{
+  "schema": "von-rag-r59-local-merged-1",
+  "verified_utc": "2026-09-30T21:05:47Z",
+  "base_candidate": "R58",
+  "base_commit": "caaeeeb7b638e6feba37ac6be67575710133f0c9",
+  "tests": {"tests": 360, "failures": 0, "errors": 0, "skipped": 0},
+  "final_log_sha256": "c90f614add7d3798f040613648f9cb4a3e439f82c97586bfe1db7ed79e31ea5a",
+  "final_junit_sha256": "2433fdfd7acf54c839e80320fa5b95fe38869afccce03ff8ba795804177b6539",
+  "focused_parallel_stack": {"tests": 19, "failures": 0},
+  "revision_live_gate": {"tests": 10, "failures": 0},
+  "source_sha256": {
+    "von_rag/parsers.py": "e890f40bcba07493c1f53ec90585d096312f75bff1fa1f862e3f2be30e4cfb4a",
+    "von_rag/retrieval.py": "0419b3a275c00ab5a8b2b202ba41892beffa16903b1e4d95e30311295f3d4444",
+    "tests/test_r51_mixed_status.py": "6cd4048899eccdfa1504aa4d3db23221b4d1bbc038cc59ff8caba02107ad4018",
+    "tests/test_r52_pdf_vision.py": "72d9f1fe67bc9c8e6073e7fa29cad0a998ba2941a232ef1bd50dd0f4120e241e",
+    "tests/test_r53_encoding_revision.py": "6c68cc39533570ba1b75ee789e3292d3c7f6f0ce6b7314e022c36676493c89ab",
+    "tests/test_r59_revision_live_eligibility.py": "9159472500bc794e1219a64847ed5cccd5a8cd6670c3366657835943bc465d69"
+  },
+  "salvaged_capabilities": ["utf16_bom_text_csv", "sparse_pdf_vision", "prose_retirement", "explicit_revision_families", "live_revision_eligibility"],
+  "rejected_source_branch": "d0ae97d339ce06f929eaeed0bc96fb50f700db22",
+  "rejected_source_ci": "failure",
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_selfcheck": false,
+  "hidden_grader_score": null,
+  "submission_changed": false,
+  "selected_submission": "R35"
+}

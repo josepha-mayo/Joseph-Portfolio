@@ -36,8 +36,29 @@ def identifiers(text):
 
 
 def retired(source, text=''):
-    return bool(re.search(r'(?:^|[/_.-])(withdrawn|superseded|obsolete|archived)(?:[/_.-]|$)', source, re.I)
-                or re.search(r'(?im)^\s*status\s*:\s*(withdrawn|superseded|obsolete)\b', text))
+    return bool(
+        re.search(r'(?:^|[/_.-])(withdrawn|superseded|obsolete|deprecated|archived)(?:[/_.-]|$)', source, re.I)
+        or re.search(r'(?im)^\s*status\s*:\s*(withdrawn|superseded|obsolete|deprecated|archived)\b', text)
+        or re.search(r'(?im)^\s*(?:withdrawn|superseded|obsolete|deprecated|archived|do\s+not\s+use)\b\s*(?:[-:\u2014]|$)', text)
+    )
+
+
+_REVISION_SUFFIX = re.compile(
+    r'(?i)(?:^|[_ .-])(?:rev(?:ision)?|r|v|version)[_ .-]?([0-9]+)([a-z]?)([0-9]*)$')
+
+
+def revision_family(source: str):
+    path = Path(source)
+    match = _REVISION_SUFFIX.search(path.stem)
+    if match is None:
+        return None
+    prefix = path.stem[:match.start()].rstrip('_ .-').casefold()
+    if not prefix:
+        return None
+    letter = ord(match.group(2).casefold()) - 96 if match.group(2) else 0
+    tail = int(match.group(3)) if match.group(3) else 0
+    family = (path.parent / (prefix + path.suffix.casefold())).as_posix()
+    return family, (int(match.group(1)), letter, tail)
 
 
 def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, file_timeout=8) -> dict:
@@ -50,6 +71,7 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
     os.close(fd)
     con = sqlite3.connect(tmp)
     skipped, files, nchunks = [], [], 0
+    document_status = {}
     try:
         con.executescript('''
         CREATE TABLE meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
@@ -85,6 +107,44 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                         data = json.loads(run.stdout)
                         if run.returncode: raise ValueError(data.get('error','parse failed')+': '+data.get('detail',''))
                         chunks = [Chunk(**x) for x in data['chunks']]
+                        # Sparse/image-only PDF pages need the same local vision
+                        # backend used for standalone images. Text-rich pages stay
+                        # on the ordinary parser path to avoid extra model calls.
+                        if ext == '.pdf' and vision is not None:
+                            import fitz
+                            from PIL import Image
+                            page_chars = {}
+                            for c in chunks:
+                                match = re.match(r'^page(\d+)', c.locator)
+                                if match:
+                                    page_no = int(match.group(1))
+                                    page_chars[page_no] = page_chars.get(page_no, 0) + len(c.text.strip())
+                            vision_pages = 0
+                            with fitz.open(p) as pdf:
+                                if pdf.needs_pass:
+                                    raise ValueError('encrypted PDF')
+                                if len(pdf) > 1000:
+                                    raise ValueError('PDF page budget exceeded')
+                                for page_no, page in enumerate(pdf, 1):
+                                    if page_chars.get(page_no, 0) >= 40:
+                                        continue
+                                    if not page.get_images(full=True):
+                                        continue
+                                    if vision_pages >= 64:
+                                        raise ValueError('PDF vision page budget exceeded')
+                                    area = max(1.0, float(page.rect.width * page.rect.height))
+                                    scale = min(1.5, max(0.5, (4_000_000.0 / area) ** 0.5))
+                                    pix = page.get_pixmap(matrix=fitz.Matrix(scale, scale), alpha=False)
+                                    image = Image.frombytes('RGB', (pix.width, pix.height), pix.samples)
+                                    try:
+                                        visual = vision(image, deadline=start+deadline_seconds)
+                                    finally:
+                                        image.close()
+                                    vision_pages += 1
+                                    if visual and str(visual).strip():
+                                        value = str(visual)
+                                        chunks.append(Chunk(rel, f'page{page_no}:vision', value,
+                                                            kv_fields(value), '', 'vision'))
                     # Source naming can retire a complete historical document,
                     # while an inline Status applies only to that literal record.
                     # Do not let one withdrawn row hide current rows in the same file.
@@ -96,6 +156,7 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                     scoped = re.compile(r'(?im)^\s*(?:product|model|device)\s*:')
                     source_retired = retired(rel, '') or any(
                         retired('', c.text) and not scoped.search(c.text) for c in chunks)
+                    document_status[rel] = bool(source_retired)
                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
                     for c in chunks:
@@ -110,6 +171,28 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                         nchunks += 1
                 except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as e:
                     skipped.append({'source':rel,'reason':str(e)[:260]})
+        # Explicit filename revision families prefer the newest eligible sibling
+        # for ordinary queries while preserving old revisions for historical mode.
+        families = collections.defaultdict(list)
+        for item in files:
+            parsed = revision_family(item['source'])
+            if parsed is not None:
+                family, revision = parsed
+                families[family].append((revision, item['source']))
+        for members in families.values():
+            # A newer sibling is eligible only if it actually retained at
+            # least one live chunk. A scoped `Status: withdrawn` record in a
+            # single-record r2 file must not suppress a valid r1 sibling.
+            eligible = [(revision, source) for revision, source in members
+                        if con.execute('SELECT 1 FROM chunks WHERE source=? AND retired=0 LIMIT 1',
+                                       (source,)).fetchone() is not None]
+            if len(eligible) < 2:
+                continue
+            newest = max(revision for revision, _ in eligible)
+            for revision, source in eligible:
+                if revision < newest:
+                    con.execute('UPDATE chunks SET retired=1 WHERE source=?', (source,))
+
         manifest = {'schema':1,'corpus':str(root),'files':files,'skipped':skipped,'chunks':nchunks,
                     'index_seconds':time.monotonic()-start,'images_read':sum(1 for f in files if Path(f['source']).suffix.lower() in {'.png','.jpg','.jpeg'})}
         con.execute('INSERT INTO meta VALUES(?,?)',('manifest',json.dumps(manifest)))
