@@ -29,11 +29,12 @@ def historical(query):
     return bool(re.search(r'\b(withdrawn|superseded|obsolete|archived|previous|old|revision\s+[a-z]?\d+)\b', query,re.I))
 
 
-def context_for(index, query, *, topk=12, graph=True, max_chars=30000):
+def context_for(index, query, *, topk=12, graph=True, max_chars=30000, record_filter=None):
     seeds=index.search(query, topk, historical=historical(query))
     chunks=index.expand(seeds,hops=2,max_chunks=40,historical=historical(query)) if graph else seeds
     out=[];n=0
     for c in chunks:
+        if record_filter is not None and not record_filter(c):continue
         cost=len(c['text'])+len(c.get('context',''))+200
         if n+cost>max_chars:continue
         out.append(c);n+=cost

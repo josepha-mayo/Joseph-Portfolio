@@ -1,0 +1,24 @@
+{
+  "schema": "von-rag-r50-local-software-1",
+  "verified_utc": "2026-09-30T13:05:56.477959+00:00",
+  "tested_base_commit": "4a5c17c76f5fe11739b98e35d412e34edc52279f",
+  "source_sha256": {
+    "von_rag/compact.py": "82cdb7a2f17c7a26418a8dcb87ad2d9e26e3af70074b8abb9b2f4ee8c0c2177e",
+    "von_rag/conflicts.py": "cba9d6af1ade898a2bc3d570c0dc68991ab5f99d8e04216af3fba849083b1b0a",
+    "von_rag/engine.py": "8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4",
+    "tests/test_r50_conditions.py": "b8a4d8d29a850c76835d8e3c45246cbf29f00551f9330cc2cce7a582da053aab",
+    "tests/test_r50_ambiguity.py": "10d7326fb7ce2079addefb66475ccefb76f3040010dce0ae92496227d84b56f5"
+  },
+  "python": "3.12.3",
+  "packages": {"pytest": "9.0.2", "PyMuPDF": "1.26.7", "python-docx": "1.2.0", "openpyxl": "3.1.5", "Pillow": "10.2.0"},
+  "baseline_new_controls": {"tests": 47, "failures": 19, "errors": 0, "skipped": 0, "seconds": 89.79, "log_sha256": "66299084ed0ce4ee04f7016d338267abb91718bc4ef24d6072efc007c4616029"},
+  "candidate_complete_suite": {"tests": 277, "failures": 0, "errors": 0, "skipped": 0, "seconds": 84.05, "log_sha256": "52d75bf768f78d3b499f4dfa1849e9c14f54b9822d87100205459489ae84ba51"},
+  "existing_tests": 230,
+  "new_authored_controls": 47,
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "submission_changed": false,
+  "hidden_grader_score": null,
+  "scope": "Software and scripted-response controls, not neural accuracy. Candidate-only patch."
+}

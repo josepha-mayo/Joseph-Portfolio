@@ -1,0 +1,35 @@
+{
+  "schema": "von-rag-r55-local-software-1",
+  "parent_commit": "3bb3191d69e74d4069696189a6b0a54facde7f93",
+  "tests": {"total": 318, "failures": 0, "errors": 0, "skipped": 0},
+  "existing_r50_tests": 277,
+  "new_r51_r55_controls": 41,
+  "full_log_sha256": "236ba4d550bd994cbd7c9b7c4d7d8621a51b9240ff9f1cec9603f753e21b981b",
+  "source_sha256": {
+    "von_rag/compact.py": "2bc94a5376a6d9eb0b39621ca6177fed9e18e62150208d96b21187546dc372a4",
+    "von_rag/conflicts.py": "0dc18e68d257c053c8c478ff23e1c3b42b7e8404e4e25954ba9f2a6aa5e35667",
+    "von_rag/engine.py": "8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4",
+    "von_rag/parsers.py": "16b5b2bfbd1fdcfe8141c1063c47ba86bbb32c65f456b0d7b9c54c829a61552f",
+    "von_rag/retrieval.py": "4cf5cdb26962a811f69f4005d2725eb3285593328ae0c7fe9dc36f1f9185909f",
+    "von_rag/selection_repair.py": "5d83f23307bd1419f7265a0b7be902f3cc2fd0ef520f7e891f7a248d510ca22e"
+  },
+  "test_sha256": {
+    "tests/test_r51_volume.py": "fd4c4ceb0e1abb2b354a579954a720b819c5c69a40e007503d26330a08fcd297",
+    "tests/test_r52_citation_minimality.py": "42cf32afb2045ba48ee2806d8fa65d5b98938a7fe73c600044a86469cb457b8a",
+    "tests/test_r53_retirement_scope.py": "77e99bfee0e8f1cc56beba99141d3456f99a8cf3e7171cca61d4cb1bff284704",
+    "tests/test_r54_property_scope.py": "36e624c878138617aada12d5ef6ceb28f39a27b76781e39743447baec5333452",
+    "tests/test_r55_python_authority.py": "6924fc4ed6973c4245eac281ae645194492a8dee24f589b35b847bd4d64e1a16"
+  },
+  "reproduced_failures": [
+    "wrong price-tier row passed grounding",
+    "unnecessary extra citation source passed exact-set output",
+    "one withdrawn record retired a current sibling in the same file",
+    "wrong explicit property value from the same product record passed",
+    "stale Python comment value passed despite AST-extracted current defaults"
+  ],
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "selected_submission_changed": false,
+  "hidden_grader_score": null
+}
