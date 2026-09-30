@@ -85,13 +85,27 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                         data = json.loads(run.stdout)
                         if run.returncode: raise ValueError(data.get('error','parse failed')+': '+data.get('detail',''))
                         chunks = [Chunk(**x) for x in data['chunks']]
-                    file_retired = any(retired(rel,c.text) for c in chunks)
+                    # A retirement marker in the source path is file-wide. An
+                    # unscoped status-only chunk is also a document declaration.
+                    # By contrast, Status: withdrawn inside an explicit
+                    # Product/Model/Device record is record-local, so a mixed
+                    # CSV/XLSX/document can still expose its current rows.
+                    source_retired = retired(rel, '')
+                    scope_keys = {'product', 'model', 'device'}
+                    def has_explicit_scope(chunk):
+                        keys={re.sub(r'[^a-z0-9]','',str(k).casefold()) for k in chunk.fields}
+                        if keys & scope_keys:
+                            return True
+                        return bool(re.search(r'(?im)^\s*(?:product|model|device)\s*:\s*\S', chunk.text))
+                    document_retired = source_retired or any(
+                        retired('', c.text) and not has_explicit_scope(c) for c in chunks)
                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
                     for c in chunks:
                         if not c.text: continue
+                        chunk_retired = document_retired or retired('', c.text)
                         con.execute('INSERT INTO chunks VALUES(?,?,?,?,?,?,?,?)',
-                            (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(file_retired)))
+                            (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(chunk_retired)))
                         body = ' '.join(tokens(c.source+' '+c.context+' '+c.text))
                         con.execute('INSERT INTO lex VALUES(?,?)',(c.cid,body))
                         for entity in identifiers(c.text+' '+c.context):
