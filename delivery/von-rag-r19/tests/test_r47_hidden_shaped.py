@@ -61,7 +61,9 @@ def test_conflicting_current_temperature_is_detected_and_refused_after_model_res
         def __init__(self): self.calls = 0
         def chat(self, *args, **kwargs):
             self.calls += 1
-            return '["82",[0]]'
+            # Evidence 0 is a.txt (81), not b.txt (82). The candidate must
+            # pass ordinary grounding before a conflict causes a refusal.
+            return '["81",[0]]'
     model = Model()
     try:
         conflicts = _explicit_current_conflict(index, "What is the maximum junction temperature of CF-900?")
