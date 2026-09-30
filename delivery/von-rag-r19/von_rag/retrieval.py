@@ -40,7 +40,7 @@ def retired(source, text=''):
                 or re.search(r'(?im)^\s*status\s*:\s*(withdrawn|superseded|obsolete)\b', text))
 
 
-def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, file_timeout=8) -> dict:
+def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, file_timeout=60) -> dict:
     root, output = root.resolve(strict=True), output.absolute()
     if not root.is_dir(): raise ValueError('corpus must be a directory')
     if output.is_relative_to(root): raise ValueError('index must be outside corpus')

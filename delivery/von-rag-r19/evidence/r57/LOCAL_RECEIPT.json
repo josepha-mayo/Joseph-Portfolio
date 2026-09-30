@@ -1,0 +1,33 @@
+{
+  "schema": "von-rag-r57-local-software-1",
+  "verified_utc": "2026-09-30T19:31:54.948411+00:00",
+  "parent_commit": "93eb6ac2be37f62b1cf7f464e66d6dd4c83da670",
+  "tests": {
+    "tests": 324,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "changed_sha256": {
+    "von_rag/retrieval.py": "0cd904425a1eebd2d14636aa37f0cc8f4f1ee13637c558ef93faeb485ff074e3",
+    "tests/test_r57_file_budget.py": "b3fdc8d04f6f648c06214651d95f6099d6bc798b793a9fd49e07c03807ec695a"
+  },
+  "full_log_sha256": "6701021b6a3241f7240271af87af295f1a7dc7e6bf780ce04dd18af97d1e7058",
+  "r56_tests": 321,
+  "new_controls": 3,
+  "benchmark_observation": {
+    "synthetic_valid_pdf_pages": 1000,
+    "bytes": 580003,
+    "elapsed_lower_bound_seconds": 23.0,
+    "completed": false,
+    "stopped_after_proving_old_8s_cap_insufficient": true
+  },
+  "old_default_file_timeout_seconds": 8,
+  "new_default_file_timeout_seconds": 60,
+  "global_index_deadline_unchanged": true,
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "selected_submission_changed": false,
+  "hidden_grader_score": null
+}
