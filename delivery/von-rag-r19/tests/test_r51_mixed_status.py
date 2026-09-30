@@ -83,6 +83,7 @@ class Scripted:
     def chat(self,messages,**kwargs):
         self.calls+=1
         payload=messages[-1]['content']
+        # Select the visible current row. The test checks old rows never enter prompt.
         assert 'MX-101' not in payload
         return json.dumps([self.answer,[0]])
 
