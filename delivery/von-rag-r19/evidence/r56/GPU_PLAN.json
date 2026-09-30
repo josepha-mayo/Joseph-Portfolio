@@ -1,0 +1,23 @@
+{
+  "schema": "von-r56-gpu-plan-1",
+  "created_utc": "2026-09-30T20:07:47.025386+00:00",
+  "candidate_commit": "7f1e0fbc440da96d818577b0104e9ef176a00e42",
+  "selected_baseline": "R35",
+  "candidate": "R56",
+  "official_cases": 10,
+  "stress_cases": 12,
+  "predeclared_new_cases": 24,
+  "questions_per_version": 46,
+  "versions": [
+    "r35",
+    "r56"
+  ],
+  "fresh_native_inference_required": true,
+  "container_selfcheck": false,
+  "gpu_run_started": false,
+  "reason_not_started": "AMD dashboard is signed out; old notebook backend returned 502.",
+  "no_paid_compute": true,
+  "submission_changed": false,
+  "script_sha256": "602be5e99c9320e282f18977863ccfbb883431d5ac0b4fc1090b8866543d68cc",
+  "stale_r48_refs": false
+}
