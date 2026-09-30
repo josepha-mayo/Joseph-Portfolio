@@ -1,5 +1,5 @@
 import r24 from '@/generated/von-registry-r24.json';
-import r35 from '@/generated/von-registry-r35.json';
+import r35 from '@/generated/von-registry-r35.json';\nimport r53 from '@/generated/von-registry-r53.json';
 import { registryResponse } from '@/lib/von-registry';
 import { resolveParentRedirect, staticMetadataRedirect } from '@/lib/von-registry-parent';
 
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 function selected(request: Request) {
   const path = new URL(request.url).pathname;
-  if (path.startsWith('/v2/von-rag-r35/')) return { data: r35, assets: 'r35' };
+  if (path.startsWith('/v2/von-rag-r53/')) return { data: r53, assets: 'r53' };\n  if (path.startsWith('/v2/von-rag-r35/')) return { data: r35, assets: 'r35' };
   return { data: r24, assets: 'r24' };
 }
 async function read(request: Request) {
