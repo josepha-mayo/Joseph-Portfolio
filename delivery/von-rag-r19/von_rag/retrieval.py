@@ -85,13 +85,24 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                         data = json.loads(run.stdout)
                         if run.returncode: raise ValueError(data.get('error','parse failed')+': '+data.get('detail',''))
                         chunks = [Chunk(**x) for x in data['chunks']]
-                    file_retired = any(retired(rel,c.text) for c in chunks)
+                    # Source naming can retire a complete historical document,
+                    # while an inline Status applies only to that literal record.
+                    # Do not let one withdrawn row hide current rows in the same file.
+                    # A retirement marker in the source name always applies to
+                    # the whole document. A standalone document-status chunk
+                    # (e.g. `Status: withdrawn` before the first record) also
+                    # applies globally. Status attached to an explicit
+                    # Product/Model/Device record remains record-local.
+                    scoped = re.compile(r'(?im)^\s*(?:product|model|device)\s*:')
+                    source_retired = retired(rel, '') or any(
+                        retired('', c.text) and not scoped.search(c.text) for c in chunks)
                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
                     for c in chunks:
                         if not c.text: continue
+                        chunk_retired = source_retired or retired('', c.text)
                         con.execute('INSERT INTO chunks VALUES(?,?,?,?,?,?,?,?)',
-                            (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(file_retired)))
+                            (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(chunk_retired)))
                         body = ' '.join(tokens(c.source+' '+c.context+' '+c.text))
                         con.execute('INSERT INTO lex VALUES(?,?)',(c.cid,body))
                         for entity in identifiers(c.text+' '+c.context):

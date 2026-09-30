@@ -1,0 +1,29 @@
+{
+  "schema": "von-rag-r56-local-software-1",
+  "verified_utc": "2026-09-30T20:04:14.577586+00:00",
+  "base_commit": "3bb3191d69e74d4069696189a6b0a54facde7f93",
+  "source_sha256": {
+    "von_rag/compact.py": "1598d8b473ba10a103ee25a43d0e443c0893a1da16c41053b3150f3f1d4162f7",
+    "von_rag/conflicts.py": "53230e698e09d524e63b1d92de82e90b780561b148d6500cd7db93f5617fbe33",
+    "von_rag/retrieval.py": "4cf5cdb26962a811f69f4005d2725eb3285593328ae0c7fe9dc36f1f9185909f",
+    "tests/test_r51_volume.py": "fd4c4ceb0e1abb2b354a579954a720b819c5c69a40e007503d26330a08fcd297",
+    "tests/test_r52_citation_minimality.py": "42cf32afb2045ba48ee2806d8fa65d5b98938a7fe73c600044a86469cb457b8a",
+    "tests/test_r53_retirement_scope.py": "77e99bfee0e8f1cc56beba99141d3456f99a8cf3e7171cca61d4cb1bff284704",
+    "tests/test_r54_property_scope.py": "72b98ddf13f7aa62fdd3e8ee402a707ab78722b10734c3febf23f0782804aaee",
+    "tests/test_r55_field_scope.py": "492798804eaecc9dead9f151f193cf6568ac6f69e9cc20d062791520a1f374d4",
+    "tests/test_r56_official_aliases.py": "d77fc6fcf696ab4f3d612229b69f1ba785cf0552c6350f95e0a052554eedbebd"
+  },
+  "tests": {
+    "tests": 328,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full_log_sha256": "a1e62250bd92af2876bb45359e3638cfdd4c6fbd7cc5a4069d7a1798e0a2b60a",
+  "junit_sha256": "d193b52cffc68f0f95f6371526d99f2ad8479ddc0dfac5409343ecae4d6159de",
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "submission_changed": false,
+  "hidden_grader_score": null
+}
