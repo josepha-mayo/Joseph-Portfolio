@@ -1,0 +1,60 @@
+name: von-rag R49 native-driver preflight
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - delivery/von-rag-r19/diagnostics/r49_native_pair.py
+      - delivery/von-rag-r19/diagnostics/r49_native_cli.py
+      - .github/workflows/von-rag-r49-driver.yml
+permissions:
+  contents: read
+jobs:
+  preflight:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19/diagnostics
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Compile drivers and validate predeclared case structure
+        run: |
+          python - <<'PY'
+          import ast,hashlib,importlib.util,json,tempfile
+          from pathlib import Path
+          root=Path('delivery/von-rag-r19/diagnostics')
+          output=Path('receipts');output.mkdir()
+          hashes={}
+          for name in ('r49_native_pair.py','r49_native_cli.py'):
+              p=root/name;ast.parse(p.read_text());hashes[name]=hashlib.sha256(p.read_bytes()).hexdigest()
+          spec=importlib.util.spec_from_file_location('pair',root/'r49_native_pair.py')
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          with tempfile.TemporaryDirectory() as d:
+              corpus=Path(d)/'corpus';cases=module.new_cases(corpus)
+              assert len(cases)==16 and len(set(c['id'] for c in cases))==16
+              assert len(list(corpus.iterdir()))==24
+              assert all(c['query'] and c['answers'] for c in cases)
+              for case in cases:
+                  assert all((corpus/source).is_file() for source in case['citations'])
+                  if case['answers']!=['']:
+                      assert any(case['answers'][0] in (corpus/source).read_text() for source in case['citations'])
+              module.save(output/'PREDECLARED_NEW_CASES.json',cases)
+          stress=module.stress_cases()
+          assert len(stress)==12 and len(set(c['id'] for c in stress))==12
+          result={'status':'passed','driver_sha256':hashes,'predeclared_new_cases':16,'new_corpus_files':24,
+                  'existing_stress_cases':12,'official_cases':10,'planned_paired_question_calls':76,
+                  'planned_fresh_cli_processes':20,'actual_gpu_calls_in_this_job':0}
+          (output/'PREFLIGHT.json').write_text(json.dumps(result,indent=2)+'\n')
+          for name in hashes:(output/name).write_bytes((root/name).read_bytes())
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r49-native-driver-preflight
+          path: receipts/
+          retention-days: 14
