@@ -1,0 +1,50 @@
+name: von-rag R39 HEAD transport checks
+on:
+  push:
+    branches: [amd-r39-registry-head-20260930]
+    paths:
+      - netlify/edge-functions/von-registry-head.js
+      - tests/von-registry-head.test.mjs
+      - .github/workflows/von-rag-r39-head.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r39-head
+  cancel-in-progress: false
+jobs:
+  tests-and-build:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare existing checksum-pinned registry metadata
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          npm ci
+          npm run prebuild > evidence/prebuild.log
+      - name: Check HEAD handlers and all existing registry tests
+        run: |
+          set -euo pipefail
+          node --experimental-strip-types --test tests/von-registry*.test.mjs | tee evidence/tests.log
+      - name: Verify full portfolio production build remains valid
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          set -euo pipefail
+          npm run build > evidence/build.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r39-head-source-checks
+          path: evidence/
+          retention-days: 14
