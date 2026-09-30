@@ -1,0 +1,22 @@
+{
+  "schema": "von-r58-gpu-plan-1",
+  "created_utc": "2026-09-30T20:22:05.711074+00:00",
+  "runtime_candidate_commit": "e20ecc1b6abc8ed24d6fe81139553ca6691f5ec3",
+  "selected_baseline": "R35",
+  "candidate": "R58",
+  "official_cases": 10,
+  "stress_cases": 12,
+  "predeclared_new_cases": 32,
+  "questions_per_version": 54,
+  "versions": [
+    "r35",
+    "r58"
+  ],
+  "fresh_native_inference_required": true,
+  "container_selfcheck": false,
+  "gpu_run_started": false,
+  "reason_not_started": "AMD dashboard signed out; prior notebook backend returned 502.",
+  "submission_changed": false,
+  "no_paid_compute": true,
+  "script_sha256": "6d8274342f0eaea65385965ddb192344f253280ebc0180addea770c46b9fd48c"
+}
