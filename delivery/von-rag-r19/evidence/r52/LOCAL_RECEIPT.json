@@ -1,0 +1,27 @@
+{
+  "schema": "von-rag-r52-local-software-1",
+  "verified_utc": "2026-09-30T14:38:53.413410+00:00",
+  "parent_commit": "4470127f70d9896cff052bef20f503371ab0482e",
+  "source_sha256": {
+    "von_rag/retrieval.py": "12a0d47bffccee8047d0661c59e234293418decee6400a496015d1deed888f37",
+    "tests/test_r52_pdf_vision.py": "72d9f1fe67bc9c8e6073e7fa29cad0a998ba2941a232ef1bd50dd0f4120e241e"
+  },
+  "baseline_new_controls": {
+    "tests": 5,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0
+  },
+  "candidate_complete_suite": {
+    "tests": 287,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "baseline_log_sha256": "b18e91ff5ef78e2be5683729f75b0d3ef70e92ae90060693f3fe3c3608da4869",
+  "candidate_log_sha256": "ed31a61726f4cc387d2b16e7b3fff1690347b742dd18a43f981b2a5f0b7dd83c",
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "submission_changed": false
+}
