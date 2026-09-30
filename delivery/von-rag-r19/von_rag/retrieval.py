@@ -85,6 +85,45 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                         data = json.loads(run.stdout)
                         if run.returncode: raise ValueError(data.get('error','parse failed')+': '+data.get('detail',''))
                         chunks = [Chunk(**x) for x in data['chunks']]
+                        # A harder corpus may contain a scanned/image-only PDF.
+                        # Text extraction legitimately returns no useful chunk
+                        # there, but PDF is still a supported document type.
+                        # Invoke the same real vision backend only for sparse
+                        # pages that actually contain embedded raster images.
+                        if ext == '.pdf' and vision is not None:
+                            import fitz
+                            from PIL import Image
+                            page_chars = {}
+                            for c in chunks:
+                                match = re.match(r'^page(\d+)', c.locator)
+                                if match:
+                                    page = int(match.group(1))
+                                    page_chars[page] = page_chars.get(page, 0) + len(c.text.strip())
+                            vision_pages = 0
+                            with fitz.open(p) as pdf:
+                                if pdf.needs_pass:
+                                    raise ValueError('encrypted PDF')
+                                if len(pdf) > 1000:
+                                    raise ValueError('PDF page budget exceeded')
+                                for page_no, page in enumerate(pdf, 1):
+                                    if page_chars.get(page_no, 0) >= 40:
+                                        continue
+                                    if not page.get_images(full=True):
+                                        continue
+                                    if vision_pages >= 64:
+                                        raise ValueError('PDF vision page budget exceeded')
+                                    area = max(1.0, float(page.rect.width * page.rect.height))
+                                    scale = min(1.5, max(0.5, (4_000_000.0 / area) ** 0.5))
+                                    pix = page.get_pixmap(matrix=fitz.Matrix(scale, scale), alpha=False)
+                                    image = Image.frombytes('RGB', (pix.width, pix.height), pix.samples)
+                                    try:
+                                        visual = vision(image, deadline=start+deadline_seconds)
+                                    finally:
+                                        image.close()
+                                    vision_pages += 1
+                                    if visual and str(visual).strip():
+                                        chunks.append(Chunk(rel, f'page{page_no}:vision', str(visual),
+                                                            kv_fields(str(visual)), '', 'vision'))
                     # A retirement marker in the source path is file-wide. An
                     # unscoped status-only chunk is also a document declaration.
                     # By contrast, Status: withdrawn inside an explicit
