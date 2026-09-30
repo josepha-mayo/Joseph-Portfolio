@@ -1,4 +1,4 @@
-name: von-rag R50 condition-scope regression
+name: von-rag R55 hidden-set hardening
 on:
   push:
     branches: [amd-r50-condition-scope-20260930]
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: von-r50-${{ github.ref }}
+  group: von-r55-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   software:
@@ -31,42 +31,44 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -r requirements-test.txt
-      - name: Check exact locally tested patch bytes
+      - name: Check exact locally tested R55 bytes
         run: |
           python - <<'PY'
           import hashlib,json
           from pathlib import Path
-          receipt=json.loads(Path('evidence/r50/LOCAL_RECEIPT.json').read_text())
-          for name,expected in receipt['source_sha256'].items():
-              actual=hashlib.sha256(Path(name).read_bytes()).hexdigest()
-              assert actual==expected,(name,expected,actual)
-          print('All five source/test hashes match the local passing candidate.')
+          receipt=json.loads(Path('evidence/r55/LOCAL_RECEIPT.json').read_text())
+          for group in ('source_sha256','test_sha256'):
+              for name,expected in receipt[group].items():
+                  actual=hashlib.sha256(Path(name).read_bytes()).hexdigest()
+                  assert actual==expected,(name,expected,actual)
+          print('R55 source and control hashes match local passing candidate.')
           PY
       - run: python -m compileall -q von_rag
       - name: Full software suite
         run: |
           set -euo pipefail
-          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r50/ci-tests.xml | tee evidence/r50/ci-tests.log
+          mkdir -p evidence/r55
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r55/ci-tests.xml | tee evidence/r55/ci-tests.log
           python - <<'PY'
           import hashlib,importlib.metadata,json,os,sys,xml.etree.ElementTree as ET
           from pathlib import Path
-          suites=ET.parse('evidence/r50/ci-tests.xml').getroot().findall('testsuite')
+          suites=ET.parse('evidence/r55/ci-tests.xml').getroot().findall('testsuite')
           totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-          assert totals=={'tests':277,'failures':0,'errors':0,'skipped':0},totals
-          out={'schema':'von-rag-r50-ci-software-1','commit':os.environ['GITHUB_SHA'],
+          assert totals=={'tests':318,'failures':0,'errors':0,'skipped':0},totals
+          out={'schema':'von-rag-r55-ci-software-1','commit':os.environ['GITHUB_SHA'],
                'python':sys.version,'tests':totals,
                'packages':{p:importlib.metadata.version(p) for p in ['pytest','PyMuPDF','python-docx','openpyxl','Pillow']},
                'source_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(Path('von_rag').glob('*.py'))},
                'fresh_model_calls':0,'native_amd_validation':False,'submission_changed':False}
-          Path('evidence/r50/CI_RECEIPT.json').write_text(json.dumps(out,indent=2)+'\n')
+          Path('evidence/r55/CI_RECEIPT.json').write_text(json.dumps(out,indent=2)+'\n')
           print(json.dumps(out,indent=2))
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: von-rag-r50-software-python-${{ matrix.python }}
+          name: von-rag-r55-software-python-${{ matrix.python }}
           path: |
-            delivery/von-rag-r19/evidence/r50/
+            delivery/von-rag-r19/evidence/r55/
             delivery/von-rag-r19/von_rag/
-            delivery/von-rag-r19/tests/test_r50_*.py
+            delivery/von-rag-r19/tests/test_r5*.py
           retention-days: 14

@@ -19,12 +19,101 @@ def _key(value):
 def _property(query):
     words = set(re.findall(r'[a-z]+', query.casefold()))
     if {'junction', 'temperature'} <= words and words & {'maximum', 'max'}:
-        return 'temperature', {'maxjunctiontemperature', 'maximumjunctiontemperature'}
+        return 'temperature', {'tjmax', 'maxjunctiontemperature', 'maximumjunctiontemperature'}
+    if {'junction', 'temperature'} <= words and words & {'minimum', 'min'}:
+        return 'temperature', {'tjmin', 'minjunctiontemperature', 'minimumjunctiontemperature'}
     if {'board', 'revision'} <= words:
-        return 'revision', {'boardrevision', 'revision'}
+        return 'revision', {'boardrevision', 'revision', 'rev'}
     if {'customer', 'sampling'} <= words and 'quarter' in words:
-        return 'quarter', {'customersamplingquarter', 'samplingquarter', 'quarter'}
+        return 'quarter', {'customersamplingquarter', 'samplingquarter', 'targetquarter', 'quarter'}
     return None, set()
+
+
+def requested_field_keys(query):
+    """Return explicit scalar-field aliases only for clearly supported questions."""
+    kind, aliases = _property(query)
+    if aliases:
+        return aliases
+    words = set(re.findall(r'[a-z]+', query.casefold()))
+    if {'unit', 'price'} <= words:
+        return {'unitprice', 'price', 'cost'}
+    if {'error', 'code'} <= words:
+        return {'errorcode', 'code'}
+    if 'timeout' in words:
+        return {'batchtimeout', 'defaultbatchtimeout', 'timeout', 'batchtimeoutseconds'}
+    if 'firmware' in words and words & {'fixed', 'fix', 'resolved', 'release', 'version'}:
+        return {'fixedin', 'fixedversion', 'firmware', 'firmwareversion', 'fixversion', 'resolvedin'}
+    if 'part' in words and words & {'number', 'replaceable', 'replacement'}:
+        return {'partnumber', 'replacementpart', 'partno', 'pn', 'sku'}
+    if {'lead', 'time'} <= words:
+        return {'leadtime', 'leadtimedays'}
+    return None
+
+
+def record_value_matches_query_property(record, query, answer):
+    """Reject a proved wrong field, but never infer structure from plain prose.
+
+    If the answer is the explicit value of a structured field, that field must
+    match the clearly requested property. Records without such structure remain
+    eligible for model reasoning.
+    """
+    aliases = requested_field_keys(query)
+    if not aliases:
+        return True
+    text = record.get('text', '')
+    fields = record.get('fields') or kv_fields(text)
+    fields = {_key(k): str(v).strip() for k, v in fields.items()}
+    bearing = {k for k, v in fields.items() if v and contains_value(v, answer)}
+    if not bearing:
+        return True
+    if bearing & aliases:
+        return True
+    # Preserve legacy generic Temperature fields only when the record does not
+    # also declare a more specific min/max temperature field. This keeps a lone
+    # `Temperature: 82 C` usable without allowing maximum to satisfy minimum.
+    temperature_specific = {
+        'tjmax','maxjunctiontemperature','maximumjunctiontemperature',
+        'tjmin','minjunctiontemperature','minimumjunctiontemperature'}
+    if 'temperature' in bearing and (_property(query)[0] == 'temperature'):
+        if not (set(fields) & temperature_specific):
+            return True
+    # Generic Parameter/Property + Value rows (including static Python
+    # defaults) carry the semantic field name in a sibling cell.
+    if 'value' in bearing:
+        semantic = fields.get('parameter', fields.get('property', ''))
+        if _key(semantic) in aliases:
+            return True
+    return False
+
+
+def source_structured_value_matches(records, record, query, answer):
+    """Use structured Python facts to veto stale values seen only in prose/comments.
+
+    The Python parser emits static constants/defaults as explicit records. When
+    at least one requested-property value exists in the same source, a raw text
+    selection must agree with one of those values. Other file types are left
+    untouched because they do not have this parser-specific stronger witness.
+    """
+    aliases = requested_field_keys(query)
+    source = str(record.get('source', ''))
+    if not aliases or not source.lower().endswith('.py'):
+        return True
+    candidates = []
+    for sibling in records:
+        if str(sibling.get('source', '')) != source:
+            continue
+        fields = sibling.get('fields') or kv_fields(sibling.get('text', ''))
+        fields = {_key(k): str(v).strip() for k, v in fields.items()}
+        for key, value in fields.items():
+            if key in aliases and value:
+                candidates.append(value)
+        value = fields.get('value', '')
+        semantic = fields.get('parameter', fields.get('property', ''))
+        if value and _key(semantic) in aliases:
+            candidates.append(value)
+    if not candidates:
+        return True
+    return any(contains_value(value, answer) for value in candidates)
 
 
 def _scalar(value, kind):
@@ -43,6 +132,7 @@ def _scalar(value, kind):
 # Unsupported syntax/units and ambiguous fields remain the model's job; never
 # silently turn comparisons, alternatives, or ranges into equality filters.
 _VOLTAGE_KEYS = {'voltage', 'supplyvoltage', 'operatingvoltage'}
+_VOLUME_KEYS = {'volume', 'unitvolume', 'quantity', 'qty'}
 _NUMBER = r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)'
 _UNIT = r'(?:mV|mv|kV|kv|V|v|(?i:millivolts?|kilovolts?|volts?))'
 _QUANTITY = re.compile(r'(' + _NUMBER + r')\s*(' + _UNIT + r')')
@@ -82,6 +172,52 @@ def query_voltage(query):
     return _volts(matches[0][1])
 
 
+def query_volume(query):
+    """Return one explicit unit-volume tier for a unit-price question."""
+    words = set(re.findall(r'[a-z]+', query.casefold()))
+    if 'price' not in words or 'unit' not in words or len(identifiers(query)) != 1:
+        return None
+    if _UNSAFE_CONDITION.search(query):
+        return None
+    matches = list(re.finditer(
+        r'(?i:\bat\s+)(\d[\d,]*)(?:\s+)(?:unit|units)(?:\s+volume)?'
+        r'(?=\s|$|[?.,;)])', query))
+    if len(matches) != 1:
+        return None
+    # More than one explicit "<number> unit(s)" quantity is ambiguous.
+    if len(re.findall(r'(?i)\b\d[\d,]*\s+(?:unit|units)\b', query)) != 1:
+        return None
+    return int(matches[0][1].replace(',', ''))
+
+
+def _volume_values(fields, text=''):
+    values = [fields[k] for k in _VOLUME_KEYS if k in fields]
+    for line in text.splitlines():
+        match = re.match(r'\s*([^:]{1,80}):\s*(.*?)\s*$', line)
+        if match and _key(match[1]) in _VOLUME_KEYS:
+            values.append(match[2])
+    return values
+
+
+def _record_volume(fields, text=''):
+    values = _volume_values(fields, text)
+    if not values:
+        return None
+    normalized = []
+    for value in values:
+        raw = str(value).strip().replace(',', '')
+        if not re.fullmatch(r'\d+', raw):
+            return None
+        normalized.append(int(raw))
+    if len(set(normalized)) != 1:
+        return None
+    return normalized[0]
+
+
+def has_query_conditions(query):
+    return query_voltage(query) is not None or query_volume(query) is not None
+
+
 def _voltage_values(fields, text=''):
     values = [fields[k] for k in _VOLTAGE_KEYS if k in fields]
     # A dict alone loses repeated keys. Preserve all explicit voltage lines:
@@ -111,14 +247,23 @@ def _ambiguous_voltages(fields, text):
 
 
 def record_matches_query_conditions(record, query):
-    """Exclude only a proved mismatch, preserving records with missing context."""
-    requested = query_voltage(query)
-    if requested is None:
+    """Exclude only proved condition mismatches; unknown conditions stay visible."""
+    requested_voltage = query_voltage(query)
+    requested_volume = query_volume(query)
+    if requested_voltage is None and requested_volume is None:
         return True
-    fields = record.get('fields') or kv_fields(record.get('text', ''))
+    text = record.get('text', '')
+    fields = record.get('fields') or kv_fields(text)
     fields = {_key(k): str(v).strip() for k, v in fields.items()}
-    observed = _record_volts(fields, record.get('text', ''))
-    return observed is None or observed == requested
+    if requested_voltage is not None:
+        observed_voltage = _record_volts(fields, text)
+        if observed_voltage is not None and observed_voltage != requested_voltage:
+            return False
+    if requested_volume is not None:
+        observed_volume = _record_volume(fields, text)
+        if observed_volume is not None and observed_volume != requested_volume:
+            return False
+    return True
 
 
 def _qualifiers(fields, excluded, text=''):
