@@ -1,0 +1,25 @@
+{
+  "schema": "von-rag-r58-local-software-1",
+  "verified_utc": "2026-09-30T20:20:00.032740+00:00",
+  "base_branch_head": "8ff56802756aa77ed0dc530a36bdffbf0cb96e8f",
+  "source_sha256": {
+    "von_rag/compact.py": "2c6370bfeb838c250a7ec9811f4be5f5f828576941cf9abc0d3aa83efc25c794",
+    "von_rag/conflicts.py": "266a3e1bff812219dfb28b6b6f0ae23b7b48b71b11e18074dec6fcdd0d4256e0",
+    "von_rag/retrieval.py": "4cf5cdb26962a811f69f4005d2725eb3285593328ae0c7fe9dc36f1f9185909f",
+    "tests/test_r57_premise_citations.py": "b3b9a83133ca6ce33ba16441ceff7e18a86c64de317898e664f760b78c1a2730",
+    "tests/test_r58_condition_proof.py": "b2839f5c0b36359e088ca94a06f5d4181b9d704a49edd402121b084f0c9a5969"
+  },
+  "tests": {
+    "tests": 340,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "log_sha256": "ac9aa1c5781dcf787bbecd5eed4eb1490222742a25dc4ef661f18c696d8305fe",
+  "junit_sha256": "4290335050a147bbfe2d07b56792db70ecff9e764d29201c316d522f7795e31e",
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "submission_changed": false,
+  "hidden_grader_score": null
+}

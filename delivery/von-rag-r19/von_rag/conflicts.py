@@ -220,6 +220,36 @@ def _ambiguous_voltages(fields, text):
     return len(set(normalized)) > 1
 
 
+def record_proves_query_conditions(record, query):
+    """A final value witness cannot rely on an explicit unknown condition.
+
+    Retrieval remains permissive, but when the record declares the requested
+    condition family, that declaration must parse unambiguously and match.
+    Records with no structured condition field remain model-visible for legacy
+    prose handling.
+    """
+    requested_voltage = query_voltage(query)
+    requested_volume = query_volume(query)
+    if requested_voltage is None and requested_volume is None:
+        return True
+    text = record.get('text', '')
+    fields = record.get('fields') or kv_fields(text)
+    fields = {_key(k): str(v).strip() for k, v in fields.items()}
+    if requested_voltage is not None:
+        declared = _voltage_values(fields, text)
+        if declared:
+            observed = _record_volts(fields, text)
+            if observed is None or observed != requested_voltage:
+                return False
+    if requested_volume is not None:
+        declared = _volume_values(fields, text)
+        if declared:
+            observed = _record_volume(fields, text)
+            if observed is None or observed != requested_volume:
+                return False
+    return True
+
+
 def record_matches_query_conditions(record, query):
     """Exclude only proved condition mismatches; unknown conditions stay visible."""
     requested_voltage = query_voltage(query)
