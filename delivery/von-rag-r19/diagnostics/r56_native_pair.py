@@ -1,0 +1,245 @@
+"""Paired real AMD source-path evaluation. Not the container self-check.
+
+Uses the existing pinned checkpoint and production reader. No paid resources,
+no submission changes, no label-derived responses, and no CPU fallback.
+"""
+from __future__ import annotations
+import argparse
+import hashlib
+import importlib
+import json
+import os
+from pathlib import Path
+import random
+import shutil
+import sys
+import threading
+import time
+import urllib.request
+import zipfile
+import io
+
+COMMIT='b08d3f49c9ed663f3583bf0dcc9529230e26fb2e'
+RAW='https://raw.githubusercontent.com/josepha-mayo/Joseph-Portfolio/'+COMMIT+'/delivery/von-rag-r19/'
+KIT='https://storage.googleapis.com/lablab-static-eu/share/mc3-starter-kit.zip'
+KIT_SHA='1173aef83fa06828b1acba231bc033f52658d4f9714d6a61a17873e4607f0829'
+BASE_HASHES={
+ '__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+ 'engine.py':'c8c06fc0a9a00a6b666fe58fa7b3ca68e72128658ba08c4d9653fb02fa26817c',
+ 'native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+ 'parsers.py':'ecc04cd20eaa001267d54b5af612b9d1ed78548a18ed0231849a41f70bbbc2a5',
+ 'proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+ 'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+ 'compact.py':'f412af4d28e92a013d66e62285f9a16911496e3a2cc1d1de8b869e33ee214d70',
+ 'retrieval.py':'9da73502fe0f03c24fccd3821d4ce00b9013ef118f380b5302b2e7fdd17ecac5',
+ 'selection_repair.py':'44c8d60911230feccf1ffdd590bb9eb9477ddffcb7a6a5c97ab736fc0539d003'}
+CHANGED={
+ 'compact.py':'2bc94a5376a6d9eb0b39621ca6177fed9e18e62150208d96b21187546dc372a4',
+ 'conflicts.py':'0dc18e68d257c053c8c478ff23e1c3b42b7e8404e4e25954ba9f2a6aa5e35667',
+ 'engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+ 'parsers.py':'16b5b2bfbd1fdcfe8141c1063c47ba86bbb32c65f456b0d7b9c54c829a61552f',
+ 'retrieval.py':'4cf5cdb26962a811f69f4005d2725eb3285593328ae0c7fe9dc36f1f9185909f',
+ 'selection_repair.py':'5d83f23307bd1419f7265a0b7be902f3cc2fd0ef520f7e891f7a248d510ca22e'}
+
+
+def sha(data):return hashlib.sha256(data).hexdigest()
+
+def save(path,value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    tmp=path.with_suffix(path.suffix+'.tmp')
+    tmp.write_text(json.dumps(value,indent=2,ensure_ascii=False)+'\n')
+    os.replace(tmp,path)
+
+def fetch(url,expected,limit):
+    request=urllib.request.Request(url,headers={'User-Agent':'von-r56-native-pair/1.0'})
+    with urllib.request.urlopen(request,timeout=30) as response:data=response.read(limit+1)
+    if len(data)>limit or sha(data)!=expected:raise ValueError('Public input identity differs')
+    return data
+
+def activate(source,vendor):
+    for name in list(sys.modules):
+        if name=='von_rag' or name.startswith('von_rag.'):del sys.modules[name]
+    sys.path[:]=[p for p in sys.path if not any(p.endswith('/source-'+v) for v in ('r35','r48','r55'))]
+    sys.path.insert(0,str(source))
+    os.environ['PYTHONPATH']=os.pathsep.join([str(source),str(vendor)])
+    importlib.invalidate_caches()
+
+
+def new_cases(root):
+    """Predeclared, deterministic development cases. Labels stay outside corpus."""
+    root.mkdir()
+    rng=random.Random(490073)
+    cases=[]
+    def put(name,text):(root/name).write_text(text)
+    def case(name,q,a,c):cases.append({'id':name,'query':q,'answers':[a],'citations':c})
+    for i in range(6):
+        one=f'RN-{rng.randrange(20000,80000)}';two=one+'1'
+        q1=f'Q{rng.randrange(1,5)} FY{rng.randrange(32,38)}';q2='Q1 FY41'
+        name=f'roadmap_{i}.txt'
+        put(name,f'Product: {one}\nCustomer sampling quarter: {q1}\nProduct: {two}\nCustomer sampling quarter: {q2}\n')
+        case('scope-'+str(i),f'In which quarter does {one} enter customer sampling?',q1,[name])
+    for i in range(4):
+        product=f'CX-{rng.randrange(20000,80000)}';base=70+i*3
+        for suffix,value in [('a',str(base)),('b',str(base+1))]:
+            put(f'conflict_{i}_{suffix}.txt',f'Product: {product}\nMaximum junction temperature: {value}\nStatus: current\n')
+        case('conflict-'+str(i),f'What is the maximum junction temperature of {product}?','',[])
+    for i in range(4):
+        product=f'QV-{rng.randrange(20000,80000)}'
+        for volts,value,suffix in [('3','81','a'),('5','96','b')]:
+            put(f'voltage_{i}_{suffix}.txt',f'Product: {product}\nVoltage: {volts} V\nMaximum junction temperature: {value}\nStatus: current\n')
+        case('condition-'+str(i),f'What is the maximum junction temperature of {product} at 3 V?','81',[f'voltage_{i}_a.txt'])
+    for i in range(2):
+        product=f'PD-{rng.randrange(20000,80000)}';name=f'properties_{i}.txt'
+        put(name,f'Product: {product}\nMinimum junction temperature: -20\nMaximum junction temperature: 104\nStatus: current\n')
+        case('property-'+str(i),f'What is the minimum junction temperature of {product}?','-20',[name])
+    for i in range(4):
+        product=f'VP-{rng.randrange(20000,80000)}';name=f'prices_{i}.csv'
+        put(name,f'Product,Volume,Unit price\n{product},1000,139.00\n{product},25000,112.50\n')
+        case('volume-'+str(i),f'What is the unit price of {product} at 25000 unit volume?','112.50',[name])
+    for i in range(2):
+        old=f'OLD-{rng.randrange(20000,80000)}';new=f'NEW-{rng.randrange(20000,80000)}';name=f'mixed_status_{i}.txt'
+        put(name,f'Product: {old}\nMaximum junction temperature: 105\nStatus: withdrawn\n\nProduct: {new}\nMaximum junction temperature: 94\nStatus: current\n')
+        case('mixed-retirement-'+str(i),f'What is the maximum junction temperature of {new}?','94',[name])
+    put('python_timeout.py','# Historical note: old default was 60 seconds\nBATCH_TIMEOUT = 180\ndef ingest(timeout=180):\n    return timeout\n')
+    case('python-stale-comment','What is the default batch timeout, in seconds, in the ingest service?','180',['python_timeout.py'])
+    for i in range(2):
+        product=f'CD-{rng.randrange(20000,80000)}';main=f'citation_main_{i}.txt';note=f'citation_note_{i}.txt'
+        put(main,f'Product: {product}\nMaximum junction temperature: 83\nStatus: current\n')
+        put(note,f'Product: {product}\nQualification note: current platform support remains active.\n')
+        case('citation-minimal-'+str(i),f'What is the maximum junction temperature of {product}?','83',[main])
+    return cases
+
+
+def stress_cases():
+    rows=[
+      ('crowding','What is the maximum junction temperature of ZX-1057?','82',['specs/ZX-1057.txt']),
+      ('similar-id','What is the maximum junction temperature of ZX-10570?','199',['specs/ZX-10570.txt']),
+      ('long-record','What is the maximum junction temperature of LM-482?','117',['specs/LM-482.txt']),
+      ('injection','What is the maximum junction temperature of PI-771?','88',['specs/PI-771.txt']),
+      ('numeric-boundary','What is the maximum junction temperature of NB-194?','94',['specs/NB-194.txt']),
+      ('quarter','In which quarter does DN-315 enter customer sampling?','Q3 FY31',['planning/roadmap.txt']),
+      ('revision','What is the board revision of AS-7419?','REV-D4',['specs/AS-7419.txt']),
+      ('price','What is the unit price of RP-418 at 25000 unit volume?','112.50',['support/prices.csv']),
+      ('missing-price','What is the unit price of RP-418 at 50000 unit volume?','',[]),
+      ('three-hop','The PX-418 production log reports voltage drift. Which firmware fixed the underlying defect?','2.11.7',['logs/production.log','support/tickets.csv','support/fixes.csv']),
+      ('python-default','What is the default batch timeout, in seconds, in the ingest service?','240',['engineering/service.py']),
+      ('ambiguous-current','What is the maximum junction temperature of CF-900?','',[])]
+    return [{'id':n,'query':q,'answers':[a],'citations':c} for n,q,a,c in rows]
+
+
+def prepare(root,previous):
+    if (root/'PREPARATION.json').exists():raise FileExistsError('Use a fresh experiment directory')
+    root.mkdir(parents=True,exist_ok=True)
+    src=previous/'source'
+    for name,expected in BASE_HASHES.items():
+        assert sha((src/'von_rag'/name).read_bytes())==expected,('baseline',name)
+    reader=(src/'von_read/native_reader.py').read_bytes()
+    assert hashlib.sha1(b'blob '+str(len(reader)).encode()+b'\0'+reader).hexdigest()=='a6911c1f83d6120ad0f6feaf95694c57596f84f0'
+    for version in ('r35','r55'):
+        target=root/('source-'+version)
+        shutil.copytree(src,target,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+        if version=='r55':
+            for name,expected in CHANGED.items():(target/'von_rag'/name).write_bytes(fetch(RAW+'von_rag/'+name,expected,80000))
+        expected=dict(BASE_HASHES,**(CHANGED if version=='r55' else {}))
+        for name,digest in expected.items():assert sha((target/'von_rag'/name).read_bytes())==digest
+    raw=fetch(KIT,KIT_SHA,300000)
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:
+        assert sum(i.file_size for i in z.infolist())<3000000
+        for item in z.infolist():assert not Path(item.filename).is_absolute() and '..' not in Path(item.filename).parts
+        z.extractall(root/'official')
+    official=root/'official/mc3-starter-kit/mc3-corpus'
+    (official/'vendor/internal_audit.txt').chmod(0)
+    shutil.copytree(previous/'stress-corpus',root/'stress-corpus')
+    new=new_cases(root/'new-corpus');save(root/'new-cases.json',new)
+    public=json.loads((root/'official/mc3-starter-kit/sample-questions.json').read_text())['queries']
+    public=[{'id':str(q['n']),'query':q['query'],'answers':[q['expected_answer'],*q.get('answer_aliases',[])],'citations':q['expected_citations']} for q in public]
+    datasets={'official':{'path':str(official),'cases':public},'stress':{'path':str(root/'stress-corpus'),'cases':stress_cases()},'new':{'path':str(root/'new-corpus'),'cases':new}}
+    for data in datasets.values():
+        data['corpus_hashes']={p.relative_to(data['path']).as_posix():sha(p.read_bytes()) for p in sorted(Path(data['path']).rglob('*')) if p.is_file() and p.stat().st_mode&0o444}
+    save(root/'PREPARATION.json',{'candidate_commit':COMMIT,'datasets':datasets,'labels_outside_corpus':True,'new_case_seed':490073,'no_new_model_weights':True,'source_hashes':{'r35':BASE_HASHES,'r55':dict(BASE_HASHES,**CHANGED)}})
+    return datasets
+
+
+def evaluate(root,previous,datasets):
+    vendor=previous/'venv/lib/python3.14/site-packages'
+    sys.path.insert(0,str(vendor))
+    os.environ.update(HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',TOKENIZERS_PARALLELISM='false')
+    import torch
+    assert torch.version.hip and torch.cuda.is_available(),'Native AMD GPU required'
+    activate(root/'source-r35',vendor)
+    from von_rag.native import NativeRag
+    started=time.monotonic();native=NativeRag(previous/'model');load_s=time.monotonic()-started
+    samples=[];stop=threading.Event()
+    def sample():
+        free,total=torch.cuda.mem_get_info()
+        samples.append({'seconds':time.monotonic()-started,'used_bytes':total-free,'total_bytes':total})
+    def poll():
+        while not stop.wait(3):
+            try:sample()
+            except Exception:break
+    sample();thread=threading.Thread(target=poll,daemon=True);thread.start()
+    all_results={};trace=[]
+    class Traced:
+        def chat(self,messages,**kwargs):
+            begin=time.monotonic();raw=native.chat(messages,**kwargs)
+            trace.append({'kind':'query','seconds':time.monotonic()-begin,'raw':raw,'prompt_sha256':sha(json.dumps(messages,ensure_ascii=False).encode())})
+            return raw
+        def vision(self,image,**kwargs):
+            begin=time.monotonic();raw=native.vision(image,**kwargs)
+            trace.append({'kind':'vision','seconds':time.monotonic()-begin,'raw':raw,'size':list(image.size)})
+            return raw
+    backend=Traced()
+    normalize=lambda x:''.join(x.upper().split())
+    try:
+        for version in ('r35','r55'):
+            activate(root/('source-'+version),vendor)
+            from von_rag.retrieval import build_index,Index
+            from von_rag.compact import answer_compact
+            results={}
+            for name,data in datasets.items():
+                output=root/version/name;output.mkdir(parents=True)
+                corpus=Path(data['path']);t=time.monotonic();calls=native.gpu_calls
+                manifest=build_index(corpus,output/'index.sqlite',vision=backend.vision,deadline_seconds=500,file_timeout=20)
+                indexing=time.monotonic()-t;vision_calls=native.gpu_calls-calls
+                save(output/'INDEX.json',manifest)
+                index=Index(output/'index.sqlite',corpus);rows=[]
+                try:
+                    for q in data['cases']:
+                        torch.cuda.reset_peak_memory_stats();torch.cuda.synchronize()
+                        begin=time.monotonic();c0=native.gpu_calls;start_trace=len(trace)
+                        result,audit=answer_compact(index,q['query'],backend,deadline=begin+29)
+                        torch.cuda.synchronize();elapsed=time.monotonic()-begin
+                        correct=bool(audit.get('completed_model_response') and elapsed<30 and normalize(result['answer']) in {normalize(v) for v in q['answers']} and set(result['citations'])==set(q['citations']))
+                        row={'id':q['id'],'prediction':result,'correct':correct,'seconds':elapsed,'gpu_calls':native.gpu_calls-c0,'peak_reserved_bytes':torch.cuda.max_memory_reserved(),'peak_allocated_bytes':torch.cuda.max_memory_allocated(),'audit':audit,'trace':trace[start_trace:]}
+                        rows.append(row);save(output/'RESULTS.json',rows)
+                        print(json.dumps({'version':version,'dataset':name,'id':q['id'],'correct':correct,'seconds':round(elapsed,4),'prediction':result,'reason':audit.get('reason'),'error':audit.get('error')}),flush=True)
+                finally:index.close()
+                summary={'correct':sum(r['correct'] for r in rows),'total':len(rows),'max_query_seconds':max(r['seconds'] for r in rows),'index_seconds':indexing,'vision_calls':vision_calls,'query_gpu_calls':sum(r['gpu_calls'] for r in rows),'rows':rows}
+                save(output/'SUMMARY.json',summary);results[name]=summary
+                save(root/'TRACES.json',trace);sample()
+            all_results[version]=results
+        regressions=[];rescues=[]
+        for dataset in datasets:
+            before={r['id']:r for r in all_results['r35'][dataset]['rows']}
+            for row in all_results['r55'][dataset]['rows']:
+                old=before[row['id']]
+                if old['correct'] and not row['correct']:regressions.append([dataset,row['id']])
+                if not old['correct'] and row['correct']:rescues.append([dataset,row['id']])
+        report={'schema':'von-r56-paired-real-amd-1','status':'completed','gpu':torch.cuda.get_device_name(0),'torch':torch.__version__,'hip':torch.version.hip,'model_load_seconds':load_s,'candidate_commit':COMMIT,'summary':{v:{d:{k:s[k] for k in ('correct','total','max_query_seconds','index_seconds','vision_calls','query_gpu_calls')} for d,s in results.items()} for v,results in all_results.items()},'regressions':regressions,'rescues':rescues,'fresh_native_inference':True,'actual_container_selfcheck':False,'hidden_grader_score':None,'submitted':False}
+        save(root/'PAIRED_RESULT.json',report);print(json.dumps(report,indent=2),flush=True)
+    finally:
+        stop.set();thread.join(timeout=4);sample();save(root/'GPU_MEMORY_SAMPLES.json',samples);save(root/'TRACES.json',trace)
+        with zipfile.ZipFile(root/'r56-native-results.zip','w',zipfile.ZIP_DEFLATED) as z:
+            for path in sorted(root.rglob('*.json')):
+                if not any(p.startswith('source-') for p in path.relative_to(root).parts):z.write(path,path.relative_to(root))
+        print('RESULT_ARCHIVE',str(root/'r56-native-results.zip'),flush=True)
+
+
+def main():
+    p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--previous',type=Path,default=Path('/persistent/r46'));p.add_argument('--prepare-only',action='store_true');a=p.parse_args()
+    datasets=prepare(a.root,a.previous)
+    if a.prepare_only:print('Prepared',sum(len(v['cases']) for v in datasets.values()),'questions');return
+    try:evaluate(a.root,a.previous,datasets)
+    except Exception as exc:
+        save(a.root/'ERROR.json',{'error':type(exc).__name__+': '+str(exc),'new_score_claimed':False});raise
+if __name__=='__main__':main()
