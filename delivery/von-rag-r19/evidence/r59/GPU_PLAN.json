@@ -1,0 +1,21 @@
+{
+  "schema": "von-r59-gpu-plan-1",
+  "created_utc": "2026-09-30T21:12:00Z",
+  "runtime_candidate_commit": "9c07b3c2c4cd7f77fa68b7d898cfeeac9f2297cb",
+  "selected_baseline": "R35",
+  "candidate": "R59",
+  "official_cases": 10,
+  "stress_cases": 12,
+  "predeclared_new_cases": 36,
+  "questions_per_version": 58,
+  "versions": ["r35", "r59"],
+  "new_transfer_cases": ["utf16-text", "utf16-csv", "revision-family-current", "image-only-pdf"],
+  "fresh_native_inference_required": true,
+  "real_vision_required_for_scan_pdf": true,
+  "container_selfcheck": false,
+  "gpu_run_started": false,
+  "reason_not_started": "AMD dashboard signed out; previous notebook backend returned 502.",
+  "submission_changed": false,
+  "no_paid_compute": true,
+  "script_sha256": "63e11350d59cd156f55d05d1405b1558cec2c6f21fab102a3fb96a88fa2d8001"
+}
