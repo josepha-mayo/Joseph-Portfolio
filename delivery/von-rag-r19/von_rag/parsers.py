@@ -51,6 +51,13 @@ def clean(value) -> str:
     return re.sub(r'\s+', ' ', str('' if value is None else value)).strip()
 
 
+def decode_text_bytes(data: bytes) -> str:
+    """Decode ordinary corpus text without turning UTF-16 into NUL garbage."""
+    if data.startswith((b'\xff\xfe', b'\xfe\xff')):
+        return data.decode('utf-16', errors='replace')
+    return data.decode('utf-8-sig', errors='replace')
+
+
 def xml(z: zipfile.ZipFile, name: str) -> ET.Element:
     info = z.getinfo(name)
     if info.file_size > MAX_XML_BYTES:
@@ -318,7 +325,7 @@ def parse_file(path: Path, root: Path) -> list[Chunk]:
     if ext == '.docx': return parse_docx(path, source)
     if ext == '.xlsx': return parse_xlsx(path, source)
     if ext == '.py': return parse_python(path, source)
-    text = path.read_text(encoding='utf-8-sig', errors='replace')
+    text = decode_text_bytes(path.read_bytes())
     if ext == '.csv':
         try: dialect = csv.Sniffer().sniff(text[:8192], delimiters=',;\t|')
         except csv.Error: dialect = csv.excel
