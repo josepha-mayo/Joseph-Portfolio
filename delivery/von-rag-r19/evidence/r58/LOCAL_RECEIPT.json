@@ -1,0 +1,42 @@
+{
+  "schema": "von-rag-r58-local-software-1",
+  "verified_utc": "2026-09-30T19:40:59.996414+00:00",
+  "parent_commit": "fe89dcf9b2db81fb334f5278911e31edbad8ba23",
+  "tests": {
+    "tests": 336,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "r57_tests": 324,
+  "new_controls": 12,
+  "r57_new_control_result": {
+    "tests": 12,
+    "failures": 5,
+    "passes": 7
+  },
+  "changed_sha256": {
+    "von_rag/compact.py": "67dd533c3c336674f8fa0634628697c0e7203ddcca2e7d66d43be3304e4300d1",
+    "von_rag/conflicts.py": "aa33ea41a1a6c31d958da5b01e15350a9dd2d69f33d1cd1d8d759a92ff4a9669",
+    "tests/test_r58_scorer_aliases.py": "dcae77a066347b7fc98434ff33e94de747a3221406a6e961f164c0daae0659c7"
+  },
+  "inherited_sha256": {
+    "von_rag/parsers.py": "6b152162d4b6f513f04155b0e5a311a9afdc3e7e3458e5dde3bfcbe0cf456ef1",
+    "von_rag/retrieval.py": "0cd904425a1eebd2d14636aa37f0cc8f4f1ee13637c558ef93faeb485ff074e3",
+    "von_rag/selection_repair.py": "5d83f23307bd1419f7265a0b7be902f3cc2fd0ef520f7e891f7a248d510ca22e"
+  },
+  "full_log_sha256": "5c38d64d14f3d87507144d364f910621f2a8e1768bd20304837d0bd2b0ebd057",
+  "python": "3.12.3",
+  "packages": {
+    "pytest": "9.0.2",
+    "PyMuPDF": "1.26.7",
+    "python-docx": "1.2.0",
+    "openpyxl": "3.1.5",
+    "Pillow": "10.2.0"
+  },
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "selected_submission_changed": false,
+  "hidden_grader_score": null
+}

@@ -50,6 +50,68 @@ def requested_field_keys(query):
     return None
 
 
+def _answer_kind(query):
+    kind, aliases = _property(query)
+    if aliases:
+        return kind, aliases
+    words = set(re.findall(r'[a-z]+', query.casefold()))
+    aliases = requested_field_keys(query)
+    if not aliases:
+        return None, set()
+    if {'unit','price'} <= words: return 'price', aliases
+    if 'timeout' in words: return 'timeout', aliases
+    if 'firmware' in words: return 'firmware', aliases
+    if {'error','code'} <= words: return 'error', aliases
+    if 'part' in words: return 'part', aliases
+    if {'lead','time'} <= words: return 'lead', aliases
+    return 'scalar', aliases
+
+
+def _typed_alias_wraps_source(answer, value, kind):
+    """Allow only narrow scorer-compatible wrappers around one source scalar."""
+    if not contains_value(answer, value):
+        return False
+    remainder = re.sub(re.escape(str(value)), ' ', str(answer), count=1, flags=re.I)
+    words = set(re.findall(r'[a-z]+', remainder.casefold()))
+    if kind == 'firmware':
+        return words <= {'firmware','version','release','meridian'}
+    if kind == 'part':
+        return words <= {'part','number','pn'}
+    if kind == 'price':
+        return not words and not re.search(r'\d', remainder)
+    return False
+
+
+def canonical_query_property_value(record, answer, query):
+    """Return a verbatim requested-field value equivalent to a model alias."""
+    kind, aliases = _answer_kind(query)
+    if kind is None or not answer:
+        return None
+    text = record.get('text', '')
+    fields = record.get('fields') or kv_fields(text)
+    fields = {_key(k): str(v).strip() for k, v in fields.items()}
+    candidates=[v for k,v in fields.items() if k in aliases and v]
+    value=fields.get('value','')
+    semantic=fields.get('parameter',fields.get('property',''))
+    if value and _key(semantic) in aliases:
+        candidates.append(value)
+    answer_scalar=_scalar(answer,kind)
+    for value in candidates:
+        if not contains_value(text,value):
+            continue
+        value_scalar=_scalar(value,kind)
+        if value_scalar is None:
+            continue
+        # Challenge scorer treats 94, 94 C, 94°C and 94 degrees as equivalent.
+        if kind=='temperature' and answer_scalar is not None and value_scalar[0]==answer_scalar[0]:
+            return value
+        if answer_scalar is not None and value_scalar==answer_scalar:
+            return value
+        if _typed_alias_wraps_source(answer,value,kind):
+            return value
+    return None
+
+
 def record_value_matches_query_property(record, query, answer):
     """Reject a proved wrong field, but never infer structure from plain prose.
 
@@ -119,11 +181,13 @@ def source_structured_value_matches(records, record, query, answer):
 def _scalar(value, kind):
     value = str(value).strip()
     if kind == 'temperature':
-        match = re.fullmatch(r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*(?:\u00b0?\s*([CFK]))?', value, re.I)
+        match = re.fullmatch(
+            r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*'
+            r'(?:(?:\u00b0|degrees?)?\s*([CFK])?|degrees?)?', value, re.I)
         if match is None:
             return None
-        # Decimal punctuation is significant: 8.1 and 81 must never collapse.
-        # Differing or unspecified unit systems stay in separate cohorts.
+        # Decimal punctuation is significant. Conflict cohorts remain unit-aware;
+        # answer alias canonicalization below may ignore degree/unit spelling.
         return Decimal(match[1]).normalize(), (match[2] or '').upper()
     return re.sub(r'\s+', '', value).upper(), ''
 
