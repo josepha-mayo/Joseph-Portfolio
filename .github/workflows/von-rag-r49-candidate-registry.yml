@@ -1,0 +1,41 @@
+name: von-rag R49 candidate image transport
+on:
+  push:
+    branches: [amd-r49-r48-candidate-20260930]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r49-candidate-registry
+  cancel-in-progress: false
+jobs:
+  source-and-build:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build immutable metadata and run transport checks
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          npm ci
+          npm run prebuild | tee evidence/prebuild.log
+          node --experimental-strip-types --test tests/von-registry*.test.mjs | tee evidence/tests.log
+          npm run build > evidence/build.log 2>&1
+          cp public/registry-assets/r48/BUILD_RECEIPT.json evidence/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r49-candidate-registry
+          path: evidence/
+          retention-days: 14
