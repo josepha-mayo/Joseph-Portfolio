@@ -79,7 +79,53 @@ def _strict_parse_selection(text, records, query):
     if value_record is None:raise GroundingError('wrong explicit product or condition scope')
     proof={'answer':answer,'evidence':[{'cid':records[i]['cid'],'quote':records[i]['text'],
             'role':'value' if i==value_record else 'bridge'} for i in selected]}
-    return validate(proof,records,query=query),proof
+    result=validate(proof,records,query=query)
+    result,proof,_=_prune_redundant_direct_bridges(result,proof,records,query)
+    return result,proof
+
+
+def _prune_redundant_direct_bridges(result, proof, records, query):
+    """Drop only provably unnecessary extra *sources* on direct-ID questions.
+
+    Hidden grading scores citations as an exact set. This intentionally does
+    nothing for questions with zero/multiple explicit identifiers, and it never
+    removes an evidence item that itself contains the answer. Required graph
+    bridges survive because strict validation fails without them.
+    """
+    from .retrieval import identifiers
+    wanted = identifiers(query)
+    evidence = list(proof.get('evidence', []))
+    if len(wanted) != 1 or not result.get('answer') or len(evidence) <= 1:
+        return result, proof, []
+    changes = []
+    index = len(evidence) - 1
+    while index >= 0:
+        item = evidence[index]
+        if item.get('role') != 'bridge' or contains_value(item.get('quote',''), result['answer']):
+            index -= 1
+            continue
+        trial_evidence = evidence[:index] + evidence[index+1:]
+        trial_proof = {'answer': proof['answer'], 'evidence': trial_evidence}
+        try:
+            checked = validate(trial_proof, records, query=query)
+        except GroundingError:
+            index -= 1
+            continue
+        # Prune only when an entire citation source disappears. Removing an
+        # extra chunk from the same file cannot improve exact-set scoring.
+        if not set(checked['citations']) < set(result['citations']):
+            index -= 1
+            continue
+        changes.append({'kind':'redundant_bridge_source_removed',
+                        'source': next(r['source'] for r in records if r['cid']==item['cid']),
+                        'cid': item['cid']})
+        evidence = trial_evidence
+        result = checked
+        index = len(evidence) - 1
+    if changes:
+        proof = {'answer': proof['answer'], 'evidence': evidence,
+                 'source_pruning': changes}
+    return result, proof, changes
 
 
 def parse_selection(text, records, query, *, page_records=None):
