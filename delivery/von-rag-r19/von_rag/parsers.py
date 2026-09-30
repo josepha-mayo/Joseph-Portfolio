@@ -119,9 +119,31 @@ def text_chunks(text: str, source: str, locator: str = 'text', context: str = ''
     blocks = text.splitlines() if Path(source).suffix == '.log' else re.split(r'\n\s*\n', text)
     for i, block in enumerate(blocks):
         if not block.strip(): continue
-        for j in range(0, len(block), 3500):
-            part = block[max(0, j-180):j+3500]
-            out.append(Chunk(source, f'{locator}:{i+1}.{j}', part, kv_fields(part), context))
+        pieces = [block]
+        if Path(source).suffix != '.log':
+            # A plain-text/PDF paragraph can contain several literal product
+            # records without blank lines. Keeping them in one chunk makes
+            # scope ambiguous and also lets duplicate key/value fields
+            # overwrite each other. Split only at the second and later explicit
+            # Product/Model/Device header; preserve any heading/prefix with the
+            # first record and never synthesize or summarize source text.
+            lines = block.splitlines()
+            starts = [n for n,line in enumerate(lines)
+                      if re.match(r'^\s*(?:product|model|device)\s*:\s*\S', line, re.I)]
+            if len(starts) > 1:
+                cuts = starts[1:]
+                pieces=[]; begin=0
+                for end in cuts:
+                    part='\n'.join(lines[begin:end])
+                    if part.strip(): pieces.append(part)
+                    begin=end
+                part='\n'.join(lines[begin:])
+                if part.strip(): pieces.append(part)
+        for piece_no, piece in enumerate(pieces):
+            for j in range(0, len(piece), 3500):
+                part = piece[max(0, j-180):j+3500]
+                suffix = f'{i+1}.{piece_no+1}.{j}' if len(pieces)>1 else f'{i+1}.{j}'
+                out.append(Chunk(source, f'{locator}:{suffix}', part, kv_fields(part), context))
     return out
 
 
