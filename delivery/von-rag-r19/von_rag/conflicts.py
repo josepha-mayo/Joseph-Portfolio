@@ -43,6 +43,18 @@ def _scalar(value, kind):
 # Unsupported syntax/units and ambiguous fields remain the model's job; never
 # silently turn comparisons, alternatives, or ranges into equality filters.
 _VOLTAGE_KEYS = {'voltage', 'supplyvoltage', 'operatingvoltage'}
+_VOLUME_KEYS = {'volume', 'unitvolume', 'quantity', 'units'}
+_VALUE_FIELDS = {
+    'min_temperature': {'minjunctiontemperature', 'minimumjunctiontemperature', 'tjmin'},
+    'max_temperature': {'maxjunctiontemperature', 'maximumjunctiontemperature', 'tjmax'},
+    'price': {'unitprice', 'price', 'cost'},
+    'quarter': {'customersamplingquarter', 'samplingquarter', 'quarter'},
+    'revision': {'boardrevision', 'revision', 'rev'},
+    'part': {'partnumber', 'replacementpart', 'partno', 'pn', 'sku'},
+    'firmware': {'fixedin', 'fixedversion', 'firmware', 'firmwareversion', 'fixversion', 'resolvedin'},
+    'error': {'errorcode', 'error', 'code'},
+    'timeout': {'batchtimeout', 'defaultbatchtimeout', 'timeout', 'batchtimeoutseconds'},
+}
 _NUMBER = r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)'
 _UNIT = r'(?:mV|mv|kV|kv|V|v|(?i:millivolts?|kilovolts?|volts?))'
 _QUANTITY = re.compile(r'(' + _NUMBER + r')\s*(' + _UNIT + r')')
@@ -82,6 +94,70 @@ def query_voltage(query):
     return _volts(matches[0][1])
 
 
+
+def query_volume(query):
+    """Return one explicit exact unit-volume tier, else None."""
+    words=set(re.findall(r'[a-z]+',query.casefold()))
+    if 'price' not in words or len(identifiers(query)) != 1 or _UNSAFE_CONDITION.search(query):
+        return None
+    matches=list(re.finditer(
+        r'(?i:\bat\s+)([0-9][0-9,]*)\s*(?:-\s*)?(?:unit\s+volume|units?)\b', query))
+    if len(matches)!=1:
+        return None
+    return int(matches[0][1].replace(',',''))
+
+
+def requested_retired(query):
+    # Historical filtering is only safe for a single-entity scalar lookup.
+    # Multi-hop questions may legitimately need current bridge files.
+    if len(identifiers(query)) != 1 or _property(query)[0] is None:
+        return False
+    return bool(re.search(r'\b(?:withdrawn|superseded|obsolete|archived)\b',query,re.I))
+
+
+def has_query_conditions(query):
+    return query_voltage(query) is not None or query_volume(query) is not None or requested_retired(query)
+
+
+def _record_volume(fields):
+    values=[fields[k] for k in _VOLUME_KEYS if k in fields]
+    if not values:
+        return None
+    parsed=[]
+    for value in values:
+        match=re.fullmatch(r'\s*([0-9][0-9,]*)\s*(?:units?)?\s*',str(value),re.I)
+        if match is None:
+            return None
+        parsed.append(int(match[1].replace(',','')))
+    return parsed[0] if len(set(parsed))==1 else None
+
+
+def _query_value_fields(query):
+    words=set(re.findall(r'[a-z]+',query.casefold()))
+    if {'junction','temperature'} <= words:
+        if words & {'minimum','min'}: return _VALUE_FIELDS['min_temperature']
+        if words & {'maximum','max'}: return _VALUE_FIELDS['max_temperature']
+    if 'price' in words: return _VALUE_FIELDS['price']
+    if {'customer','sampling','quarter'} <= words: return _VALUE_FIELDS['quarter']
+    if {'board','revision'} <= words: return _VALUE_FIELDS['revision']
+    if 'part' in words and ('number' in words or 'assembly' in words): return _VALUE_FIELDS['part']
+    if 'firmware' in words: return _VALUE_FIELDS['firmware']
+    if {'error','code'} <= words: return _VALUE_FIELDS['error']
+    if 'timeout' in words: return _VALUE_FIELDS['timeout']
+    return set()
+
+
+def record_value_matches_query(record, query, answer):
+    aliases=_query_value_fields(query)
+    if not aliases:
+        return True
+    fields=record.get('fields') or kv_fields(record.get('text',''))
+    fields={_key(k):str(v).strip() for k,v in fields.items()}
+    candidates=[value for key,value in fields.items() if key in aliases and value]
+    if not candidates:
+        return True
+    return any(contains_value(value,answer) for value in candidates)
+
 def _voltage_values(fields, text=''):
     values = [fields[k] for k in _VOLTAGE_KEYS if k in fields]
     # A dict alone loses repeated keys. Preserve all explicit voltage lines:
@@ -111,14 +187,24 @@ def _ambiguous_voltages(fields, text):
 
 
 def record_matches_query_conditions(record, query):
-    """Exclude only a proved mismatch, preserving records with missing context."""
-    requested = query_voltage(query)
-    if requested is None:
+    """Exclude only proved condition mismatches; preserve unknown or ambiguous context."""
+    if requested_retired(query) and not bool(record.get('retired')):
+        return False
+    requested_v=query_voltage(query)
+    requested_n=query_volume(query)
+    if requested_v is None and requested_n is None:
         return True
-    fields = record.get('fields') or kv_fields(record.get('text', ''))
-    fields = {_key(k): str(v).strip() for k, v in fields.items()}
-    observed = _record_volts(fields, record.get('text', ''))
-    return observed is None or observed == requested
+    fields=record.get('fields') or kv_fields(record.get('text',''))
+    fields={_key(k):str(v).strip() for k,v in fields.items()}
+    if requested_v is not None:
+        observed=_record_volts(fields,record.get('text',''))
+        if observed is not None and observed != requested_v:
+            return False
+    if requested_n is not None:
+        observed=_record_volume(fields)
+        if observed is not None and observed != requested_n:
+            return False
+    return True
 
 
 def _qualifiers(fields, excluded, text=''):

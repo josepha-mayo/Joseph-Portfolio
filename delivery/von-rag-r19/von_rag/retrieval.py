@@ -85,13 +85,17 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                         data = json.loads(run.stdout)
                         if run.returncode: raise ValueError(data.get('error','parse failed')+': '+data.get('detail',''))
                         chunks = [Chunk(**x) for x in data['chunks']]
-                    file_retired = any(retired(rel,c.text) for c in chunks)
+                    # Filename/document-level retirement retires the whole source.
+                    # Row-level status in CSV/XLSX is scoped to that row only.
+                    source_retired = retired(rel, '') or any(
+                        retired('', c.text) for c in chunks if c.kind != 'row')
                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
                     for c in chunks:
                         if not c.text: continue
+                        chunk_retired = source_retired or retired('', c.text)
                         con.execute('INSERT INTO chunks VALUES(?,?,?,?,?,?,?,?)',
-                            (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(file_retired)))
+                            (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(chunk_retired)))
                         body = ' '.join(tokens(c.source+' '+c.context+' '+c.text))
                         con.execute('INSERT INTO lex VALUES(?,?)',(c.cid,body))
                         for entity in identifiers(c.text+' '+c.context):

@@ -1,0 +1,33 @@
+{
+  "schema": "von-rag-r51-local-software-1",
+  "verified_utc": "2026-09-30T13:44:01.508550+00:00",
+  "base_commit": "3bb3191d69e74d4069696189a6b0a54facde7f93",
+  "source_sha256": {
+    "von_rag/compact.py": "982ee3f90f00c8f351a201a288c1ab941a8baaecfec1fecbd5066b2899f658ce",
+    "von_rag/conflicts.py": "65938b6a36977cf2b638860fb53fca7a20ab85f899306599d9566599eac452cd",
+    "von_rag/retrieval.py": "5ec6014ce020d15b0f0c4250727616b02cdfe76aabc17efb7dbf27af8becdcd2",
+    "tests/test_r51_scalar_scope.py": "f3e8f3657f7d3a2574faeacbc2f25aa25fbdb067855f5fd3ee30e7ccd6b3fb85",
+    "tests/test_r51_citation_minimization.py": "c756695664dd37145d859c3d51f786d4027e2d3b71edc6fcb0463a470cced484"
+  },
+  "baseline_r50_new_controls": {
+    "tests": 12,
+    "failures": 8,
+    "errors": 0,
+    "skipped": 0
+  },
+  "candidate_full_suite": {
+    "tests": 289,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "baseline_new_failures": 8,
+  "new_authored_controls": 12,
+  "prior_tests_preserved": 277,
+  "fresh_model_calls": 0,
+  "native_amd_validation": false,
+  "container_gpu_selfcheck": false,
+  "selected_submission_changed": false,
+  "hidden_grader_score": null,
+  "scope": "software/scripted-output controls only; exact citation and query-scope hardening"
+}
