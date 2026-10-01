@@ -1,0 +1,89 @@
+name: von-rag R61 exact AMD-tested source
+on:
+  push:
+    branches: [amd-r61-verified-integration-20261001]
+    paths:
+      - delivery/von-rag-r19/**
+      - .github/workflows/von-rag-r61-exact.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r61-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  software:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r requirements-test.txt
+      - name: Verify exact AMD-tested runtime and R61 controls
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          expected={
+            'von_rag/__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+            'von_rag/compact.py':'2db060a0070d86d877d69cf5818790ccd5fa50f2dde80f8ce0fbb9a5de3ba4ea',
+            'von_rag/conflicts.py':'fe42f5c08b74ecfe49935ce6a3757a173d9dbd1b0fa8c2e659f7aa41d11ee912',
+            'von_rag/engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+            'von_rag/native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+            'von_rag/parsers.py':'7075037b8058bb2550030fa6f90291ef47f2f495b7aadcdd342e0757a4ba8ce3',
+            'von_rag/proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+            'von_rag/retrieval.py':'8518f67298a18651dc0d6d3edef59eacffbbf5d8a8b57d3ebde1b42bd0800ac0',
+            'von_rag/runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+            'von_rag/scalar_guard.py':'dfea01e2fb106697e6322b36caca203a7c2f5081a3998a17ecd8664351260606',
+            'von_rag/selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+            'von_rag/value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894',
+            'tests/test_r55_python_authority.py':'6924fc4ed6973c4245eac281ae645194492a8dee24f589b35b847bd4d64e1a16',
+            'tests/test_r56_docx_merges.py':'0daf169fbe47ef4029f0911f4214dcd389fbc33741fb4722575c15bdd1a86e08',
+            'tests/test_r56_official_aliases.py':'6cce14e8b5a0c002609a1afaaffa135b3893a0f34941c8e68cffb1165923a5dc',
+            'tests/test_r57_file_budget.py':'b3fdc8d04f6f648c06214651d95f6099d6bc798b793a9fd49e07c03807ec695a',
+            'tests/test_r58_scorer_aliases.py':'dcae77a066347b7fc98434ff33e94de747a3221406a6e961f164c0daae0659c7',
+            'tests/test_r61_literal_transfer.py':'f0a5a9882cf2055e618eae554cf1512ee66f99582bf2b4df3740a681f8f1d3fe',
+            'tests/test_r61_pdf_limits.py':'07468da5f1dc3e75e6e4bb981d419e7eafef15b78ef77291527e34dd72191e02',
+            'tests/test_r61_review_findings.py':'c1aa9d63441ad6c6682eb7772f5ba9b30f1bc5f5dbe822f58176b1157aee1dbd',
+          }
+          actual={p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in expected}
+          assert actual==expected,(expected,actual)
+          Path('evidence/r61').mkdir(parents=True,exist_ok=True)
+          Path('evidence/r61/CI_HASHES.json').write_text(json.dumps(actual,indent=2)+'\n')
+          print('exact R61 bytes verified:',len(actual))
+          PY
+      - run: python -m compileall -q von_rag
+      - name: Full software suite
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r61
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r61/ci-tests.xml | tee evidence/r61/ci-tests.log
+          python - <<'PY'
+          import json,os,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('evidence/r61/ci-tests.xml').getroot().findall('testsuite')
+          totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert totals=={'tests':426,'failures':0,'errors':0,'skipped':0},totals
+          receipt={'schema':'von-r61-ci-1','commit':os.environ['GITHUB_SHA'],'python':sys.version,'tests':totals,
+                   'fresh_model_calls':0,'native_amd_result_external':True,'submission_changed':False}
+          Path('evidence/r61/CI_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r61-python-${{ matrix.python }}
+          path: delivery/von-rag-r19/evidence/r61/
+          retention-days: 14
