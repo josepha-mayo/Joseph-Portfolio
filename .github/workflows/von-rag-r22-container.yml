@@ -1,0 +1,145 @@
+name: von-rag R22 complete container acceptance
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths: [.github/workflows/von-rag-r22-container.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r22-complete-container
+  cancel-in-progress: false
+jobs:
+  build-and-check:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      PARENT_IMAGE: awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws/von-read@sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad
+      CANDIDATE_IMAGE: von-rag-r22:checked
+      SOURCE_COMMIT: 598f6ebe576bd5dba052618ef6170f0cc1734dc7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 598f6ebe576bd5dba052618ef6170f0cc1734dc7
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - name: Prepare disposable GitHub runner
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p receipts
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/DISK.txt
+          python3 -c "import shutil; assert shutil.disk_usage('/').free>70*2**30"
+      - name: Pull unchanged verified parent without registry credentials
+        timeout-minutes: 18
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/r22-anonymous"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          timeout --kill-after=20s 1050s docker pull "$PARENT_IMAGE" > receipts/PARENT_PULL.log 2>&1
+          docker image inspect "$PARENT_IMAGE" > receipts/PARENT.json
+      - name: Build the exact native RAG image
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/r22-anonymous"
+          timeout --kill-after=15s 270s docker build --progress=plain -t "$CANDIDATE_IMAGE" delivery/von-rag-r19 > receipts/BUILD.log 2>&1
+          docker image inspect "$CANDIDATE_IMAGE" > receipts/IMAGE.json
+          docker run --rm --network none --entrypoint python3 "$CANDIDATE_IMAGE" -c 'import json,sys,torch,transformers,pymupdf; from pathlib import Path; from von_read.native_reader import verify_snapshot; verify_snapshot(Path("/models/reader")); assert torch.__version__=="2.13.0+rocm10.0.0"; assert transformers.__version__=="5.3.0"; assert sys.version_info[:2]==(3,14); print(json.dumps({"python":sys.version,"torch":torch.__version__,"transformers":transformers.__version__,"pymupdf":pymupdf.VersionBind,"snapshot_integrity":True,"gpu_available":torch.cuda.is_available()}))' > receipts/ENVIRONMENT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('receipts/PARENT.json').read_text())[0]
+          c=json.loads(Path('receipts/IMAGE.json').read_text())[0]
+          assert c['RootFS']['Layers'][:len(p['RootFS']['Layers'])]==p['RootFS']['Layers']
+          assert c['Size']<=60*2**30
+          assert c['Config']['Entrypoint']==['python3','-m','von_rag.runtime','serve']
+          assert c['Config'].get('ExposedPorts')==p['Config'].get('ExposedPorts')
+          PY
+      - name: Verify actual CLI lifecycle inside the built image
+        timeout-minutes: 4
+        run: |
+          set -euo pipefail
+          mkdir -p authored-corpus/empty
+          printf 'Product: RX-731\nMaximum junction temperature: 89\nStatus: current\n' > authored-corpus/current.txt
+          printf '2026-09-28 product=RX-731 event="thermal throttle" error_code=E83241 ticket=FIX-6831\n' > authored-corpus/production.log
+          printf 'Ticket,Description,Fixed in\nFIX-6831,Controller correction,7.4.2\n' > authored-corpus/fixes.csv
+          printf 'deliberately unsupported\n' > authored-corpus/unknown.xyz
+          printf 'private diagnostic file\n' > authored-corpus/unreadable.txt
+          chmod 000 authored-corpus/unreadable.txt
+          docker run -d --name von-rag-r22-diagnostic --network none --cap-drop DAC_OVERRIDE -v "$PWD/authored-corpus:/app/corpus:ro" "$CANDIDATE_IMAGE" python3 -m von_rag.runtime serve --diagnostic > receipts/CONTAINER_ID.txt
+        continue-on-error: false
+      - name: Run per-question processes and verify output files
+        timeout-minutes: 4
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess,time
+          from pathlib import Path
+          name='von-rag-r22-diagnostic';root=Path('receipts')
+          # Start with an explicitly overridden entrypoint; no fake native GPU pass.
+          subprocess.run(['docker','rm','-f',name],check=True,stdout=subprocess.DEVNULL)
+          image='von-rag-r22:checked'
+          subprocess.run(['docker','run','-d','--name',name,'--network','none','--cap-drop','DAC_OVERRIDE',
+              '-v',str(Path('authored-corpus').resolve())+':/app/corpus:ro','--entrypoint','python3',image,
+              '-m','von_rag.runtime','serve','--diagnostic'],check=True,stdout=subprocess.DEVNULL)
+          started=time.monotonic()
+          for _ in range(60):
+              ready=subprocess.run(['docker','exec',name,'python3','-m','von_rag.runtime','health'],capture_output=True,text=True)
+              if ready.returncode==0:break
+              time.sleep(.25)
+          else:raise RuntimeError('built worker never became ready')
+          result=subprocess.run(['docker','exec',name,'python3','/app/app.py','--index','/app/corpus'],capture_output=True,text=True,timeout=60)
+          (root/'INDEX.stdout').write_text(result.stdout);(root/'INDEX.stderr').write_text(result.stderr)
+          assert result.returncode==0,result.stderr
+          manifest=json.loads(result.stdout)
+          assert {'unknown.xyz','unreadable.txt'}<={x['source'] for x in manifest['skipped']}
+          questions=[('current','What is the maximum junction temperature of RX-731?','89',['current.txt']),
+            ('chain','The production log shows RX-731 thermal throttle. Which firmware release fixed the underlying defect?','7.4.2',['production.log','fixes.csv']),
+            ('missing','What is the unit price of RX-731 at 25000 unit volume?','',[])]
+          calls=[]
+          for qid,query,answer,citations in questions:
+              begin=time.monotonic()
+              r=subprocess.run(['docker','exec',name,'python3','/app/app.py','--corpus','/app/corpus','--query-id',qid,'--query',query],capture_output=True,text=True,timeout=30)
+              assert r.returncode==0,r.stderr
+              raw=subprocess.check_output(['docker','exec',name,'cat',f'/app/output/{qid}_output.json'])
+              record=json.loads(raw);assert record['answer']==answer and set(record['citations'])==set(citations),record
+              (root/(qid+'-output.json')).write_bytes(raw)
+              audit=json.loads(subprocess.check_output(['docker','exec',name,'cat',f'/app/audit/{qid}.json']))
+              assert audit['backend']=='cpu_diagnostic'
+              calls.append({'query_id':qid,'seconds':time.monotonic()-begin,'output':record,'backend':audit['backend']})
+          running=json.loads(subprocess.check_output(['docker','inspect',name]))[0]['State']['Running']
+          assert running
+          receipt={'schema':'von-rag-built-container-contract-1','status':'passed','source_commit':'598f6ebe576bd5dba052618ef6170f0cc1734dc7',
+            'parent_model_layers_preserved':True,'rocm_torch_preserved':True,'native_gpu_execution':False,
+            'real_neural_accuracy_measured':False,'cpu_diagnostic_explicit':True,'fresh_query_processes':len(calls),
+            'worker_still_running':running,'network':'none','cap_drop':['DAC_OVERRIDE'],
+            'startup_and_index_seconds':time.monotonic()-started,'calls':calls,'submitted':False}
+          (root/'CONTAINER_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
+          print(json.dumps(receipt))
+          PY
+      - name: Retain exact built delta without storing model weights
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          timeout --kill-after=10s 430s python3 delivery/von-rag-r19/diagnostics/export_delta.py --image "$CANDIDATE_IMAGE" --parent "$PARENT_IMAGE" --out receipts/delta > receipts/DELTA.log 2>&1
+      - name: Record default runtime failure without a GPU
+        if: always()
+        timeout-minutes: 2
+        run: |
+          set +e
+          timeout --kill-after=5s 60s docker run --rm --network none "$CANDIDATE_IMAGE" > receipts/NATIVE_NO_GPU.log 2>&1
+          echo "$?" > receipts/NATIVE_NO_GPU.exit
+          docker logs von-rag-r22-diagnostic > receipts/WORKER.log 2>&1
+          docker rm -f von-rag-r22-diagnostic >/dev/null 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r22-built-container-and-delta
+          path: receipts/
+          retention-days: 14
+          compression-level: 0
+          if-no-files-found: error

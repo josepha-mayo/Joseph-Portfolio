@@ -1,0 +1,174 @@
+name: von-rag R49 R48 candidate Docker acceptance
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths: [.github/workflows/von-rag-r49-image-acceptance.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r49-image-acceptance
+  cancel-in-progress: false
+jobs:
+  image-acceptance:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      ORIGIN: https://6abcf6dfc7574f0008ae09d5--josephm.netlify.app
+      MANIFEST: sha256:6484459d6b64564b80f190b3ff26f644190097c61d4bedcbca0dd34f5db516b8
+      IMAGE_CONFIG: sha256:b0a7a341b6dc0b17dca83a13b28e16ec1635b81072498b599cfb70e4600f5273
+    steps:
+      - name: Verify public metadata and pin the isolated candidate
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          python3 - <<'PY'
+          import hashlib,json,os,urllib.request
+          from pathlib import Path
+          origin=os.environ['ORIGIN'];manifest=os.environ['MANIFEST'];config=os.environ['IMAGE_CONFIG']
+          def get(path,limit=100000):
+              req=urllib.request.Request(origin+path,headers={'Accept-Encoding':'identity','User-Agent':'von-r49-image-check/1.0'})
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  data=r.read(limit+1)
+                  assert r.code==200 and len(data)<=limit
+                  return data
+          def dg(data):return 'sha256:'+hashlib.sha256(data).hexdigest()
+          mb=get('/v2/von-rag-r48/manifests/'+manifest);cb=get('/v2/von-rag-r48/blobs/'+config)
+          assert dg(mb)==manifest and dg(cb)==config
+          m=json.loads(mb);c=json.loads(cb)
+          oldm=json.loads(get('/registry-assets/r35/manifest.json'));oldc=json.loads(get('/registry-assets/r35/config.json'))
+          assert len(m['layers'])==len(c['rootfs']['diff_ids'])==28
+          assert m['layers'][:27]==oldm['layers'] and c['rootfs']['diff_ids'][:27]==oldc['rootfs']['diff_ids']
+          assert c['config']==oldc['config']
+          patch=m['layers'][-1];blob=get('/v2/von-rag-r48/blobs/'+patch['digest'])
+          assert len(blob)==patch['size']==8746 and dg(blob)==patch['digest']
+          image=origin.removeprefix('https://')+'/von-rag-r48@'+manifest
+          print('::add-mask::'+image)
+          with open(os.environ['GITHUB_ENV'],'a') as f:f.write('IMAGE='+image+'\n')
+          Path('private-image.txt').write_text(image)
+          Path('evidence/manifest.json').write_bytes(mb);Path('evidence/config.json').write_bytes(cb)
+          Path('evidence/METADATA.json').write_text(json.dumps({'status':'passed','parent_layers_unchanged':27,'layers':28,'new_source_layer_bytes':8746,'runtime_configuration_unchanged':True,'saved_submission_changed':False},indent=2)+'\n')
+          PY
+      - name: Prepare only this disposable runner
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > evidence/disk-before.txt
+      - name: Fresh anonymous full image pull
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/r49-empty-docker"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > evidence/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > private-pull.log 2>&1
+          date -u +%s > evidence/pull-end.txt
+          docker image inspect "$IMAGE" > private-inspect.json
+      - name: Check exact executed source and grounded conflict behavior
+        run: |
+          set -euo pipefail
+          docker run --rm -i --network none --entrypoint python3 "$IMAGE" - <<'PY' > evidence/INSIDE_CONTAINER.json
+          import hashlib,json,pathlib,tempfile,time
+          from von_rag import runtime,compact
+          from von_rag.parsers import text_chunks
+          from von_rag.retrieval import build_index,Index
+          assert runtime.answer_model is compact.answer_compact
+          expected={'compact.py':'4e46a32d5a1a927cf7cc678027c1713b042c461eb7e8d5836b197aaf1b3b3bde',
+                    'parsers.py':'16b5b2bfbd1fdcfe8141c1063c47ba86bbb32c65f456b0d7b9c54c829a61552f',
+                    'conflicts.py':'8b64e2a1bb7da472894dea457b557bb88ae59fec1a3369ef05a6f3d076d0ed04',
+                    'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59'}
+          actual={name:hashlib.sha256((pathlib.Path('/app/von_rag')/name).read_bytes()).hexdigest() for name in expected}
+          assert actual==expected
+          text='Product: NX-3301\nCustomer sampling quarter: Q2 FY36\nProduct: NX-3302\nCustomer sampling quarter: Q4 FY37\n'
+          pieces=text_chunks(text,'roadmap.txt')
+          assert len(pieces)==2 and 'NX-3302' not in pieces[0].text
+          assert pieces[0].fields['Customer sampling quarter']=='Q2 FY36'
+          class Scripted:
+              def __init__(self,raw):self.raw=raw;self.calls=0
+              def chat(self,*a,**kw):
+                  self.calls+=1
+                  if isinstance(self.raw,Exception):raise self.raw
+                  return self.raw
+          with tempfile.TemporaryDirectory() as d:
+              root=pathlib.Path(d);corpus=root/'corpus';corpus.mkdir()
+              for name,value in [('a','81'),('b','82')]:
+                  (corpus/(name+'.txt')).write_text('Product: CC-932\nMaximum junction temperature: '+value+'\nStatus: current\n')
+              db=root/'index.sqlite';build_index(corpus,db);ix=Index(db,corpus)
+              query='What is the maximum junction temperature of CC-932?'
+              records,_=compact.prepare(ix,query)
+              selected=next(i for i,r in enumerate(records) if r['fields'].get('Maximum junction temperature')=='82')
+              model=Scripted(json.dumps(['82',[selected]]))
+              result,audit=compact.answer_compact(ix,query,model,deadline=time.monotonic()+10)
+              assert model.calls==1 and audit['completed_model_response'] and audit['reason']=='explicit_current_conflict'
+              assert result=={'answer':'','citations':[],'confidence':0.0}
+              controls=[]
+              for raw in ['not json','["99999",[0]]','["82",[]]','["82",[999]]',TimeoutError('test')]:
+                  m=Scripted(raw);result,audit=compact.answer_compact(ix,query,m,deadline=time.monotonic()+10)
+                  assert m.calls==1 and not audit['completed_model_response']
+                  controls.append({'case':str(raw),'passed':True})
+              ix.close()
+          print(json.dumps({'status':'passed','source_hashes':actual,'literal_product_sections_verified':True,
+            'grounded_conflict_refusal_verified':True,'invalid_output_controls':controls,'new_neural_inference':False,'scripted_backend_only':True},indent=2))
+          PY
+      - name: Real CLI index and queries in explicitly diagnostic mode
+        run: |
+          set -euo pipefail
+          mkdir -p corpus
+          printf 'Product: NX-3301\nMaximum junction temperature: 84\nStatus: current\n' > corpus/spec.txt
+          printf 'event="cooling oscillation" ticket=CASE-5724\n' > corpus/event.log
+          printf 'Ticket,Fixed in\nCASE-5724,3.4.8\n' > corpus/fixes.csv
+          docker run -d --name r49-check --network none --entrypoint python3 -v "$PWD/corpus:/app/corpus:ro" "$IMAGE" -m von_rag.runtime serve --diagnostic
+          trap 'docker logs r49-check > evidence/worker.log 2>&1; docker rm -f r49-check >/dev/null 2>&1 || true' EXIT
+          docker exec r49-check python3 /app/app.py --index /app/corpus > evidence/index.json
+          docker exec r49-check python3 /app/app.py --corpus /app/corpus --query-id direct --query 'What is the maximum junction temperature of NX-3301?'
+          docker exec r49-check python3 /app/app.py --corpus /app/corpus --query-id chain --query 'The production log shows cooling oscillation. Which firmware fixed the underlying defect?'
+          docker exec r49-check python3 /app/app.py --corpus /app/corpus --query-id missing --query 'What is the unit price of NX-3301 at 25000 unit volume?'
+          docker cp r49-check:/app/output evidence/output
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for q,expected in {'direct':('84',['spec.txt']),'chain':('3.4.8',['event.log','fixes.csv']),'missing':('',[])}.items():
+              r=json.loads(Path('evidence/output',q+'_output.json').read_text())
+              assert (r['answer'],sorted(r['citations']))==expected
+          PY
+      - name: Native mode rejects absent AMD hardware
+        run: |
+          set +e
+          timeout --kill-after=5s 150s docker run --rm --network none "$IMAGE" > evidence/native-no-gpu.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          test "$rc" -ne 124
+          grep -q 'Allocated AMD ROCm hardware required' evidence/native-no-gpu.log
+      - name: Summarize verified transport and software scope
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          image=json.loads(Path('private-inspect.json').read_text())[0]
+          config=json.loads(Path('evidence/config.json').read_text())
+          assert image['Id']==os.environ['IMAGE_CONFIG'] and image['RootFS']['Layers']==config['rootfs']['diff_ids']
+          seconds=int(Path('evidence/pull-end.txt').read_text())-int(Path('evidence/pull-start.txt').read_text())
+          result={'schema':'von-r49-r48-candidate-container-1','status':'passed','config':image['Id'],
+            'layers':len(image['RootFS']['Layers']),'uncompressed_bytes':image['Size'],'full_anonymous_pull_seconds':seconds,
+            'source_hashes_checked':4,'invalid_output_controls':5,'diagnostic_cli_cases':3,'default_requires_amd':True,
+            'native_gpu_inference':False,'official_selfcheck':False,'production_merged':False,'submission_changed':False,'new_score_claimed':False}
+          Path('evidence/ACCEPTANCE.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))
+          PY
+      - name: Redact candidate address from transfer log
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          if Path('private-pull.log').exists() and Path('private-image.txt').exists():
+              image=Path('private-image.txt').read_text().strip()
+              Path('evidence/pull.log').write_text(Path('private-pull.log').read_text().replace(image,'[candidate image reference]'))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r49-r48-candidate-container
+          path: evidence/
+          retention-days: 14

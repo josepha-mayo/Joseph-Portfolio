@@ -1,0 +1,46 @@
+{
+  "schema": "von-rag-r19-verification-1",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "linux"
+  },
+  "tests": {
+    "tests": "58",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "30.577"
+  },
+  "benchmark": {
+    "seed": 672891,
+    "queries": 224,
+    "baseline_exact": 192,
+    "candidate_exact": 224,
+    "rescues": 32,
+    "regressions": 0,
+    "scope": "Authored synthetic text/table CPU diagnostic. Not independent/general/vision/neural accuracy."
+  },
+  "native_gpu_run": false,
+  "container_built": false,
+  "submitted": false,
+  "new_awarded_xp_verified": false,
+  "source_sha256": {
+    "Dockerfile": "563bd2d2f2e244e847de49d264785110640819a0f56c8fe3a5224e9b72dc9b44",
+    "app.py": "32ec6ac66b5c1f5abed3ff8819ee2651f0bb0efa122ca2f8f760e111c3357054",
+    "benchmark.py": "e26e42152ced83bdda70506496fb2b559841808580ed28372dd54449064845bb",
+    "requirements-test.txt": "08eebc8494ff2be9123e77b59cc7578094a82335941b1195ddc0a99214a8d585",
+    "tests/conftest.py": "bed1fd603ff58b313d70b8213a343e8a4a68ee29e814066b1ac87530b5b2facd",
+    "tests/test_adversarial.py": "b630cd1ad0b8af31e7b4b2ac0742a39c6cf5ce46fc2602e6cb41e1ae01c9ef16",
+    "tests/test_core.py": "61520d9aab418ef83f2b90694efa1b356cab4beab0649593090fabc8f98adf2c",
+    "von_rag/__init__.py": "6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c",
+    "von_rag/engine.py": "203d14f43480c831c242142a86d75ceaa6c90117a604253050f9fcfc748a6cc8",
+    "von_rag/native.py": "366e1acb0f4d0137c117f07debf5136010608bb6c695e28aac1e7983c4ebca73",
+    "von_rag/parsers.py": "ecc04cd20eaa001267d54b5af612b9d1ed78548a18ed0231849a41f70bbbc2a5",
+    "von_rag/proofs.py": "be6a398031317622f812f40446f94257ab04244b52d857cb3da544547e2dcd74",
+    "von_rag/retrieval.py": "0426eb0f76c53cd92a4da132f6e9a091ead3d932a2d48dc244569061faa01901",
+    "von_rag/runtime.py": "5ac6d4d55566e684202a692a7e60c6613adbbfbd1787007cf60968c44b138ead"
+  },
+  "source_git_tree": "5db7a1f50ff125d84c6b5546e5708927079389b8",
+  "tests_git_tree": "9afca1adc0ac1f8a87d24419ccb7791a1d6375fd",
+  "tested_source_and_test_blob_identities_verified": true
+}

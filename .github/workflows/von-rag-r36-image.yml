@@ -1,0 +1,253 @@
+name: von-rag R36 full-image candidate acceptance
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - .github/workflows/von-rag-r36-image.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r36-image
+  cancel-in-progress: false
+
+jobs:
+  build-and-pull:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Compose deterministic source-only delta over verified R24
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r36 image
+          python - <<'PY'
+          import gzip, hashlib, io, json, tarfile, urllib.request, zipfile
+          from pathlib import Path
+
+          RELEASE='https://github.com/josepha-mayo/Joseph-Portfolio/releases/download/von-rag-r24/von-rag-r24.zip'
+          RELEASE_SHA='799cdf2ebd0c782e1a5840a0330be544329ff9c2b4790f12944c71bf3cf0e73c'
+          PARENT_MANIFEST='sha256:87108e9df86e106041e2cbe82dda5bd1a7c18164153780a7ccf878e55506c686'
+          PARENT_CONFIG='sha256:2945493266e9cffb0de0e98376ed3a853cf0e71ec714be64b8f5e3216a023ec8'
+          PARENT_ORIGIN='https://josephm.netlify.app'
+          source_names=['von_rag/compact.py','von_rag/retrieval.py','von_rag/selection_repair.py']
+
+          def sha(b): return 'sha256:'+hashlib.sha256(b).hexdigest()
+          def packed(o): return json.dumps(o,separators=(',',':'),ensure_ascii=False).encode()
+
+          req=urllib.request.Request(RELEASE,headers={'User-Agent':'von-rag-r36-compose/1.0'})
+          with urllib.request.urlopen(req,timeout=60) as response:
+              release=response.read(30_000_001)
+          assert len(release)<=30_000_000 and hashlib.sha256(release).hexdigest()==RELEASE_SHA
+          with zipfile.ZipFile(io.BytesIO(release)) as z:
+              mb=z.read('image/manifest.json'); cb=z.read('image/config.json')
+          assert sha(mb)==PARENT_MANIFEST and sha(cb)==PARENT_CONFIG
+          manifest=json.loads(mb); config=json.loads(cb)
+          assert len(manifest['layers'])==len(config['rootfs']['diff_ids'])==26
+          assert config['config']['Entrypoint']==['python3','-m','von_rag.runtime','serve']
+
+          files={}
+          expected={}
+          for name in source_names:
+              b=Path(name).read_bytes(); files['app/'+name]=b; expected[name]=hashlib.sha256(b).hexdigest()
+
+          buf=io.BytesIO()
+          with tarfile.open(fileobj=buf,mode='w',format=tarfile.USTAR_FORMAT) as tf:
+              for name,b in sorted(files.items()):
+                  info=tarfile.TarInfo(name); info.size=len(b); info.mode=0o644
+                  info.uid=info.gid=0; info.uname=info.gname=''; info.mtime=0
+                  tf.addfile(info,io.BytesIO(b))
+          raw=buf.getvalue()
+          gzbuf=io.BytesIO()
+          with gzip.GzipFile(fileobj=gzbuf,mode='wb',filename='',mtime=0,compresslevel=9) as g:
+              g.write(raw)
+          layer=gzbuf.getvalue()
+          desc={'mediaType':'application/vnd.oci.image.layer.v1.tar+gzip','digest':sha(layer),'size':len(layer)}
+          Path('image/'+desc['digest'][7:]+'.tar.gz').write_bytes(layer)
+
+          manifest['layers'].append(desc)
+          config['rootfs']['diff_ids'].append(sha(raw))
+          config.setdefault('history',[]).append({
+              'created':'2026-09-29T19:30:00Z',
+              'created_by':'von-rag R36 tested source repair overlay'
+          })
+          new_cb=packed(config)
+          manifest['config']={**manifest['config'],'digest':sha(new_cb),'size':len(new_cb)}
+          new_mb=packed(manifest)
+          Path('image/config.json').write_bytes(new_cb)
+          Path('image/manifest.json').write_bytes(new_mb)
+
+          routes={}
+          for x in manifest['layers'][:-1]:
+              routes[x['digest']]={'size':x['size'],'source':'parent','location':PARENT_ORIGIN+'/v2/von-rag/blobs/'+x['digest']}
+          routes[desc['digest']]={'size':desc['size'],'source':'local'}
+          routing={'schema':1,'manifest':sha(new_mb),'config':sha(new_cb),'repository':'von-rag','tag':'r36','routes':routes}
+          Path('image/routing.json').write_text(json.dumps(routing,indent=2)+'\n')
+          receipt={
+              'schema':'von-rag-r36-composition-1','status':'passed',
+              'parent_manifest':PARENT_MANIFEST,'candidate_manifest':sha(new_mb),'candidate_config':sha(new_cb),
+              'parent_layers_preserved':26,'candidate_layers':27,
+              'patch_digest':desc['digest'],'patch_bytes':desc['size'],'patch_diffid':sha(raw),
+              'runtime_configuration_unchanged':True,'weights_changed':False,
+              'source_sha256':expected,'native_amd_validation':False,'submitted':False
+          }
+          Path('evidence/r36/COMPOSITION.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+
+      - name: Create bounded loopback registry for the exact candidate
+        run: |
+          cat > evidence/r36/registry.py <<'PY'
+          import argparse, hashlib, http.server, json, re
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          def dg(b): return 'sha256:'+hashlib.sha256(b).hexdigest()
+          class H(http.server.BaseHTTPRequestHandler):
+              protocol_version='HTTP/1.1'
+              def log_message(self,*a): pass
+              def do_GET(self): self.serve(False)
+              def do_HEAD(self): self.serve(True)
+              def finish_response(self,status,headers,body=b''):
+                  self.send_response(status)
+                  for k,v in headers.items(): self.send_header(k,str(v))
+                  if 'Content-Length' not in headers:self.send_header('Content-Length',str(len(body)))
+                  self.send_header('Connection','close'); self.end_headers()
+                  if self.command!='HEAD' and body:self.wfile.write(body)
+                  self.close_connection=True
+              def serve(self,head):
+                  root=self.server.root; route=self.server.route; p=self.path
+                  base={'Docker-Distribution-API-Version':'registry/2.0','Cache-Control':'no-store'}
+                  if '?' in p or '%' in p or '..' in p or '\\' in p:
+                      return self.finish_response(400,base,b'{}')
+                  if p in ('/v2','/v2/'):return self.finish_response(200,{**base,'Content-Type':'application/json'},b'{}')
+                  prefix='/v2/von-rag/'
+                  if not p.startswith(prefix):return self.finish_response(404,base,b'{}')
+                  tail=p[len(prefix):]
+                  if tail.startswith('manifests/'):
+                      ref=tail[10:]
+                      if ref not in ('r36',route['manifest']):return self.finish_response(404,base,b'{}')
+                      b=(root/'manifest.json').read_bytes()
+                      return self.finish_response(200,{**base,'Content-Type':'application/vnd.oci.image.manifest.v1+json','Docker-Content-Digest':route['manifest']},b)
+                  if not tail.startswith('blobs/'):return self.finish_response(404,base,b'{}')
+                  ref=tail[6:]
+                  if ref==route['config']:
+                      b=(root/'config.json').read_bytes()
+                      return self.finish_response(200,{**base,'Content-Type':'application/vnd.oci.image.config.v1+json','Docker-Content-Digest':ref},b)
+                  entry=route['routes'].get(ref)
+                  if not entry:return self.finish_response(404,base,b'{}')
+                  if entry['source']=='parent':
+                      return self.finish_response(307,{**base,'Location':entry['location'],'Docker-Content-Digest':ref},b'')
+                  blob=root/(ref[7:]+'.tar.gz')
+                  assert blob.stat().st_size==entry['size']
+                  b=blob.read_bytes(); assert dg(b)==ref
+                  return self.finish_response(200,{**base,'Content-Type':'application/octet-stream','Docker-Content-Digest':ref},b)
+          class S(http.server.ThreadingHTTPServer): pass
+          if __name__=='__main__':
+              a=argparse.ArgumentParser();a.add_argument('--root',type=Path,required=True);a.add_argument('--port',type=int,default=50436);x=a.parse_args()
+              root=x.root.resolve(); route=json.loads((root/'routing.json').read_text())
+              server=S(('127.0.0.1',x.port),H);server.root=root;server.route=route
+              print(json.dumps({'ready':True,'image':'127.0.0.1:'+str(x.port)+'/von-rag@'+route['manifest']}),flush=True)
+              server.serve_forever()
+          PY
+
+      - name: Fresh full Docker pull and source identity check
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          python3 -u evidence/r36/registry.py --root image > evidence/r36/registry.log 2>&1 &
+          reg=$!
+          trap 'kill "$reg" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do grep -q '"ready": true' evidence/r36/registry.log && break; sleep .2; done
+          grep -q '"ready": true' evidence/r36/registry.log
+          IMAGE=$(python3 -c 'import json;print(json.loads(open("evidence/r36/registry.log").readline())["image"])')
+          printf '%s\n' "$IMAGE" > evidence/r36/IMAGE.txt
+          export DOCKER_CONFIG="$RUNNER_TEMP/r36-empty"
+          mkdir -p "$DOCKER_CONFIG"; printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > evidence/r36/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > evidence/r36/docker-pull.log 2>&1
+          date -u +%s > evidence/r36/pull-end.txt
+          docker image inspect "$IMAGE" > evidence/r36/inspect.json
+          docker run --rm --network none --entrypoint python3 "$IMAGE" - <<'PY' > evidence/r36/source.json
+          import hashlib,json,pathlib
+          root=pathlib.Path('/app/von_rag')
+          files={}
+          for name in ['compact.py','retrieval.py','selection_repair.py','runtime.py']:
+              p=root/name;files[name]=hashlib.sha256(p.read_bytes()).hexdigest()
+          from von_rag import runtime,compact
+          print(json.dumps({'files':files,'compact_is_default':runtime.answer_model is compact.answer_compact}))
+          PY
+
+      - name: Diagnostic lifecycle and native no-fallback check
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat evidence/r36/IMAGE.txt)
+          mkdir -p evidence/r36/corpus
+          printf 'Product: ZX-517\nMaximum junction temperature: 84\nStatus: current\n' > evidence/r36/corpus/spec.txt
+          docker run -d --name r36-check --network none --entrypoint python3             -v "$PWD/evidence/r36/corpus:/app/corpus:ro" "$IMAGE" -m von_rag.runtime serve --diagnostic
+          trap 'docker logs r36-check > evidence/r36/worker.log 2>&1; docker rm -f r36-check >/dev/null 2>&1 || true' EXIT
+          for i in $(seq 1 50); do docker exec r36-check python3 -m von_rag.runtime health >/dev/null 2>&1 && break; sleep .2; done
+          docker exec r36-check python3 /app/app.py --index /app/corpus > evidence/r36/index.json
+          docker exec r36-check python3 /app/app.py --corpus /app/corpus --query-id q1 --query 'What is the maximum junction temperature of ZX-517?'
+          docker cp r36-check:/app/output/q1_output.json evidence/r36/q1_output.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('evidence/r36/q1_output.json'))
+          assert r['answer']=='84' and r['citations']==['spec.txt']
+          PY
+          docker rm -f r36-check >/dev/null
+          trap - EXIT
+          set +e
+          timeout --kill-after=5s 120s docker run --rm --network none "$IMAGE" > evidence/r36/native-no-gpu.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          test "$rc" -ne 124
+          grep -q 'Allocated AMD ROCm hardware required' evidence/r36/native-no-gpu.log
+
+      - name: Emit acceptance receipt
+        run: |
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          comp=json.load(open('evidence/r36/COMPOSITION.json'))
+          inspect=json.load(open('evidence/r36/inspect.json'))[0]
+          source=json.load(open('evidence/r36/source.json'))
+          seconds=int(Path('evidence/r36/pull-end.txt').read_text())-int(Path('evidence/r36/pull-start.txt').read_text())
+          expected={k.split('/')[-1]:v for k,v in comp['source_sha256'].items()}
+          for name,sha in expected.items():assert source['files'][name]==sha
+          assert source['compact_is_default']
+          assert inspect['Id']==comp['candidate_config']
+          assert len(inspect['RootFS']['Layers'])==27
+          out={'schema':'von-rag-r36-full-image-acceptance-1','status':'passed',
+               'candidate_manifest':comp['candidate_manifest'],'candidate_config':comp['candidate_config'],
+               'full_pull_seconds':seconds,'uncompressed_bytes':inspect['Size'],'layers':27,
+               'source_hashes_verified':True,'compact_is_default':True,'diagnostic_query_passed':True,
+               'native_no_cpu_fallback':True,'native_amd_validation':False,'official_selfcheck':False,
+               'submitted':False}
+          Path('evidence/r36/ACCEPTANCE.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r36-full-image-candidate
+          path: |
+            delivery/von-rag-r19/evidence/r36/
+            delivery/von-rag-r19/image/manifest.json
+            delivery/von-rag-r19/image/config.json
+            delivery/von-rag-r19/image/routing.json
+            delivery/von-rag-r19/image/*.tar.gz
+          retention-days: 14
