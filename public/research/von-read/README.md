@@ -9,6 +9,7 @@
 - **Open-source implementation and reproducibility files:** [source/](./source/)
 - **Scoped open-source license:** [source/LICENSE.txt](./source/LICENSE.txt)
 - **Decoder case study:** [DECODER_CASE_STUDY.md](./DECODER_CASE_STUDY.md)
+- **Machine-readable Quest evidence:** [QUEST_EVIDENCE_2026-10-01.json](./QUEST_EVIDENCE_2026-10-01.json)
 
 ## Quest Building evidence
 
@@ -26,6 +27,8 @@
 
 These rows are **evidence for eligibility review**, not a claim that any Quest XP has already been awarded.
 
+The manifest above records each Building criterion separately, links the scoped MIT license directly, and distinguishes evidence published from credit actually awarded. The latest verified public Quest state on 1 October 2026 is **530 XP, rank 470, two Mini-Challenges submitted**; the public board does not expose a category-by-category credit breakdown.
+
 ## Current challenge work
 
 ### Mini-Challenge 2: exact OCR
@@ -36,7 +39,9 @@ The selected R16 candidate preserves the earlier model/runtime and changes only 
 
 The selected R35 candidate preserves the R24 Qwen3-VL weights and parent filesystem layers while adding retrieval and validation fixes. On the official **public** sample, an original-checkpoint CPU diagnostic produced 8/10 exact answer+citation results. Replaying those same recorded outputs through the conservative grounded repair gives 10/10.
 
-That replay is **not fresh neural inference, native AMD timing, or a hidden-grader score**. Native AMD MC3 timing/VRAM and the official GPU self-check remain unverified.
+That replay is **not fresh neural inference or a hidden-grader score**. The selected R35 image also has a recorded native AMD source-path public-sample validation: 10/10, 19.919 s model-load+index, 0.338 s slowest query, and 8.633 GiB peak reserved VRAM. This remains public-sample/source-path evidence, not a hidden grade or full Docker GPU self-check.
+
+A source-only research successor, **R61**, has passed 426 software/parser/scripted-selection checks including reviewer-derived condition, citation, retirement and PDF-resource controls. R61 is **not** the selected MC3 image and has not passed the required fresh paired native gate or full-container GPU qualification.
 
 ## Reproducibility and disclosure
 
