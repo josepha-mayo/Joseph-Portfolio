@@ -140,3 +140,21 @@ def indexed_page(index: Any, record: dict[str, Any]):
     if len(rows) > 64:
         return None
     return [dict(row) for row in rows]
+
+
+def indexed_source(index: Any, record: dict[str, Any]):
+    """Return a bounded source-local record set with decoded fields."""
+    connection = getattr(index, 'con', None)
+    if connection is None:
+        return None
+    rows = connection.execute('SELECT cid FROM chunks WHERE source=? LIMIT 129',
+        (record.get('source', ''),)).fetchall()
+    if len(rows) > 128:
+        return None
+    try:
+        return [index.chunk(row[0]) for row in rows]
+    except (KeyError, TypeError, AttributeError):
+        return None
+
+
+[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
