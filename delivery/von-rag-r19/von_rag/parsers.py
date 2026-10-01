@@ -154,6 +154,53 @@ def text_chunks(text: str, source: str, locator: str = 'text', context: str = ''
     return out
 
 
+def docx_table_rows(table) -> list[list[str]]:
+    """Expand OOXML grid spans and carry only genuine vertical-merge scope.
+
+    Word stores a vertically merged continuation as an empty cell with vMerge,
+    so flattening text naively loses the entity/key on later rows. Horizontal
+    grid spans also need placeholder columns or every later field shifts left.
+    """
+    rows=[]; vertical={}
+    for row_no, row in enumerate(table.findall(W+'tr'), 1):
+        if row_no > MAX_ROWS: raise ValueError('Word table exceeds row budget')
+        cells=[]; col=0
+        for cell in row.findall(W+'tc'):
+            props=cell.find(W+'tcPr')
+            span=1
+            merge=None
+            if props is not None:
+                grid=props.find(W+'gridSpan')
+                if grid is not None:
+                    raw=grid.attrib.get(W+'val','1')
+                    if not raw.isdigit(): raise ValueError('invalid Word table grid span')
+                    span=int(raw)
+                    if not 1 <= span <= 512: raise ValueError('Word table grid span out of bounds')
+                merge=props.find(W+'vMerge')
+            if col+span>512: raise ValueError('Word table too wide')
+            text=' '.join(x.text or '' for x in cell.iter(W+'t')).strip()
+            if merge is not None:
+                state=merge.attrib.get(W+'val','continue').casefold()
+                if state=='restart':
+                    for c in range(col,col+span): vertical[c]=text
+                elif state in {'continue',''}:
+                    if not text:
+                        inherited={vertical.get(c,'') for c in range(col,col+span)}
+                        inherited.discard('')
+                        if len(inherited)==1:text=next(iter(inherited))
+                else:
+                    raise ValueError('unsupported Word vertical merge state')
+            else:
+                for c in range(col,col+span): vertical.pop(c,None)
+            cells.append(text)
+            cells.extend(['']*(span-1))
+            col += span
+        vertical = {c:v for c,v in vertical.items() if c < col}
+        rows.append(cells)
+    return rows
+
+
+
 def parse_docx(path: Path, source: str) -> list[Chunk]:
     out, context = [], ''
     with archive(path) as z:
@@ -168,9 +215,7 @@ def parse_docx(path: Path, source: str) -> list[Chunk]:
                     # Preserve nearby document/section headings, not arbitrary prior rows.
                     if len(t) < 220: context = (context + '\n' + t)[-1400:]
             elif item.tag == W+'tbl':
-                rows = [[' '.join(x.text or '' for x in cell.iter(W+'t'))
-                         for cell in row.findall(W+'tc')] for row in item.findall(W+'tr')]
-                out += row_chunks(rows, source, f'table{i+1}', context)
+                out += row_chunks(docx_table_rows(item), source, f'table{i+1}', context)
     return out
 
 
@@ -342,3 +387,5 @@ if __name__ == '__main__':
     except Exception as e:
         print(json.dumps({'error': type(e).__name__, 'detail': str(e)[:240]}))
         sys.exit(2)
+
+[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
