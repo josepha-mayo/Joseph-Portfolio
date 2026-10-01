@@ -1,0 +1,158 @@
+name: von-rag R61 full container qualification
+on:
+  push:
+    branches: [amd-r61-registry-preview-20261001]
+    paths:
+      - .github/workflows/von-rag-r61-container-qualification.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r61-full-container
+  cancel-in-progress: false
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 38
+    env:
+      BASE_IMAGE: josephm.netlify.app/von-rag-r35@sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb
+      LOCAL_IMAGE: von-rag-r61:qualification
+      PATCH: 70fc8a2aa9e2bde50a9a3632f9978e1a7660050c8d20f149b9ae096156ba4b15.tar.gz
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Generate and verify exact R61 OCI assets
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python scripts/prepare-von-registry.py > receipts/r24.json
+          python scripts/prepare-von-registry-r35.py > receipts/r35.json
+          python scripts/prepare-von-registry-r61.py | tee receipts/r61.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('public/registry-assets/r61/BUILD_RECEIPT.json').read_text())
+          assert r['candidate_manifest']=='sha256:334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3'
+          assert r['patch_digest']=='sha256:70fc8a2aa9e2bde50a9a3632f9978e1a7660050c8d20f149b9ae096156ba4b15'
+          assert r['weights_changed'] is False and r['candidate_layers']==28
+          PY
+      - name: Prepare disposable runner
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          mkdir -p "$RUNNER_TEMP/empty-docker"
+          printf '{}\n' > "$RUNNER_TEMP/empty-docker/config.json"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk-before.txt
+      - name: Fresh anonymous pull of exact R35 parent
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker"
+          date -u +%s > receipts/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$BASE_IMAGE" > receipts/pull.log 2>&1
+          date -u +%s > receipts/pull-end.txt
+          docker image inspect "$BASE_IMAGE" > receipts/base-inspect.json
+      - name: Build local R61 container from exact verified overlay
+        run: |
+          set -euo pipefail
+          printf 'FROM %s\nADD public/registry-assets/r61/%s /\n' "$BASE_IMAGE" "$PATCH" > Dockerfile.r61-qualification
+          DOCKER_BUILDKIT=1 docker build --network=none --pull=false -f Dockerfile.r61-qualification -t "$LOCAL_IMAGE" .             > receipts/build.log 2>&1
+          docker image inspect "$LOCAL_IMAGE" > receipts/candidate-inspect.json
+      - name: Verify ancestry and exact runtime source
+        run: |
+          set -euo pipefail
+          docker run --rm --network none --entrypoint python3 "$LOCAL_IMAGE" - <<'PY' > receipts/source.json
+          import hashlib,json,pathlib
+          expected={
+          '__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+          'compact.py':'2db060a0070d86d877d69cf5818790ccd5fa50f2dde80f8ce0fbb9a5de3ba4ea',
+          'conflicts.py':'fe42f5c08b74ecfe49935ce6a3757a173d9dbd1b0fa8c2e659f7aa41d11ee912',
+          'engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+          'native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+          'parsers.py':'7075037b8058bb2550030fa6f90291ef47f2f495b7aadcdd342e0757a4ba8ce3',
+          'proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+          'retrieval.py':'8518f67298a18651dc0d6d3edef59eacffbbf5d8a8b57d3ebde1b42bd0800ac0',
+          'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+          'scalar_guard.py':'dfea01e2fb106697e6322b36caca203a7c2f5081a3998a17ecd8664351260606',
+          'selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+          'value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894'}
+          root=pathlib.Path('/app/von_rag')
+          got={k:hashlib.sha256((root/k).read_bytes()).hexdigest() for k in expected}
+          assert got==expected
+          assert hashlib.sha256(pathlib.Path('/app/app.py').read_bytes()).hexdigest()=='32ec6ac66b5c1f5abed3ff8819ee2651f0bb0efa122ca2f8f760e111c3357054'
+          print(json.dumps(got,sort_keys=True))
+          PY
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base=json.loads(Path('receipts/base-inspect.json').read_text())[0]
+          cand=json.loads(Path('receipts/candidate-inspect.json').read_text())[0]
+          b=base['RootFS']['Layers'];c=cand['RootFS']['Layers']
+          assert len(b)==27 and len(c)==28 and c[:27]==b
+          Path('receipts/ancestry.json').write_text(json.dumps({
+            'base_layers':len(b),'candidate_layers':len(c),'all_parent_layers_preserved':True,
+            'base_size':base['Size'],'candidate_size':cand['Size']},indent=2)+'\n')
+          PY
+      - name: Exercise persistent worker and real app.py CLI in diagnostic mode
+        run: |
+          set -euo pipefail
+          mkdir -p fixtures/corpus
+          cat > fixtures/corpus/spec.txt <<'EOF'
+          Product: QA-731
+          Maximum junction temperature: 94
+          Status: current
+          EOF
+          docker run -d --name r61diag --network none --entrypoint python3 "$LOCAL_IMAGE"             -m von_rag.runtime serve --diagnostic > receipts/container-id.txt
+          cleanup(){ docker rm -f r61diag >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          for i in $(seq 1 60); do
+            if docker exec r61diag python3 -m von_rag.runtime health >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          docker exec r61diag python3 -m von_rag.runtime health | tee receipts/health.json
+          docker cp fixtures/corpus r61diag:/tmp/corpus
+          docker exec r61diag python3 /app/app.py --index /tmp/corpus | tee receipts/index.json
+          docker exec r61diag python3 /app/app.py --corpus /tmp/corpus --query-id q1             --query 'What is the maximum junction temperature of QA-731?' | tee receipts/query-stdout.txt
+          docker cp r61diag:/app/output/q1_output.json receipts/q1_output.json
+          docker cp r61diag:/app/audit/q1.json receipts/q1_audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          out=json.loads(Path('receipts/q1_output.json').read_text())
+          audit=json.loads(Path('receipts/q1_audit.json').read_text())
+          assert out['answer']=='94' and out['citations']==['spec.txt']
+          assert audit['backend']=='cpu_diagnostic' and audit['gpu_calls']==0
+          PY
+      - name: Write qualification receipt
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          def read(name):
+              p=Path('receipts')/name
+              return json.loads(p.read_text()) if p.exists() else None
+          seconds=None
+          if Path('receipts/pull-start.txt').exists() and Path('receipts/pull-end.txt').exists():
+              seconds=int(Path('receipts/pull-end.txt').read_text())-int(Path('receipts/pull-start.txt').read_text())
+          receipt={'schema':'von-rag-r61-container-qualification-1',
+            'base_image':os.environ['BASE_IMAGE'],
+            'candidate_manifest':'sha256:334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3',
+            'fresh_anonymous_parent_pull':seconds is not None,'pull_seconds':seconds,
+            'ancestry':read('ancestry.json'),'source_verified':Path('receipts/source.json').exists(),
+            'health':read('health.json'),'index':read('index.json'),'query_output':read('q1_output.json'),
+            'diagnostic_only':True,'native_amd_source_gate_separate':True,
+            'submission_changed':False,'production_deployed':False}
+          Path('receipts/QUALIFICATION.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r61-full-container-qualification
+          path: receipts/
+          retention-days: 14
