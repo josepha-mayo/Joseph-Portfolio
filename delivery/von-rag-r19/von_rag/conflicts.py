@@ -19,9 +19,9 @@ def _key(value):
 def _property(query):
     words = set(re.findall(r'[a-z]+', query.casefold()))
     if {'junction', 'temperature'} <= words and words & {'maximum', 'max'}:
-        return 'temperature', {'maxjunctiontemperature', 'maximumjunctiontemperature'}
+        return 'temperature', {'tjmax', 'maxjunctiontemperature', 'maximumjunctiontemperature'}
     if {'junction', 'temperature'} <= words and words & {'minimum', 'min'}:
-        return 'temperature', {'minjunctiontemperature', 'minimumjunctiontemperature'}
+        return 'temperature', {'tjmin', 'minjunctiontemperature', 'minimumjunctiontemperature'}
     if {'board', 'revision'} <= words:
         return 'revision', {'boardrevision', 'revision', 'rev'}
     if {'customer', 'sampling'} <= words and 'quarter' in words:
@@ -40,52 +40,8 @@ def _property(query):
 
 
 def record_answer_matches_query_property(record, answer, query):
-    """Reject a value proved to belong to a different supported property.
-
-    Missing/opaque field structure stays model-visible; this only rejects when
-    the record itself exposes the requested field and the selected answer is not
-    its value.
-    """
-    kind, aliases = _property(query)
-    if kind is None or not answer:
-        return True
-    text = record.get('text', '')
-    fields = record.get('fields') or kv_fields(text)
-    fields = {_key(k): str(v).strip() for k, v in fields.items()}
-    candidates = [v for k, v in fields.items() if k in aliases and v]
-    # Python/code parser represents literals as parameter/value pairs.
-    parameter = fields.get('parameter', '')
-    if _key(parameter) in aliases and fields.get('value'):
-        candidates.append(fields['value'])
-    if not candidates:
-        return True
-    def comparable(value):
-        value = str(value).strip()
-        if kind == 'temperature':
-            match = re.fullmatch(
-                r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*'
-                r'(?:°?\s*[CFK]|degrees?)?', value, re.I)
-            return ('temperature', Decimal(match[1]).normalize()) if match else None
-        if kind == 'timeout':
-            match = re.fullmatch(
-                r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*'
-                r'(?:s|secs?|seconds?)?', value, re.I)
-            return ('timeout', Decimal(match[1]).normalize()) if match else None
-        if kind == 'price':
-            raw = value.replace(',', '')
-            try:
-                return ('price', Decimal(raw).normalize())
-            except Exception:
-                return None
-        if kind == 'firmware':
-            versions = re.findall(r'(?<!\d)\d+(?:\.\d+){1,5}(?!\d)', value)
-            if len(versions) == 1:
-                return ('firmware-version', versions[0])
-        return (kind, re.sub(r'\s+', '', value).upper())
-    target = comparable(answer)
-    return target is not None and any(
-        contains_value(text, v) and comparable(v) == target for v in candidates)
-
+    from .scalar_guard import property_matches
+    return property_matches(record, answer, query)
 
 def _scalar(value, kind):
     value = str(value).strip()
@@ -102,7 +58,7 @@ def _scalar(value, kind):
 # Only explicit equality conditions on a single voltage are interpreted here.
 # Unsupported syntax/units and ambiguous fields remain the model's job; never
 # silently turn comparisons, alternatives, or ranges into equality filters.
-_VOLTAGE_KEYS = {'voltage', 'supplyvoltage', 'operatingvoltage'}
+_VOLTAGE_KEYS = {'voltage', 'supplyvoltage', 'operatingvoltage', 'testvoltage'}
 _VOLUME_KEYS = {'volume', 'unitvolume', 'quantity', 'qty'}
 _NUMBER = r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)'
 _UNIT = r'(?:mV|mv|kV|kv|V|v|(?i:millivolts?|kilovolts?|volts?))'
@@ -126,14 +82,14 @@ def _volts(value):
     return Decimal(match[1]) * scale
 
 
-def query_voltage(query):
+def query_voltage(query, *, final=False):
     """Return one explicit `at 3 V` condition, or None when not safely parsed."""
     # Do not filter multi-hop or unsupported question types by a guessed
     # electrical condition. This rule is only for the supported scalar tasks.
     # Voltage is a semantic condition only for the temperature scalar family.
     # Expanding field validation to price/firmware/etc must not silently turn
     # an incidental voltage mention into a retrieval filter.
-    if _property(query)[0] != 'temperature' or len(identifiers(query)) != 1:
+    if _property(query)[0] != 'temperature' or (not final and len(identifiers(query)) != 1):
         return None
     if _UNSAFE_CONDITION.search(query):
         return None
@@ -146,10 +102,10 @@ def query_voltage(query):
     return _volts(matches[0][1])
 
 
-def query_volume(query):
+def query_volume(query, *, final=False):
     """Return one explicit unit-volume tier for a unit-price question."""
     words = set(re.findall(r'[a-z]+', query.casefold()))
-    if 'price' not in words or 'unit' not in words or len(identifiers(query)) != 1:
+    if 'price' not in words or 'unit' not in words or (not final and len(identifiers(query)) != 1):
         return None
     if _UNSAFE_CONDITION.search(query):
         return None
@@ -161,7 +117,10 @@ def query_volume(query):
     # More than one explicit "<number> unit(s)" quantity is ambiguous.
     if len(re.findall(r'(?i)\b\d[\d,]*\s+(?:unit|units)\b', query)) != 1:
         return None
-    return int(matches[0][1].replace(',', ''))
+    token = matches[0][1]
+    if not re.fullmatch(r'(?:\d+|\d{1,3}(?:,\d{3})+)', token):
+        return None
+    return int(token.replace(',', ''))
 
 
 def _volume_values(fields, text=''):
@@ -179,10 +138,10 @@ def _record_volume(fields, text=''):
         return None
     normalized = []
     for value in values:
-        raw = str(value).strip().replace(',', '')
-        if not re.fullmatch(r'\d+', raw):
+        raw = str(value).strip()
+        if not re.fullmatch(r'(?:\d+|\d{1,3}(?:,\d{3})+)', raw):
             return None
-        normalized.append(int(raw))
+        normalized.append(int(raw.replace(',', '')))
     if len(set(normalized)) != 1:
         return None
     return normalized[0]
@@ -228,8 +187,8 @@ def record_proves_query_conditions(record, query):
     Records with no structured condition field remain model-visible for legacy
     prose handling.
     """
-    requested_voltage = query_voltage(query)
-    requested_volume = query_volume(query)
+    requested_voltage = query_voltage(query, final=True)
+    requested_volume = query_volume(query, final=True)
     if requested_voltage is None and requested_volume is None:
         return True
     text = record.get('text', '')
@@ -332,3 +291,5 @@ def explicit_current_conflict(index, query):
             result.extend({'value': item['value'], 'sources': sorted(item['sources'])}
                           for item in values.values())
     return sorted(result, key=lambda item: (item['value'], item['sources']))
+
+[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
