@@ -49,7 +49,7 @@ def test_numeric_price_exact_source_value():
 @pytest.mark.parametrize('source_value,nonliteral',[
  ('94','94 C'), ('180','180 seconds'), ('4.3.2','Meridian 4.3.2'),
 ])
-def test_nonliteral_alias_is_still_rejected_by_source_grounding(source_value,nonliteral):
+def test_equivalent_alias_rewrites_to_literal_source_value(source_value,nonliteral):
     query=('What is the maximum junction temperature of TQ-40?' if source_value=='94'
            else 'What is the default batch timeout, in seconds, in the ingest service?' if source_value=='180'
            else 'Which firmware version fixed ticket ORR-1847?')
@@ -58,5 +58,10 @@ def test_nonliteral_alias_is_still_rejected_by_source_grounding(source_value,non
           else 'Ticket: ORR-1847\nFixed in: '+source_value)
     fields=({'parameter':'BATCH_TIMEOUT','value':source_value} if source_value=='180' else {})
     r=[Chunk('source.txt','p1',text,fields).dict()]
-    with pytest.raises(ValueError):
-        parse_selection(json.dumps([nonliteral,[0]]),r,query)
+    # R61 intentionally supersedes the former blanket alias-rejection policy.
+    # Canonicalization is allowed only before strict literal-proof validation.
+    out, proof = parse_selection(json.dumps([nonliteral,[0]]),r,query)
+    assert out['answer'] == source_value
+    assert proof['answer'] == source_value
+    assert proof['evidence'][0]['quote'] == r[0]['text']
+    assert proof['alias_canonicalization']['original'] == nonliteral
