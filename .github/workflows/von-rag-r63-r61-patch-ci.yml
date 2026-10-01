@@ -1,0 +1,125 @@
+name: von-rag R63 exact R61 patch CI
+on:
+  push:
+    branches: [amd-r63-r61-patch-ci-20261001]
+    paths:
+      - delivery/von-rag-r19/evidence/r61/r61.patch.xz.b64
+      - .github/workflows/von-rag-r63-r61-patch-ci.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-r63-r61-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  exact-r61:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Decode and verify exact tested R61 patch
+        run: |
+          set -euo pipefail
+          base64 -d delivery/von-rag-r19/evidence/r61/r61.patch.xz.b64 | xz -d > /tmp/r61.patch
+          echo "85d0bc232756336a4ffd3169f643c3d04365df664ba0f80758a40decd970b8b9  /tmp/r61.patch" | sha256sum -c -
+          git apply --check /tmp/r61.patch
+          git apply /tmp/r61.patch
+          python - <<'PY'
+          import subprocess
+          expected={
+          'delivery/von-rag-r19/tests/test_r55_python_authority.py',
+          'delivery/von-rag-r19/tests/test_r56_docx_merges.py',
+          'delivery/von-rag-r19/tests/test_r56_official_aliases.py',
+          'delivery/von-rag-r19/tests/test_r57_file_budget.py',
+          'delivery/von-rag-r19/tests/test_r58_scorer_aliases.py',
+          'delivery/von-rag-r19/tests/test_r61_literal_transfer.py',
+          'delivery/von-rag-r19/tests/test_r61_pdf_limits.py',
+          'delivery/von-rag-r19/tests/test_r61_review_findings.py',
+          'delivery/von-rag-r19/von_rag/compact.py',
+          'delivery/von-rag-r19/von_rag/conflicts.py',
+          'delivery/von-rag-r19/von_rag/parsers.py',
+          'delivery/von-rag-r19/von_rag/retrieval.py',
+          'delivery/von-rag-r19/von_rag/scalar_guard.py',
+          'delivery/von-rag-r19/von_rag/selection_repair.py'}
+          got=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          assert got==expected,(sorted(got-expected),sorted(expected-got))
+          print('Exact 14-file R61 delta applied.')
+          PY
+
+      - name: Verify exact tested runtime hashes
+        working-directory: delivery/von-rag-r19
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          expected={
+          '__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+          'compact.py':'2db060a0070d86d877d69cf5818790ccd5fa50f2dde80f8ce0fbb9a5de3ba4ea',
+          'conflicts.py':'fe42f5c08b74ecfe49935ce6a3757a173d9dbd1b0fa8c2e659f7aa41d11ee912',
+          'engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+          'native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+          'parsers.py':'7075037b8058bb2550030fa6f90291ef47f2f495b7aadcdd342e0757a4ba8ce3',
+          'proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+          'retrieval.py':'8518f67298a18651dc0d6d3edef59eacffbbf5d8a8b57d3ebde1b42bd0800ac0',
+          'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+          'scalar_guard.py':'dfea01e2fb106697e6322b36caca203a7c2f5081a3998a17ecd8664351260606',
+          'selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+          'value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894'}
+          for name,want in expected.items():
+              got=hashlib.sha256((Path('von_rag')/name).read_bytes()).hexdigest()
+              assert got==want,(name,want,got)
+          print('All 12 runtime hashes match tested R61.')
+          PY
+
+      - run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
+
+      - name: Full R61 software suite
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          python -m compileall -q von_rag
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r61-ci.xml | tee evidence/r61-ci.log
+          python - <<'PY'
+          import json, os, sys, hashlib, xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('evidence/r61-ci.xml').getroot().findall('testsuite')
+          totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert totals=={'tests':426,'failures':0,'errors':0,'skipped':0},totals
+          receipt={'schema':'von-rag-r63-r61-patch-ci-1','commit':os.environ['GITHUB_SHA'],
+                   'python':sys.version,'tests':totals,
+                   'candidate_source_id':'unpublished-runtime-sha256:2883a30fbc0a71df8106fdcd2747166cdd012e01fa215f1064d06761ce2a089c',
+                   'patch_sha256':'85d0bc232756336a4ffd3169f643c3d04365df664ba0f80758a40decd970b8b9',
+                   'fresh_model_calls':0,'native_amd_validation':False,'submission_changed':False}
+          Path('evidence/r61-ci-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+
+      - name: Package exact patched candidate
+        working-directory: delivery/von-rag-r19
+        run: |
+          tar -czf ../../von-rag-r61-exact-source.tgz app.py requirements-test.txt LICENSE.txt von_rag tests diagnostics evidence/r61-ci-receipt.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r61-exact-python-${{ matrix.python }}
+          path: |
+            von-rag-r61-exact-source.tgz
+            delivery/von-rag-r19/evidence/r61-ci.xml
+            delivery/von-rag-r19/evidence/r61-ci.log
+            delivery/von-rag-r19/evidence/r61-ci-receipt.json
+          retention-days: 14
