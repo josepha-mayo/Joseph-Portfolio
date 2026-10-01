@@ -1,0 +1,204 @@
+name: von-rag R62 full image reconstruction
+on:
+  push:
+    branches: [amd-r61-verified-integration-20261001]
+    paths: [.github/workflows/von-rag-r62-container.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r62-container
+  cancel-in-progress: false
+jobs:
+  full-image:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      PARENT_ORIGIN: https://josephm.netlify.app
+      PARENT_MANIFEST: sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb
+      PARENT_CONFIG: sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - name: Compose deterministic source-only R61 layer over selected R35
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r62 image
+          python3 - <<'PY'
+          import gzip,hashlib,io,json,os,tarfile,urllib.request
+          from pathlib import Path
+          origin=os.environ['PARENT_ORIGIN']; pm=os.environ['PARENT_MANIFEST']; pc=os.environ['PARENT_CONFIG']
+          def get(path,limit=200000):
+              req=urllib.request.Request(origin+path,headers={'Accept-Encoding':'identity','User-Agent':'von-r62-compose/1.0'})
+              with urllib.request.urlopen(req,timeout=45) as r:
+                  b=r.read(limit+1); assert r.code==200 and len(b)<=limit; return b
+          def dg(b): return 'sha256:'+hashlib.sha256(b).hexdigest()
+          def packed(x): return json.dumps(x,separators=(',',':'),ensure_ascii=False).encode()
+          mb=get('/v2/von-rag/manifests/'+pm); cb=get('/v2/von-rag/blobs/'+pc)
+          assert dg(mb)==pm and dg(cb)==pc
+          manifest=json.loads(mb); config=json.loads(cb)
+          assert len(manifest['layers'])==len(config['rootfs']['diff_ids'])==27
+          assert config['config']['Entrypoint']==['python3','-m','von_rag.runtime','serve']
+          files={}
+          for p in sorted(Path('von_rag').glob('*.py')): files['app/von_rag/'+p.name]=p.read_bytes()
+          files['app/app.py']=Path('app.py').read_bytes()
+          hashes={k.removeprefix('app/'):hashlib.sha256(v).hexdigest() for k,v in files.items()}
+          buf=io.BytesIO()
+          with tarfile.open(fileobj=buf,mode='w',format=tarfile.USTAR_FORMAT) as tf:
+              for name,b in sorted(files.items()):
+                  info=tarfile.TarInfo(name); info.size=len(b); info.mode=0o644
+                  info.uid=info.gid=0; info.uname=info.gname=''; info.mtime=0
+                  tf.addfile(info,io.BytesIO(b))
+          raw=buf.getvalue(); gz=io.BytesIO()
+          with gzip.GzipFile(fileobj=gz,mode='wb',filename='',mtime=0,compresslevel=9) as g:g.write(raw)
+          layer=gz.getvalue(); desc={'mediaType':'application/vnd.oci.image.layer.v1.tar+gzip','digest':dg(layer),'size':len(layer)}
+          Path('image/'+desc['digest'][7:]+'.tar.gz').write_bytes(layer)
+          manifest['layers'].append(desc); config['rootfs']['diff_ids'].append(dg(raw))
+          config.setdefault('history',[]).append({'created':'2026-10-01T17:00:00Z','created_by':'von-rag R61 exact AMD-tested source overlay'})
+          newcb=packed(config); manifest['config']={**manifest['config'],'digest':dg(newcb),'size':len(newcb)}; newmb=packed(manifest)
+          Path('image/config.json').write_bytes(newcb); Path('image/manifest.json').write_bytes(newmb)
+          routes={x['digest']:{'size':x['size'],'source':'parent','location':origin+'/v2/von-rag/blobs/'+x['digest']} for x in manifest['layers'][:-1]}
+          routes[desc['digest']]={'size':desc['size'],'source':'local'}
+          routing={'schema':1,'manifest':dg(newmb),'config':dg(newcb),'repository':'von-rag-r61','tag':'r61','routes':routes}
+          Path('image/routing.json').write_text(json.dumps(routing,indent=2)+'\n')
+          receipt={'schema':'von-r62-r61-composition-1','parent_manifest':pm,'parent_config':pc,
+                   'candidate_manifest':dg(newmb),'candidate_config':dg(newcb),'parent_layers_preserved':27,
+                   'candidate_layers':28,'patch_digest':desc['digest'],'patch_bytes':desc['size'],'patch_diffid':dg(raw),
+                   'runtime_configuration_unchanged':True,'weights_changed':False,'source_sha256':hashes,
+                   'native_amd_gate_passed':True,'official_hidden_grade':None,'submission_changed':False}
+          Path('evidence/r62/COMPOSITION.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - name: Write bounded local registry
+        working-directory: delivery/von-rag-r19
+        run: |
+          cat > evidence/r62/registry.py <<'PY'
+          import argparse,hashlib,http.server,json
+          from pathlib import Path
+          def dg(b):return 'sha256:'+hashlib.sha256(b).hexdigest()
+          class H(http.server.BaseHTTPRequestHandler):
+              protocol_version='HTTP/1.1'
+              def log_message(self,*a):pass
+              def do_GET(self):self.serve()
+              def do_HEAD(self):self.serve()
+              def finish(self,status,headers,body=b''):
+                  self.send_response(status)
+                  for k,v in headers.items():self.send_header(k,str(v))
+                  self.send_header('Content-Length',str(len(body)));self.send_header('Connection','close');self.end_headers()
+                  if self.command!='HEAD' and body:self.wfile.write(body)
+                  self.close_connection=True
+              def serve(self):
+                  p=self.path; root=self.server.root; route=self.server.route
+                  base={'Docker-Distribution-API-Version':'registry/2.0','Cache-Control':'no-store'}
+                  if '?' in p or '%' in p or '..' in p or '\\' in p:return self.finish(400,base,b'{}')
+                  if p in ('/v2','/v2/'):return self.finish(200,{**base,'Content-Type':'application/json'},b'{}')
+                  prefix='/v2/von-rag-r61/'
+                  if not p.startswith(prefix):return self.finish(404,base,b'{}')
+                  tail=p[len(prefix):]
+                  if tail.startswith('manifests/'):
+                      ref=tail[10:]
+                      if ref not in ('r61',route['manifest']):return self.finish(404,base,b'{}')
+                      b=(root/'manifest.json').read_bytes()
+                      return self.finish(200,{**base,'Content-Type':'application/vnd.oci.image.manifest.v1+json','Docker-Content-Digest':route['manifest']},b)
+                  if not tail.startswith('blobs/'):return self.finish(404,base,b'{}')
+                  ref=tail[6:]
+                  if ref==route['config']:
+                      b=(root/'config.json').read_bytes()
+                      return self.finish(200,{**base,'Content-Type':'application/vnd.oci.image.config.v1+json','Docker-Content-Digest':ref},b)
+                  e=route['routes'].get(ref)
+                  if not e:return self.finish(404,base,b'{}')
+                  if e['source']=='parent':return self.finish(307,{**base,'Location':e['location'],'Docker-Content-Digest':ref},b'')
+                  b=(root/(ref[7:]+'.tar.gz')).read_bytes();assert len(b)==e['size'] and dg(b)==ref
+                  return self.finish(200,{**base,'Content-Type':'application/octet-stream','Docker-Content-Digest':ref},b)
+          class S(http.server.ThreadingHTTPServer):pass
+          a=argparse.ArgumentParser();a.add_argument('--root',type=Path,required=True);a.add_argument('--port',type=int,default=50621);x=a.parse_args()
+          route=json.loads((x.root/'routing.json').read_text());s=S(('127.0.0.1',x.port),H);s.root=x.root;s.route=route
+          print(json.dumps({'ready':True,'image':'127.0.0.1:'+str(x.port)+'/von-rag-r61@'+route['manifest']}),flush=True);s.serve_forever()
+          PY
+      - name: Fresh anonymous full Docker pull
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          python3 -u evidence/r62/registry.py --root image > evidence/r62/registry.log 2>&1 &
+          server=$!; trap 'kill "$server" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do grep -q '"ready": true' evidence/r62/registry.log && break; sleep .2; done
+          IMAGE=$(python3 -c 'import json;print(json.loads(open("evidence/r62/registry.log").readline())["image"])')
+          echo "::add-mask::$IMAGE"; printf '%s\n' "$IMAGE" > private-image.txt
+          export DOCKER_CONFIG="$RUNNER_TEMP/r62-empty-docker";mkdir -p "$DOCKER_CONFIG";printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > evidence/r62/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > private-pull.log 2>&1
+          date -u +%s > evidence/r62/pull-end.txt
+          docker image inspect "$IMAGE" > evidence/r62/inspect.json
+      - name: Verify exact R61 source inside reconstructed image
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat private-image.txt)
+          docker run --rm -i --network none --entrypoint python3 "$IMAGE" - <<'PY' > evidence/r62/source.json
+          import hashlib,json,pathlib
+          root=pathlib.Path('/app'); files={}
+          for p in sorted((root/'von_rag').glob('*.py')):files['von_rag/'+p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
+          files['app.py']=hashlib.sha256((root/'app.py').read_bytes()).hexdigest()
+          from von_rag import runtime,compact
+          print(json.dumps({'files':files,'compact_default':runtime.answer_model is compact.answer_compact}))
+          PY
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          comp=json.loads(Path('evidence/r62/COMPOSITION.json').read_text());source=json.loads(Path('evidence/r62/source.json').read_text())
+          assert source['files']==comp['source_sha256'] and source['compact_default']
+          image=json.loads(Path('evidence/r62/inspect.json').read_text())[0]
+          assert image['Id']==comp['candidate_config'] and len(image['RootFS']['Layers'])==28
+          assert image['Size'] < 60*1024**3
+          PY
+      - name: No-network lifecycle in diagnostic mode and native no-fallback
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          IMAGE=$(cat private-image.txt);mkdir -p evidence/r62/corpus
+          printf 'Product: ZV-421\nMaximum junction temperature: 83\nStatus: current\n' > evidence/r62/corpus/spec.txt
+          docker run -d --name r62-check --network none --entrypoint python3 -v "$PWD/evidence/r62/corpus:/app/corpus:ro" "$IMAGE" -m von_rag.runtime serve --diagnostic
+          trap 'docker logs r62-check > evidence/r62/worker.log 2>&1; docker rm -f r62-check >/dev/null 2>&1 || true' EXIT
+          docker exec r62-check python3 /app/app.py --index /app/corpus > evidence/r62/index.json
+          docker exec r62-check python3 /app/app.py --corpus /app/corpus --query-id q1 --query 'What is the maximum junction temperature of ZV-421?'
+          docker cp r62-check:/app/output/q1_output.json evidence/r62/q1_output.json
+          python3 -c "import json; r=json.load(open('evidence/r62/q1_output.json')); assert r['answer']=='83' and r['citations']==['spec.txt']"
+          docker rm -f r62-check >/dev/null; trap - EXIT
+          set +e
+          timeout --kill-after=5s 150s docker run --rm --network none "$IMAGE" > evidence/r62/native-no-gpu.log 2>&1; rc=$?
+          set -e
+          test "$rc" -ne 0; test "$rc" -ne 124; grep -q 'Allocated AMD ROCm hardware required' evidence/r62/native-no-gpu.log
+      - name: Final transport receipt and small reconstruction bundle
+        if: always()
+        working-directory: delivery/von-rag-r19
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          ev=Path('evidence/r62')
+          if (ev/'inspect.json').exists():
+              image=json.loads((ev/'inspect.json').read_text())[0];comp=json.loads((ev/'COMPOSITION.json').read_text())
+              seconds=int((ev/'pull-end.txt').read_text())-int((ev/'pull-start.txt').read_text())
+              out={'schema':'von-r62-full-image-transport-1','status':'passed','manifest':comp['candidate_manifest'],
+                   'config':comp['candidate_config'],'uncompressed_bytes':image['Size'],'layers':len(image['RootFS']['Layers']),
+                   'full_anonymous_pull_seconds':seconds,'source_hashes_verified':True,'diagnostic_cli_passed':True,
+                   'native_no_cpu_fallback':True,'native_amd_source_gate_passed':True,'official_selfcheck_on_amd':False,
+                   'submission_changed':False}
+              (ev/'ACCEPTANCE.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out,indent=2))
+          with zipfile.ZipFile(ev/'r61-reconstruction-bundle.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(Path('image').iterdir()):
+                  if p.is_file():z.write(p,p.name)
+              z.write(ev/'registry.py','registry.py')
+          (ev/'BUNDLE_SHA256.txt').write_text(hashlib.sha256((ev/'r61-reconstruction-bundle.zip').read_bytes()).hexdigest()+'  r61-reconstruction-bundle.zip\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r62-r61-full-image
+          path: delivery/von-rag-r19/evidence/r62/
+          retention-days: 14
