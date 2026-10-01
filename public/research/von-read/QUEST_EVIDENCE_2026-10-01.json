@@ -1,6 +1,6 @@
 {
-  "schema": "von-read-quest-evidence-2026-10-01",
-  "updated_utc": "2026-10-01T20:55:00+01:00",
+  "schema": "von-read-quest-evidence-2026-10-01-r68",
+  "updated_date_utc": "2026-10-01",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -23,28 +23,57 @@
       "matched model/robustness comparison covering 186 model-image evaluations",
       "completion-budget/EOS repair followed by 91-input regression and 72 AMD driver-memory samples"
     ],
-    "milestone_awards_claimed": false
+    "milestone_awards_claimed": false,
+    "credit_scope_note": "The R61 release supplements this existing project evidence; it is not a fourth milestone claim or a new duplicate project claim."
   },
   "selected_challenge_artifacts": {
     "mc2": "awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws/von-read@sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad",
-    "mc3": "josephm.netlify.app/von-rag-r35@sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb"
+    "mc3": "josephm.netlify.app/von-rag-r61@sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07",
+    "selection_verified_date_utc": "2026-10-01",
+    "verification": "LabLab displayed Submission Updated; a fresh submission-editor load retained the R61 digest and unchanged MC2 digest. The public description also identifies R61."
   },
   "mc3_research_successor": {
     "name": "R61",
-    "submitted": false,
+    "role": "now_selected_mc3",
+    "submitted": true,
     "runtime_source_id": "unpublished-runtime-sha256:2883a30fbc0a71df8106fdcd2747166cdd012e01fa215f1064d06761ce2a089c",
+    "published_source_commit": "73600eaa711cf6a78b2cd1de0db4da565a2b6eab",
     "software_tests": 426,
     "failures": 0,
-    "scope": "software/parser/scripted-selection checks; not hidden or neural accuracy",
-    "native_pair_verified": false,
-    "full_container_gpu_verified": false
+    "software_scope": "software/parser/scripted-selection checks, independently repeated on Python 3.12 and 3.14; not neural accuracy",
+    "native_pair_verified": true,
+    "native_pair": {
+      "verified_utc": "2026-10-01T16:52:56.094245+00:00",
+      "gpu": "AMD Instinct MI300X VF",
+      "baseline_r35": {"official": [10, 10], "stress": [10, 12], "development_transfer": [14, 36], "total": [34, 58]},
+      "candidate_r61": {"official": [10, 10], "stress": [12, 12], "development_transfer": [36, 36], "total": [58, 58]},
+      "rescues": 24,
+      "regressions": 0,
+      "archive_sha256": "b6f68adfa05a32485443eacab045bcfd4461ebd5a2ef4f3f106156239e4e8f9b",
+      "scope": "Recorded fresh native inference on a development suite, not a blind hidden-set estimate. This evidence update is not a new GPU run.",
+      "receipt": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/62eb0f9d68ca5da69c83ca08faa441c5e3deaf60/delivery/von-rag-r19/evidence/r62/AMD_NATIVE_RESULT.json"
+    },
+    "transport": {
+      "manifest": "sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07",
+      "config": "sha256:3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c",
+      "uncompressed_bytes": 40302129764,
+      "layers": 28,
+      "parent_layers_preserved": 27,
+      "weights_changed": false,
+      "preview_full_pull_run": "https://github.com/josepha-mayo/Joseph-Portfolio/actions/runs/36921651037",
+      "production_full_pull_run": "https://github.com/josepha-mayo/Joseph-Portfolio/actions/runs/36923592112",
+      "release_pull_request": "https://github.com/josepha-mayo/Joseph-Portfolio/pull/63"
+    },
+    "full_container_gpu_verified": false,
+    "remaining_gate": "Actual full-container AMD GPU qualification remains outstanding; native source-path and Docker transport checks do not replace it."
   },
   "latest_verified_quest_state": {
     "xp": 530,
     "rank": 470,
     "mini_challenges_submitted": 2,
     "verified_date": "2026-10-01",
-    "category_breakdown_available": false
+    "category_breakdown_available": false,
+    "fresh_xp_check_in_this_update": false
   },
   "pending_assessment_requests": {
     "existing_request_totals": [905, 550],
@@ -56,7 +85,7 @@
     "course completion",
     "ROCm certification completion",
     "hidden grader score",
-    "R61 submission",
+    "full-container AMD GPU qualification",
     "unawarded or duplicate Quest XP"
   ]
 }
