@@ -44,7 +44,7 @@ def retired(source, text=''):
 
 
 _REVISION_SUFFIX = re.compile(
-    r'(?i)(?:^|[_ .-])(?:rev(?:ision)?|r|v|version)[_ .-]?([0-9]+)([a-z]?)([0-9]*)$')
+    r'(?i)(?:^|[_ .-])(?:rev(?:ision)?|r|v|version)[_ .-]?([0-9]+(?:\.[0-9]+)*)([a-z]?)([0-9]*)$')
 
 
 def revision_family(source: str):
@@ -58,10 +58,26 @@ def revision_family(source: str):
     letter = ord(match.group(2).casefold()) - 96 if match.group(2) else 0
     tail = int(match.group(3)) if match.group(3) else 0
     family = (path.parent / (prefix + path.suffix.casefold())).as_posix()
-    return family, (int(match.group(1)), letter, tail)
+    parts=tuple(int(n) for n in match.group(1).split('.'))
+    while len(parts)>1 and parts[-1]==0: parts=parts[:-1]
+    return family, (parts, letter, tail)
 
 
-def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, file_timeout=8) -> dict:
+def pdf_render_scale(width, height, *, pixel_limit=4_000_000, edge_limit=4096):
+    """Bound dimensions before rasterization, including extreme page geometry."""
+    width,height=float(width),float(height)
+    if not all(math.isfinite(v) and v > 0 for v in (width,height)):
+        raise ValueError('invalid PDF page geometry')
+    scale=min(1.5, math.sqrt(pixel_limit/width/height), edge_limit/width, edge_limit/height)
+    if not math.isfinite(scale) or scale <= 0:
+        raise ValueError('unrenderable PDF geometry')
+    # Ceil rounding may otherwise cross the target by one row or column.
+    while math.ceil(width*scale)*math.ceil(height*scale) > pixel_limit:
+        scale *= .999
+    return scale
+
+
+def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, file_timeout=60) -> dict:
     root, output = root.resolve(strict=True), output.absolute()
     if not root.is_dir(): raise ValueError('corpus must be a directory')
     if output.is_relative_to(root): raise ValueError('index must be outside corpus')
@@ -92,18 +108,20 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                     if p.is_symlink() or not p.is_file() or not info.st_mode & 0o444:
                         raise PermissionError('not an authorized readable regular file')
                     if info.st_size > MAX_FILE_BYTES: raise ValueError('oversized file')
+                    file_deadline=min(start+deadline_seconds, time.monotonic()+file_timeout)
                     ext = p.suffix.lower()
                     if ext not in SUPPORTED: raise ValueError('unknown format')
                     if ext in {'.png','.jpg','.jpeg'}:
                         if vision is None: raise RuntimeError('image requires vision backend; not silently treated as read')
                         from von_read.views import load_image
                         with load_image(p) as im:
-                            text = vision(im, deadline=start+deadline_seconds)
+                            text = vision(im, deadline=file_deadline)
+                        if time.monotonic() >= file_deadline: raise TimeoutError('late image transcription')
                         chunks = [Chunk(rel, 'vision', text, kv_fields(text), '', 'vision')]
                     else:
                         env = dict(os.environ, OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1')
                         run = subprocess.run([sys.executable,'-m','von_rag.parsers',str(p),str(root)],
-                            text=True, capture_output=True, timeout=min(file_timeout, max(.1,deadline_seconds-(time.monotonic()-start))), env=env)
+                            text=True, capture_output=True, timeout=max(.001, file_deadline-time.monotonic()), env=env)
                         data = json.loads(run.stdout)
                         if run.returncode: raise ValueError(data.get('error','parse failed')+': '+data.get('detail',''))
                         chunks = [Chunk(**x) for x in data['chunks']]
@@ -132,12 +150,17 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                                         continue
                                     if vision_pages >= 64:
                                         raise ValueError('PDF vision page budget exceeded')
-                                    area = max(1.0, float(page.rect.width * page.rect.height))
-                                    scale = min(1.5, max(0.5, (4_000_000.0 / area) ** 0.5))
+                                    if time.monotonic() >= file_deadline:
+                                        raise TimeoutError('PDF file budget exceeded')
+                                    scale=pdf_render_scale(page.rect.width,page.rect.height)
                                     pix = page.get_pixmap(matrix=fitz.Matrix(scale, scale), alpha=False)
                                     image = Image.frombytes('RGB', (pix.width, pix.height), pix.samples)
                                     try:
-                                        visual = vision(image, deadline=start+deadline_seconds)
+                                        if time.monotonic() >= file_deadline:
+                                            raise TimeoutError('PDF render exhausted file budget')
+                                        visual = vision(image, deadline=file_deadline)
+                                        if time.monotonic() >= file_deadline:
+                                            raise TimeoutError('late PDF transcription')
                                     finally:
                                         image.close()
                                     vision_pages += 1
@@ -155,7 +178,7 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                     # Product/Model/Device record remains record-local.
                     scoped = re.compile(r'(?im)^\s*(?:product|model|device)\s*:')
                     source_retired = retired(rel, '') or any(
-                        retired('', c.text) and not scoped.search(c.text) for c in chunks)
+                        retired('', c.text) and c.kind != 'row' and not scoped.search(c.text) for c in chunks)
                     document_status[rel] = bool(source_retired)
                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
@@ -193,6 +216,8 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                 if revision < newest:
                     con.execute('UPDATE chunks SET retired=1 WHERE source=?', (source,))
 
+        if time.monotonic() >= start+deadline_seconds:
+            raise TimeoutError('index startup budget exceeded before commit')
         manifest = {'schema':1,'corpus':str(root),'files':files,'skipped':skipped,'chunks':nchunks,
                     'index_seconds':time.monotonic()-start,'images_read':sum(1 for f in files if Path(f['source']).suffix.lower() in {'.png','.jpg','.jpeg'})}
         con.execute('INSERT INTO meta VALUES(?,?)',('manifest',json.dumps(manifest)))
@@ -260,3 +285,5 @@ class Index:
 
     def all(self):
         return [self.chunk(r[0]) for r in self.con.execute('SELECT cid FROM chunks')]
+
+[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
