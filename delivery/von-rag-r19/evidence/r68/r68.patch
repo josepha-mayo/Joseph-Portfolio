@@ -1,0 +1,318 @@
+--- a/delivery/von-rag-r19/von_rag/conflicts.py
++++ b/delivery/von-rag-r19/von_rag/conflicts.py
+@@ -246,7 +246,10 @@
+     kind, aliases = _property(query)
+     if len(wanted) != 1 or kind is None:
+         return []
+-    scope_keys = {'product', 'model', 'device'}
++    scope_keys = {
++        'product', 'model', 'device', 'partnumber', 'partno', 'pn', 'sku',
++        'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
++    }
+     groups = {}
+     for record in index.search(query, k=32, historical=False):
+         if record.get('retired') or not record_matches_query_conditions(record, query):
+@@ -260,11 +263,14 @@
+             continue
+         scope = set()
+         for name, value in fields.items():
+-            if name in scope_keys:
++            if name in scope_keys and name not in aliases:
+                 scope |= identifiers(value)
++        scope_line = re.compile(
++            r'\s*(?:product|model|device|part\s+(?:number|no)|pn|sku|asset|'
++            r'component|serial\s+number|item|assembly|module)\s*:\s*(.*)', re.I)
+         for line in text.splitlines():
+-            match = re.match(r'\s*(?:product|model|device)\s*:\s*(.*)', line, re.I)
+-            if match:
++            match = scope_line.match(line)
++            if match and _key(line.split(':', 1)[0]) not in aliases:
+                 scope |= identifiers(match[1])
+         if scope != wanted:
+             continue
+--- a/delivery/von-rag-r19/von_rag/parsers.py
++++ b/delivery/von-rag-r19/von_rag/parsers.py
+@@ -128,24 +128,38 @@
+         if not block.strip(): continue
+         pieces = [block]
+         if Path(source).suffix != '.log':
+-            # A plain-text/PDF paragraph can contain several literal product
+-            # records without blank lines. Keeping them in one chunk makes
+-            # scope ambiguous and also lets duplicate key/value fields
+-            # overwrite each other. Split only at the second and later explicit
+-            # Product/Model/Device header; preserve any heading/prefix with the
+-            # first record and never synthesize or summarize source text.
++            # A plain-text/PDF paragraph can contain several literal records
++            # without blank lines. Split on a repeated entity key, or after a
++            # completed Status record. Different adjacent entity fields may
++            # belong to the SAME record (for example Product + Part Number).
+             lines = block.splitlines()
+-            starts = [n for n,line in enumerate(lines)
+-                      if re.match(r'^\s*(?:product|model|device)\s*:\s*\S', line, re.I)]
+-            if len(starts) > 1:
+-                cuts = starts[1:]
+-                pieces=[]; begin=0
+-                for end in cuts:
+-                    part='\n'.join(lines[begin:end])
++            scope_header = re.compile(
++                r'^\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
++                r'serial\s+number|item|assembly|module)\s*:\s*\S', re.I)
++            hits=[]
++            for n,line in enumerate(lines):
++                match=scope_header.match(line)
++                if match:
++                    key=re.sub(r'[^a-z0-9]','',match.group(1).casefold())
++                    hits.append((n,key))
++            if len(hits) > 1:
++                cuts=[]; seen={hits[0][1]}; previous=hits[0][0]
++                for n,key in hits[1:]:
++                    between=lines[previous+1:n]
++                    closed=any(re.match(r'^\s*status\s*:\s*\S', x, re.I) for x in between)
++                    if key in seen or closed:
++                        cuts.append(n); seen={key}
++                    else:
++                        seen.add(key)
++                    previous=n
++                if cuts:
++                    pieces=[]; begin=0
++                    for end in cuts:
++                        part='\n'.join(lines[begin:end])
++                        if part.strip(): pieces.append(part)
++                        begin=end
++                    part='\n'.join(lines[begin:])
+                     if part.strip(): pieces.append(part)
+-                    begin=end
+-                part='\n'.join(lines[begin:])
+-                if part.strip(): pieces.append(part)
+         for piece_no, piece in enumerate(pieces):
+             for j in range(0, len(piece), 3500):
+                 part = piece[max(0, j-180):j+3500]
+--- a/delivery/von-rag-r19/von_rag/retrieval.py
++++ b/delivery/von-rag-r19/von_rag/retrieval.py
+@@ -30,7 +30,7 @@
+ 
+ 
+ def identifiers(text):
+-    raw = re.findall(r'(?<![\w])(?:[A-Za-z]{1,10}[-_][A-Za-z0-9][A-Za-z0-9_-]*|[A-Za-z]{1,8}\d{2,}[A-Za-z0-9_-]*)(?![\w])', text)
++    raw = re.findall(r'(?<![\w])(?:[A-Za-z]{1,32}[-_][A-Za-z0-9][A-Za-z0-9_-]*|[A-Za-z]{1,24}\d{2,}[A-Za-z0-9_-]*)(?![\w])', text)
+     return {re.sub(r'[-_]', '', x).upper() for x in raw
+             if any(c.isdigit() for c in x) and not re.fullmatch(r'FY\d+',x,re.I)}
+ 
+@@ -41,6 +41,26 @@
+         or re.search(r'(?im)^\s*status\s*:\s*(withdrawn|superseded|obsolete|deprecated|archived)\b', text)
+         or re.search(r'(?im)^\s*(?:withdrawn|superseded|obsolete|deprecated|archived|do\s+not\s+use)\b\s*(?:[-:\u2014]|$)', text)
+     )
++
++
++
++def document_retirement_marker(chunk):
++    """True only for a document-level retirement marker, not a retired record."""
++    text = str(chunk.text)
++    if chunk.kind == 'row' or not retired('', text):
++        return False
++    fields = kv_fields(text)
++    if not fields:
++        return True
++    keys = {re.sub(r'[^a-z0-9]', '', str(k).casefold()) for k in fields}
++    # A status block is document-wide unless it also declares an entity record.
++    # This preserves a withdrawn status plus arbitrary document metadata while
++    # preventing a retired Part/SKU/Asset record from poisoning live siblings.
++    entity_keys = {
++        'product', 'model', 'device', 'partnumber', 'partno', 'pn', 'sku',
++        'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
++    }
++    return not bool(keys & entity_keys)
+ 
+ 
+ _REVISION_SUFFIX = re.compile(
+@@ -176,9 +196,8 @@
+                     # (e.g. `Status: withdrawn` before the first record) also
+                     # applies globally. Status attached to an explicit
+                     # Product/Model/Device record remains record-local.
+-                    scoped = re.compile(r'(?im)^\s*(?:product|model|device)\s*:')
+                     source_retired = retired(rel, '') or any(
+-                        retired('', c.text) and c.kind != 'row' and not scoped.search(c.text) for c in chunks)
++                        document_retirement_marker(c) for c in chunks)
+                     document_status[rel] = bool(source_retired)
+                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
+                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
+--- a/delivery/von-rag-r19/von_rag/scalar_guard.py
++++ b/delivery/von-rag-r19/von_rag/scalar_guard.py
+@@ -105,10 +105,25 @@
+ 
+ 
+ def property_matches(record, answer, query):
+-    kind, values = field_values(record, query)
+-    if kind is None or not values:
++    kind, aliases = property_kind(query)
++    if kind is None:
+         return True
+     text = str(record.get('text', ''))
++    fields = record.get('fields') or kv_fields(text)
++    fields = {_key(k): str(v).strip() for k, v in fields.items()} if isinstance(fields, dict) else {}
++    semantic = fields.get('parameter', fields.get('property', ''))
++    generic = fields.get('value', '')
++    explicit = [v for k, v in fields.items() if k in aliases and v]
++    # A generic Value cell tied to a different named parameter is positive
++    # evidence of the WRONG property, not unstructured prose. Reject only when
++    # no requested field in the same record independently carries the answer.
++    if (generic and semantic and _key(semantic) not in aliases
++            and equivalent(answer, generic, kind)
++            and not any(equivalent(answer, v, kind) for v in explicit)):
++        return False
++    _, values = field_values(record, query)
++    if not values:
++        return True
+     # Conflicting repeated requested fields are not a unique scalar witness.
+     if any(not equivalent(values[0], v, kind) for v in values[1:]):
+         return False
+--- a/delivery/von-rag-r19/tests/test_r64_record_boundaries.py
++++ b/delivery/von-rag-r19/tests/test_r64_record_boundaries.py
+@@ -0,0 +1,73 @@
++"""R64 record-boundary regressions for non-Product entity labels."""
++import pytest
++from von_rag.parsers import text_chunks
++from von_rag.retrieval import build_index, Index
++
++def make_index(tmp_path, text):
++    root=tmp_path/'corpus'; root.mkdir()
++    (root/'mixed.txt').write_text(text)
++    db=tmp_path/'i.sqlite'
++    m=build_index(root,db,file_timeout=30,deadline_seconds=180)
++    assert not m['skipped'],m
++    return Index(db,root)
++
++@pytest.mark.parametrize('scope_key',['Part Number','Part No','PN','SKU','Asset','Component'])
++def test_adjacent_plaintext_records_split_on_common_scope_headers(scope_key):
++    text=(f'{scope_key}: OLD-100\nMaximum junction temperature: 105\nStatus: withdrawn\n'
++          f'{scope_key}: NEW-200\nMaximum junction temperature: 94\nStatus: current\n')
++    chunks=text_chunks(text,'mixed.txt')
++    assert len(chunks)==2
++    assert 'OLD-100' in chunks[0].text and 'NEW-200' not in chunks[0].text
++    assert 'NEW-200' in chunks[1].text and 'OLD-100' not in chunks[1].text
++    assert chunks[0].fields[scope_key]=='OLD-100'
++    assert chunks[1].fields[scope_key]=='NEW-200'
++
++@pytest.mark.parametrize('scope_key',['Product','Model','Device'])
++def test_existing_primary_scope_split_is_preserved(scope_key):
++    text=(f'{scope_key}: A-100\nValue: 1\n'
++          f'{scope_key}: B-200\nValue: 2\n')
++    chunks=text_chunks(text,'mixed.txt')
++    assert len(chunks)==2
++
++def test_single_part_number_record_is_not_split():
++    chunks=text_chunks('Part Number: FAN-2214-B\nStatus: current\n','mixed.txt')
++    assert len(chunks)==1
++
++def test_no_blank_line_mixed_status_preserves_live_record(tmp_path):
++    root=tmp_path/'corpus'; root.mkdir()
++    (root/'mixed.txt').write_text(
++       'Part Number: OLD-100\nMaximum junction temperature: 105\nStatus: withdrawn\n'
++       'Part Number: NEW-200\nMaximum junction temperature: 94\nStatus: current\n')
++    db=tmp_path/'i.sqlite'
++    m=build_index(root,db,file_timeout=30,deadline_seconds=180)
++    assert not m['skipped'],m
++    ix=Index(db,root)
++    try:
++        rows=ix.all()
++        assert len(rows)==2
++        old=next(r for r in rows if 'OLD-100' in r['text'])
++        new=next(r for r in rows if 'NEW-200' in r['text'])
++        assert old['retired'] and not new['retired']
++    finally: ix.close()
++
++@pytest.mark.parametrize('scope_key',['Serial Number','Item','Assembly','Module'])
++def test_more_common_entity_headers_split_and_stay_record_scoped(tmp_path,scope_key):
++    text=(f'{scope_key}: OLD-100\nMaximum junction temperature: 105\nStatus: withdrawn\n'
++          f'{scope_key}: NEW-200\nMaximum junction temperature: 94\nStatus: current\n')
++    chunks=text_chunks(text,'mixed.txt')
++    assert len(chunks)==2
++    ix=make_index(tmp_path,text)
++    try:
++        rows=ix.all()
++        old=next(r for r in rows if 'OLD-100' in r['text'])
++        new=next(r for r in rows if 'NEW-200' in r['text'])
++        assert old['retired'] and not new['retired']
++    finally: ix.close()
++
++def test_document_status_with_arbitrary_metadata_still_retires_file(tmp_path):
++    ix=make_index(tmp_path,
++      'Status: withdrawn\nReason: replaced by next generation\nOwner: engineering\n\n'
++      'Product: NEW-200\nMaximum junction temperature: 94\nStatus: current\n')
++    try:
++        assert all(r['retired'] for r in ix.all())
++    finally: ix.close()
+--- a/delivery/von-rag-r19/tests/test_r65_conflict_scope.py
++++ b/delivery/von-rag-r19/tests/test_r65_conflict_scope.py
+@@ -0,0 +1,71 @@
++"""R65 conflict scoping across non-Product entity labels."""
++import json
++import time
++import pytest
++from von_rag.retrieval import build_index, Index
++from von_rag.conflicts import explicit_current_conflict
++from von_rag.compact import prepare, answer_compact
++
++def make_index(tmp_path, files):
++    root=tmp_path/'corpus'; root.mkdir()
++    for name,text in files.items(): (root/name).write_text(text)
++    db=tmp_path/'index.sqlite'
++    m=build_index(root,db,file_timeout=30,deadline_seconds=180)
++    assert not m['skipped'],m
++    return Index(db,root)
++
++@pytest.mark.parametrize('key',['Part Number','SKU','Asset','Component','Serial Number'])
++def test_conflict_detected_under_common_entity_scope(tmp_path,key):
++    files={
++      'a.txt':f'{key}: FAN-2214-B\nMaximum junction temperature: 81\nStatus: current\n',
++      'b.txt':f'{key}: FAN-2214-B\nMaximum junction temperature: 82\nStatus: current\n'}
++    ix=make_index(tmp_path,files)
++    try:
++        got=explicit_current_conflict(ix,
++          'What is the maximum junction temperature of FAN-2214-B?')
++        assert {x['value'] for x in got}=={'81','82'}
++    finally: ix.close()
++
++def test_same_value_is_not_conflict(tmp_path):
++    ix=make_index(tmp_path,{
++      'a.txt':'Part Number: FAN-2214-B\nMaximum junction temperature: 81\nStatus: current\n',
++      'b.txt':'Part Number: FAN-2214-B\nMaximum junction temperature: 81\nStatus: current\n'})
++    try:
++        assert explicit_current_conflict(ix,
++          'What is the maximum junction temperature of FAN-2214-B?')==[]
++    finally: ix.close()
++
++def test_other_entity_does_not_create_conflict(tmp_path):
++    ix=make_index(tmp_path,{
++      'a.txt':'Part Number: FAN-2214-B\nMaximum junction temperature: 81\nStatus: current\n',
++      'b.txt':'Part Number: FAN-9999-Z\nMaximum junction temperature: 82\nStatus: current\n'})
++    try:
++        assert explicit_current_conflict(ix,
++          'What is the maximum junction temperature of FAN-2214-B?')==[]
++    finally: ix.close()
++
++def test_part_number_answer_is_not_mistaken_for_scope(tmp_path):
++    ix=make_index(tmp_path,{
++      'a.txt':'Product: TQ-40\nPart Number: FAN-2214-B\nStatus: current\n',
++      'b.txt':'Product: TQ-40\nPart Number: FAN-2214-C\nStatus: current\n'})
++    try:
++        got=explicit_current_conflict(ix,
++          'What is the part number of the field-replaceable fan assembly for TQ-40?')
++        assert {x['value'] for x in got}=={'FAN-2214-B','FAN-2214-C'}
++    finally: ix.close()
++
++def test_valid_model_selection_is_refused_when_scope_conflicts(tmp_path):
++    ix=make_index(tmp_path,{
++      'a.txt':'Part Number: FAN-2214-B\nMaximum junction temperature: 81\nStatus: current\n',
++      'b.txt':'Part Number: FAN-2214-B\nMaximum junction temperature: 82\nStatus: current\n'})
++    try:
++        q='What is the maximum junction temperature of FAN-2214-B?'
++        records,_=prepare(ix,q)
++        selected=next(i for i,r in enumerate(records) if '81' in r['text'])
++        class Model:
++            def chat(self,*args,**kwargs): return json.dumps(['81',[selected]])
++        out,audit=answer_compact(ix,q,Model(),deadline=time.monotonic()+10)
++        assert out=={'answer':'','citations':[],'confidence':0.0}
++        assert audit['completed_model_response']
++        assert audit['reason']=='explicit_current_conflict'
++    finally: ix.close()
