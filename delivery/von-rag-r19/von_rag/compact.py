@@ -235,5 +235,3 @@ def answer_compact(index, query, model, *, deadline):
     except (ValueError,TypeError,KeyError,TimeoutError) as exc:
         return empty,{**audit,'reason':'invalid_or_incomplete_model_response',
                       'error':type(exc).__name__+': '+str(exc)[:300]}
-
-[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
