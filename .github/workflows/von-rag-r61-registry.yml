@@ -1,0 +1,64 @@
+name: von-rag R61 registry build
+on:
+  push:
+    branches: [amd-r61-registry-preview-20261001]
+    paths:
+      - registry-inputs/r61-runtime-layer.b64
+      - scripts/prepare-von-registry-r61.py
+      - src/app/v2/**
+      - tests/von-registry-r61.test.mjs
+      - package.json
+      - netlify.toml
+      - .github/workflows/von-rag-r61-registry.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r61-registry-build
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build deterministic R24, R35 and R61 assets
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python scripts/prepare-von-registry.py > receipts/r24.json
+          python scripts/prepare-von-registry-r35.py > receipts/r35.json
+          python scripts/prepare-von-registry-r61.py | tee receipts/r61.json
+      - name: Run registry tests
+        run: node --experimental-strip-types --test tests/von-registry*.test.mjs | tee receipts/tests.log
+      - name: Build site and registry routes
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build 2>&1 | tee receipts/next-build.log
+      - name: Verify exact R61 build receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('public/registry-assets/r61/BUILD_RECEIPT.json').read_text())
+          assert r['status']=='passed' and r['weights_changed'] is False
+          assert r['candidate_manifest']=='sha256:334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3'
+          assert r['candidate_config']=='sha256:559c9eb8e465e78c60f64158be563fb325e6ee5660395d6ebb58d63aca77cf3d'
+          assert r['patch_digest']=='sha256:70fc8a2aa9e2bde50a9a3632f9978e1a7660050c8d20f149b9ae096156ba4b15'
+          assert r['candidate_layers']==28
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r61-registry-build
+          path: receipts/
+          retention-days: 14

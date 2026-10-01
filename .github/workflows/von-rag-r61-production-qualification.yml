@@ -1,0 +1,145 @@
+name: von-rag R61 production pull gate
+on:
+  push:
+    branches: [master]
+    paths:
+      - registry-inputs/r61-runtime-layer.b64
+      - scripts/prepare-von-registry-r61.py
+      - src/app/v2/**
+      - tests/von-registry-r61.test.mjs
+      - package.json
+      - netlify.toml
+      - .github/workflows/von-rag-r61-production-qualification.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r61-production-pull
+  cancel-in-progress: false
+jobs:
+  pull:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 38
+    env:
+      IMAGE: josephm.netlify.app/von-rag-r61@sha256:334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3
+      MANIFEST_URL: https://josephm.netlify.app/v2/von-rag-r61/manifests/sha256:334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Wait for exact production manifest
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          for i in $(seq 1 120); do
+            code=$(curl -L -sS --max-time 20 -o receipts/manifest.body -D receipts/manifest.headers -w '%{http_code}' "$MANIFEST_URL" || true)
+            if [ "$code" = 200 ]; then
+              got=$(sha256sum receipts/manifest.body | awk '{print $1}')
+              if [ "$got" = 334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3 ]; then
+                echo "production manifest ready on poll $i" | tee receipts/readiness.txt
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+          echo 'exact production manifest never appeared' >&2
+          exit 1
+      - name: Prepare disposable runner
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p "$RUNNER_TEMP/empty-docker"
+          printf '{}\n' > "$RUNNER_TEMP/empty-docker/config.json"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk-before.txt
+      - name: Fresh anonymous full pull of production R61
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker"
+          date -u +%s > receipts/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > receipts/pull.log 2>&1
+          date -u +%s > receipts/pull-end.txt
+          docker image inspect "$IMAGE" > receipts/inspect.json
+      - name: Verify exact production runtime and ancestry
+        run: |
+          set -euo pipefail
+          docker run --rm --network none --entrypoint python3 "$IMAGE" - <<'PY' > receipts/source.json
+          import hashlib,json,pathlib
+          expected={
+          '__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+          'compact.py':'2db060a0070d86d877d69cf5818790ccd5fa50f2dde80f8ce0fbb9a5de3ba4ea',
+          'conflicts.py':'fe42f5c08b74ecfe49935ce6a3757a173d9dbd1b0fa8c2e659f7aa41d11ee912',
+          'engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+          'native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+          'parsers.py':'7075037b8058bb2550030fa6f90291ef47f2f495b7aadcdd342e0757a4ba8ce3',
+          'proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+          'retrieval.py':'8518f67298a18651dc0d6d3edef59eacffbbf5d8a8b57d3ebde1b42bd0800ac0',
+          'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+          'scalar_guard.py':'dfea01e2fb106697e6322b36caca203a7c2f5081a3998a17ecd8664351260606',
+          'selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+          'value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894'}
+          root=pathlib.Path('/app/von_rag')
+          got={k:hashlib.sha256((root/k).read_bytes()).hexdigest() for k in expected}
+          assert got==expected
+          assert hashlib.sha256(pathlib.Path('/app/app.py').read_bytes()).hexdigest()=='32ec6ac66b5c1f5abed3ff8819ee2651f0bb0efa122ca2f8f760e111c3357054'
+          print(json.dumps(got,sort_keys=True))
+          PY
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('receipts/inspect.json').read_text())[0]
+          layers=d['RootFS']['Layers']
+          assert len(layers)==28
+          Path('receipts/ancestry.json').write_text(json.dumps({'layers':28,'size':d['Size']},indent=2)+'\n')
+          PY
+      - name: Exercise production container CLI in diagnostic mode
+        run: |
+          set -euo pipefail
+          mkdir -p fixtures/corpus
+          cat > fixtures/corpus/spec.txt <<'EOF'
+          Product: QA-731
+          Maximum junction temperature: 94
+          Status: current
+          EOF
+          docker run -d --name r61prod --network none --entrypoint python3 "$IMAGE"             -m von_rag.runtime serve --diagnostic > receipts/container-id.txt
+          cleanup(){ docker rm -f r61prod >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          for i in $(seq 1 60); do
+            docker exec r61prod python3 -m von_rag.runtime health >/dev/null 2>&1 && break
+            sleep 1
+          done
+          docker exec r61prod python3 -m von_rag.runtime health | tee receipts/health.json
+          docker cp fixtures/corpus r61prod:/tmp/corpus
+          docker exec r61prod python3 /app/app.py --index /tmp/corpus | tee receipts/index.json
+          docker exec r61prod python3 /app/app.py --corpus /tmp/corpus --query-id q1             --query 'What is the maximum junction temperature of QA-731?' | tee receipts/query-stdout.txt
+          docker cp r61prod:/app/output/q1_output.json receipts/q1_output.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          out=json.loads(Path('receipts/q1_output.json').read_text())
+          assert out['answer']=='94' and out['citations']==['spec.txt']
+          PY
+      - name: Final receipt
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          secs=None
+          if Path('receipts/pull-start.txt').exists() and Path('receipts/pull-end.txt').exists():
+              secs=int(Path('receipts/pull-end.txt').read_text())-int(Path('receipts/pull-start.txt').read_text())
+          out={'schema':'von-rag-r61-production-pull-1',
+               'image':'josephm.netlify.app/von-rag-r61@sha256:334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3',
+               'manifest_sha256':'334daf654bb4d615681c2c6305fcd828fdb77fcb218d021b88481a05f7c04ad3',
+               'anonymous_pull_completed':secs is not None,'pull_seconds':secs,
+               'source_verified':Path('receipts/source.json').exists(),
+               'cli_verified':Path('receipts/q1_output.json').exists(),
+               'submission_changed':False}
+          Path('receipts/PRODUCTION_RECEIPT.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r61-production-pull
+          path: receipts/
+          retention-days: 14
