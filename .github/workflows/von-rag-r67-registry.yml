@@ -1,0 +1,66 @@
+name: von-rag R67 R61 public registry
+on:
+  push:
+    branches: [amd-r67-r61-registry-20261001]
+    paths:
+      - scripts/prepare-von-registry-r61.py
+      - src/app/v2/**
+      - src/lib/von-registry.ts
+      - src/lib/von-registry-parent.ts
+      - tests/von-registry-r61.test.mjs
+      - package.json
+      - netlify.toml
+      - .github/workflows/von-rag-r67-registry.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r67-registry
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build exact R24, R35 and R61 registry assets
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python scripts/prepare-von-registry.py > receipts/r24.json
+          python scripts/prepare-von-registry-r35.py > receipts/r35.json
+          python scripts/prepare-von-registry-r61.py | tee receipts/r61.json
+      - name: Run registry tests
+        run: node --experimental-strip-types --test tests/von-registry*.test.mjs | tee receipts/tests.log
+      - name: Build complete site and registry routes
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build 2>&1 | tee receipts/next-build.log
+      - name: Verify generated immutable R61 asset identities
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          def dg(p): return 'sha256:'+hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          assert dg('public/registry-assets/r61/manifest.json')=='sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07'
+          assert dg('public/registry-assets/r61/config.json')=='sha256:3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c'
+          p='public/registry-assets/r61/70fc8a2aa9e2bde50a9a3632f9978e1a7660050c8d20f149b9ae096156ba4b15.tar.gz'
+          assert dg(p)=='sha256:70fc8a2aa9e2bde50a9a3632f9978e1a7660050c8d20f149b9ae096156ba4b15'
+          assert Path(p).stat().st_size==32153
+          print('R61 immutable registry assets exactly match the validated R62 image.')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r67-r61-registry
+          path: receipts/
+          retention-days: 14

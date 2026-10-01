@@ -1,0 +1,91 @@
+name: von-rag R67 production full pull
+on:
+  push:
+    branches: [master]
+    paths:
+      - scripts/prepare-von-registry-r61.py
+      - src/app/v2/**
+      - src/lib/von-registry.ts
+      - src/lib/von-registry-parent.ts
+      - package.json
+      - netlify.toml
+      - .github/workflows/von-rag-r67-production-pull.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-r67-production-pull
+  cancel-in-progress: false
+jobs:
+  pull:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      IMAGE: josephm.netlify.app/von-rag-r61@sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07
+      MANIFEST_URL: https://josephm.netlify.app/registry-assets/r61/manifest.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Wait for this exact production commit and R61 manifest
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          python - <<'PY'
+          import hashlib,os,time,urllib.request,sys
+          origin='https://josephm.netlify.app'
+          marker=origin+'/registry-assets/r61/DEPLOY_COMMIT.txt'
+          manifest=origin+'/registry-assets/r61/manifest.json'
+          want_commit=os.environ['GITHUB_SHA']
+          want_manifest='0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07'
+          headers={'Cache-Control':'no-cache','User-Agent':'von-r67-production-gate/1.1'}
+          for attempt in range(120):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(
+                      marker+'?commit='+want_commit,headers=headers),timeout=15) as r:
+                      live_commit=r.read(200).decode().strip()
+                  with urllib.request.urlopen(urllib.request.Request(
+                      manifest+'?commit='+want_commit,headers=headers),timeout=15) as r:
+                      body=r.read(100000)
+                  if live_commit==want_commit and hashlib.sha256(body).hexdigest()==want_manifest:
+                      print('Exact production commit and R61 manifest are live after',attempt,'polls')
+                      sys.exit(0)
+                  print('not-current',attempt,live_commit[:40],hashlib.sha256(body).hexdigest())
+              except Exception as exc:
+                  print(type(exc).__name__,str(exc)[:160])
+              time.sleep(5)
+          raise SystemExit('Current production commit did not become exact within 10 minutes')
+          PY
+      - name: Reclaim runner disk
+        run: sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+      - name: Fresh anonymous production pull
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker"
+          mkdir -p "$DOCKER_CONFIG"; printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > receipts/start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" 2>&1 | tee receipts/pull.log
+          date -u +%s > receipts/end.txt
+          docker image inspect "$IMAGE" > receipts/inspect.json
+      - name: Verify production image identity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          image=json.loads(Path('receipts/inspect.json').read_text())[0]
+          assert image['Id']=='sha256:3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c',image['Id']
+          assert len(image['RootFS']['Layers'])==28,len(image['RootFS']['Layers'])
+          assert image['Size'] < 60*1024**3,image['Size']
+          seconds=int(Path('receipts/end.txt').read_text())-int(Path('receipts/start.txt').read_text())
+          out={'schema':'von-r67-production-full-pull-1','status':'passed',
+               'manifest':'sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07',
+               'config':image['Id'],'layers':28,'uncompressed_bytes':image['Size'],
+               'pull_seconds':seconds,'anonymous':True,'registry':'josephm.netlify.app'}
+          Path('receipts/RESULT.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r67-production-full-pull
+          path: receipts/
+          retention-days: 14
