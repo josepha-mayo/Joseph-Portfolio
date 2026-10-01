@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
-      PARENT_ORIGIN: https://josephm.netlify.app
+      PARENT_ORIGIN: https://6abcf6dfc7574f0008ae09d5--josephm.netlify.app
       PARENT_MANIFEST: sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb
       PARENT_CONFIG: sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72
     steps:
@@ -36,7 +36,7 @@ jobs:
                   b=r.read(limit+1); assert r.code==200 and len(b)<=limit; return b
           def dg(b): return 'sha256:'+hashlib.sha256(b).hexdigest()
           def packed(x): return json.dumps(x,separators=(',',':'),ensure_ascii=False).encode()
-          mb=get('/v2/von-rag/manifests/'+pm); cb=get('/v2/von-rag/blobs/'+pc)
+          mb=get('/registry-assets/r35/manifest.json'); cb=get('/registry-assets/r35/config.json')
           assert dg(mb)==pm and dg(cb)==pc
           manifest=json.loads(mb); config=json.loads(cb)
           assert len(manifest['layers'])==len(config['rootfs']['diff_ids'])==27
@@ -59,7 +59,7 @@ jobs:
           config.setdefault('history',[]).append({'created':'2026-10-01T17:00:00Z','created_by':'von-rag R61 exact AMD-tested source overlay'})
           newcb=packed(config); manifest['config']={**manifest['config'],'digest':dg(newcb),'size':len(newcb)}; newmb=packed(manifest)
           Path('image/config.json').write_bytes(newcb); Path('image/manifest.json').write_bytes(newmb)
-          routes={x['digest']:{'size':x['size'],'source':'parent','location':origin+'/v2/von-rag/blobs/'+x['digest']} for x in manifest['layers'][:-1]}
+          routes={x['digest']:{'size':x['size'],'source':'parent','location':origin+'/v2/von-rag-r35/blobs/'+x['digest']} for x in manifest['layers'][:-1]}
           routes[desc['digest']]={'size':desc['size'],'source':'local'}
           routing={'schema':1,'manifest':dg(newmb),'config':dg(newcb),'repository':'von-rag-r61','tag':'r61','routes':routes}
           Path('image/routing.json').write_text(json.dumps(routing,indent=2)+'\n')
@@ -193,7 +193,7 @@ jobs:
           with zipfile.ZipFile(ev/'r61-reconstruction-bundle.zip','w',zipfile.ZIP_DEFLATED) as z:
               for p in sorted(Path('image').iterdir()):
                   if p.is_file():z.write(p,p.name)
-              z.write(ev/'registry.py','registry.py')
+              if (ev/'registry.py').exists(): z.write(ev/'registry.py','registry.py')
           (ev/'BUNDLE_SHA256.txt').write_text(hashlib.sha256((ev/'r61-reconstruction-bundle.zip').read_bytes()).hexdigest()+'  r61-reconstruction-bundle.zip\n')
           PY
       - uses: actions/upload-artifact@v4
