@@ -127,6 +127,8 @@ def main():
     (out / "manifest.json").write_bytes(candidate_m)
     (out / "config.json").write_bytes(candidate_c)
     (out / (PATCH_DIGEST[7:] + ".tar.gz")).write_bytes(layer)
+    deploy_commit = os.environ.get("COMMIT_REF") or os.environ.get("GITHUB_SHA") or "local"
+    (out / "DEPLOY_COMMIT.txt").write_text(deploy_commit + "\n")
 
     routes = dict(parent_meta["routes"])
     routes[PATCH_DIGEST] = {

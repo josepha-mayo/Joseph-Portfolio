@@ -5,6 +5,8 @@ on:
     paths:
       - scripts/prepare-von-registry-r61.py
       - src/app/v2/**
+      - src/lib/von-registry.ts
+      - src/lib/von-registry-parent.ts
       - tests/von-registry-r61.test.mjs
       - package.json
       - netlify.toml
