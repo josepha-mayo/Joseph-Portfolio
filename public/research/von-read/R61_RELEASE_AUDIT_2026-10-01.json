@@ -1,0 +1,44 @@
+{
+  "schema": "von-r68-retained-native-evidence-audit-1",
+  "audited_utc": "2026-10-01T21:53:29.685573+00:00",
+  "project": "von-read",
+  "selected_mc3": "josephm.netlify.app/von-rag-r61@sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07",
+  "archive_filename": "r61-native-results-gate-v2.zip",
+  "archive_sha256": "b6f68adfa05a32485443eacab045bcfd4461ebd5a2ef4f3f106156239e4e8f9b",
+  "archive_bytes": 105162,
+  "source_modules_matching_retained_run": 12,
+  "recorded_query_attempts": 116,
+  "recorded_query_traces": 116,
+  "recorded_vision_traces": 5,
+  "counts": {
+    "r35": {"official": {"correct": 10, "total": 10}, "stress": {"correct": 10, "total": 12}, "new": {"correct": 14, "total": 36}, "total": {"correct": 34, "total": 58}},
+    "r61": {"official": {"correct": 10, "total": 10}, "stress": {"correct": 12, "total": 12}, "new": {"correct": 36, "total": 36}, "total": {"correct": 58, "total": 58}}
+  },
+  "rescues": 24,
+  "regressions": 0,
+  "checks_performed": [
+    "Archive bytes match the frozen SHA-256 in the published native result receipt.",
+    "Every suite has unique case IDs and its per-row correctness count matches the retained summary.",
+    "Both variants contain the same 58 case IDs, matched within suites.",
+    "Every recorded case has at least one GPU query attempt; the global trace contains 116 query entries and five vision entries.",
+    "Every scored-correct response passes the recorded completion, output-match, citation-byte and query-budget checks.",
+    "The matched delta is exactly 24 rescues and zero regressions.",
+    "All twelve local R61 runtime module hashes match SOURCE_RECHECK.json from the retained run."
+  ],
+  "baseline_rejected_responses_preserved_as_failures": [
+    ["r35", "stress", "quarter"],
+    ["r35", "new", "scope-0"],
+    ["r35", "new", "scope-1"],
+    ["r35", "new", "scope-2"],
+    ["r35", "new", "scope-3"],
+    ["r35", "new", "scope-4"],
+    ["r35", "new", "scope-5"]
+  ],
+  "audit_development_note": "An initial audit incorrectly required every baseline response to pass completion validation. The final audit preserves its seven rejected responses as failures and requires completion for every scored-correct response. No stored prediction or score was changed.",
+  "native_run_receipt": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/62eb0f9d68ca5da69c83ca08faa441c5e3deaf60/delivery/von-rag-r19/evidence/r62/AMD_NATIVE_RESULT.json",
+  "published_runtime_commit": "73600eaa711cf6a78b2cd1de0db4da565a2b6eab",
+  "fresh_gpu_run_performed_by_this_audit": false,
+  "scope": "Integrity and internal-consistency audit of retained native evidence, not new inference, independent regrading, or a blind hidden-set evaluation.",
+  "full_container_amd_gpu_selfcheck": false,
+  "xp_award_claimed": false
+}
