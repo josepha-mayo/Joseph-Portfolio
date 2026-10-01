@@ -285,5 +285,3 @@ class Index:
 
     def all(self):
         return [self.chunk(r[0]) for r in self.con.execute('SELECT cid FROM chunks')]
-
-[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
