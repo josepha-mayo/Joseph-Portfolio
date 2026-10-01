@@ -387,5 +387,3 @@ if __name__ == '__main__':
     except Exception as e:
         print(json.dumps({'error': type(e).__name__, 'detail': str(e)[:240]}))
         sys.exit(2)
-
-[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
