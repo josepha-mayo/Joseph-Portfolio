@@ -10,6 +10,7 @@ import json
 import math
 import time
 import itertools
+from .scalar_guard import canonical_value, python_authority_matches
 from .engine import context_for
 from .proofs import GroundingError, contains_value, validate
 from .conflicts import (explicit_current_conflict as _explicit_current_conflict,
@@ -42,7 +43,7 @@ def prepare(index, query, *, max_chars=7000, max_records=12):
     return records,messages
 
 
-def _strict_parse_selection(text, records, query):
+def _strict_parse_selection(text, records, query, *, source_records=None):
     raw=text.strip()
     fence=chr(96)*3
     if raw.startswith(fence):
@@ -63,7 +64,8 @@ def _strict_parse_selection(text, records, query):
         return {'answer':'','citations':[],'confidence':0.0}, {'answer':'','evidence':[]}
     if not answer.strip() or answer!=answer.strip() or not selected:
         raise GroundingError('unsupported answer')
-    potential=[i for i in selected if contains_value(records[i]['text'],answer)]
+    potential=[i for i in selected if contains_value(records[i]['text'],answer)
+               or canonical_value(records[i],answer,query) is not None]
     if not potential:raise GroundingError('value not present in selected evidence')
     from .retrieval import identifiers
     import re
@@ -74,6 +76,9 @@ def _strict_parse_selection(text, records, query):
         if not record_matches_query_conditions(c,query):continue
         if not record_proves_query_conditions(c,query):continue
         if not record_answer_matches_query_property(c,answer,query):continue
+        siblings = source_records(c) if source_records is not None else records
+        if siblings is None: siblings = records
+        if not python_authority_matches(siblings,c,query,answer):continue
         scopes=[]
         for line in c['text'].splitlines():
             m=re.match(r'\s*(?:product|model|device)\s*:\s*(.*)',line,re.I)
@@ -82,25 +87,50 @@ def _strict_parse_selection(text, records, query):
         if wanted and scope_ids and not scope_ids<=wanted:continue
         value_record=i;break
     if value_record is None:raise GroundingError('wrong explicit product or condition scope')
-    proof={'answer':answer,'evidence':[{'cid':records[i]['cid'],'quote':records[i]['text'],
+    canonical = answer
+    if not contains_value(records[value_record]['text'],answer):
+        canonical = canonical_value(records[value_record],answer,query)
+        if canonical is None: raise GroundingError('no literal canonical value')
+    proof={'answer':canonical,'evidence':[{'cid':records[i]['cid'],'quote':records[i]['text'],
             'role':'value' if i==value_record else 'bridge'} for i in selected]}
-    return validate(proof,records,query=query),proof
+    result = validate(proof,records,query=query)
+    if canonical != answer:
+        proof['alias_canonicalization'] = {'original':answer,'canonical':canonical}
+    return result,proof
 
 
 def _premise_sensitive_query(query):
-    """True when wording explicitly depends on an upstream event/source premise.
-
-    Structural subset validation cannot prove that a downstream record repeating
-    the product ID makes the premise source unnecessary.
-    """
+    """A narrative or source-dependent question is not safely minimized."""
     import re
-    q=query.casefold()
-    upstream = bool(re.search(r'\b(?:production\s+)?logs?\b|\bincident\b|\breports?\b|\bshows?\b|\bunderlying\b', q))
-    downstream = bool(re.search(r'\bfirmware\b|\bfix(?:ed|es)?\b|\bdefect\b|\bticket\b|\bresolved?\b', q))
-    return upstream and downstream
+    q=query.casefold().strip()
+    direct = bool(re.match(r'^(?:what|which|in which)\b', q))
+    source_premise = bool(re.search(
+        r'\b(?:logs?|incidents?|reports?|traces?|documents?|shows?|underlying|'
+        r'described|reported|recorded|observed|according|mentioned|depicted)\b', q))
+    # This deliberately declines novel narrative wording rather than guessing.
+    return not direct or source_premise
+
+def _preserves_condition_premises(before, after, records, query):
+    """Do not delete the only structured witness to an exact query condition."""
+    from .conflicts import (query_voltage, query_volume, _voltage_values,
+                            _volume_values, _record_volts, _record_volume, _key)
+    from .parsers import kv_fields
+    checks = ((query_voltage(query,final=True), _voltage_values, _record_volts),
+              (query_volume(query,final=True), _volume_values, _record_volume))
+    for requested, declarations, parse in checks:
+        if requested is None: continue
+        witnesses=set()
+        for i in before:
+            c=records[i];text=c.get('text','')
+            fields=c.get('fields') or kv_fields(text)
+            fields={_key(k):str(v).strip() for k,v in fields.items()}
+            if declarations(fields,text) and parse(fields,text)==requested:
+                witnesses.add(i)
+        if witnesses and not witnesses.intersection(after): return False
+    return True
 
 
-def _unique_minimal_sources(text, records, query, result, proof):
+def _unique_minimal_sources(text, records, query, result, proof, *, source_records=None):
     """Drop extra citation sources only when one strict smaller source set is unique.
 
     This intentionally requires one explicit query identifier. Identifier-free
@@ -122,8 +152,10 @@ def _unique_minimal_sources(text, records, query, result, proof):
     if not isinstance(data,list) or len(data)!=2 or not isinstance(data[1],list):
         return result,proof
     answer,selected=data
-    if answer != result['answer'] or any(type(i) is not int for i in selected):
+    if any(type(i) is not int for i in selected):
         return result,proof
+    # Use the already validated literal scalar after an alias rewrite.
+    answer = result['answer']
     sources=[]
     for i in selected:
         source=records[i]['source']
@@ -134,9 +166,11 @@ def _unique_minimal_sources(text, records, query, result, proof):
         for kept in itertools.combinations(sources,keep_count):
             keep=set(kept)
             indices=[i for i in selected if records[i]['source'] in keep]
+            if not _preserves_condition_premises(selected,indices,records,query):
+                continue
             try:
                 candidate,candidate_proof=_strict_parse_selection(
-                    json.dumps([answer,indices],ensure_ascii=False),records,query)
+                    json.dumps([answer,indices],ensure_ascii=False),records,query,source_records=source_records)
             except (GroundingError,ValueError,TypeError,KeyError):
                 continue
             if candidate.get('answer')==answer:
@@ -153,26 +187,26 @@ def _unique_minimal_sources(text, records, query, result, proof):
         if removed:
             candidate_proof['source_minimization']={
                 'removed_sources':removed,'rule':'unique_strict_smaller_source_set'}
-            if proof.get('source_repairs'):
-                candidate_proof['source_repairs']=proof['source_repairs']
+            for note in ('source_repairs','alias_canonicalization'):
+                if proof.get(note): candidate_proof[note]=proof[note]
             return candidate,candidate_proof
         return result,proof
     return result,proof
 
 
-def parse_selection(text, records, query, *, page_records=None):
+def parse_selection(text, records, query, *, page_records=None, source_records=None):
     """Apply conservative source-grounded recovery, then rerun strict validation."""
     try:
-        result,proof=_strict_parse_selection(text, records, query)
-        return _unique_minimal_sources(text,records,query,result,proof)
+        result,proof=_strict_parse_selection(text, records, query, source_records=source_records)
+        return _unique_minimal_sources(text,records,query,result,proof,source_records=source_records)
     except GroundingError:
         from .selection_repair import recover_selection
         recovered, changes = recover_selection(text, records, query, page_records=page_records)
         if not changes:
             raise
-        result, proof = _strict_parse_selection(recovered, records, query)
+        result, proof = _strict_parse_selection(recovered, records, query, source_records=source_records)
         proof['source_repairs'] = changes
-        return _unique_minimal_sources(recovered,records,query,result,proof)
+        return _unique_minimal_sources(recovered,records,query,result,proof,source_records=source_records)
 
 
 def answer_compact(index, query, model, *, deadline):
@@ -186,8 +220,9 @@ def answer_compact(index, query, model, *, deadline):
     try:
         raw=model.chat(messages,max_tokens=96,deadline=deadline-.3)
         if time.monotonic()>=deadline:raise TimeoutError('late compact output')
-        from .selection_repair import indexed_page
-        result,proof=parse_selection(raw,records,query,page_records=lambda record: indexed_page(index,record))
+        from .selection_repair import indexed_page, indexed_source
+        result,proof=parse_selection(raw,records,query,page_records=lambda record: indexed_page(index,record),
+                                     source_records=lambda record: indexed_source(index,record))
         # Validate the model's completed evidence selection before deciding that
         # contradictory current records require a refusal. A malformed or
         # unsupported answer must not be turned into a successful response.
@@ -200,3 +235,5 @@ def answer_compact(index, query, model, *, deadline):
     except (ValueError,TypeError,KeyError,TimeoutError) as exc:
         return empty,{**audit,'reason':'invalid_or_incomplete_model_response',
                       'error':type(exc).__name__+': '+str(exc)[:300]}
+
+[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
