@@ -1,0 +1,94 @@
+name: von-rag R69 cross-key scope hardening
+on:
+  push:
+    branches: [amd-r69-cross-key-scope-20261001]
+    paths:
+      - delivery/von-rag-r19/evidence/r69/r69.patch.xz.b64
+      - .github/workflows/von-rag-r69.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-r69-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Apply exact R69 patch
+        run: |
+          set -euo pipefail
+          base64 -d delivery/von-rag-r19/evidence/r69/r69.patch.xz.b64 | xz -d > /tmp/r69.patch
+          echo "530fe08207e6497b5096e341ee5330cc14c760d48d1e10256f51114ab36d57db  /tmp/r69.patch" | sha256sum -c -
+          git apply --check /tmp/r69.patch
+          git apply /tmp/r69.patch
+      - name: Verify exact R69 runtime hashes
+        working-directory: delivery/von-rag-r19
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          expected={
+          '__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+          'compact.py':'2db060a0070d86d877d69cf5818790ccd5fa50f2dde80f8ce0fbb9a5de3ba4ea',
+          'conflicts.py':'8e28b9f309300a279b5e31765af410698472232937edcf725691cdfece51e4d8',
+          'engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+          'native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+          'parsers.py':'b83367d39fd0a5f4f4b9759b66274a66dad0a3ecb63d5f879bcd2b4f6525e74a',
+          'proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+          'retrieval.py':'87ca40ebbd35aec0c897f0bcbef6e208d55024e128764a815c6e58c4764860a5',
+          'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+          'scalar_guard.py':'ba54b42303b034ff3144e7b19e8c91bdff807d7c5cf9ac1db8f0f636312539d7',
+          'selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+          'value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894'}
+          root=Path('von_rag')
+          got={n:hashlib.sha256((root/n).read_bytes()).hexdigest() for n in expected}
+          assert got==expected,(expected,got)
+          print('exact R69 runtime hashes verified')
+          PY
+      - run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
+      - name: Full R69 software suite
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r69
+          python -m compileall -q von_rag
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r69/tests.xml | tee evidence/r69/tests.log
+          python - <<'PY'
+          import json,os,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('evidence/r69/tests.xml').getroot().findall('testsuite')
+          totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert totals=={'tests':456,'failures':0,'errors':0,'skipped':0},totals
+          out={'schema':'von-r69-ci-1','commit':os.environ['GITHUB_SHA'],'python':sys.version,
+               'tests':totals,'base_r61':'73600eaa711cf6a78b2cd1de0db4da565a2b6eab',
+               'patch_sha256':'530fe08207e6497b5096e341ee5330cc14c760d48d1e10256f51114ab36d57db',
+               'fresh_model_calls':0,'submission_changed':False}
+          Path('evidence/r69/CI_RECEIPT.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - name: Package exact R69 candidate
+        working-directory: delivery/von-rag-r19
+        run: tar -czf ../../von-rag-r69-exact-source.tgz app.py requirements-test.txt LICENSE.txt von_rag tests evidence/r69/CI_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r69-python-${{ matrix.python }}
+          path: |
+            von-rag-r69-exact-source.tgz
+            delivery/von-rag-r19/evidence/r69/
+          retention-days: 14
