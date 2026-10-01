@@ -155,6 +155,3 @@ def indexed_source(index: Any, record: dict[str, Any]):
         return [index.chunk(row[0]) for row in rows]
     except (KeyError, TypeError, AttributeError):
         return None
-
-
-[executed on device: joseph-hp-elitebook (952b4ec0-09f4-4bcf-9153-2dd8c5e6a1d5)]
