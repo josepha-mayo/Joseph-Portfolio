@@ -1,0 +1,62 @@
+{
+  "schema": "von-read-quest-evidence-2026-10-01",
+  "updated_utc": "2026-10-01T20:55:00+01:00",
+  "project": {
+    "name": "von-read",
+    "participation": "solo",
+    "event": "AMD x lablab.ai AI Academy Challenge",
+    "public_submission": "https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/von-read/von-read-exact-ocr-on-amd",
+    "repository": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/master/public/research/von-read",
+    "demo": "https://josephmayo.site/research/von-read/walkthrough.html",
+    "license": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/source/LICENSE.txt"
+  },
+  "quest_building_evidence": {
+    "create_first_project": {"state": "evidence_published", "award_claimed": false},
+    "connect_github_repo": {"state": "repo_saved_in_lablab_submission", "award_claimed": false},
+    "submit_project_demo": {"state": "walkthrough_published_and_linked_in_submission_evidence", "award_claimed": false},
+    "submit_complete_project": {"state": "public_non_draft_submission_with_repo_demo_mc2_mc3", "award_claimed": false},
+    "submit_open_source_project": {"state": "source_and_scoped_mit_license_public", "award_claimed": false},
+    "participate_in_amd_hackathon": {"state": "public_solo_entry", "award_claimed": false},
+    "build_using_amd_technologies": {"state": "recorded_native_rocm_mi300x_work", "award_claimed": false},
+    "milestones": [
+      "revision-locked native Qwen inference on AMD Instinct MI300X VF",
+      "matched model/robustness comparison covering 186 model-image evaluations",
+      "completion-budget/EOS repair followed by 91-input regression and 72 AMD driver-memory samples"
+    ],
+    "milestone_awards_claimed": false
+  },
+  "selected_challenge_artifacts": {
+    "mc2": "awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws/von-read@sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad",
+    "mc3": "josephm.netlify.app/von-rag-r35@sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb"
+  },
+  "mc3_research_successor": {
+    "name": "R61",
+    "submitted": false,
+    "runtime_source_id": "unpublished-runtime-sha256:2883a30fbc0a71df8106fdcd2747166cdd012e01fa215f1064d06761ce2a089c",
+    "software_tests": 426,
+    "failures": 0,
+    "scope": "software/parser/scripted-selection checks; not hidden or neural accuracy",
+    "native_pair_verified": false,
+    "full_container_gpu_verified": false
+  },
+  "latest_verified_quest_state": {
+    "xp": 530,
+    "rank": 470,
+    "mini_challenges_submitted": 2,
+    "verified_date": "2026-10-01",
+    "category_breakdown_available": false
+  },
+  "pending_assessment_requests": {
+    "existing_request_totals": [905, 550],
+    "guaranteed_additional_xp": false,
+    "overlap_possible": true,
+    "latest_status_followup_sent": "2026-10-01"
+  },
+  "not_claimed": [
+    "course completion",
+    "ROCm certification completion",
+    "hidden grader score",
+    "R61 submission",
+    "unawarded or duplicate Quest XP"
+  ]
+}
