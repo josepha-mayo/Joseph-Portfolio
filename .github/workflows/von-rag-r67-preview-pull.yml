@@ -1,0 +1,56 @@
+name: von-rag R67 preview full pull
+on:
+  push:
+    branches: [amd-r67-r61-registry-20261001]
+    paths: [.github/workflows/von-rag-r67-preview-pull.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-r67-preview-pull
+  cancel-in-progress: false
+jobs:
+  pull:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      IMAGE: 6abec1d7d6a6410007c70bcc--josephm.netlify.app/von-rag-r61@sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reclaim runner disk
+        run: sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+      - name: Fresh anonymous pull from immutable Netlify preview
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          export DOCKER_CONFIG="$RUNNER_TEMP/empty-docker"
+          mkdir -p "$DOCKER_CONFIG"; printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > receipts/start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" 2>&1 | tee receipts/pull.log
+          date -u +%s > receipts/end.txt
+          docker image inspect "$IMAGE" > receipts/inspect.json
+      - name: Verify pulled image identity and shape
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          image=json.loads(Path('receipts/inspect.json').read_text())[0]
+          assert image['Id']=='sha256:3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c',image['Id']
+          assert len(image['RootFS']['Layers'])==28,len(image['RootFS']['Layers'])
+          assert image['Size'] < 60*1024**3,image['Size']
+          seconds=int(Path('receipts/end.txt').read_text())-int(Path('receipts/start.txt').read_text())
+          out={'schema':'von-r67-preview-full-pull-1','status':'passed',
+               'manifest':'sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07',
+               'config':image['Id'],'layers':len(image['RootFS']['Layers']),
+               'uncompressed_bytes':image['Size'],'pull_seconds':seconds,
+               'anonymous':True,'preview':'6abec1d7d6a6410007c70bcc--josephm.netlify.app'}
+          Path('receipts/RESULT.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r67-preview-full-pull
+          path: receipts/
+          retention-days: 14
