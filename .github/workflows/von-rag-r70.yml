@@ -1,0 +1,94 @@
+name: von-rag R70 explicit entity scope
+on:
+  push:
+    branches: [amd-r70-explicit-entity-scope-20261001]
+    paths:
+      - delivery/von-rag-r19/evidence/r70/r70.patch.xz.b64
+      - .github/workflows/von-rag-r70.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-r70-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Apply exact R70 patch
+        run: |
+          set -euo pipefail
+          base64 -d delivery/von-rag-r19/evidence/r70/r70.patch.xz.b64 | xz -d > /tmp/r70.patch
+          echo "708c8c3c5d5bf88ffa6cd2f8ba41addc77410e66247749187bf7ea6b09b66a57  /tmp/r70.patch" | sha256sum -c -
+          git apply --check /tmp/r70.patch
+          git apply /tmp/r70.patch
+      - name: Verify exact R70 runtime hashes
+        working-directory: delivery/von-rag-r19
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          expected={
+          '__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+          'compact.py':'8e4628922f08ac14756e08a1900d3705431f3171c9c07f0946098cad64dfecba',
+          'conflicts.py':'b7cc9144ed4d67aa3c49ec2c5f46d096e4a9a0356a293edadb091c3bf24373da',
+          'engine.py':'8bdc53557d640101a0f8dab2458f884089b0a002c1059fc5d060d8e071dae2f4',
+          'native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+          'parsers.py':'b83367d39fd0a5f4f4b9759b66274a66dad0a3ecb63d5f879bcd2b4f6525e74a',
+          'proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+          'retrieval.py':'87ca40ebbd35aec0c897f0bcbef6e208d55024e128764a815c6e58c4764860a5',
+          'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+          'scalar_guard.py':'ba54b42303b034ff3144e7b19e8c91bdff807d7c5cf9ac1db8f0f636312539d7',
+          'selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+          'value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894'}
+          root=Path('von_rag')
+          got={n:hashlib.sha256((root/n).read_bytes()).hexdigest() for n in expected}
+          assert got==expected,(expected,got)
+          print('exact R70 runtime hashes verified')
+          PY
+      - run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
+      - name: Full R70 software suite
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r70
+          python -m compileall -q von_rag
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r70/tests.xml | tee evidence/r70/tests.log
+          python - <<'PY'
+          import json,os,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('evidence/r70/tests.xml').getroot().findall('testsuite')
+          totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert totals=={'tests':463,'failures':0,'errors':0,'skipped':0},totals
+          out={'schema':'von-r70-ci-1','commit':os.environ['GITHUB_SHA'],'python':sys.version,
+               'tests':totals,'base_r61':'73600eaa711cf6a78b2cd1de0db4da565a2b6eab',
+               'patch_sha256':'708c8c3c5d5bf88ffa6cd2f8ba41addc77410e66247749187bf7ea6b09b66a57',
+               'fresh_model_calls':0,'submission_changed':False}
+          Path('evidence/r70/CI_RECEIPT.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - name: Package exact R70 candidate
+        working-directory: delivery/von-rag-r19
+        run: tar -czf ../../von-rag-r70-exact-source.tgz app.py requirements-test.txt LICENSE.txt von_rag tests evidence/r70/CI_RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r70-python-${{ matrix.python }}
+          path: |
+            von-rag-r70-exact-source.tgz
+            delivery/von-rag-r19/evidence/r70/
+          retention-days: 14
