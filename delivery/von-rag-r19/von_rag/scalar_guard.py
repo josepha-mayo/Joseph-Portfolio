@@ -105,10 +105,25 @@ def equivalent(answer, value, kind):
 
 
 def property_matches(record, answer, query):
-    kind, values = field_values(record, query)
-    if kind is None or not values:
+    kind, aliases = property_kind(query)
+    if kind is None:
         return True
     text = str(record.get('text', ''))
+    fields = record.get('fields') or kv_fields(text)
+    fields = {_key(k): str(v).strip() for k, v in fields.items()} if isinstance(fields, dict) else {}
+    semantic = fields.get('parameter', fields.get('property', ''))
+    generic = fields.get('value', '')
+    explicit = [v for k, v in fields.items() if k in aliases and v]
+    # A generic Value cell tied to a different named parameter is positive
+    # evidence of the WRONG property, not unstructured prose. Reject only when
+    # no requested field in the same record independently carries the answer.
+    if (generic and semantic and _key(semantic) not in aliases
+            and equivalent(answer, generic, kind)
+            and not any(equivalent(answer, v, kind) for v in explicit)):
+        return False
+    _, values = field_values(record, query)
+    if not values:
+        return True
     # Conflicting repeated requested fields are not a unique scalar witness.
     if any(not equivalent(values[0], v, kind) for v in values[1:]):
         return False

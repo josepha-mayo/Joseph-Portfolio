@@ -30,7 +30,7 @@ def tokens(text):
 
 
 def identifiers(text):
-    raw = re.findall(r'(?<![\w])(?:[A-Za-z]{1,10}[-_][A-Za-z0-9][A-Za-z0-9_-]*|[A-Za-z]{1,8}\d{2,}[A-Za-z0-9_-]*)(?![\w])', text)
+    raw = re.findall(r'(?<![\w])(?:[A-Za-z]{1,32}[-_][A-Za-z0-9][A-Za-z0-9_-]*|[A-Za-z]{1,24}\d{2,}[A-Za-z0-9_-]*)(?![\w])', text)
     return {re.sub(r'[-_]', '', x).upper() for x in raw
             if any(c.isdigit() for c in x) and not re.fullmatch(r'FY\d+',x,re.I)}
 
@@ -41,6 +41,26 @@ def retired(source, text=''):
         or re.search(r'(?im)^\s*status\s*:\s*(withdrawn|superseded|obsolete|deprecated|archived)\b', text)
         or re.search(r'(?im)^\s*(?:withdrawn|superseded|obsolete|deprecated|archived|do\s+not\s+use)\b\s*(?:[-:\u2014]|$)', text)
     )
+
+
+
+def document_retirement_marker(chunk):
+    """True only for a document-level retirement marker, not a retired record."""
+    text = str(chunk.text)
+    if chunk.kind == 'row' or not retired('', text):
+        return False
+    fields = kv_fields(text)
+    if not fields:
+        return True
+    keys = {re.sub(r'[^a-z0-9]', '', str(k).casefold()) for k in fields}
+    # A status block is document-wide unless it also declares an entity record.
+    # This preserves a withdrawn status plus arbitrary document metadata while
+    # preventing a retired Part/SKU/Asset record from poisoning live siblings.
+    entity_keys = {
+        'product', 'model', 'device', 'partnumber', 'partno', 'pn', 'sku',
+        'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
+    }
+    return not bool(keys & entity_keys)
 
 
 _REVISION_SUFFIX = re.compile(
@@ -176,9 +196,8 @@ def build_index(root: Path, output: Path, *, vision=None, deadline_seconds=540, 
                     # (e.g. `Status: withdrawn` before the first record) also
                     # applies globally. Status attached to an explicit
                     # Product/Model/Device record remains record-local.
-                    scoped = re.compile(r'(?im)^\s*(?:product|model|device)\s*:')
                     source_retired = retired(rel, '') or any(
-                        retired('', c.text) and c.kind != 'row' and not scoped.search(c.text) for c in chunks)
+                        document_retirement_marker(c) for c in chunks)
                     document_status[rel] = bool(source_retired)
                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
@@ -262,9 +281,42 @@ class Index:
             if len(result)>=k: break
         return result
 
-    def expand(self, seeds: list[dict], *, hops=2, max_chunks=48, historical=False):
+    def expand(self, seeds: list[dict], *, hops=2, max_chunks=48, historical=False, query=None):
         result={c['cid']:c for c in seeds}; frontier=list(result)
         expanded=set()
+        qtokens=set(tokens(query or ''))
+        qwords=set(re.findall(r'[a-z0-9]+', str(query or '').casefold()))
+        wants_log=bool({'log','logs','production','incident'} & qwords)
+        hints=set()
+        if 'firmware' in qtokens:
+            hints |= {'fixedin','fixedversion','firmware','firmwareversion','fixversion','resolvedin'}
+        if 'temperature' in qtokens:
+            hints |= {'tjmax','tjmin','maxjunctiontemperature','maximumjunctiontemperature',
+                      'minjunctiontemperature','minimumjunctiontemperature'}
+        if 'price' in qtokens:
+            hints |= {'unitprice','price','cost'}
+        if 'timeout' in qtokens:
+            hints |= {'batchtimeout','defaultbatchtimeout','timeout','batchtimeoutseconds'}
+        if 'revision' in qtokens:
+            hints |= {'boardrevision','revision','rev'}
+        if 'quarter' in qtokens or 'sampling' in qtokens:
+            hints |= {'customersamplingquarter','samplingquarter','quarter'}
+        if 'part' in qtokens:
+            hints |= {'partnumber','replacementpart','partno','pn','sku'}
+        if 'error' in qtokens:
+            hints |= {'errorcode','error','code'}
+
+        def ref_rank(cid):
+            c=self.chunk(cid)
+            fields=c.get('fields') or kv_fields(c.get('text',''))
+            keys={re.sub(r'[^a-z0-9]','',str(k).casefold()) for k in fields}
+            text_tokens=set(tokens(c.get('source','')+' '+c.get('context','')+' '+c.get('text','')))
+            score=60*bool(keys & hints) + 3*len(qtokens & text_tokens)
+            if wants_log and c.get('source','').lower().endswith('.log'):
+                score += 45
+            score += 12*bool(identifiers(query or '') & identifiers(c.get('text','')+' '+c.get('context','')))
+            return (-score, len(c.get('text','')), c.get('source',''), cid)
+
         for _ in range(hops):
             next_frontier=[]
             for cid in frontier:
@@ -272,9 +324,13 @@ class Index:
                 for entity in ids:
                     if entity in expanded: continue
                     expanded.add(entity)
-                    refs=self.con.execute('SELECT cid FROM entities WHERE entity=? LIMIT 49',(entity,)).fetchall()
-                    if len(refs)>32: continue
-                    for (other,) in refs:
+                    refs=[r[0] for r in self.con.execute(
+                        'SELECT cid FROM entities WHERE entity=? LIMIT 129',(entity,)).fetchall()]
+                    if len(refs)>32:
+                        if query is None:
+                            continue
+                        refs=sorted(refs,key=ref_rank)[:32]
+                    for other in refs:
                         if other in result: continue
                         c=self.chunk(other)
                         if not historical and c['retired']: continue

@@ -31,7 +31,26 @@ def historical(query):
 
 def context_for(index, query, *, topk=12, graph=True, max_chars=30000, record_filter=None):
     seeds=index.search(query, topk, historical=historical(query))
-    chunks=index.expand(seeds,hops=2,max_chunks=40,historical=historical(query)) if graph else seeds
+    chunks=index.expand(seeds,hops=2,max_chunks=40,historical=historical(query),query=query) if graph else seeds
+    seed_rank={c['cid']:i for i,c in enumerate(seeds)}
+    qtokens=set(tokens(query)); qids=identifiers(query)
+    wants_log=bool(re.search(r'\b(?:log|logs|production|incident)\b',query,re.I))
+    kind=intent(query)
+    allowed=FIELDS.get(kind,(set(),set()))[1] if kind else set()
+
+    def priority(c):
+        text=c.get('text','')
+        fields={norm(k):v for k,v in (c.get('fields') or {}).items()}
+        semantic=norm(fields.get('parameter',fields.get('property','')))
+        value_field=bool(set(fields) & allowed or (semantic in allowed and fields.get('value','').strip()))
+        overlap=len(qtokens & set(tokens(c.get('source','')+' '+c.get('context','')+' '+text)))
+        scope=bool(qids & identifiers(text+' '+c.get('context','')))
+        log=bool(wants_log and c.get('source','').lower().endswith('.log'))
+        score=60*value_field + 45*log + 12*scope + 3*overlap
+        return (-score, seed_rank.get(c['cid'],10**6), len(text), c.get('source',''))
+
+    if graph:
+        chunks=sorted(chunks,key=priority)
     out=[];n=0
     for c in chunks:
         if record_filter is not None and not record_filter(c):continue
