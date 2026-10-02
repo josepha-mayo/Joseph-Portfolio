@@ -2,7 +2,9 @@ name: von-rag unified candidate integration
 on:
   push:
     branches: [amd-unified-candidate-20261002]
-    paths: [.github/workflows/von-rag-unified-candidate.yml]
+    paths:
+      - .github/workflows/von-rag-unified-candidate.yml
+      - delivery/von-rag-r19/evidence/unified-integration/typed_scope.patch.xz.b64
 permissions:
   contents: read
 concurrency:
@@ -12,6 +14,10 @@ jobs:
   integrate:
     runs-on: ubuntu-latest
     timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.14']
     env:
       PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
       OMP_NUM_THREADS: '1'
@@ -22,12 +28,12 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python }}
       - name: Fetch pinned public source revisions
         run: |
           git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
           git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
-      - name: Reconstruct each branch and attempt a conservative three-way integration
+      - name: Reconstruct exact branches and resolve the reviewed integration
         run: |
           python - <<'PY'
           import base64, hashlib, json, lzma, shutil, subprocess
@@ -40,20 +46,19 @@ jobs:
           def export(ref,label):
               dest=root/label
               paths=subprocess.check_output(['git','ls-tree','-r','--name-only',ref,'--',prefix],text=True).splitlines()
-              hashes={}
               for path in paths:
                   rel=path[len(prefix):]
                   if not ((rel.startswith(('von_rag/','tests/','diagnostics/')) and rel.endswith('.py')) or rel in ['app.py','requirements-test.txt','LICENSE.txt']):continue
                   body=data(ref,path);assert len(body)<1000000,path
                   out=dest/path;out.parent.mkdir(parents=True,exist_ok=True);out.write_bytes(body)
-                  hashes[rel]=hashlib.sha256(body).hexdigest()
-              return dest,hashes
-          base66,h66=export(ref66,'base66')
-          base69,h69=export(ref67,'base69')
+              return dest
+          base66=export(ref66,'base66');base69=export(ref67,'base69')
           patch_dir=root/'patches';patch_dir.mkdir()
           patches=[('r69.patch',lzma.decompress(base64.b64decode(data(ref67,prefix+'evidence/r69/r69.patch.xz.b64'))),'530fe08207e6497b5096e341ee5330cc14c760d48d1e10256f51114ab36d57db')]
           for name,want in [('fragment_retirement.patch','2e3dd32adaa51807e4308b9499bfe75c8d63b2e49c3f1cccebc7da06dfde8228'),('explicit_status_boundary.patch','1e155d583e9e93f3f2c1e68759808ecc9d2169bde761de2f8b5a24ff49b78925')]:
               patches.append((name,data(ref67,prefix+'evidence/fragment-retirement/'+name),want))
+          typed=lzma.decompress(base64.b64decode(Path(prefix+'evidence/unified-integration/typed_scope.patch.xz.b64').read_bytes()))
+          patches.append(('typed_scope.patch',typed,'c38f4f1b0d4cbb590dcaeae32ceb605c53e8283c95ea25953743511205c008b3'))
           for name,body,want in patches:
               assert hashlib.sha256(body).hexdigest()==want,name
               (patch_dir/name).write_bytes(body)
@@ -63,58 +68,79 @@ jobs:
               subprocess.run(['git','apply','--directory='+str(dest),patch],check=True)
           apply(base69,'r69.patch')
           base67=root/'base67';shutil.copytree(base69,base67)
-          apply(base67,'fragment_retirement.patch')
-          apply(base67,'explicit_status_boundary.patch')
+          apply(base67,'fragment_retirement.patch');apply(base67,'explicit_status_boundary.patch')
           candidate=root/'candidate';shutil.copytree(base66,candidate)
-          conflicts=[];merged=[];test_collisions=[]
+          conflicts=[];merged=[];resolutions=[];test_collisions=[]
           for file67 in (base67/prefix/'von_rag').glob('*.py'):
-              rel=file67.relative_to(base67)
-              ancestor=base69/rel;current=candidate/rel
+              rel=file67.relative_to(base67);ancestor=base69/rel;current=candidate/rel
               if ancestor.read_bytes()==file67.read_bytes():continue
               result=subprocess.run(['git','merge-file','-p',str(current),str(ancestor),str(file67)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
               if result.returncode:
                   conflicts.append(str(rel));(patch_dir/(file67.name+'.conflict')).write_bytes(result.stdout)
+                  assert rel.as_posix()==prefix+'von_rag/parsers.py','Unexpected merge conflict'
+                  assert hashlib.sha256(file67.read_bytes()).hexdigest()=='f6d15c325f2e63edaeb6fb4d4b3a824987b5ad24046df45c31b04a4842344f95'
+                  current.write_bytes(file67.read_bytes())
+                  resolutions.append({'file':str(rel),'choice':'PR67 explicit opposing-state boundary; no split merely after Status'})
               else:
                   current.write_bytes(result.stdout);merged.append(str(rel))
+          assert conflicts==[prefix+'von_rag/parsers.py'],conflicts
           for file67 in (base67/prefix/'tests').glob('*.py'):
               target=candidate/prefix/'tests'/file67.name
               if target.exists() and target.read_bytes()!=file67.read_bytes():
-                  target=target.with_name('cross67_'+target.name)
-                  test_collisions.append(file67.name)
+                  target=target.with_name('test_cross67_'+target.name.removeprefix('test_'))
+                  test_collisions.append({'original':file67.name,'retained_as':target.name})
               if not target.exists():target.write_bytes(file67.read_bytes())
-          report={'schema':'von-unified-integration-1','branch66_commit':ref66,'branch67_commit':ref67,'merge_conflicts':conflicts,'merged_runtime_files':merged,'preserved_test_collisions':test_collisions,'submission_changed':False,'gpu_calls':0,'xp_award':None}
+          apply(candidate,'typed_scope.patch')
+          expected={
+              'app.py':'32ec6ac66b5c1f5abed3ff8819ee2651f0bb0efa122ca2f8f760e111c3357054',
+              'von_rag/__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+              'von_rag/compact.py':'931c5dcf5cd2015173416248d32aba7eac8cb350378b10dc7097445eff8093de',
+              'von_rag/conflicts.py':'386b6661a6ecd78e69a4e4384c40ae7a54db51bb821dcda0d88c0170c398e179',
+              'von_rag/engine.py':'08d0a430ce1954c65cb9ea6bcc8b36445cdca560baabbb60afe0717d48aee619',
+              'von_rag/native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+              'von_rag/parsers.py':'f6d15c325f2e63edaeb6fb4d4b3a824987b5ad24046df45c31b04a4842344f95',
+              'von_rag/proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+              'von_rag/retrieval.py':'4fa43d3a7c7ed32c80f62e2109580a103b04404b5bfcc88b1a23617a418ffda6',
+              'von_rag/runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+              'von_rag/scalar_guard.py':'ba54b42303b034ff3144e7b19e8c91bdff807d7c5cf9ac1db8f0f636312539d7',
+              'von_rag/scope_links.py':'d42d856d85ba676df92dc19d142cea1fdfaf828fbb850fc997fc0515f1379060',
+              'von_rag/selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+              'von_rag/value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894'}
+          for name,want in expected.items():assert hashlib.sha256((candidate/prefix/name).read_bytes()).hexdigest()==want,name
+          report={'schema':'von-unified-integration-2','branch66_commit':ref66,'branch67_commit':ref67,'resolved_conflicts':resolutions,'merged_runtime_files':merged,'preserved_test_collisions':test_collisions,'source_sha256':expected,'submission_changed':False,'gpu_calls':0,'xp_award':None}
           (root/'MERGE.json').write_text(json.dumps(report,indent=2)+'\n')
-          (root/'INPUT_HASHES.json').write_text(json.dumps({'base66':h66,'base67_checkout_before_patch':h69},indent=2)+'\n')
+          manifest={p.relative_to(candidate/prefix).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((candidate/prefix).rglob('*')) if p.is_file()}
+          (root/'FINAL_SOURCE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
           print(json.dumps(report,indent=2))
           PY
       - name: Install software-test dependencies
         run: python -m pip install --disable-pip-version-check -r unified-evidence/base66/delivery/von-rag-r19/requirements-test.txt
-      - name: Evaluate both originals and the integrated candidate
+      - name: Evaluate both originals and the frozen integrated candidate
         run: |
           python - <<'PY'
-          import json,os,subprocess,sys,xml.etree.ElementTree as ET
+          import hashlib,json,os,subprocess,sys,xml.etree.ElementTree as ET
           from pathlib import Path
-          root=Path('unified-evidence').resolve();report=json.loads((root/'MERGE.json').read_text());results={}
+          root=Path('unified-evidence').resolve();results={}
+          expected_counts={'base66':487,'base67':511,'candidate':606}
           for label in ['base66','base67','candidate']:
-              if label=='candidate' and report['merge_conflicts']:
-                  results[label]={'status':'not_run_merge_conflicts'};continue
-              cwd=root/label/'delivery/von-rag-r19'
-              log=root/(label+'.log');xml=root/(label+'.xml')
+              cwd=root/label/'delivery/von-rag-r19';log=root/(label+'.log');xml=root/(label+'.xml')
               env=dict(os.environ,PYTHONPATH=str(cwd))
               with log.open('w') as stream:
-                  run=subprocess.run([sys.executable,'-m','pytest','-q','tests','-p','no:cacheprovider','--junitxml='+str(xml)],cwd=cwd,env=env,stdout=stream,stderr=subprocess.STDOUT,timeout=240)
+                  run=subprocess.run([sys.executable,'-m','pytest','-q','tests','-p','no:cacheprovider','--junitxml='+str(xml)],cwd=cwd,env=env,stdout=stream,stderr=subprocess.STDOUT,timeout=300)
               suites=ET.parse(xml).getroot().findall('testsuite')
               totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-              results[label]={'exit_code':run.returncode,'counts':totals}
-              print(label,json.dumps(results[label]),flush=True)
-              print(log.read_text()[-7000:],flush=True)
-          (root/'TEST_RESULTS.json').write_text(json.dumps(results,indent=2)+'\n')
+              results[label]={'exit_code':run.returncode,'counts':totals,'expected_tests':expected_counts[label]}
+              print(label,json.dumps(results[label]),flush=True);print(log.read_text()[-7000:],flush=True)
+          frozen=json.loads((root/'FINAL_SOURCE_MANIFEST.json').read_text())
+          cwd=root/'candidate/delivery/von-rag-r19'
+          for name,want in frozen.items():assert hashlib.sha256((cwd/name).read_bytes()).hexdigest()==want,name
+          (root/'TEST_RESULTS.json').write_text(json.dumps({'python':sys.version,'results':results,'source_unchanged_after_tests':True,'fresh_model_calls':0,'submission_changed':False},indent=2)+'\n')
           PY
-      - name: Package only source, patches and audit outputs
+      - name: Package exact source and all audit outputs
         if: always()
         run: |
           python - <<'PY'
-          import hashlib,json,zipfile
+          import hashlib,zipfile
           from pathlib import Path
           root=Path('unified-evidence');out=Path('unified-export');out.mkdir()
           if root.exists():
@@ -124,26 +150,25 @@ jobs:
                       if p.suffix not in {'.py','.txt','.json','.patch','.conflict','.log','.xml'}:continue
                       assert p.stat().st_size<2000000,p
                       z.write(p,p.relative_to(root))
-              for name in ['MERGE.json','TEST_RESULTS.json']:
+              for name in ['MERGE.json','TEST_RESULTS.json','FINAL_SOURCE_MANIFEST.json']:
                   if (root/name).exists():(out/name).write_bytes((root/name).read_bytes())
               (out/'ARCHIVE_SHA256.txt').write_text(hashlib.sha256((out/'sources-and-results.zip').read_bytes()).hexdigest()+'\n')
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: von-unified-integration
+          name: von-unified-integration-${{ matrix.python }}
           path: unified-export/
           retention-days: 14
-      - name: Enforce no-conflict and no-regression software gate
+      - name: Enforce the unchanged-source software gate
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          root=Path('unified-evidence')
-          assert not json.loads((root/'MERGE.json').read_text())['merge_conflicts']
-          data=json.loads((root/'TEST_RESULTS.json').read_text())
-          for name in ['base66','base67','candidate']:
-              assert data[name]['exit_code']==0,(name,data[name])
-              assert all(data[name]['counts'][key]==0 for key in ['failures','errors','skipped']),(name,data[name])
-          print('Software integration gate passed. Native AMD qualification still required; no submission changed.')
+          data=json.loads(Path('unified-evidence/TEST_RESULTS.json').read_text())
+          assert data['source_unchanged_after_tests']
+          for name,item in data['results'].items():
+              assert item['exit_code']==0,(name,item)
+              assert item['counts']=={'tests':item['expected_tests'],'failures':0,'errors':0,'skipped':0},(name,item)
+          print('Exact 606-test integration passed. Native AMD qualification still required; no submission changed.')
           PY
