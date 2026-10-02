@@ -41,10 +41,10 @@ jobs:
         run: |
           set -euo pipefail
           PATCH=delivery/von-rag-r19/evidence/fragment-retirement/fragment_retirement.patch
-          echo "6a82ef3556eefbb25205a7a41ed8e9fa0f19988c6aef9e383ad2bf1f0f70f603  $PATCH" | sha256sum -c -
+          echo "92a592b320f949bc5674645c404a704dda94a495a39118ba39702f36048e632b  $PATCH" | sha256sum -c -
           git apply --check "$PATCH"
           git apply "$PATCH"
-          echo '4c78b55449258f5b4d31982b84ad8d4b96522afeca830a5465be12eef6183375  delivery/von-rag-r19/von_rag/retrieval.py' | sha256sum -c -
+          echo '4838c74e4bfedd9d07a5ce50b07da46ebfbb0a2bb1240fcbef330fffbb7bde4b  delivery/von-rag-r19/von_rag/retrieval.py' | sha256sum -c -
       - run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
       - name: Existing software tests plus fresh boundary controls
         working-directory: delivery/von-rag-r19
@@ -59,10 +59,10 @@ jobs:
           folder=Path('evidence/fragment-retirement/results')
           suites=ET.parse(folder/'tests.xml').getroot().findall('testsuite')
           totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-          assert totals=={'tests':489,'failures':0,'errors':0,'skipped':0},totals
-          receipt={'schema':'von-fragment-retirement-ci-1','commit':os.environ['GITHUB_SHA'],
+          assert totals=={'tests':497,'failures':0,'errors':0,'skipped':0},totals
+          receipt={'schema':'von-fragment-retirement-ci-2','commit':os.environ['GITHUB_SHA'],
                    'python':sys.version,'tests':totals,'fresh_model_calls':0,
-                   'source_patch_sha256':'6a82ef3556eefbb25205a7a41ed8e9fa0f19988c6aef9e383ad2bf1f0f70f603',
+                   'source_patch_sha256':'92a592b320f949bc5674645c404a704dda94a495a39118ba39702f36048e632b',
                    'submission_changed':False,'official_score':None}
           (folder/'RESULT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print(json.dumps(receipt,indent=2))

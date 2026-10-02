@@ -1,22 +1,21 @@
 --- a/delivery/von-rag-r19/von_rag/retrieval.py
 +++ b/delivery/von-rag-r19/von_rag/retrieval.py
-@@ -61,6 +61,42 @@
+@@ -61,6 +61,53 @@
          'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
      }
      return not bool(keys & entity_keys)
 +
 +
 +def fragment_retirement_states(chunks):
-+    """Carry retirement across fragments of one literal parser record.
++    """Propagate retirement only across fragments with established entity scope.
 +
-+    Only text_chunks' numeric-offset locators are grouped. Distinct paragraphs,
-+    pages, literal records, table rows and image transcriptions stay separate.
-+    Source text, field values and citation identifiers are never synthesized.
++    Numeric locators prove a shared parser piece, not necessarily one entity:
++    different entity keys can coexist in that piece. Require scope in its first
++    fragment and no new entity field/value in later fragments. Otherwise retain
++    the prior per-chunk behavior, including document-wide withdrawal markers.
 +    """
 +    groups = collections.defaultdict(list)
 +    for chunk in chunks:
-+        # Single record: text:1.0 / text:1.3500
-+        # Split records: text:1.1.0 / text:1.1.3500 / text:1.2.0
 +        fragmented = (chunk.kind == 'text' and
 +                      re.fullmatch(r'.+:\d+(?:\.\d+)?\.\d+', chunk.locator))
 +        group = ('text', chunk.source, chunk.locator.rsplit('.', 1)[0]) if fragmented else ('single', chunk.cid)
@@ -25,25 +24,37 @@
 +        'product', 'model', 'device', 'partnumber', 'partno', 'pn', 'sku',
 +        'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
 +    }
++
++    def scope_fields(chunk):
++        return {(key, value.strip()) for name, value in kv_fields(chunk.text).items()
++                if (key := re.sub(r'[^a-z0-9]', '', name.casefold())) in entity_keys}
++
 +    document_retired = False
 +    flags = {}
 +    for members in groups.values():
-+        scoped = len(members) > 1 and any(
-+            {_key for name in kv_fields(c.text)
-+             if (_key := re.sub(r'[^a-z0-9]', '', name.casefold()))} & entity_keys
-+            for c in members)
-+        # A status-only tail has no scope locally, but belongs to the same
-+        # literal record as its header. It cannot retire unrelated siblings.
-+        if not scoped and any(document_retirement_marker(c) for c in members):
-+            document_retired = True
-+        record_retired = any(retired('', c.text) for c in members)
-+        for c in members:
-+            flags[c.cid] = record_retired
++        if len(members) > 1:
++            members = sorted(members, key=lambda c: int(c.locator.rsplit('.', 1)[1]))
++        initial_scope = scope_fields(members[0])
++        established_scope = (
++            len(members) > 1 and bool(initial_scope)
++            and all(scope_fields(c) <= initial_scope for c in members[1:]))
++        if established_scope:
++            # A status-only continuation after an established entity header
++            # stays local. Overlapping copies of that header are harmless.
++            record_retired = any(retired('', c.text) for c in members)
++            for c in members:
++                flags[c.cid] = record_retired
++        else:
++            # Do not reinterpret a leading unscoped document marker, or merge
++            # a later different entity into the first entity's withdrawal.
++            document_retired |= any(document_retirement_marker(c) for c in members)
++            for c in members:
++                flags[c.cid] = retired('', c.text)
 +    return document_retired, flags
  
  
  _REVISION_SUFFIX = re.compile(
-@@ -196,14 +232,14 @@
+@@ -196,14 +243,14 @@
                      # (e.g. `Status: withdrawn` before the first record) also
                      # applies globally. Status attached to an explicit
                      # Product/Model/Device record remains record-local.
@@ -169,3 +180,48 @@
 +    b=Chunk('spec.pdf','page1:2.0','Product: NEW-200\nStatus: current')
 +    doc,flags=fragment_retirement_states([a,b])
 +    assert not doc and flags[a.cid] and not flags[b.cid]
+--- a/delivery/von-rag-r19/tests/test_r70_review_boundaries.py
++++ b/delivery/von-rag-r19/tests/test_r70_review_boundaries.py
+@@ -0,0 +1,42 @@
++"""Regression cases derived from independent review, not model evaluation."""
++import pytest
++from von_rag.retrieval import build_index, Index
++
++
++def indexed(tmp_path, text):
++    corpus=tmp_path/'corpus'; corpus.mkdir()
++    (corpus/'mixed.txt').write_text(text)
++    db=tmp_path/'index.sqlite'
++    receipt=build_index(corpus,db,file_timeout=10,deadline_seconds=40)
++    assert receipt['skipped']==[]
++    return Index(db,corpus)
++
++
++@pytest.mark.parametrize('first,second', [
++    ('Product','Part Number'),('Model','Asset'),('Asset','Serial Number')])
++@pytest.mark.parametrize('length',[4100,8600])
++def test_late_different_entity_with_current_status_is_not_retired(tmp_path,first,second,length):
++    # R69 intentionally does not split merely because a *different* entity
++    # field appears; therefore the numeric prefix is not a complete proof.
++    text=(f'{first}: OLD-100\nStatus: withdrawn\n'
++          +('Prior record explanation without field labels.\n'*250)[:length]
++          +f'\n{second}: NEW-200\nStatus: current\nMaximum junction temperature: 94\n')
++    ix=indexed(tmp_path,text)
++    try:
++        current=[r for r in ix.all() if 'NEW-200' in r['text']]
++        assert current and all(not r['retired'] for r in current)
++        assert any('NEW-200' in r['text'] for r in ix.search('NEW-200',k=20,historical=False))
++    finally: ix.close()
++
++
++@pytest.mark.parametrize('length',[4100,8600])
++def test_early_unscoped_withdrawal_remains_document_wide(tmp_path,length):
++    text=('Status: withdrawn\n'
++          +('Document introduction without entity fields.\n'*250)[:length]
++          +'\nProduct: OLD-100\nStatus: current\n\n'
++          +'Product: LIVE-200\nStatus: current\nMaximum junction temperature: 94\n')
++    ix=indexed(tmp_path,text)
++    try:
++        assert all(r['retired'] for r in ix.all())
++        assert ix.search('LIVE-200',k=20,historical=False)==[]
++    finally: ix.close()
