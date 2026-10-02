@@ -1,0 +1,52 @@
+name: von-read R8 input compatibility
+on:
+  push:
+    branches: [von-read-input-r8-20260926]
+    paths:
+      - delivery/von-read-r4/von_read/views.py
+      - tools/von-input-r8/**
+      - .github/workflows/von-read-input-r8.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-read-input-r8-20260926
+  cancel-in-progress: false
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare test dependencies and immutable baseline
+        run: |
+          python -m pip install Pillow==12.3.0 pytest==9.1.1
+          cp delivery/von-read-r4/von_read/views.py tools/von-input-r8/views.py
+          python - <<'PY'
+          import urllib.request,hashlib
+          from pathlib import Path
+          url='https://raw.githubusercontent.com/josepha-mayo/Joseph-Portfolio/3186e0ef79c27a298ed7505ed834b6a2be929c05/delivery/von-read-r4/von_read/views.py'
+          with urllib.request.urlopen(url,timeout=20) as response: data=response.read(10000)
+          assert hashlib.sha256(data).hexdigest()=='310d04d6ea3e02c9c89feafab610bd4c26162bc504899ed329a12c4723da39f0'
+          Path('tools/von-input-r8/original_views.py').write_bytes(data)
+          PY
+      - name: Pixel parity and image safety checks
+        working-directory: tools/von-input-r8
+        run: python -m pytest -q --junitxml=CPU_TESTS.xml
+      - name: Reproduce 48 MP failures and validate candidate decoding
+        working-directory: tools/von-input-r8
+        run: timeout 110s python large_image_check.py
+      - name: Preserve measured receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-read-r8-decoder-receipts
+          retention-days: 14
+          path: |
+            tools/von-input-r8/CPU_TESTS.xml
+            tools/von-input-r8/LARGE_IMAGE_RESULTS.json
