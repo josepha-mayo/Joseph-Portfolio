@@ -1,0 +1,136 @@
+name: von-read R11 overlay publication
+on:
+  workflow_dispatch:
+  push:
+    branches: [von-registry-r11-20260927]
+    paths:
+      - .github/workflows/von-read-registry-r11.yml
+      - delivery/registry-r11/publisher/**
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: von-read-registry-r11-publication
+  cancel-in-progress: true
+jobs:
+  publish-overlay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      BASE_IMAGE: rocm/pytorch:rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
+      BASE_PIN: rocm/pytorch@sha256:3174cb7061d94c427da96c0edef4adea28046fa3f3b2ff3948dc4e995665ff8c
+      PUBLISHER_DIR: publisher_source/delivery/registry-r11/publisher
+      CANDIDATE_DIR: candidate_source/delivery/von-read-r4
+    steps:
+      - name: Check out publication tools
+        uses: actions/checkout@v4
+        with:
+          path: publisher_source
+          sparse-checkout: delivery/registry-r11/publisher
+          persist-credentials: false
+      - name: Check out the exact frozen R4 source
+        uses: actions/checkout@v4
+        with:
+          ref: 3186e0ef79c27a298ed7505ed834b6a2be929c05
+          path: candidate_source
+          sparse-checkout: delivery/von-read-r4
+          persist-credentials: false
+      - name: Prepare the disposable free hosted builder and verify publication logic
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p receipts
+          df -B1 / > receipts/disk-before.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk-after.txt
+          python3 -m venv "$RUNNER_TEMP/von-r11-env"
+          "$RUNNER_TEMP/von-r11-env/bin/pip" -q install requests==2.32.5 pytest==9.1.1
+          "$RUNNER_TEMP/von-r11-env/bin/python" -m pytest -q "$PUBLISHER_DIR/test_publish_overlay.py" --junitxml=receipts/PUBLISHER_TESTS.xml
+          "$RUNNER_TEMP/von-r11-env/bin/python" "$PUBLISHER_DIR/publish_overlay.py" verify-source --source "$CANDIDATE_DIR" --lock "$PUBLISHER_DIR/frozen-source-lock.json" --out receipts/SOURCE.json
+          sha256sum "$PUBLISHER_DIR/publish_overlay.py" > receipts/PUBLISHER_SOURCE_SHA256.txt
+      - name: Probe the live GHCR upload protocol with a tiny monolithic blob
+        timeout-minutes: 2
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/von-r11-env/bin/python" - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, os.environ["PUBLISHER_DIR"])
+          import publish_overlay as pub
+          path = Path(os.environ["RUNNER_TEMP"]) / "ghcr-monolithic-probe"
+          body = b"von-r11-ghcr-monolithic-probe-v1\n"
+          path.write_bytes(body)
+          desc = pub.descriptor(body, pub.LAYER_TYPE)
+          pub.GHCR(os.environ["GITHUB_ACTOR"], os.environ["REGISTRY_TOKEN"], pub.Deadline(90)).upload_blob(path, desc)
+          print(json.dumps({"status": "passed", "bytes": len(body), "digest": desc["digest"]}))
+          PY
+      - name: Pull the immutable mandatory base and bind the original Dockerfile tag
+        timeout-minutes: 16
+        run: |
+          set -euo pipefail
+          timeout --kill-after=20s 900s docker pull "$BASE_PIN" > receipts/base-pull.log 2>&1
+          docker tag "$BASE_PIN" "$BASE_IMAGE"
+          docker image inspect "$BASE_IMAGE" > receipts/base-inspect.json
+      - name: Download only the hash-pinned measured model snapshot
+        timeout-minutes: 16
+        run: |
+          set -euo pipefail
+          timeout --kill-after=10s 900s python3 -u "$CANDIDATE_DIR/packaging/fetch_model.py" --lock "$CANDIDATE_DIR/packaging/MODEL_LOCK.json" --destination "$CANDIDATE_DIR/models/reader" > receipts/model.log 2>&1
+      - name: Rebuild the frozen unsquashed R4 source and dependencies
+        timeout-minutes: 16
+        run: |
+          set -euo pipefail
+          timeout --kill-after=20s 900s docker build --pull=false --progress=plain -f "$CANDIDATE_DIR/packaging/Dockerfile.worker" -t von-read-candidate:local "$CANDIDATE_DIR" > receipts/build.log 2>&1
+          docker image inspect von-read-candidate:local > receipts/candidate-inspect.json
+      - name: Verify the actual container CLI and fail-closed hardware requirement
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 -v "$PWD/$CANDIDATE_DIR/packaging/container_checks.py:/checks.py:ro" -v "$PWD/receipts:/reports" von-read-candidate:local /checks.py --out /reports/CLI.json > receipts/cli.log 2>&1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result = json.loads(Path('receipts/CLI.json').read_text())
+          assert result['status'] == 'passed' and len(result['calls']) == 10
+          assert all(result['checks'].values()) and not result['gpu_inference']
+          PY
+          set +e
+          timeout --kill-after=5s 90s docker run --rm --network none von-read-candidate:local > receipts/no-gpu.log 2>&1
+          result=$?
+          set -e
+          test "$result" -ne 0
+          test "$result" -ne 124
+          python3 - <<'PY'
+          from pathlib import Path
+          assert 'Allocated AMD ROCm hardware required' in Path('receipts/no-gpu.log').read_text()
+          PY
+      - name: Export exactly once and publish only the eight overlay layers
+        timeout-minutes: 41
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          timeout --kill-after=20s 2400s "$RUNNER_TEMP/von-r11-env/bin/python" -u "$PUBLISHER_DIR/publish_overlay.py" publish --out receipts --deadline-seconds 2350 > receipts/publish.log 2>&1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result = json.loads(Path('receipts/PUBLICATION.json').read_text())
+          assert result['base_bytes_uploaded_to_GHCR'] == 0
+          assert result['base_layers_preserved'] == 11 and result['overlay_layers'] == 8
+          assert result['largest_overlay_bytes'] < 10_000_000_000
+          assert result['export_passes'] == 1 and result['observed_export_manifest_verified']
+          print(json.dumps(result, indent=2))
+          PY
+      - name: Preserve delivery metadata and build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-registry-r11-overlay-and-gateway-data
+          path: receipts/
+          retention-days: 14
+          if-no-files-found: error
+          compression-level: 6
