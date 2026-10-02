@@ -1,6 +1,6 @@
 --- a/delivery/von-rag-r19/von_rag/parsers.py
 +++ b/delivery/von-rag-r19/von_rag/parsers.py
-@@ -117,6 +117,24 @@
+@@ -119,6 +119,23 @@
      return result
  
  
@@ -24,7 +24,7 @@
  def text_chunks(text: str, source: str, locator: str = 'text', context: str = '') -> list[Chunk]:
      if len(text) > MAX_TEXT: raise ValueError('text budget exceeded')
      out = []
-@@ -129,9 +147,9 @@
+@@ -129,9 +146,9 @@
          pieces = [block]
          if Path(source).suffix != '.log':
              # A plain-text/PDF paragraph can contain several literal records
@@ -37,7 +37,7 @@
              lines = block.splitlines()
              scope_header = re.compile(
                  r'^\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
-@@ -141,19 +159,27 @@
+@@ -141,19 +158,26 @@
                  match=scope_header.match(line)
                  if match:
                      key=re.sub(r'[^a-z0-9]','',match.group(1).casefold())
@@ -77,7 +77,7 @@
                      for end in cuts:
 --- a/delivery/von-rag-r19/tests/test_r70_explicit_status_boundaries.py
 +++ b/delivery/von-rag-r19/tests/test_r70_explicit_status_boundaries.py
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,65 @@
 +"""Literal opposing status records, including the independent three-fragment report."""
 +import pytest
 +from von_rag.parsers import text_chunks
