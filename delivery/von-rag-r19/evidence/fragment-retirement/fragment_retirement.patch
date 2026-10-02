@@ -10,8 +10,8 @@
 +    """Propagate retirement only across fragments with established entity scope.
 +
 +    Numeric locators prove a shared parser piece, not necessarily one entity:
-+    different entity keys can coexist in that piece. Require scope in its first
-+    fragment and no new entity field/value in later fragments. Otherwise retain
++    different entity keys can coexist in that piece. Require one entity field in
++    its first fragment and no new entity field/value later. Otherwise retain
 +    the prior per-chunk behavior, including document-wide withdrawal markers.
 +    """
 +    groups = collections.defaultdict(list)
@@ -36,7 +36,7 @@
 +            members = sorted(members, key=lambda c: int(c.locator.rsplit('.', 1)[1]))
 +        initial_scope = scope_fields(members[0])
 +        established_scope = (
-+            len(members) > 1 and bool(initial_scope)
++            len(members) > 1 and len(initial_scope) == 1
 +            and all(scope_fields(c) <= initial_scope for c in members[1:]))
 +        if established_scope:
 +            # A status-only continuation after an established entity header
@@ -225,3 +225,21 @@
 +        assert all(r['retired'] for r in ix.all())
 +        assert ix.search('LIVE-200',k=20,historical=False)==[]
 +    finally: ix.close()
+--- a/delivery/von-rag-r19/tests/test_r70_initial_scope_ambiguity.py
++++ b/delivery/von-rag-r19/tests/test_r70_initial_scope_ambiguity.py
+@@ -0,0 +1,15 @@
++"""An ambiguous multi-entity prefix is not evidence for propagation."""
++import pytest
++from von_rag.parsers import text_chunks
++from von_rag.retrieval import fragment_retirement_states, retired, document_retirement_marker
++
++@pytest.mark.parametrize('length',[4100,8600])
++def test_two_initial_entity_fields_keep_original_per_fragment_state(length):
++    text=('Product: OLD-100\nStatus: withdrawn\nPart Number: NEW-200\nStatus: current\n'
++          +('New record explanation without field labels.\n'*250)[:length]
++          +'\nMaximum junction temperature: 94\n')
++    chunks=text_chunks(text,'mixed.txt')
++    assert len(chunks)>1
++    doc,flags=fragment_retirement_states(chunks)
++    assert doc==any(document_retirement_marker(c) for c in chunks)
++    assert flags=={c.cid:retired('',c.text) for c in chunks}
