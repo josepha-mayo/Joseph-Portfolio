@@ -1,0 +1,145 @@
+--- a/delivery/von-rag-r19/von_rag/parsers.py
++++ b/delivery/von-rag-r19/von_rag/parsers.py
+@@ -119,6 +119,23 @@
+     return result
+ 
+ 
++def _explicit_record_state(lines):
++    """Return one unambiguous literal state; unknown or mixed states stay opaque."""
++    states = set()
++    for line in lines:
++        match = re.match(r'^\s*status\s*:\s*([a-z]+)\b', line, re.I)
++        if not match:
++            continue
++        value = match.group(1).casefold()
++        if value in {'withdrawn', 'superseded', 'obsolete', 'deprecated', 'archived'}:
++            states.add('retired')
++        elif value == 'current':
++            states.add('current')
++        else:
++            return None
++    return next(iter(states)) if len(states) == 1 else None
++
++
+ def text_chunks(text: str, source: str, locator: str = 'text', context: str = '') -> list[Chunk]:
+     if len(text) > MAX_TEXT: raise ValueError('text budget exceeded')
+     out = []
+@@ -129,9 +146,9 @@
+         pieces = [block]
+         if Path(source).suffix != '.log':
+             # A plain-text/PDF paragraph can contain several literal records
+-            # without blank lines. Split on a repeated entity key, or after a
+-            # completed Status record. Different adjacent entity fields may
+-            # belong to the SAME record (for example Product + Part Number).
++            # without blank lines. Repeated keys delimit records. Different
++            # adjacent entity fields normally belong to the SAME record; only
++            # explicit opposing states establish a cross-key boundary.
+             lines = block.splitlines()
+             scope_header = re.compile(
+                 r'^\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
+@@ -141,19 +158,26 @@
+                 match=scope_header.match(line)
+                 if match:
+                     key=re.sub(r'[^a-z0-9]','',match.group(1).casefold())
+-                    hits.append((n,key))
++                    value = re.sub(r'[\s_-]', '', line.split(':', 1)[1]).casefold()
++                    hits.append((n, key, value))
+             if len(hits) > 1:
+-                # A repeated entity key is strong evidence of a new literal
+-                # record. A *different* entity key is not: Product + Part
+-                # Number + Serial Number can all describe one record, even when
+-                # Status appears between them. Never split cross-key merely
+-                # because a Status line was seen.
+-                cuts=[]; seen={hits[0][1]}
+-                for n,key in hits[1:]:
+-                    if key in seen:
+-                        cuts.append(n); seen={key}
++                # A different key alone is not a boundary: Product + Part Number
++                # may describe one record. Require a different identifier AND
++                # explicit opposing states on either side of that new header.
++                # A leading unscoped document marker remains in the first piece.
++                cuts=[]; seen={hits[0][1]}; values={hits[0][2]}; record_start=0
++                for h in range(1, len(hits)):
++                    n, key, value = hits[h]
++                    split = key in seen
++                    if not split and value not in values:
++                        stop = hits[h+1][0] if h+1 < len(hits) else len(lines)
++                        before = _explicit_record_state(lines[record_start:n])
++                        after = _explicit_record_state(lines[n:stop])
++                        split = before is not None and after is not None and before != after
++                    if split:
++                        cuts.append(n); seen={key}; values={value}; record_start=n
+                     else:
+-                        seen.add(key)
++                        seen.add(key); values.add(value)
+                 if cuts:
+                     pieces=[]; begin=0
+                     for end in cuts:
+--- a/delivery/von-rag-r19/tests/test_r70_explicit_status_boundaries.py
++++ b/delivery/von-rag-r19/tests/test_r70_explicit_status_boundaries.py
+@@ -0,0 +1,65 @@
++"""Literal opposing status records, including the independent three-fragment report."""
++import pytest
++from von_rag.parsers import text_chunks
++from von_rag.retrieval import build_index, Index
++
++
++def indexed(tmp_path,text):
++    corpus=tmp_path/'corpus';corpus.mkdir()
++    (corpus/'mixed.txt').write_text(text)
++    db=tmp_path/'index.sqlite'
++    receipt=build_index(corpus,db,file_timeout=15,deadline_seconds=50)
++    assert receipt['skipped']==[]
++    return Index(db,corpus)
++
++
++@pytest.mark.parametrize('first,second',[('Product','Part Number'),('Asset','Serial Number')])
++@pytest.mark.parametrize('status',['withdrawn','superseded'])
++def test_scoped_middle_status_does_not_retire_later_current_entity(tmp_path,first,second,status):
++    filler=('Record narrative without any metadata labels.\n'*150)[:4200]
++    text=(f'{first}: OLD-100\nMaximum junction temperature: 105\n'+filler+
++          f'\nStatus: {status}\n'+filler+
++          f'\n{second}: NEW-200\nStatus: current\nMaximum junction temperature: 94\n')
++    ix=indexed(tmp_path,text)
++    try:
++        rows=ix.all()
++        new=[r for r in rows if 'NEW-200' in r['text']]
++        assert new and all(not r['retired'] for r in new)
++        assert all(r['retired'] for r in rows if r not in new)
++        assert any('NEW-200' in r['text'] for r in ix.search('NEW-200',k=20,historical=False))
++    finally:ix.close()
++
++
++@pytest.mark.parametrize('first,second',[('Product','Part Number'),('Asset','Serial Number')])
++def test_current_record_does_not_inherit_later_different_entity_withdrawal(tmp_path,first,second):
++    filler=('Current record explanation without field labels.\n'*150)[:4200]
++    text=(f'{first}: NEW-200\nStatus: current\n'+filler+
++          '\nMaximum junction temperature: 94\n'+
++          f'{second}: OLD-100\nStatus: withdrawn\nMaximum junction temperature: 105\n')
++    ix=indexed(tmp_path,text)
++    try:
++        rows=ix.all();old=[r for r in rows if 'OLD-100' in r['text']]
++        assert old and all(r['retired'] for r in old)
++        assert all(not r['retired'] for r in rows if r not in old)
++    finally:ix.close()
++
++
++@pytest.mark.parametrize('status',['current','withdrawn'])
++def test_complementary_field_without_its_own_status_is_not_split(status):
++    text=f'Product: TQ-40\nStatus: {status}\nPart Number: FAN-2214-B\n'
++    chunks=text_chunks(text,'one.txt')
++    assert len(chunks)==1
++    assert chunks[0].fields['Product']=='TQ-40'
++    assert chunks[0].fields['Part Number']=='FAN-2214-B'
++
++
++@pytest.mark.parametrize('alias',['TQ-40','TQ40'])
++def test_same_identifier_under_an_alias_is_not_a_new_record(alias):
++    text=f'Product: TQ-40\nStatus: withdrawn\nModel: {alias}\nStatus: current\n'
++    assert len(text_chunks(text,'one.txt'))==1
++
++
++@pytest.mark.parametrize('status',['current','draft'])
++def test_same_or_unknown_status_does_not_invent_a_cross_key_boundary(status):
++    text=f'Product: TQ-40\nStatus: current\nPart Number: FAN-2214-B\nStatus: {status}\n'
++    assert len(text_chunks(text,'one.txt'))==1

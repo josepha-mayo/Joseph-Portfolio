@@ -1,0 +1,245 @@
+--- a/delivery/von-rag-r19/von_rag/retrieval.py
++++ b/delivery/von-rag-r19/von_rag/retrieval.py
+@@ -61,6 +61,53 @@
+         'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
+     }
+     return not bool(keys & entity_keys)
++
++
++def fragment_retirement_states(chunks):
++    """Propagate retirement only across fragments with established entity scope.
++
++    Numeric locators prove a shared parser piece, not necessarily one entity:
++    different entity keys can coexist in that piece. Require one entity field in
++    its first fragment and no new entity field/value later. Otherwise retain
++    the prior per-chunk behavior, including document-wide withdrawal markers.
++    """
++    groups = collections.defaultdict(list)
++    for chunk in chunks:
++        fragmented = (chunk.kind == 'text' and
++                      re.fullmatch(r'.+:\d+(?:\.\d+)?\.\d+', chunk.locator))
++        group = ('text', chunk.source, chunk.locator.rsplit('.', 1)[0]) if fragmented else ('single', chunk.cid)
++        groups[group].append(chunk)
++    entity_keys = {
++        'product', 'model', 'device', 'partnumber', 'partno', 'pn', 'sku',
++        'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
++    }
++
++    def scope_fields(chunk):
++        return {(key, value.strip()) for name, value in kv_fields(chunk.text).items()
++                if (key := re.sub(r'[^a-z0-9]', '', name.casefold())) in entity_keys}
++
++    document_retired = False
++    flags = {}
++    for members in groups.values():
++        if len(members) > 1:
++            members = sorted(members, key=lambda c: int(c.locator.rsplit('.', 1)[1]))
++        initial_scope = scope_fields(members[0])
++        established_scope = (
++            len(members) > 1 and len(initial_scope) == 1
++            and all(scope_fields(c) <= initial_scope for c in members[1:]))
++        if established_scope:
++            # A status-only continuation after an established entity header
++            # stays local. Overlapping copies of that header are harmless.
++            record_retired = any(retired('', c.text) for c in members)
++            for c in members:
++                flags[c.cid] = record_retired
++        else:
++            # Do not reinterpret a leading unscoped document marker, or merge
++            # a later different entity into the first entity's withdrawal.
++            document_retired |= any(document_retirement_marker(c) for c in members)
++            for c in members:
++                flags[c.cid] = retired('', c.text)
++    return document_retired, flags
+ 
+ 
+ _REVISION_SUFFIX = re.compile(
+@@ -196,14 +243,14 @@
+                     # (e.g. `Status: withdrawn` before the first record) also
+                     # applies globally. Status attached to an explicit
+                     # Product/Model/Device record remains record-local.
+-                    source_retired = retired(rel, '') or any(
+-                        document_retirement_marker(c) for c in chunks)
++                    marked_document, record_flags = fragment_retirement_states(chunks)
++                    source_retired = retired(rel, '') or marked_document
+                     document_status[rel] = bool(source_retired)
+                     file_hash = hashlib.sha256(p.read_bytes()).hexdigest()
+                     files.append({'source':rel,'sha256':file_hash,'bytes':info.st_size,'chunks':len(chunks)})
+                     for c in chunks:
+                         if not c.text: continue
+-                        chunk_retired = source_retired or retired('', c.text)
++                        chunk_retired = source_retired or record_flags.get(c.cid, False)
+                         con.execute('INSERT INTO chunks VALUES(?,?,?,?,?,?,?,?)',
+                             (c.cid,c.source,c.locator,c.text,json.dumps(c.fields),c.context,c.kind,int(chunk_retired)))
+                         body = ' '.join(tokens(c.source+' '+c.context+' '+c.text))
+--- a/delivery/von-rag-r19/tests/test_r70_long_record_retirement.py
++++ b/delivery/von-rag-r19/tests/test_r70_long_record_retirement.py
+@@ -0,0 +1,70 @@
++"""Fresh authored CPU regressions; these are not model or hidden-set scores."""
++from pathlib import Path
++import pytest
++from von_rag.parsers import Chunk, text_chunks
++from von_rag.retrieval import build_index, Index
++
++
++def indexed(tmp_path, text):
++    corpus=tmp_path/'corpus';corpus.mkdir()
++    (corpus/'mixed.txt').write_text(text)
++    db=tmp_path/'index.sqlite'
++    manifest=build_index(corpus,db,file_timeout=10,deadline_seconds=30)
++    assert manifest['skipped']==[]
++    return Index(db,corpus)
++
++
++@pytest.mark.parametrize('key',['Product','Part Number','Asset'])
++@pytest.mark.parametrize('length',[4000,8500])
++@pytest.mark.parametrize('position',['head','tail'])
++@pytest.mark.parametrize('status',['withdrawn','superseded'])
++def test_long_retired_record_cannot_hide_live_sibling_or_leak_old_values(tmp_path,key,length,position,status):
++    filler=('Calibration narrative without entity labels.\n'*250)[:length]
++    head=f'{key}: OLD-100\n'
++    status_line=f'Status: {status}\n'
++    value='Maximum junction temperature: 105\n'
++    if position=='head': old=head+status_line+filler+'\n'+value
++    else: old=head+value+filler+'\n'+status_line
++    text=old+f'{key}: NEW-200\nMaximum junction temperature: 94\nStatus: current\n'
++    ix=indexed(tmp_path,text)
++    try:
++        rows=ix.all()
++        new=[r for r in rows if 'NEW-200' in r['text']]
++        assert len(new)==1 and not new[0]['retired'], 'a local withdrawal must not retire its live sibling'
++        old_rows=[r for r in rows if r['cid']!=new[0]['cid']]
++        assert len(old_rows)>=2 and all(r['retired'] for r in old_rows), 'all old-record fragments must remain retired'
++        live=ix.search('maximum junction temperature',k=100,historical=False)
++        assert not any('105' in r['text'] for r in live), 'a value-only tail must not appear current'
++        assert any('OLD-100' in r['text'] for r in ix.search('OLD-100',k=100,historical=True))
++        assert all(c.text in text for c in text_chunks(text,'mixed.txt')), 'literal source text must remain unchanged'
++    finally:ix.close()
++
++
++@pytest.mark.parametrize('length',[4000,8500])
++def test_long_document_level_withdrawal_still_retires_entire_file(tmp_path,length):
++    prefix=('Document-wide narrative.\n'*500)[:length]+'\nStatus: withdrawn\n\n'
++    text=prefix+'Product: NEW-200\nMaximum junction temperature: 94\nStatus: current\n'
++    ix=indexed(tmp_path,text)
++    try: assert all(r['retired'] for r in ix.all())
++    finally:ix.close()
++
++
++@pytest.mark.parametrize('length',[4000,8500])
++def test_long_current_record_and_unrelated_old_record_keep_distinct_statuses(tmp_path,length):
++    text='Product: NEW-200\nStatus: current\n'+('Current calibration narrative.\n'*500)[:length]+'\nMaximum junction temperature: 94\nProduct: OLD-100\nMaximum junction temperature: 105\nStatus: withdrawn\n'
++    ix=indexed(tmp_path,text)
++    try:
++        rows=ix.all()
++        old=[r for r in rows if 'OLD-100' in r['text']]
++        assert len(old)==1 and old[0]['retired']
++        assert all(not r['retired'] for r in rows if r['cid']!=old[0]['cid'])
++    finally:ix.close()
++
++
++def test_short_record_control_unchanged(tmp_path):
++    ix=indexed(tmp_path,'Product: OLD-100\nStatus: withdrawn\nProduct: NEW-200\nStatus: current\n')
++    try:
++        rows=ix.all();assert len(rows)==2
++        assert next(r for r in rows if 'OLD-100' in r['text'])['retired']
++        assert not next(r for r in rows if 'NEW-200' in r['text'])['retired']
++    finally:ix.close()
+--- a/delivery/von-rag-r19/tests/test_r70_fragment_identity.py
++++ b/delivery/von-rag-r19/tests/test_r70_fragment_identity.py
+@@ -0,0 +1,32 @@
++"""Negative controls for the new record-fragment grouping boundary."""
++from von_rag.parsers import Chunk
++from von_rag.retrieval import fragment_retirement_states
++
++
++def test_same_numeric_locator_in_different_sources_is_not_one_record():
++    a=Chunk('old.txt','text:1.0','Product: OLD-100\nStatus: withdrawn')
++    b=Chunk('new.txt','text:1.3500','Product: NEW-200\nStatus: current')
++    doc,flags=fragment_retirement_states([a,b])
++    assert not doc and flags[a.cid] and not flags[b.cid]
++
++
++def test_pages_remain_separate_while_withdrawn_page_fragments_stay_together():
++    a=Chunk('mixed.pdf','page1:1.0','Product: OLD-100')
++    b=Chunk('mixed.pdf','page1:1.3500','Status: withdrawn')
++    c=Chunk('mixed.pdf','page2:1.0','Product: NEW-200\nStatus: current')
++    doc,flags=fragment_retirement_states([a,b,c])
++    assert not doc and flags[a.cid] and flags[b.cid] and not flags[c.cid]
++
++
++def test_row_kind_never_inherits_another_rows_status_even_with_numeric_locators():
++    a=Chunk('sheet.xlsx','text:1.0','Part Number: OLD-100\nStatus: withdrawn',kind='row')
++    b=Chunk('sheet.xlsx','text:1.3500','Part Number: NEW-200\nStatus: current',kind='row')
++    doc,flags=fragment_retirement_states([a,b])
++    assert not doc and flags[a.cid] and not flags[b.cid]
++
++
++def test_distinct_blocks_in_one_page_do_not_share_status():
++    a=Chunk('spec.pdf','page1:1.0','Product: OLD-100\nStatus: withdrawn')
++    b=Chunk('spec.pdf','page1:2.0','Product: NEW-200\nStatus: current')
++    doc,flags=fragment_retirement_states([a,b])
++    assert not doc and flags[a.cid] and not flags[b.cid]
+--- a/delivery/von-rag-r19/tests/test_r70_review_boundaries.py
++++ b/delivery/von-rag-r19/tests/test_r70_review_boundaries.py
+@@ -0,0 +1,42 @@
++"""Regression cases derived from independent review, not model evaluation."""
++import pytest
++from von_rag.retrieval import build_index, Index
++
++
++def indexed(tmp_path, text):
++    corpus=tmp_path/'corpus'; corpus.mkdir()
++    (corpus/'mixed.txt').write_text(text)
++    db=tmp_path/'index.sqlite'
++    receipt=build_index(corpus,db,file_timeout=10,deadline_seconds=40)
++    assert receipt['skipped']==[]
++    return Index(db,corpus)
++
++
++@pytest.mark.parametrize('first,second', [
++    ('Product','Part Number'),('Model','Asset'),('Asset','Serial Number')])
++@pytest.mark.parametrize('length',[4100,8600])
++def test_late_different_entity_with_current_status_is_not_retired(tmp_path,first,second,length):
++    # R69 intentionally does not split merely because a *different* entity
++    # field appears; therefore the numeric prefix is not a complete proof.
++    text=(f'{first}: OLD-100\nStatus: withdrawn\n'
++          +('Prior record explanation without field labels.\n'*250)[:length]
++          +f'\n{second}: NEW-200\nStatus: current\nMaximum junction temperature: 94\n')
++    ix=indexed(tmp_path,text)
++    try:
++        current=[r for r in ix.all() if 'NEW-200' in r['text']]
++        assert current and all(not r['retired'] for r in current)
++        assert any('NEW-200' in r['text'] for r in ix.search('NEW-200',k=20,historical=False))
++    finally: ix.close()
++
++
++@pytest.mark.parametrize('length',[4100,8600])
++def test_early_unscoped_withdrawal_remains_document_wide(tmp_path,length):
++    text=('Status: withdrawn\n'
++          +('Document introduction without entity fields.\n'*250)[:length]
++          +'\nProduct: OLD-100\nStatus: current\n\n'
++          +'Product: LIVE-200\nStatus: current\nMaximum junction temperature: 94\n')
++    ix=indexed(tmp_path,text)
++    try:
++        assert all(r['retired'] for r in ix.all())
++        assert ix.search('LIVE-200',k=20,historical=False)==[]
++    finally: ix.close()
+--- a/delivery/von-rag-r19/tests/test_r70_initial_scope_ambiguity.py
++++ b/delivery/von-rag-r19/tests/test_r70_initial_scope_ambiguity.py
+@@ -0,0 +1,15 @@
++"""An ambiguous multi-entity prefix is not evidence for propagation."""
++import pytest
++from von_rag.parsers import text_chunks
++from von_rag.retrieval import fragment_retirement_states, retired, document_retirement_marker
++
++@pytest.mark.parametrize('length',[4100,8600])
++def test_two_initial_entity_fields_keep_original_per_fragment_state(length):
++    text=('Product: OLD-100\nStatus: withdrawn\nPart Number: NEW-200\nStatus: current\n'
++          +('New record explanation without field labels.\n'*250)[:length]
++          +'\nMaximum junction temperature: 94\n')
++    chunks=text_chunks(text,'mixed.txt')
++    assert len(chunks)>1
++    doc,flags=fragment_retirement_states(chunks)
++    assert doc==any(document_retirement_marker(c) for c in chunks)
++    assert flags=={c.cid:retired('',c.text) for c in chunks}
