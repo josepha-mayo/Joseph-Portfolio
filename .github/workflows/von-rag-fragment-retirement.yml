@@ -4,6 +4,7 @@ on:
     branches: [amd-fragment-retirement-fix-20261002]
     paths:
       - delivery/von-rag-r19/evidence/fragment-retirement/fragment_retirement.patch
+      - delivery/von-rag-r19/evidence/fragment-retirement/explicit_status_boundary.patch
       - .github/workflows/von-rag-fragment-retirement.yml
 permissions:
   contents: read
@@ -45,6 +46,14 @@ jobs:
           git apply --check "$PATCH"
           git apply "$PATCH"
           echo '5799183b512d4a6432893b056aeef0ddd15f9208fbb1f46df47f0eb5ff31f3bb  delivery/von-rag-r19/von_rag/retrieval.py' | sha256sum -c -
+      - name: Apply explicit opposing-status record boundary correction
+        run: |
+          set -euo pipefail
+          PATCH=delivery/von-rag-r19/evidence/fragment-retirement/explicit_status_boundary.patch
+          echo "1e155d583e9e93f3f2c1e68759808ecc9d2169bde761de2f8b5a24ff49b78925  $PATCH" | sha256sum -c -
+          git apply --check "$PATCH"
+          git apply "$PATCH"
+          echo 'f6d15c325f2e63edaeb6fb4d4b3a824987b5ad24046df45c31b04a4842344f95  delivery/von-rag-r19/von_rag/parsers.py' | sha256sum -c -
       - run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
       - name: Existing software tests plus fresh boundary controls
         working-directory: delivery/von-rag-r19
@@ -59,10 +68,11 @@ jobs:
           folder=Path('evidence/fragment-retirement/results')
           suites=ET.parse(folder/'tests.xml').getroot().findall('testsuite')
           totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-          assert totals=={'tests':499,'failures':0,'errors':0,'skipped':0},totals
-          receipt={'schema':'von-fragment-retirement-ci-3','commit':os.environ['GITHUB_SHA'],
+          assert totals=={'tests':511,'failures':0,'errors':0,'skipped':0},totals
+          receipt={'schema':'von-fragment-retirement-ci-4','commit':os.environ['GITHUB_SHA'],
                    'python':sys.version,'tests':totals,'fresh_model_calls':0,
-                   'source_patch_sha256':'2e3dd32adaa51807e4308b9499bfe75c8d63b2e49c3f1cccebc7da06dfde8228',
+                   'fragment_patch_sha256':'2e3dd32adaa51807e4308b9499bfe75c8d63b2e49c3f1cccebc7da06dfde8228',
+                   'boundary_patch_sha256':'1e155d583e9e93f3f2c1e68759808ecc9d2169bde761de2f8b5a24ff49b78925',
                    'submission_changed':False,'official_score':None}
           (folder/'RESULT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print(json.dumps(receipt,indent=2))
