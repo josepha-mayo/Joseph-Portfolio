@@ -1,0 +1,65 @@
+{
+  "schema": "von-unified-candidate-software-result-1",
+  "date_utc": "2026-10-02",
+  "project": "von-read",
+  "tested_commit": "f8738524f29433da0dc3697a863f5b735e315f95",
+  "workflow_run": 37036764213,
+  "pull_request": 68,
+  "source_branches": {
+    "pr66": "7c1dafd1d7faf71d38256b2ee8378c7fb1daf311",
+    "pr67": "ff4cb536079868af4758c2422db18417460f63d9"
+  },
+  "matrix": {
+    "python_3_12_14": {
+      "original_pr66_tests": 487,
+      "original_pr67_tests": 511,
+      "unified_candidate_tests": 606,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "artifact_id": 11241200763,
+      "downloaded_artifact_sha256": "9b3a1590253b5e4560b63d81bb9e676dac7e56cbe0d1701b122617e4d80ea862"
+    },
+    "python_3_14_7": {
+      "original_pr66_tests": 487,
+      "original_pr67_tests": 511,
+      "unified_candidate_tests": 606,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "artifact_id": 11241180673,
+      "downloaded_artifact_sha256": "3372d2234d36d5cede9c7263bee88fcf4d43e7b5339425ff37bd05b2a862b4f5"
+    }
+  },
+  "new_targeted_checks": {
+    "selected_entity_firmware_link_controls": 27,
+    "explicit_link_long_record_and_noisy_hub_controls": 16,
+    "total": 43,
+    "passed": 43,
+    "model_calls": 0
+  },
+  "integrity": {
+    "all_83_candidate_files_match_local_frozen_manifest": true,
+    "source_unchanged_during_each_ci_test_run": true,
+    "both_colliding_record_boundary_test_files_collected": true,
+    "existing_proofs_py_unchanged": true,
+    "native_reader_unchanged": true,
+    "model_weights_changed": false,
+    "runtime_entrypoint_unchanged": true,
+    "typed_scope_patch_sha256": "c38f4f1b0d4cbb590dcaeae32ceb605c53e8283c95ea25953743511205c008b3",
+    "compact_py_sha256": "931c5dcf5cd2015173416248d32aba7eac8cb350378b10dc7097445eff8093de",
+    "scope_links_py_sha256": "d42d856d85ba676df92dc19d142cea1fdfaf828fbb850fc997fc0515f1379060"
+  },
+  "preserved_failures_and_limitations": [
+    "First integration run 37034943817 stopped at a parser conflict while both originals passed. It did not qualify an integrated candidate.",
+    "An initial exploratory linked-record fixture supplied only a shared ticket, not a product-to-asset link. Its rejection remains preserved; it was not silently relabelled as a successful test.",
+    "A preliminary local full run is not final qualification because development files changed while it ran. The final matrix reconstructed frozen source and checked every source hash after testing.",
+    "These are software, parser, retrieval and scripted-selection tests. They do not establish a new native model result, hidden grader performance or awarded XP."
+  ],
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}
