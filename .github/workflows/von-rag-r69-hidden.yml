@@ -3,6 +3,8 @@ on:
   push:
     branches: [amd-r69-hidden-hardening-20261002]
     paths:
+      - delivery/von-rag-r19/von_rag/**
+      - delivery/von-rag-r19/tests/**
       - delivery/von-rag-r19/evidence/r69/r69-overlay.tgz.b64
       - .github/workflows/von-rag-r69-hidden.yml
 permissions:
@@ -29,23 +31,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - name: Verify and apply deterministic R69 overlay
+      - name: Verify committed R69 bytes match deterministic overlay
         run: |
           set -euo pipefail
-          cd delivery/von-rag-r19
-          base64 -d evidence/r69/r69-overlay.tgz.b64 > /tmp/r69-overlay.tgz
+          base64 -d delivery/von-rag-r19/evidence/r69/r69-overlay.tgz.b64 > /tmp/r69-overlay.tgz
           echo "572ea6b4588bc31cc2db754d5b7863f51f62e0e27fabac69e33aab1dd55b2011  /tmp/r69-overlay.tgz" | sha256sum -c -
+          rm -rf /tmp/r69-exact; mkdir -p /tmp/r69-exact
+          tar -xzf /tmp/r69-overlay.tgz -C /tmp/r69-exact
           python - <<'PY'
-          import tarfile
-          allowed_prefixes=('delivery/von-rag-r19/von_rag/','delivery/von-rag-r19/tests/')
-          with tarfile.open('/tmp/r69-overlay.tgz','r:gz') as z:
-              names=z.getnames()
-              assert len(names)==13,names
-              assert all(n.startswith(allowed_prefixes) and '..' not in n.split('/') for n in names),names
-              print('\n'.join(names))
+          from pathlib import Path
+          import hashlib
+          payload=Path('/tmp/r69-exact/delivery/von-rag-r19')
+          checkout=Path('delivery/von-rag-r19')
+          files=[p.relative_to(payload) for p in payload.rglob('*') if p.is_file()]
+          assert len(files)==13,files
+          for rel in files:
+              expected=hashlib.sha256((payload/rel).read_bytes()).hexdigest()
+              actual=hashlib.sha256((checkout/rel).read_bytes()).hexdigest()
+              assert actual==expected,(str(rel),expected,actual)
+              print(rel,actual)
           PY
-          cd ../..
-          tar -xzf /tmp/r69-overlay.tgz
       - name: Install exact test dependencies
         run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
       - name: Compile and run cumulative suite
@@ -61,12 +66,12 @@ jobs:
           root=ET.parse('evidence/r69/ci.xml').getroot()
           suites=root.findall('testsuite')
           totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-          assert totals['tests'] >= 426,totals
-          assert totals['failures']==totals['errors']==totals['skipped']==0,totals
+          assert totals=={'tests':487,'failures':0,'errors':0,'skipped':0},totals
           receipt={
-            'schema':'von-r69-ci-1','base_commit':'73600eaa711cf6a78b2cd1de0db4da565a2b6eab',
+            'schema':'von-r69-ci-2','base_commit':'73600eaa711cf6a78b2cd1de0db4da565a2b6eab',
             'overlay_sha256':'572ea6b4588bc31cc2db754d5b7863f51f62e0e27fabac69e33aab1dd55b2011',
             'commit':os.environ['GITHUB_SHA'],'python':sys.version,'tests':totals,
+            'committed_bytes_match_overlay':True,
             'fresh_model_calls':0,'fresh_gpu_calls':0,'submission_changed':False,
             'scope':'software/parser/retrieval/grounding controls; not hidden grader or neural accuracy'
           }
