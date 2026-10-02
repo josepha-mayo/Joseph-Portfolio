@@ -1,0 +1,75 @@
+name: von-rag fragment retirement regression
+on:
+  push:
+    branches: [amd-fragment-retirement-fix-20261002]
+    paths:
+      - delivery/von-rag-r19/evidence/fragment-retirement/fragment_retirement.patch
+      - .github/workflows/von-rag-fragment-retirement.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-fragment-retirement-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Apply and verify the exact R69 base
+        run: |
+          set -euo pipefail
+          base64 -d delivery/von-rag-r19/evidence/r69/r69.patch.xz.b64 | xz -d > /tmp/r69.patch
+          echo '530fe08207e6497b5096e341ee5330cc14c760d48d1e10256f51114ab36d57db  /tmp/r69.patch' | sha256sum -c -
+          git apply --check /tmp/r69.patch
+          git apply /tmp/r69.patch
+          echo '87ca40ebbd35aec0c897f0bcbef6e208d55024e128764a815c6e58c4764860a5  delivery/von-rag-r19/von_rag/retrieval.py' | sha256sum -c -
+      - name: Apply exact tested fragment-retirement patch
+        run: |
+          set -euo pipefail
+          PATCH=delivery/von-rag-r19/evidence/fragment-retirement/fragment_retirement.patch
+          echo "6a82ef3556eefbb25205a7a41ed8e9fa0f19988c6aef9e383ad2bf1f0f70f603  $PATCH" | sha256sum -c -
+          git apply --check "$PATCH"
+          git apply "$PATCH"
+          echo '4c78b55449258f5b4d31982b84ad8d4b96522afeca830a5465be12eef6183375  delivery/von-rag-r19/von_rag/retrieval.py' | sha256sum -c -
+      - run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
+      - name: Existing software tests plus fresh boundary controls
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/fragment-retirement/results
+          python -m compileall -q von_rag
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/fragment-retirement/results/tests.xml | tee evidence/fragment-retirement/results/tests.log
+          python - <<'PY'
+          import json, os, sys, xml.etree.ElementTree as ET
+          from pathlib import Path
+          folder=Path('evidence/fragment-retirement/results')
+          suites=ET.parse(folder/'tests.xml').getroot().findall('testsuite')
+          totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert totals=={'tests':489,'failures':0,'errors':0,'skipped':0},totals
+          receipt={'schema':'von-fragment-retirement-ci-1','commit':os.environ['GITHUB_SHA'],
+                   'python':sys.version,'tests':totals,'fresh_model_calls':0,
+                   'source_patch_sha256':'6a82ef3556eefbb25205a7a41ed8e9fa0f19988c6aef9e383ad2bf1f0f70f603',
+                   'submission_changed':False,'official_score':None}
+          (folder/'RESULT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-fragment-retirement-python-${{ matrix.python }}
+          path: delivery/von-rag-r19/evidence/fragment-retirement/results/
+          retention-days: 14
