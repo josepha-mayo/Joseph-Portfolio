@@ -103,24 +103,36 @@ def query_voltage(query, *, final=False):
 
 
 def query_volume(query, *, final=False):
-    """Return one explicit unit-volume tier for a unit-price question."""
+    """Return one explicit equality volume tier for a unit-price question.
+
+    Accepted spellings are deliberately narrow but formatting-tolerant:
+    "at 25,000 units", "at 25,000-unit volume", and
+    "at [a] volume of 25,000 units". Ranges, thresholds, and approximations
+    remain fail-open for the model rather than becoming equality filters.
+    """
     words = set(re.findall(r'[a-z]+', query.casefold()))
     if 'price' not in words or 'unit' not in words or (not final and len(identifiers(query)) != 1):
         return None
     if _UNSAFE_CONDITION.search(query):
         return None
-    matches = list(re.finditer(
-        r'(?i:\bat\s+)(\d[\d,]*)(?:\s+)(?:unit|units)(?:\s+volume)?'
-        r'(?=\s|$|[?.,;)])', query))
+    if re.search(r'(?i)\b\d[\d,]*\s*[-–—]\s*\d[\d,]*\s*(?:unit|units)\b', query):
+        return None
+    token = r'(\d[\d,]*)'
+    patterns = (
+        r'(?i)\bat\s+(?:a\s+)?' + token
+        + r'\s*(?:-\s*)?(?:unit|units)(?:\s+volume)?(?=\s|$|[?.,;)])',
+        r'(?i)\bat\s+(?:a\s+)?(?:unit\s+)?volume\s+of\s+' + token
+        + r'\s+(?:unit|units)(?=\s|$|[?.,;)])',
+    )
+    matches = []
+    for pattern in patterns:
+        matches.extend(re.finditer(pattern, query))
     if len(matches) != 1:
         return None
-    # More than one explicit "<number> unit(s)" quantity is ambiguous.
-    if len(re.findall(r'(?i)\b\d[\d,]*\s+(?:unit|units)\b', query)) != 1:
+    value = matches[0][1]
+    if not re.fullmatch(r'(?:\d+|\d{1,3}(?:,\d{3})+)', value):
         return None
-    token = matches[0][1]
-    if not re.fullmatch(r'(?:\d+|\d{1,3}(?:,\d{3})+)', token):
-        return None
-    return int(token.replace(',', ''))
+    return int(value.replace(',', ''))
 
 
 def _volume_values(fields, text=''):
@@ -246,7 +258,10 @@ def explicit_current_conflict(index, query):
     kind, aliases = _property(query)
     if len(wanted) != 1 or kind is None:
         return []
-    scope_keys = {'product', 'model', 'device'}
+    scope_keys = {
+        'product', 'model', 'device', 'partnumber', 'partno', 'pn', 'sku',
+        'asset', 'component', 'serialnumber', 'item', 'assembly', 'module'
+    }
     groups = {}
     for record in index.search(query, k=32, historical=False):
         if record.get('retired') or not record_matches_query_conditions(record, query):
@@ -260,11 +275,14 @@ def explicit_current_conflict(index, query):
             continue
         scope = set()
         for name, value in fields.items():
-            if name in scope_keys:
+            if name in scope_keys and name not in aliases:
                 scope |= identifiers(value)
+        scope_line = re.compile(
+            r'\s*(?:product|model|device|part\s+(?:number|no)|pn|sku|asset|'
+            r'component|serial\s+number|item|assembly|module)\s*:\s*(.*)', re.I)
         for line in text.splitlines():
-            match = re.match(r'\s*(?:product|model|device)\s*:\s*(.*)', line, re.I)
-            if match:
+            match = scope_line.match(line)
+            if match and _key(line.split(':', 1)[0]) not in aliases:
                 scope |= identifiers(match[1])
         if scope != wanted:
             continue

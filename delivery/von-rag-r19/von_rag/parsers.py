@@ -128,24 +128,38 @@ def text_chunks(text: str, source: str, locator: str = 'text', context: str = ''
         if not block.strip(): continue
         pieces = [block]
         if Path(source).suffix != '.log':
-            # A plain-text/PDF paragraph can contain several literal product
-            # records without blank lines. Keeping them in one chunk makes
-            # scope ambiguous and also lets duplicate key/value fields
-            # overwrite each other. Split only at the second and later explicit
-            # Product/Model/Device header; preserve any heading/prefix with the
-            # first record and never synthesize or summarize source text.
+            # A plain-text/PDF paragraph can contain several literal records
+            # without blank lines. Split on a repeated entity key, or after a
+            # completed Status record. Different adjacent entity fields may
+            # belong to the SAME record (for example Product + Part Number).
             lines = block.splitlines()
-            starts = [n for n,line in enumerate(lines)
-                      if re.match(r'^\s*(?:product|model|device)\s*:\s*\S', line, re.I)]
-            if len(starts) > 1:
-                cuts = starts[1:]
-                pieces=[]; begin=0
-                for end in cuts:
-                    part='\n'.join(lines[begin:end])
+            scope_header = re.compile(
+                r'^\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
+                r'serial\s+number|item|assembly|module)\s*:\s*\S', re.I)
+            hits=[]
+            for n,line in enumerate(lines):
+                match=scope_header.match(line)
+                if match:
+                    key=re.sub(r'[^a-z0-9]','',match.group(1).casefold())
+                    hits.append((n,key))
+            if len(hits) > 1:
+                cuts=[]; seen={hits[0][1]}; previous=hits[0][0]
+                for n,key in hits[1:]:
+                    between=lines[previous+1:n]
+                    closed=any(re.match(r'^\s*status\s*:\s*\S', x, re.I) for x in between)
+                    if key in seen or closed:
+                        cuts.append(n); seen={key}
+                    else:
+                        seen.add(key)
+                    previous=n
+                if cuts:
+                    pieces=[]; begin=0
+                    for end in cuts:
+                        part='\n'.join(lines[begin:end])
+                        if part.strip(): pieces.append(part)
+                        begin=end
+                    part='\n'.join(lines[begin:])
                     if part.strip(): pieces.append(part)
-                    begin=end
-                part='\n'.join(lines[begin:])
-                if part.strip(): pieces.append(part)
         for piece_no, piece in enumerate(pieces):
             for j in range(0, len(piece), 3500):
                 part = piece[max(0, j-180):j+3500]

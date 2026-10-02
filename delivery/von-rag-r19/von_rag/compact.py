@@ -79,10 +79,18 @@ def _strict_parse_selection(text, records, query, *, source_records=None):
         siblings = source_records(c) if source_records is not None else records
         if siblings is None: siblings = records
         if not python_authority_matches(siblings,c,query,answer):continue
-        scopes=[]
+        from .conflicts import _property, _key
+        _, aliases = _property(query)
+        scope_keys={'product','model','device','partnumber','partno','pn','sku',
+                    'asset','component','serialnumber','item','assembly','module'}
+        fields=c.get('fields') or {}
+        scopes=[str(v) for k,v in fields.items() if _key(k) in scope_keys and _key(k) not in aliases]
+        scope_line=re.compile(
+            r'\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
+            r'serial\s+number|item|assembly|module)\s*:\s*(.*)',re.I)
         for line in c['text'].splitlines():
-            m=re.match(r'\s*(?:product|model|device)\s*:\s*(.*)',line,re.I)
-            if m:scopes.append(m[1])
+            m=scope_line.match(line)
+            if m and _key(m.group(1)) not in aliases: scopes.append(m.group(2))
         scope_ids=set().union(*(identifiers(s) for s in scopes)) if scopes else set()
         if wanted and scope_ids and not scope_ids<=wanted:continue
         value_record=i;break

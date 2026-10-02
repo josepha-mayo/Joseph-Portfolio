@@ -1,0 +1,86 @@
+name: von-rag R69 hidden hardening
+on:
+  push:
+    branches: [amd-r69-hidden-hardening-20261002]
+    paths:
+      - delivery/von-rag-r19/von_rag/**
+      - delivery/von-rag-r19/tests/**
+      - delivery/von-rag-r19/evidence/r69/r69-overlay.tgz.b64
+      - .github/workflows/von-rag-r69-hidden.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r69-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify committed R69 bytes match deterministic overlay
+        run: |
+          set -euo pipefail
+          base64 -d delivery/von-rag-r19/evidence/r69/r69-overlay.tgz.b64 > /tmp/r69-overlay.tgz
+          echo "572ea6b4588bc31cc2db754d5b7863f51f62e0e27fabac69e33aab1dd55b2011  /tmp/r69-overlay.tgz" | sha256sum -c -
+          rm -rf /tmp/r69-exact; mkdir -p /tmp/r69-exact
+          tar -xzf /tmp/r69-overlay.tgz -C /tmp/r69-exact
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          payload=Path('/tmp/r69-exact/delivery/von-rag-r19')
+          checkout=Path('delivery/von-rag-r19')
+          files=[p.relative_to(payload) for p in payload.rglob('*') if p.is_file()]
+          assert len(files)==13,files
+          for rel in files:
+              expected=hashlib.sha256((payload/rel).read_bytes()).hexdigest()
+              actual=hashlib.sha256((checkout/rel).read_bytes()).hexdigest()
+              assert actual==expected,(str(rel),expected,actual)
+              print(rel,actual)
+          PY
+      - name: Install exact test dependencies
+        run: python -m pip install --disable-pip-version-check -r delivery/von-rag-r19/requirements-test.txt
+      - name: Compile and run cumulative suite
+        working-directory: delivery/von-rag-r19
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r69
+          python -m compileall -q von_rag
+          python -m pytest -q tests -p no:cacheprovider --junitxml=evidence/r69/ci.xml | tee evidence/r69/ci.log
+          python - <<'PY'
+          import json,os,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=ET.parse('evidence/r69/ci.xml').getroot()
+          suites=root.findall('testsuite')
+          totals={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert totals=={'tests':487,'failures':0,'errors':0,'skipped':0},totals
+          receipt={
+            'schema':'von-r69-ci-2','base_commit':'73600eaa711cf6a78b2cd1de0db4da565a2b6eab',
+            'overlay_sha256':'572ea6b4588bc31cc2db754d5b7863f51f62e0e27fabac69e33aab1dd55b2011',
+            'commit':os.environ['GITHUB_SHA'],'python':sys.version,'tests':totals,
+            'committed_bytes_match_overlay':True,
+            'fresh_model_calls':0,'fresh_gpu_calls':0,'submission_changed':False,
+            'scope':'software/parser/retrieval/grounding controls; not hidden grader or neural accuracy'
+          }
+          Path('evidence/r69/CI_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r69-python-${{ matrix.python }}
+          path: delivery/von-rag-r19/evidence/r69/
+          retention-days: 14
