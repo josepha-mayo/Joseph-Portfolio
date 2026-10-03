@@ -1,0 +1,14 @@
+{
+  "schema":"von-read-xp-pipeline-2026-10-03",
+  "date_utc":"2026-10-03",
+  "project":"von-read",
+  "current_verified_quest_state":{"xp":530,"rank":474,"leader_xp":4350,"gap_to_current_leader":3820,"source":"public LabLab Quest leaderboard API","xp_awarded_by_this_update":false},
+  "submitted_content_proposals":[
+    {"type":"AI Tech Tutorial","status":"proposal_submitted","http_status":201,"confirmation":"Form submitted successfully","topic":"Reproducible OCR + evidence-grounded RAG on AMD ROCm: lessons from von-read","target_date":"2026-10-10","authorship_boundary":"Final tutorial prose will be written/re-written by Joseph; the proposal explicitly disclosed LabLab's no fully AI-generated final tutorial rule.","xp_awarded":false},
+    {"type":"Blog Article","status":"proposal_submitted","http_status":201,"confirmation":"Form submitted successfully","topic":"Why exact-answer RAG fails before generation: 24 rescued failure cases from von-read on AMD MI300X","target_date":"2026-10-12","xp_awarded":false}
+  ],
+  "visible_xp_schedule":{"academy_course_each":150,"five_course_bonus":100,"ten_course_bonus":100,"rocm_certification":150,"first_project":50,"github_repo":5,"project_demo":150,"complete_project":200,"open_source_project":200,"amd_hackathon":300,"amd_technology":250,"milestone_each":100,"milestones_capped_per_project":3,"discord_answer":5,"like":2,"accepted_solution":50,"community_contributor_badge":250},
+  "unannounced_commented_page_material":{"guaranteed_current":false,"x_or_linkedin_post":10,"blog_article":100,"youtube_or_tutorial_video":200,"case_study":200,"published_article":100,"published_tutorial":150,"ten_upvotes":25,"fifty_upvotes":100,"featured_by_amd":250,"friend_creates_amd_account":50,"friend_completes_onboarding":100,"friend_completes_tutorial":150,"friend_submits_project":300},
+  "other_routes":{"youtube_build_log":{"asset_prepared":true,"published":false,"reason":"Upload-Post monthly quota exhausted: 0 uploads remaining.","asset_sha256":"c07bded2d7ed06ade1ea4c5c777e1c766f64b17e3ebfba3b226829ce6cfa2dfe"},"referrals":{"frontend_api_discovered":true,"generate_endpoint":"/api/v4/{eventSlug}/referral/generate","my_stats_endpoint":"/api/v4/{eventSlug}/referral/my-stats","global_stats_endpoint":"/api/v4/referral/stats","auth_bypass_attempted":false,"referral_link_generated":false}},
+  "constraints":["Do not interfere with Joseph's visible Brave tab/window.","Do not use or expose OTPs or browser cookies.","Do not fabricate course/community/referral/publication/XP completion.","R61 remains submitted MC3 until native/full-container gates pass."]
+}
