@@ -237,7 +237,7 @@ jobs:
           rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/v10-before.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
           print('V9 V10-reproduction',rc,counts)
-          assert rc==1 and counts=={'tests':9,'failures':4,'errors':0,'skipped':0},counts
+          assert rc==1 and counts=={'tests':10,'failures':4,'errors':0,'skipped':0},counts
           PY
       - name: Apply V10 parser transform and freeze source
         run: |
@@ -264,7 +264,7 @@ jobs:
           from pathlib import Path
           suites=ET.parse('unified-evidence/v10-after.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-          assert counts=={'tests':723,'failures':0,'errors':0,'skipped':0},counts
+          assert counts=={'tests':724,'failures':0,'errors':0,'skipped':0},counts
           src=Path('unified-evidence/candidate/delivery/von-rag-r19')
           manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST_V10.json').read_text())
           for name,want in manifest.items(): assert hashlib.sha256((src/name).read_bytes()).hexdigest()==want,name
