@@ -1,6 +1,6 @@
 {
   "schema": "von-read-quest-evidence-2026-10-03-r1",
-  "updated_utc": "2026-10-03T22:24:14.652Z",
+  "updated_utc": "2026-10-03T22:27:33.747Z",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -87,7 +87,8 @@
       "build_window_starts": "2026-10-12",
       "xp_awarded": false,
       "note": "Included only as stronger AMD-hackathon participation evidence. No Quest XP is claimed until the organizer confirms the qualifying threshold."
-    }
+    },
+    "human_readable_ledger": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/QUEST_BUILDING_EVIDENCE_2026-10-03.md"
   },
   "referral": {
     "generated_via_official_authenticated_endpoint": true,
@@ -103,7 +104,14 @@
       "walkthrough_page_committed": true,
       "github_referral_commit": "4b490116a1d1ef7968f242ae004018abc01f2036",
       "production_site_deploy_live": false,
-      "note": "GitHub README is live. Manual Netlify upload build failed before publish, leaving healthy production deploy unchanged."
+      "note": "GitHub README is live. Manual Netlify upload build failed before publish, leaving healthy production deploy unchanged.",
+      "production_deploy_attempt": {
+        "date_utc": "2026-10-03",
+        "netlify_deploy_id": "6ac17f8812c28918b6c0a72a",
+        "state": "error",
+        "error_stage": "building site",
+        "production_unchanged": true
+      }
     },
     "award_claimed": false
   },
@@ -130,7 +138,15 @@
       "thread_id": "cmusxrs2f014ts601m2hf8cpd"
     },
     "note": "Substantive LabLab forum contributions. The active XP table specifically names Discord answers, likes, accepted solutions and Contributor badge, so no Quest XP is claimed for forum posts themselves.",
-    "award_claimed": false
+    "award_claimed": false,
+    "evidence_packet": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/COMMUNITY_CONTRIBUTOR_EVIDENCE_2026-10-03.md",
+    "badge_review_request": {
+      "sent_utc": "2026-10-03T22:27:33.747Z",
+      "to": "community@lablab.ai",
+      "gmail_message_id": "1a103e0d36573857",
+      "requested": "criteria/review route for active +250 Community Contributor badge",
+      "xp_awarded": false
+    }
   },
   "course_route": {
     "authenticated_academy_session_available": false,
