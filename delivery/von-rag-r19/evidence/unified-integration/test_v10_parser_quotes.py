@@ -73,3 +73,11 @@ def test_malformed_tail_matching_primary_still_conflicts(tmp_path):
     other=parsed(tmp_path,"match.log",'Status=current Note="unterminated Product=PX-237 Asset=BOARD-789 Ticket=CASE-5179 Fixed_in=4.3.3')[0]
     with pytest.raises(GroundingError):
         select([root,value,other])
+
+
+def test_python_assignment_with_spaces_stays_ast_authoritative(tmp_path):
+    rows=parsed(tmp_path,"ingest.py","DEFAULT_BATCH_TIMEOUT = 180\n")
+    assert any(r["kind"]=="code" and r["fields"].get("parameter")=="DEFAULT_BATCH_TIMEOUT"
+               and r["fields"].get("value")=="180" for r in rows)
+    assert not any(r["kind"]=="text" and r["fields"].get("DEFAULT_BATCH_TIMEOUT")=="180"
+                   for r in rows)
