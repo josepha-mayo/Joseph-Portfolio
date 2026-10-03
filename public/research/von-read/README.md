@@ -23,6 +23,8 @@ Submission and deployment are not an official score. **Actual full-container AMD
 - [Decoder case study](./DECODER_CASE_STUDY.md)
 - [Machine-readable Quest evidence](./QUEST_EVIDENCE_2026-10-01.json)
 
+**Want to join the AMD AI Academy Challenge?** [Use Joseph's official LabLab referral link](https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge?invite=inv_u3q67xxspf6hiwjrgb0yyy2r&utm_source=member_invite&utm_medium=referral&utm_campaign=amd-lablab-ai-academy-challenge). This is a referral link: if a new participant joins and completes LabLab's referral criteria, Joseph may receive event XP. No purchase is required by this project.
+
 ## Mini-Challenge 3: measured R61 result
 
 The retained AMD MI300X VF experiment compared R35 and R61 using the same pinned production reader/checkpoint on a predeclared development suite. The [native result receipt](https://github.com/josepha-mayo/Joseph-Portfolio/blob/62eb0f9d68ca5da69c83ca08faa441c5e3deaf60/delivery/von-rag-r19/evidence/r62/AMD_NATIVE_RESULT.json) was verified at 16:52:56 UTC on October 1.
