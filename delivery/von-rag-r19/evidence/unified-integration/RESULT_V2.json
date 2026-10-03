@@ -1,0 +1,55 @@
+{
+  "schema": "von-unified-candidate-review-fix-result-2",
+  "date_utc": "2026-10-02",
+  "project": "von-read",
+  "tested_commit": "fcf9228cf5e67c70396323d794a912a24cee432d",
+  "workflow_run": 37038692627,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": "RESULT.json (606-test V1 remains historical evidence; two review findings were subsequently reproduced)",
+  "review_findings": [
+    {
+      "comment_id": 4167925540,
+      "severity": "P1",
+      "defect": "Adding the matching primary product to an otherwise conflicting current asset/ticket record could conceal the conflict.",
+      "correction": "Compare primary and secondary scope separately; compatible extra or omitted secondary qualifiers do not conceal conflicting current values. Explicitly foreign primary products remain excluded."
+    },
+    {
+      "comment_id": 4167925546,
+      "severity": "P2",
+      "defect": "A draft or otherwise non-current record could incorrectly veto a selected current firmware answer.",
+      "correction": "Apply the existing current-authority predicate consistently when evaluating other records as conflicts."
+    }
+  ],
+  "matrix": {
+    "python_3_12_14": {
+      "new_review_cases_on_v1": {"tests": 14, "failures": 11, "errors": 0, "skipped": 0},
+      "corrected_full_suite": {"tests": 620, "failures": 0, "errors": 0, "skipped": 0},
+      "artifact_id": 11240594419,
+      "verified_download_sha256": "07129568ec4adf93b950c7b7be1fa95162447524baf5468d612d48ef6003021f"
+    },
+    "python_3_14_7": {
+      "new_review_cases_on_v1": {"tests": 14, "failures": 11, "errors": 0, "skipped": 0},
+      "corrected_full_suite": {"tests": 620, "failures": 0, "errors": 0, "skipped": 0},
+      "artifact_id": 11241033430,
+      "verified_download_sha256": "ef13cd4d4abf05d979b32a0236960a317200230f33624da95183b562264567da"
+    }
+  },
+  "integrity": {
+    "verified_candidate_files": 84,
+    "both_ci_artifacts_and_local_frozen_source_match": true,
+    "source_unchanged_after_tests": true,
+    "changed_existing_runtime_files_since_v1": ["von_rag/scope_links.py"],
+    "added_test_files_since_v1": ["tests/test_reviewed_scope_conflicts.py"],
+    "review_patch_sha256": "a3db4d0ddd4b812e76c9bdd60a6fa9019264a19b64b894f8c54b7c8eb3070a69",
+    "scope_links_py_sha256": "7146b3e217bf9f0474bec9610aaac163f42cb6fda72ebcb8791af824a044e5ce",
+    "previous_source_reconstruction_commit": "f8738524f29433da0dc3697a863f5b735e315f95"
+  },
+  "scope": "Software, parser, retrieval and scripted-selection regression testing. This does not estimate hidden-grader accuracy or establish fresh neural execution.",
+  "review_followup": "A focused read-only re-review was requested; this receipt does not claim reviewer approval.",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}

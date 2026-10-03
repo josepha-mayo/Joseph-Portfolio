@@ -1,0 +1,56 @@
+{
+  "schema": "von-unified-candidate-typed-identity-result-3",
+  "date_utc": "2026-10-02",
+  "project": "von-read",
+  "tested_commit": "2eecf0b809c75078af1fb935ecfe07e9d60116da",
+  "workflow_run": 37040477578,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": ["RESULT.json", "RESULT_V2.json"],
+  "review_findings_addressed": [4167925540, 4167925546, 4168069122],
+  "latest_correction": {
+    "defect": "The V2 flattened subset comparison missed a conflicting current record when both records shared an asset but each carried a different compatible extra qualifier.",
+    "fix": "Use canonical typed secondary identities. A conflict requires at least one matching shared type and no disagreement on shared types. Non-overlapping extra qualifiers do not conceal the shared identity. Unrelated types with the same spelling do not prove identity.",
+    "selected_root_rule": "Every value-side secondary identifier must have an exact same-type binding in the selected primary-product root. Part Number/Part No/PN aliases are canonicalized; contradictory aliases cannot establish one identity."
+  },
+  "fixture_correction_disclosure": {
+    "prior_incorrect_positive_fixtures": 4,
+    "issue": "The Part Number variants of the authored long-record fixture declared only Asset in the root, so the purported explicit typed relationship was absent.",
+    "corrected_positive": "The positive fixture now explicitly declares Part Number in the root for those variants.",
+    "preserved_originals": "Four original mismatched-type long-record layouts remain as rejection controls in test_unified_mismatched_types.py.",
+    "new_typed_unit_cases": 44,
+    "prior_test_functions_deleted": 0,
+    "stored_model_predictions_changed": false
+  },
+  "matrix": {
+    "python_3_12_14": {
+      "new_cases_on_v2": {"tests": 48, "failures": 44, "errors": 0, "skipped": 0},
+      "corrected_full_suite": {"tests": 668, "failures": 0, "errors": 0, "skipped": 0},
+      "artifact_id": 11241826822,
+      "verified_download_sha256": "c6258efa55d8e2de219592ac83a6caec51a06f8cfb55daae9ae1497fbb6524e8"
+    },
+    "python_3_14_7": {
+      "new_cases_on_v2": {"tests": 48, "failures": 44, "errors": 0, "skipped": 0},
+      "corrected_full_suite": {"tests": 668, "failures": 0, "errors": 0, "skipped": 0},
+      "artifact_id": 11241736934,
+      "verified_download_sha256": "6587054955c0b08daff71df0c7b7679cba366dd9ce831bbc42ed30247bb4d45b"
+    }
+  },
+  "integrity": {
+    "verified_candidate_files": 86,
+    "both_ci_artifacts_and_local_frozen_source_match": true,
+    "source_unchanged_after_tests": true,
+    "changed_existing_runtime_files_since_v2": ["von_rag/scope_links.py"],
+    "changed_existing_test_fixtures_since_v2": ["tests/test_unified_explicit_links.py"],
+    "added_test_files_since_v2": ["tests/test_typed_scope_qualifiers.py", "tests/test_unified_mismatched_types.py"],
+    "typed_identity_patch_sha256": "122c58dfdb17626dfe18115b85784458c3a311dce5263ef458c95263bd3acbde",
+    "scope_links_py_sha256": "09fd7934030b29399001567fd5c3cc41a23818a38b5fe8800afaf1f8c544c35b"
+  },
+  "scope": "Software, parser, retrieval and scripted-selection regression testing. Not a hidden-grader accuracy estimate or fresh neural evaluation.",
+  "review_followup": "Focused V3 re-review requested once; this result does not claim reviewer approval.",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}

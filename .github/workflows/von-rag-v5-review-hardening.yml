@@ -1,0 +1,158 @@
+name: von-rag V5 reviewer hardening
+on:
+  push:
+    branches: [amd-unified-candidate-20261002]
+    paths:
+      - .github/workflows/von-rag-v5-review-hardening.yml
+      - delivery/von-rag-r19/evidence/unified-integration/v5_review_fixes.patch
+      - delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py
+      - delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Fetch immutable V4 dependencies
+        run: |
+          git fetch --no-tags --depth=1 origin 13d1d6424ff568128c4ec6ec2e137a19b6555d0f
+          git fetch --no-tags --depth=1 origin 2eecf0b809c75078af1fb935ecfe07e9d60116da
+          git fetch --no-tags --depth=1 origin fcf9228cf5e67c70396323d794a912a24cee432d
+          git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
+          git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
+          git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+      - name: Reconstruct exact successful V4
+        run: |
+          python - <<'PY'
+          import subprocess
+          raw=subprocess.check_output(['git','show','13d1d6424ff568128c4ec6ec2e137a19b6555d0f:.github/workflows/von-rag-v4-fuzz-hardening.yml'],text=True)
+          lines=raw.splitlines()
+          marker='      - name: Reconstruct exact reviewed V3'
+          start=lines.index(marker)+1
+          begin=next(i for i in range(start,len(lines)) if lines[i]=="          python - <<'PY'")+1
+          end=next(i for i in range(begin,len(lines)) if lines[i]=='          PY')
+          program='\n'.join(line[10:] for line in lines[begin:end])
+          exec(compile(program,'pinned-v4-base-reconstruction','exec'))
+          PY
+          mkdir -p /tmp/v4
+          git show 13d1d6424ff568128c4ec6ec2e137a19b6555d0f:delivery/von-rag-r19/evidence/unified-integration/apply_v4.py > /tmp/v4/apply_v4.py
+          git show 13d1d6424ff568128c4ec6ec2e137a19b6555d0f:delivery/von-rag-r19/evidence/unified-integration/test_v4_fuzz_regressions.py > /tmp/v4/test_v4_fuzz_regressions.py
+          cp -a unified-evidence/candidate unified-evidence/candidate-v3
+          python /tmp/v4/apply_v4.py unified-evidence/candidate/delivery/von-rag-r19 | tee unified-evidence/V4_TRANSFORM.json
+          cp -a unified-evidence/candidate unified-evidence/candidate-v4
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          root=Path('unified-evidence/candidate-v4/delivery/von-rag-r19')
+          assert hashlib.sha256((root/'von_rag/scope_links.py').read_bytes()).hexdigest()=='f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03'
+          assert hashlib.sha256((root/'von_rag/compact.py').read_bytes()).hexdigest()=='4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3'
+          print('Exact successful V4 reconstructed.')
+          PY
+      - name: Apply exact V5 patch and freeze source
+        run: |
+          mkdir -p /tmp/v5
+          cp delivery/von-rag-r19/evidence/unified-integration/v5_review_fixes.patch /tmp/v5/v5_review.patch
+          cp delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py /tmp/v5/test_v5_review_regressions.py
+          cp delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py /tmp/v5/v5_fuzz.py
+          python - <<'PY'
+          import hashlib,subprocess,json,shutil
+          from pathlib import Path
+          patch=Path('/tmp/v5/v5_review.patch')
+          patch_sha=hashlib.sha256(patch.read_bytes()).hexdigest()
+          assert patch_sha=='b91823aa9d8abf615b5e69e9d8ec5694fbdb55cf539c6e02623cb8b65ed13426',patch_sha
+          dest='unified-evidence/candidate/delivery/von-rag-r19'
+          subprocess.run(['git','apply','--check','--directory='+dest,str(patch.resolve())],check=True)
+          subprocess.run(['git','apply','--directory='+dest,str(patch.resolve())],check=True)
+          test=Path('/tmp/v5/test_v5_review_regressions.py')
+          dst=Path('unified-evidence/candidate/delivery/von-rag-r19/tests/test_v5_review_regressions.py')
+          shutil.copy2(test,dst)
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in sorted(src.rglob('*')) if p.is_file()}
+          Path('unified-evidence/FINAL_SOURCE_MANIFEST_V5.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          transform={
+              'schema':'von-v5-source-transform-1',
+              'base_v4_scope_links':'f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03',
+              'base_v4_compact':'4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3',
+              'patch_source':'current branch v5_review_fixes.patch',
+              'test_source':'current branch test_v5_review_regressions.py',
+              'fuzz_source':'current branch v5_fuzz.py',
+              'patch_sha256':patch_sha,
+              'scope_links_sha256':manifest['von_rag/scope_links.py'],
+              'compact_sha256':manifest['von_rag/compact.py'],
+              'source_files':len(manifest),
+          }
+          Path('unified-evidence/V5_TRANSFORM.json').write_text(json.dumps(transform,indent=2)+'\\n')
+          print(json.dumps(transform,indent=2))
+          PY
+      - name: Install pinned test dependencies
+        run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
+      - name: Reproduce V4 reviewer failures
+        run: |
+          set +e
+          PYTHONPATH="$PWD/unified-evidence/candidate-v4/delivery/von-rag-r19" \
+            python -m pytest -q /tmp/v5/test_v5_review_regressions.py \
+            -p no:cacheprovider --junitxml=unified-evidence/before.xml > unified-evidence/before.log 2>&1
+          rc=$?
+          set -e
+          python - "$rc" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/before.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          print('V4 reviewer reproduction',rc,counts)
+          assert rc==1 and counts=={'tests':8,'failures':5,'errors':0,'skipped':0},counts
+          PY
+      - name: Run complete V5 software suite
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          python -m pytest -q tests -p no:cacheprovider --junitxml="$GITHUB_WORKSPACE/unified-evidence/after.xml" | tee "$GITHUB_WORKSPACE/unified-evidence/after.log"
+      - name: Enforce V5 suite and frozen hashes
+        run: |
+          python - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('unified-evidence/after.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert counts=={'tests':684,'failures':0,'errors':0,'skipped':0},counts
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST_V5.json').read_text())
+          for name,want in manifest.items():
+              assert hashlib.sha256((src/name).read_bytes()).hexdigest()==want,name
+          Path('unified-evidence/V5_TEST_RESULTS.json').write_text(json.dumps({
+              'schema':'von-v5-full-suite-1','counts':counts,'source_unchanged_after_tests':True,
+              'model_calls':0,'submission_changed':False},indent=2)+'\n')
+          print(counts)
+          PY
+      - name: Run 8000-case V5 metamorphic campaign
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          PYTHONPATH="$PWD" python /tmp/v5/v5_fuzz.py \
+            "$GITHUB_WORKSPACE/unified-evidence/V5_FUZZ_RESULT.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-v5-review-hardening-${{ matrix.python }}
+          path: |
+            unified-evidence/V4_TRANSFORM.json
+            unified-evidence/V5_TRANSFORM.json
+            unified-evidence/V5_TEST_RESULTS.json
+            unified-evidence/V5_FUZZ_RESULT.json
+            unified-evidence/FINAL_SOURCE_MANIFEST_V5.json
+            unified-evidence/before.log
+            unified-evidence/after.log
+          retention-days: 14

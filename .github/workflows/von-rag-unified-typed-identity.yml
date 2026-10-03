@@ -1,0 +1,130 @@
+name: von-rag unified typed identity
+on:
+  push:
+    branches: [amd-unified-candidate-20261002]
+    paths:
+      - .github/workflows/von-rag-unified-typed-identity.yml
+      - delivery/von-rag-r19/evidence/unified-integration/typed_identity_fix.patch.xz.b64
+permissions:
+  contents: read
+jobs:
+  typed-identity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Fetch immutable prior reconstruction commits
+        run: |
+          git fetch --no-tags --depth=1 origin fcf9228cf5e67c70396323d794a912a24cee432d
+          git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
+          git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
+          git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+      - name: Reconstruct verified V2 and apply the typed identity delta
+        run: |
+          python - <<'PY'
+          import base64,hashlib,json,lzma,shutil,subprocess
+          from pathlib import Path
+          revision='fcf9228cf5e67c70396323d794a912a24cee432d'
+          raw=subprocess.check_output(['git','show',revision+':.github/workflows/von-rag-unified-review-fix.yml']).decode()
+          lines=raw.splitlines()
+          marker='      - name: Reuse the verified reconstruction and apply only the reviewed correction'
+          start=lines.index(marker)+1
+          begin=next(i for i in range(start,len(lines)) if lines[i]=="          python - <<'PY'")+1
+          end=next(i for i in range(begin,len(lines)) if lines[i]=='          PY')
+          assert all(line.startswith('          ') or not line for line in lines[begin:end])
+          program='\n'.join(line[10:] for line in lines[begin:end])
+          exec(compile(program,'immutable-v2-reconstruction','exec'))
+          root=Path('unified-evidence');prefix='delivery/von-rag-r19/'
+          original=root/'candidate-v2';shutil.copytree(root/'candidate',original)
+          previous=json.loads((root/'FINAL_SOURCE_MANIFEST.json').read_text())
+          assert len(previous)==84
+          (root/'FINAL_SOURCE_MANIFEST_V2.json').write_text(json.dumps(previous,indent=2)+'\n')
+          patch=lzma.decompress(base64.b64decode(Path(prefix+'evidence/unified-integration/typed_identity_fix.patch.xz.b64').read_bytes()))
+          assert len(patch)==11416
+          assert hashlib.sha256(patch).hexdigest()=='122c58dfdb17626dfe18115b85784458c3a311dce5263ef458c95263bd3acbde'
+          patch_path=root/'patches/typed_identity_fix.patch';patch_path.write_bytes(patch)
+          subprocess.run(['git','apply','--check','--directory='+str(root/'candidate'),str(patch_path.resolve())],check=True)
+          subprocess.run(['git','apply','--directory='+str(root/'candidate'),str(patch_path.resolve())],check=True)
+          source=root/'candidate'/prefix
+          now={p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(source.rglob('*')) if p.is_file()}
+          assert set(now)-set(previous)=={'tests/test_typed_scope_qualifiers.py','tests/test_unified_mismatched_types.py'}
+          assert not set(previous)-set(now)
+          assert set(n for n in previous if now[n]!=previous[n])=={'von_rag/scope_links.py','tests/test_unified_explicit_links.py'}
+          expected={'von_rag/scope_links.py':'09fd7934030b29399001567fd5c3cc41a23818a38b5fe8800afaf1f8c544c35b','tests/test_unified_explicit_links.py':'c5b052b0e9f81437a4b83036f08a7da8e3be4833087c05fa502284faae32be06','tests/test_typed_scope_qualifiers.py':'69dd8a654623fa547106b68d17941060f953ac4a29667856a3f90ea8e5191bdd','tests/test_unified_mismatched_types.py':'8c55bb67206a4fdb0e2c3deba7c84b20100eea4de992bf77a9b3abc086be9bd7'}
+          for name,want in expected.items():assert now[name]==want,name
+          (root/'FINAL_SOURCE_MANIFEST.json').write_text(json.dumps(now,indent=2)+'\n')
+          tests=root/'review-reproduction';tests.mkdir()
+          for name in ['test_typed_scope_qualifiers.py','test_unified_mismatched_types.py']:
+              shutil.copy2(source/'tests'/name,tests/name)
+          provenance={'schema':'von-typed-fixture-provenance-1','prior_wrong_assumption':'Four positive long-record fixtures treated an Asset ID as a Part Number solely because their spelling matched.','change':'The positive fixture now binds the same declared identifier type. Four original mismatched-type layouts are retained in a new test file and must reject.','prior_tests_deleted':0,'new_typed_identity_cases':44,'original_mismatched_layouts_preserved_as_negative_cases':4,'model_results_or_labels_changed':False}
+          (root/'FIXTURE_PROVENANCE.json').write_text(json.dumps(provenance,indent=2)+'\n')
+          PY
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
+      - name: Reproduce prior defects and run the final source suite
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path('unified-evidence').resolve();results={}
+          runs=[('typed_before',root/'candidate-v2/delivery/von-rag-r19',[str(root/'review-reproduction')]),('candidate',root/'candidate/delivery/von-rag-r19',['tests'])]
+          for label,cwd,targets in runs:
+              xml=root/(label+'.xml');log=root/(label+'.log')
+              with log.open('w') as stream:
+                  p=subprocess.run([sys.executable,'-m','pytest','-q',*targets,'-p','no:cacheprovider','--junitxml='+str(xml)],cwd=cwd,env=dict(os.environ,PYTHONPATH=str(cwd)),stdout=stream,stderr=subprocess.STDOUT,timeout=300)
+              suites=ET.parse(xml).getroot().findall('testsuite')
+              counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+              results[label]={'exit_code':p.returncode,'counts':counts}
+              print(label,json.dumps(results[label]),flush=True);print(log.read_text()[-5000:],flush=True)
+          source=root/'candidate/delivery/von-rag-r19';manifest=json.loads((root/'FINAL_SOURCE_MANIFEST.json').read_text())
+          for name,want in manifest.items():assert hashlib.sha256((source/name).read_bytes()).hexdigest()==want,name
+          receipt={'schema':'von-unified-typed-identity-1','python':sys.version,'results':results,'source_unchanged_after_tests':True,'files':len(manifest),'prior_v2_full_run':37038692627,'fixture_provenance':'FIXTURE_PROVENANCE.json','fresh_model_calls':0,'submission_changed':False,'xp_award_claimed':False}
+          (root/'TYPED_IDENTITY_RESULTS.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          PY
+      - name: Preserve source, original failures, and fixture corrections
+        if: always()
+        run: |
+          python - <<'PY'
+          import hashlib,zipfile
+          from pathlib import Path
+          root=Path('unified-evidence');out=Path('typed-identity-export');out.mkdir()
+          with zipfile.ZipFile(out/'sources-and-results.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and '__pycache__' not in p.parts and p.suffix in {'.py','.txt','.log','.xml','.json','.patch','.conflict'}:
+                      assert p.stat().st_size<2000000,p
+                      z.write(p,p.relative_to(root))
+          for name in ['TYPED_IDENTITY_RESULTS.json','FINAL_SOURCE_MANIFEST.json','FIXTURE_PROVENANCE.json']:
+              if (root/name).exists():(out/name).write_bytes((root/name).read_bytes())
+          (out/'ARCHIVE_SHA256.txt').write_text(hashlib.sha256((out/'sources-and-results.zip').read_bytes()).hexdigest()+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-unified-typed-identity-${{ matrix.python }}
+          path: typed-identity-export/
+          retention-days: 14
+      - name: Enforce exact before and after outcomes
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('unified-evidence/TYPED_IDENTITY_RESULTS.json').read_text())
+          assert r['source_unchanged_after_tests'] and r['files']==86
+          before=r['results']['typed_before'];after=r['results']['candidate']
+          assert before['exit_code']==1 and before['counts']=={'tests':48,'failures':44,'errors':0,'skipped':0},before
+          assert after['exit_code']==0 and after['counts']=={'tests':668,'failures':0,'errors':0,'skipped':0},after
+          print('Typed identity review reproduced and fixed; all 668 software checks pass. Native gate and full-container AMD qualification remain outstanding.')
+          PY

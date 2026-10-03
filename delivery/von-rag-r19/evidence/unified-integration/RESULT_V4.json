@@ -1,0 +1,39 @@
+{
+  "schema": "von-unified-candidate-v4-fuzz-result-1",
+  "date_utc": "2026-10-03",
+  "tested_commit": "13d1d6424ff568128c4ec6ec2e137a19b6555d0f",
+  "workflow_run": 37135993903,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": ["RESULT.json", "RESULT_V2.json", "RESULT_V3.json"],
+  "matrix": {
+    "python_3_12": {
+      "full_suite": {"tests": 676, "failures": 0, "errors": 0, "skipped": 0},
+      "metamorphic": {"checks": 3200, "passed": 3200, "failures": 0},
+      "artifact_id": 11278368550,
+      "artifact_sha256": "b31402efbd2412f92e055b2fba40c2efadadccc4c5005378b6ef829cb7d269d0"
+    },
+    "python_3_14": {
+      "full_suite": {"tests": 676, "failures": 0, "errors": 0, "skipped": 0},
+      "metamorphic": {"checks": 3200, "passed": 3200, "failures": 0},
+      "artifact_id": 11278283940,
+      "artifact_sha256": "08b3a4fc65108d7800356ac9b51ad5927567fa06b6f441d1f6cf60befc5e0252"
+    }
+  },
+  "source": {
+    "scope_links_py_sha256": "f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03",
+    "compact_py_sha256": "4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3",
+    "new_regression_test_sha256": "7cf4d38e0835a6aa2efc1b632190f99b5cc2312088b7f73cc1f06a1c974549a5"
+  },
+  "what_v4_changes": [
+    "Separates invalid fuzz syntax from valid corpus syntax instead of treating all initial V3 failures as model bugs.",
+    "Hardens explicit scope detection so key=value style scope declarations cannot silently bypass product/asset linking rules.",
+    "Preserves typed primary/secondary identity checks, current-authority filtering, ticket linkage, and conflict rejection."
+  ],
+  "scope": "Software/parser/retrieval/scripted-selection validation only. No fresh neural inference or hidden-grader accuracy claim.",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}

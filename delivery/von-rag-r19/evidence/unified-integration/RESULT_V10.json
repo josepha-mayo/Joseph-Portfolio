@@ -1,0 +1,78 @@
+{
+  "schema": "von-unified-candidate-v10-parser-result-1",
+  "date_utc": "2026-10-03",
+  "tested_commit": "403ec74c23fa3e9928a18d213e6e8c0c9b6ce669",
+  "workflow_run": 37150558734,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": [
+    "RESULT.json",
+    "RESULT_V2.json",
+    "RESULT_V3.json",
+    "RESULT_V4.json",
+    "RESULT_V5.json",
+    "RESULT_V7.json",
+    "RESULT_V8.json",
+    "RESULT_V9.json"
+  ],
+  "reproduction_on_v9": {
+    "tests": 10,
+    "failures": 4,
+    "errors": 0,
+    "skipped": 0
+  },
+  "matrix": {
+    "python_3_12_14": {
+      "full_suite": {
+        "tests": 724,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "parser_fuzz": {
+        "checks": 4000,
+        "passed": 4000,
+        "failures": 0
+      },
+      "artifact_id": 11283961204,
+      "artifact_sha256": "875e89e3f6d075069182231abf10f9e081de0bafebd517562547f5c8771c0f96"
+    },
+    "python_3_14_7": {
+      "full_suite": {
+        "tests": 724,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "parser_fuzz": {
+        "checks": 4000,
+        "passed": 4000,
+        "failures": 0
+      },
+      "artifact_id": 11283996866,
+      "artifact_sha256": "e355b097350d94413271a8ece8d9421e94ad01cd7b0e92d6db740f60c89a9777"
+    }
+  },
+  "source": {
+    "files": 92,
+    "parsers_py_sha256": "bd5fc56b71ca39affd04ce282dfc41eb05482bea8bc93b1b479458aa5d7dc6b0",
+    "scope_links_py_sha256": "5a8cf99d0978d6a6e95e92364503e63b0cf3cedaaaf7fee31f279b9a15689efd",
+    "transform_script_sha256": "edb554d4a36b0d2a232fb2fdacbc98229d724ff7a156284e2e3d27c7975ba447"
+  },
+  "changes": [
+    "Quote-aware top-level key=value parsing no longer promotes scope-looking text inside quoted or malformed unknown fields.",
+    "Uppercase .LOG files use log record boundaries.",
+    "Raw Python text does not gain generic key=value authority; AST constant/default records remain authoritative.",
+    "Malformed-tail Product/Model/Device can scope a firmware value only when that firmware is recovered from the same malformed tail, preventing retroactive exoneration of an already-explicit conflict."
+  ],
+  "integrity_notes": [
+    "Earlier V10 attempts are preserved as failures. One V10.1 attempt also exposed that transform failures were hidden by a shell pipe; the qualification workflow was changed to set pipefail before the successful run.",
+    "The successful run applied transform schema von-v10-transform-4 and then froze post-transform hashes before tests/fuzz."
+  ],
+  "scope": "software/parser/retrieval/scripted-selection validation only; not neural accuracy or hidden-grader score",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}

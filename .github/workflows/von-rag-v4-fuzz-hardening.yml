@@ -1,0 +1,117 @@
+name: von-rag V4 fuzz hardening
+on:
+  push:
+    branches: [amd-unified-candidate-20261002]
+    paths:
+      - .github/workflows/von-rag-v4-fuzz-hardening.yml
+      - delivery/von-rag-r19/evidence/unified-integration/apply_v4.py
+      - delivery/von-rag-r19/evidence/unified-integration/test_v4_fuzz_regressions.py
+      - delivery/von-rag-r19/evidence/unified-integration/v4_fuzz.py
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Fetch immutable V3 reconstruction dependencies
+        run: |
+          git fetch --no-tags --depth=1 origin 2eecf0b809c75078af1fb935ecfe07e9d60116da
+          git fetch --no-tags --depth=1 origin fcf9228cf5e67c70396323d794a912a24cee432d
+          git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
+          git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
+          git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+      - name: Reconstruct exact reviewed V3
+        run: |
+          python - <<'PY'
+          import subprocess
+          raw=subprocess.check_output(['git','show','2eecf0b809c75078af1fb935ecfe07e9d60116da:.github/workflows/von-rag-unified-typed-identity.yml'],text=True)
+          lines=raw.splitlines()
+          marker='      - name: Reconstruct verified V2 and apply the typed identity delta'
+          start=lines.index(marker)+1
+          begin=next(i for i in range(start,len(lines)) if lines[i]=="          python - <<'PY'")+1
+          end=next(i for i in range(begin,len(lines)) if lines[i]=='          PY')
+          program='\n'.join(line[10:] for line in lines[begin:end])
+          exec(compile(program,'immutable-v3-reconstruction','exec'))
+          PY
+      - name: Freeze V3 and apply deterministic V4 transform
+        run: |
+          cp -a unified-evidence/candidate unified-evidence/candidate-v3
+          python delivery/von-rag-r19/evidence/unified-integration/apply_v4.py             unified-evidence/candidate/delivery/von-rag-r19 | tee unified-evidence/V4_TRANSFORM.json
+          cp delivery/von-rag-r19/evidence/unified-integration/test_v4_fuzz_regressions.py             unified-evidence/test_v4_reproduction.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in sorted(src.rglob('*')) if p.is_file()}
+          Path('unified-evidence/FINAL_SOURCE_MANIFEST_V4.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          print('files',len(manifest))
+          PY
+      - name: Install pinned test dependencies
+        run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
+      - name: Reproduce V3 failures exactly
+        run: |
+          set +e
+          PYTHONPATH="$PWD/unified-evidence/candidate-v3/delivery/von-rag-r19"             python -m pytest -q unified-evidence/test_v4_reproduction.py -p no:cacheprovider             --junitxml=unified-evidence/before.xml > unified-evidence/before.log 2>&1
+          rc=$?
+          set -e
+          python - "$rc" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          rc=int(sys.argv[1])
+          suites=ET.parse('unified-evidence/before.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          print('V3 reproduction',rc,counts)
+          assert rc==1 and counts=={'tests':8,'failures':3,'errors':0,'skipped':0}
+          PY
+      - name: Run complete V4 software suite
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          python -m pytest -q tests -p no:cacheprovider --junitxml="$GITHUB_WORKSPACE/unified-evidence/after.xml"             | tee "$GITHUB_WORKSPACE/unified-evidence/after.log"
+      - name: Enforce full-suite counts and frozen hashes
+        run: |
+          python - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('unified-evidence/after.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          print(counts)
+          assert counts=={'tests':676,'failures':0,'errors':0,'skipped':0},counts
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST_V4.json').read_text())
+          for name,want in manifest.items():
+              assert hashlib.sha256((src/name).read_bytes()).hexdigest()==want,name
+          result={'schema':'von-v4-full-suite-1','counts':counts,'source_unchanged_after_tests':True,
+                  'model_calls':0,'submission_changed':False}
+          Path('unified-evidence/V4_TEST_RESULTS.json').write_text(json.dumps(result,indent=2)+'\n')
+          PY
+      - name: Run corrected 3200-case metamorphic campaign
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          PYTHONPATH="$PWD" python "$GITHUB_WORKSPACE/delivery/von-rag-r19/evidence/unified-integration/v4_fuzz.py"             "$GITHUB_WORKSPACE/unified-evidence/V4_FUZZ_RESULT.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-v4-fuzz-hardening-${{ matrix.python }}
+          path: |
+            unified-evidence/V4_TRANSFORM.json
+            unified-evidence/V4_TEST_RESULTS.json
+            unified-evidence/V4_FUZZ_RESULT.json
+            unified-evidence/FINAL_SOURCE_MANIFEST_V4.json
+            unified-evidence/before.log
+            unified-evidence/after.log
+          retention-days: 14
