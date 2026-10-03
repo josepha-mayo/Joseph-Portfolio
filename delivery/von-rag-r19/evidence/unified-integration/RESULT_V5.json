@@ -1,0 +1,74 @@
+{
+  "schema": "von-unified-candidate-v5-review-result-1",
+  "date_utc": "2026-10-03",
+  "tested_commit": "61ee8533608f305def633ac2e96c129a877cb2fd",
+  "workflow_run": 37138709607,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": [
+    "RESULT.json",
+    "RESULT_V2.json",
+    "RESULT_V3.json",
+    "RESULT_V4.json"
+  ],
+  "review_findings_addressed": [
+    4173943252,
+    4173943258
+  ],
+  "reproduction_on_v4": {
+    "tests": 8,
+    "failures": 5,
+    "errors": 0,
+    "skipped": 0
+  },
+  "matrix": {
+    "python_3_12_14": {
+      "corrected_full_suite": {
+        "tests": 684,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "metamorphic": {
+        "checks": 8000,
+        "passed": 8000,
+        "failures": 0
+      },
+      "artifact_id": 11280120801,
+      "artifact_sha256": "33d4f862226e5107490f477f45773a633bad1cc473c9bf7d6fdab893d9d55076"
+    },
+    "python_3_14_7": {
+      "corrected_full_suite": {
+        "tests": 684,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "metamorphic": {
+        "checks": 8000,
+        "passed": 8000,
+        "failures": 0
+      },
+      "artifact_id": 11279083186,
+      "artifact_sha256": "d3e849521ee6ad717ecd1fe9da204fea56c6771c5774ea2bcbb2d5b2d4f13152"
+    }
+  },
+  "source": {
+    "source_files": 88,
+    "review_patch_sha256": "b91823aa9d8abf615b5e69e9d8ec5694fbdb55cf539c6e02623cb8b65ed13426",
+    "scope_links_py_sha256": "be61d793d6cb45536d17c9feaf3c81b14064240d2a75452bc77b576620f9ac9f",
+    "compact_py_sha256": "c67ac170c27bc16528e2d1a139a9be273ea8d295b235f6faf955c8b3d155e020",
+    "test_v5_review_regressions_sha256": "bdd05b7fdede0489331dd460dc51f16121417bcd924407dd246d8e04ed6855c9"
+  },
+  "changes": [
+    "Tokenizes every structured key=value pair on a log line rather than consuming the rest of the line as one value.",
+    "Preserves duplicate-field values while scanning unselected records so malformed siblings cannot erase otherwise matching current conflicts.",
+    "Keeps selected evidence fail-closed when literal fields repeat."
+  ],
+  "scope": "software/parser/retrieval/scripted-selection validation only; no fresh neural inference or hidden-grader accuracy claim",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}
