@@ -36,6 +36,9 @@ jobs:
           git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
           git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
           git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+          git fetch --no-tags --depth=1 origin 0fa865484b39e5f50a2dd32891fed2e759916be0
+          git fetch --no-tags --depth=1 origin f561326064edc71dc9409626ae964ee427bd5583
+          git fetch --no-tags --depth=1 origin 013bf6945512ff8952e49d2c126cf60027e7f941
       - name: Reconstruct exact successful V4
         run: |
           python - <<'PY'
@@ -65,14 +68,18 @@ jobs:
           PY
       - name: Apply exact V5 patch and freeze source
         run: |
+          mkdir -p /tmp/v5
+          git show 0fa865484b39e5f50a2dd32891fed2e759916be0:delivery/von-rag-r19/evidence/unified-integration/v5_review.patch > /tmp/v5/v5_review.patch
+          git show f561326064edc71dc9409626ae964ee427bd5583:delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py > /tmp/v5/test_v5_review_regressions.py
+          git show 013bf6945512ff8952e49d2c126cf60027e7f941:delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py > /tmp/v5/v5_fuzz.py
           python - <<'PY'
           import hashlib,subprocess,json,shutil
           from pathlib import Path
-          patch=Path('delivery/von-rag-r19/evidence/unified-integration/v5_review.patch')
-          assert hashlib.sha256(patch.read_bytes()).hexdigest()=='7b28f16dd8233a578dd1f40d8a40f8efe0ec2518ed47d5ac5a5d8449b3ccf4be'
+          patch=Path('/tmp/v5/v5_review.patch')
+          patch_sha=hashlib.sha256(patch.read_bytes()).hexdigest()
           subprocess.run(['git','apply','--check','--directory=unified-evidence/candidate',str(patch.resolve())],check=True)
           subprocess.run(['git','apply','--directory=unified-evidence/candidate',str(patch.resolve())],check=True)
-          test=Path('delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py')
+          test=Path('/tmp/v5/test_v5_review_regressions.py')
           dst=Path('unified-evidence/candidate/delivery/von-rag-r19/tests/test_v5_review_regressions.py')
           shutil.copy2(test,dst)
           src=Path('unified-evidence/candidate/delivery/von-rag-r19')
@@ -83,7 +90,10 @@ jobs:
               'schema':'von-v5-source-transform-1',
               'base_v4_scope_links':'f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03',
               'base_v4_compact':'4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3',
-              'patch_sha256':'7b28f16dd8233a578dd1f40d8a40f8efe0ec2518ed47d5ac5a5d8449b3ccf4be',
+              'patch_commit':'0fa865484b39e5f50a2dd32891fed2e759916be0',
+              'test_commit':'f561326064edc71dc9409626ae964ee427bd5583',
+              'fuzz_commit':'013bf6945512ff8952e49d2c126cf60027e7f941',
+              'patch_sha256':patch_sha,
               'scope_links_sha256':manifest['von_rag/scope_links.py'],
               'compact_sha256':manifest['von_rag/compact.py'],
               'source_files':len(manifest),
@@ -97,7 +107,7 @@ jobs:
         run: |
           set +e
           PYTHONPATH="$PWD/unified-evidence/candidate-v4/delivery/von-rag-r19" \
-            python -m pytest -q delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py \
+            python -m pytest -q /tmp/v5/test_v5_review_regressions.py \
             -p no:cacheprovider --junitxml=unified-evidence/before.xml > unified-evidence/before.log 2>&1
           rc=$?
           set -e
@@ -132,7 +142,7 @@ jobs:
       - name: Run 8000-case V5 metamorphic campaign
         run: |
           cd unified-evidence/candidate/delivery/von-rag-r19
-          PYTHONPATH="$PWD" python "$GITHUB_WORKSPACE/delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py" \
+          PYTHONPATH="$PWD" python /tmp/v5/v5_fuzz.py \
             "$GITHUB_WORKSPACE/unified-evidence/V5_FUZZ_RESULT.json"
       - uses: actions/upload-artifact@v4
         if: always()
