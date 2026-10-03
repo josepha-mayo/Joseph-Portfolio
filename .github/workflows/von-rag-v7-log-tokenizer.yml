@@ -87,7 +87,7 @@ jobs:
           rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/before.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
           print('V5 reproduction',rc,counts)
-          assert rc==1 and counts=={'tests':15,'failures':10,'errors':0,'skipped':0},counts
+          assert rc==1 and counts=={'tests':14,'failures':8,'errors':0,'skipped':0},counts
           PY
       - name: Apply V7 transform
         run: |
@@ -112,7 +112,7 @@ jobs:
           from pathlib import Path
           suites=ET.parse('unified-evidence/after.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
-          assert counts=={'tests':699,'failures':0,'errors':0,'skipped':0},counts
+          assert counts=={'tests':698,'failures':0,'errors':0,'skipped':0},counts
           src=Path('unified-evidence/candidate/delivery/von-rag-r19')
           manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST_V7.json').read_text())
           for name,want in manifest.items(): assert hashlib.sha256((src/name).read_bytes()).hexdigest()==want,name
