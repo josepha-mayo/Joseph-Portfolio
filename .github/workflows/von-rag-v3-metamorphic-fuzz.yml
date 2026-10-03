@@ -1,0 +1,172 @@
+name: von-rag V3 metamorphic fuzz
+on:
+  push:
+    branches: [amd-unified-candidate-20261002]
+    paths:
+      - .github/workflows/von-rag-v3-metamorphic-fuzz.yml
+permissions:
+  contents: read
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch immutable reconstruction dependencies
+        run: |
+          git fetch --no-tags --depth=1 origin fcf9228cf5e67c70396323d794a912a24cee432d
+          git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
+          git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
+          git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+      - name: Reconstruct exact reviewed V3
+        run: |
+          python - <<'PY'
+          import hashlib, subprocess
+          from pathlib import Path
+          raw=Path('.github/workflows/von-rag-unified-typed-identity.yml').read_text()
+          lines=raw.splitlines()
+          marker='      - name: Reconstruct verified V2 and apply the typed identity delta'
+          start=lines.index(marker)+1
+          begin=next(i for i in range(start,len(lines)) if lines[i]=="          python - <<'PY'")+1
+          end=next(i for i in range(begin,len(lines)) if lines[i]=='          PY')
+          program='\n'.join(line[10:] for line in lines[begin:end])
+          exec(compile(program,'v3-reconstruct','exec'))
+          manifest=Path('unified-evidence/FINAL_SOURCE_MANIFEST.json')
+          assert manifest.exists()
+          print('manifest_sha256',hashlib.sha256(manifest.read_bytes()).hexdigest())
+          PY
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
+      - name: Run frozen 668-test suite before fuzzing
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          python -m pytest -q tests -p no:cacheprovider
+      - name: Run deterministic metamorphic fuzz campaign
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, random, sys, traceback
+          from pathlib import Path
+          root=Path('unified-evidence/candidate/delivery/von-rag-r19').resolve()
+          sys.path.insert(0,str(root))
+          from von_rag.parsers import Chunk
+          from von_rag.compact import parse_selection
+          from von_rag.proofs import GroundingError
+
+          query_tpl='The {product} production log reports voltage drift. Which firmware release addressed the underlying defect?'
+          primary_labels=['Product','Model','Device']
+          secondary_types={
+              'asset':['Asset'],
+              'part':['Part Number','Part No','PN'],
+          }
+          statuses_good=['current','Current','CURRENT']
+          statuses_noncurrent=['draft','proposed','pending','withdrawn','superseded','obsolete','deprecated','archived']
+          ws=[': ',':  ',' : ',' = ']
+
+          def chunk(src,text):
+              return Chunk(src,'record:1.0',text).dict()
+
+          def kv(label,value,rng):
+              sep=rng.choice(ws)
+              if sep==' = ':
+                  return f'{label}={value}'
+              return f'{label}{sep}{value}'
+
+          def shuffled(lines,rng):
+              lines=list(lines)
+              rng.shuffle(lines)
+              return '\n'.join(lines)
+
+          def run(records,query):
+              return parse_selection(json.dumps(['4.3.2',[0,1]]),records,query)[0]
+
+          def expect_pass(records,query):
+              out=run(records,query)
+              assert out['answer']=='4.3.2',out
+              assert set(out['citations'])=={'root.txt','value.txt'},out
+
+          def expect_fail(records,query):
+              try:
+                  out=run(records,query)
+              except GroundingError:
+                  return
+              raise AssertionError('expected GroundingError, got '+repr(out))
+
+          results={'schema':'von-v3-metamorphic-fuzz-1','seed_start':0,'seeds':400,'scenarios_per_seed':8,
+                   'checks':0,'passed':0,'failures':[],'model_calls':0,'submission_changed':False}
+          for seed in range(results['seeds']):
+              rng=random.Random(seed)
+              product=f'PX-{rng.randrange(100,999)}'
+              other_product=f'PX-{rng.randrange(1000,9999)}'
+              ticket=f'CASE-{rng.randrange(1000,9999)}'
+              sec_kind=rng.choice(list(secondary_types))
+              sec_label=rng.choice(secondary_types[sec_kind])
+              sec_value=('BOARD-' if sec_kind=='asset' else 'PN-')+str(rng.randrange(10,999))
+              primary=rng.choice(primary_labels)
+              query=query_tpl.format(product=product)
+              root_lines=[kv(primary,product,rng),kv(sec_label,sec_value,rng),kv('Ticket',ticket,rng),kv('Event','voltage drift',rng)]
+              value_lines=[kv(sec_label,sec_value,rng),kv('Ticket',ticket,rng),kv('Fixed in','4.3.2',rng),kv('Status',rng.choice(statuses_good),rng)]
+              root=chunk('root.txt',shuffled(root_lines,rng))
+              value=chunk('value.txt',shuffled(value_lines,rng))
+
+              scenarios=[]
+              scenarios.append(('base_valid',True,[root,value]))
+              foreign=chunk('other.txt',shuffled([kv(rng.choice(primary_labels),other_product,rng),kv(sec_label,sec_value,rng),kv('Ticket',ticket,rng),kv('Fixed in','4.3.3',rng),kv('Status','current',rng)],rng))
+              scenarios.append(('foreign_primary_no_conflict',True,[root,value,foreign]))
+              draft=chunk('other.txt',shuffled([kv(sec_label,sec_value,rng),kv('Ticket',ticket,rng),kv('Fixed in','4.3.3',rng),kv('Status',rng.choice(statuses_noncurrent),rng)],rng))
+              scenarios.append(('noncurrent_no_conflict',True,[root,value,draft]))
+              current_conflict=chunk('other.txt',shuffled([kv(sec_label,sec_value,rng),kv('Ticket',ticket,rng),kv('Fixed in','4.3.3',rng),kv('Status','current',rng)],rng))
+              scenarios.append(('same_identity_current_conflict',False,[root,value,current_conflict]))
+              extra_label='Part Number' if sec_kind=='asset' else 'Asset'
+              extra_value='PN-EXTRA' if sec_kind=='asset' else 'BOARD-EXTRA'
+              qualified_conflict=chunk('other.txt',shuffled([kv(primary,product,rng),kv(sec_label,sec_value,rng),kv(extra_label,extra_value,rng),kv('Ticket',ticket,rng),kv('Fixed in','4.3.3',rng),kv('Status','current',rng)],rng))
+              scenarios.append(('extra_qualifier_cannot_hide_conflict',False,[root,value,qualified_conflict]))
+              wrong_kind='part' if sec_kind=='asset' else 'asset'
+              wrong_label=rng.choice(secondary_types[wrong_kind])
+              bad_value=chunk('value.txt',shuffled([kv(wrong_label,sec_value,rng),kv('Ticket',ticket,rng),kv('Fixed in','4.3.2',rng),kv('Status','current',rng)],rng))
+              scenarios.append(('same_literal_wrong_type_no_link',False,[root,bad_value]))
+              contradictory_root=chunk('root.txt',shuffled(root_lines+[kv(sec_label,sec_value+'-OTHER',rng)],rng))
+              scenarios.append(('contradictory_alias_root_no_authority',False,[contradictory_root,value]))
+              wrong_ticket=chunk('value.txt',shuffled([kv(sec_label,sec_value,rng),kv('Ticket',ticket+'X',rng),kv('Fixed in','4.3.2',rng),kv('Status','current',rng)],rng))
+              scenarios.append(('wrong_ticket_no_link',False,[root,wrong_ticket]))
+
+              for name,should_pass,records in scenarios:
+                  results['checks']+=1
+                  try:
+                      (expect_pass if should_pass else expect_fail)(records,query)
+                      results['passed']+=1
+                  except Exception as exc:
+                      results['failures'].append({'seed':seed,'scenario':name,'error':repr(exc),
+                                                  'records':records,'query':query,'traceback':traceback.format_exc()[-3000:]})
+                      if len(results['failures'])>=20:
+                          break
+              if len(results['failures'])>=20:
+                  break
+
+          out=Path('fuzz-evidence')
+          out.mkdir()
+          (out/'RESULT.json').write_text(json.dumps(results,indent=2)+'\n')
+          print(json.dumps({k:v for k,v in results.items() if k!='failures'},indent=2))
+          if results['failures']:
+              print(json.dumps(results['failures'][:5],indent=2)[:20000])
+              raise SystemExit(1)
+          # freeze source manifest after fuzz
+          manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST.json').read_text())
+          for name,want in manifest.items():
+              got=hashlib.sha256((root/name).read_bytes()).hexdigest()
+              assert got==want,(name,got,want)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-v3-metamorphic-fuzz
+          path: fuzz-evidence/
+          retention-days: 14
