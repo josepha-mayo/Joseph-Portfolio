@@ -5,8 +5,10 @@ from pathlib import Path
 
 root=Path(sys.argv[1])
 parsers=root/"von_rag/parsers.py"
+scope=root/"von_rag/scope_links.py"
 def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 assert sha(parsers)=="f6d15c325f2e63edaeb6fb4d4b3a824987b5ad24046df45c31b04a4842344f95", sha(parsers)
+assert sha(scope)=="275b82b4942c87e333944db608d1020ae978034de8c32d821939a856680e21c1", sha(scope)
 
 s=parsers.read_text()
 old="""def kv_fields(text: str) -> dict[str, str]:
@@ -24,7 +26,7 @@ new="""_INLINE_EQUALS_KEY = re.compile(
 
 
 def _inline_equals_pairs(text: str):
-    """Yield top-level single-key k=v fields without rescanning quotes."""
+    '''Yield top-level single-key k=v fields without rescanning quotes.'''
     for line in text.splitlines():
         pos = 0
         size = len(line)
@@ -87,4 +89,13 @@ s=s.replace("blocks = text.splitlines() if Path(source).suffix == '.log' else re
 s=s.replace("        if Path(source).suffix != '.log':",
             "        if not is_log:")
 parsers.write_text(s)
-print(json.dumps({"schema":"von-v10-transform-1","parsers_sha256":sha(parsers)},indent=2))
+
+sc=scope.read_text()
+old_recover="_RECOVER_AFTER_MALFORMED = {\n    'status','partnumber','partno','pn','sku','asset','component','serialnumber',\n    'item','assembly','module','ticket','ticketid','issue','issueid','bug','bugid',\n    'case','caseid','defect','defectid','fixedin','fixedversion','firmware',\n    'firmwareversion','fixversion','resolvedin',\n}"
+new_recover="_RECOVER_AFTER_MALFORMED = {\n    'product','model','device',\n    'status','partnumber','partno','pn','sku','asset','component','serialnumber',\n    'item','assembly','module','ticket','ticketid','issue','issueid','bug','bugid',\n    'case','caseid','defect','defectid','fixedin','fixedversion','firmware',\n    'firmwareversion','fixversion','resolvedin',\n}"
+if sc.count(old_recover)!=1:
+    raise SystemExit("malformed recovery anchor mismatch")
+sc=sc.replace(old_recover,new_recover)
+scope.write_text(sc)
+
+print(json.dumps({"schema":"von-v10-transform-2","parsers_sha256":sha(parsers),"scope_links_sha256":sha(scope)},indent=2))
