@@ -29,9 +29,12 @@ with tempfile.TemporaryDirectory() as td:
         r0=parse(root,"root"+ext,'Model=PX-237 Asset=BOARD-789 Ticket=CASE-5179 Event="voltage drift"')[0]
         v0=parse(root,"value"+ext,'Fixed_in=4.3.2 Status=current Asset=BOARD-789 Ticket=CASE-5179 '+note)[0]
         cases=[]
-        cases.append(("nested_fields_clean", lambda: (
-            (_ for _ in ()).throw(AssertionError(v0["fields"])) if any(k in v0["fields"] for k in ["Product","Model"] if k not in {"Model"} and nested.startswith(k+"=")) else None
-        )))
+        def nested_fields_clean():
+            assert v0["fields"].get("Product") is None, v0["fields"]
+            assert v0["fields"].get("Model") is None, v0["fields"]
+            assert v0["fields"].get("Asset")=="BOARD-789", v0["fields"]
+            assert v0["fields"].get("Ticket")=="CASE-5179", v0["fields"]
+        cases.append(("nested_fields_clean",nested_fields_clean))
         def valid():
             got=selection([r0,v0]); assert got["answer"]=="4.3.2"
         cases.append(("nested_selection_valid",valid))
