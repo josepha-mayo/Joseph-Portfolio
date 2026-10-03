@@ -141,7 +141,7 @@ jobs:
           rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/v8-before.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
           print('V7 V8-reproduction',rc,counts)
-          assert rc==1 and counts=={'tests':7,'failures':3,'errors':0,'skipped':0},counts
+          assert rc==1 and counts=={'tests':7,'failures':5,'errors':0,'skipped':0},counts
           PY
       - name: Apply V8 transform and freeze source
         run: |
@@ -237,7 +237,7 @@ jobs:
           rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/v10-before.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
           print('V9 V10-reproduction',rc,counts)
-          assert rc==1 and counts=={'tests':7,'failures':5,'errors':0,'skipped':0},counts
+          assert rc==1 and counts=={'tests':7,'failures':3,'errors':0,'skipped':0},counts
           PY
       - name: Apply V10 parser transform and freeze source
         run: |
