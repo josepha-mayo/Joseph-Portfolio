@@ -1,0 +1,135 @@
+name: von-rag V7 robust log tokenizer
+on:
+  push:
+    branches: [amd-unified-candidate-20261002]
+    paths:
+      - .github/workflows/von-rag-v7-log-tokenizer.yml
+      - delivery/von-rag-r19/evidence/unified-integration/apply_v7.py
+      - delivery/von-rag-r19/evidence/unified-integration/test_v7_log_tokenizer.py
+      - delivery/von-rag-r19/evidence/unified-integration/v7_fuzz.py
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12','3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Fetch immutable V5 dependencies
+        run: |
+          git fetch --no-tags --depth=1 origin 61ee8533608f305def633ac2e96c129a877cb2fd
+          git fetch --no-tags --depth=1 origin 13d1d6424ff568128c4ec6ec2e137a19b6555d0f
+          git fetch --no-tags --depth=1 origin 2eecf0b809c75078af1fb935ecfe07e9d60116da
+          git fetch --no-tags --depth=1 origin fcf9228cf5e67c70396323d794a912a24cee432d
+          git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
+          git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
+          git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+      - name: Reconstruct exact successful V5
+        run: |
+          python - <<'PY'
+          import subprocess
+          raw=subprocess.check_output(['git','show','61ee8533608f305def633ac2e96c129a877cb2fd:.github/workflows/von-rag-v5-review-hardening.yml'],text=True)
+          lines=raw.splitlines()
+          marker='      - name: Reconstruct exact successful V4'
+          start=lines.index(marker)+1
+          begin=next(i for i in range(start,len(lines)) if lines[i]=="          python - <<'PY'")+1
+          end=next(i for i in range(begin,len(lines)) if lines[i]=='          PY')
+          exec(compile('\n'.join(line[10:] for line in lines[begin:end]),'v5-base-reconstruction','exec'))
+          PY
+          mkdir -p /tmp/v4 /tmp/v5
+          git show 13d1d6424ff568128c4ec6ec2e137a19b6555d0f:delivery/von-rag-r19/evidence/unified-integration/apply_v4.py > /tmp/v4/apply_v4.py
+          cp -a unified-evidence/candidate unified-evidence/candidate-v3
+          python /tmp/v4/apply_v4.py unified-evidence/candidate/delivery/von-rag-r19 > unified-evidence/V4_TRANSFORM.json
+          cp -a unified-evidence/candidate unified-evidence/candidate-v4
+          git show 61ee8533608f305def633ac2e96c129a877cb2fd:delivery/von-rag-r19/evidence/unified-integration/v5_review_fixes.patch > /tmp/v5/v5_review.patch
+          git show 61ee8533608f305def633ac2e96c129a877cb2fd:delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py > /tmp/v5/test_v5_review_regressions.py
+          python - <<'PY'
+          import hashlib,subprocess,shutil,json
+          from pathlib import Path
+          patch=Path('/tmp/v5/v5_review.patch')
+          assert hashlib.sha256(patch.read_bytes()).hexdigest()=='b91823aa9d8abf615b5e69e9d8ec5694fbdb55cf539c6e02623cb8b65ed13426'
+          dest='unified-evidence/candidate/delivery/von-rag-r19'
+          subprocess.run(['git','apply','--check','--directory='+dest,str(patch.resolve())],check=True)
+          subprocess.run(['git','apply','--directory='+dest,str(patch.resolve())],check=True)
+          shutil.copy2('/tmp/v5/test_v5_review_regressions.py',Path(dest)/'tests/test_v5_review_regressions.py')
+          src=Path(dest)
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file()}
+          assert len(manifest)==88
+          assert manifest['von_rag/scope_links.py']=='be61d793d6cb45536d17c9feaf3c81b14064240d2a75452bc77b576620f9ac9f'
+          assert manifest['von_rag/compact.py']=='c67ac170c27bc16528e2d1a139a9be273ea8d295b235f6faf955c8b3d155e020'
+          Path('unified-evidence/FINAL_SOURCE_MANIFEST_V5.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          PY
+          cp -a unified-evidence/candidate unified-evidence/candidate-v5
+      - name: Install pinned test dependencies
+        run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
+      - name: Reproduce V7 targets on V5
+        run: |
+          set +e
+          PYTHONPATH="$PWD/unified-evidence/candidate-v5/delivery/von-rag-r19" python -m pytest -q             delivery/von-rag-r19/evidence/unified-integration/test_v7_log_tokenizer.py             -p no:cacheprovider --junitxml=unified-evidence/before.xml > unified-evidence/before.log 2>&1
+          rc=$?
+          set -e
+          python - "$rc" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/before.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          print('V5 reproduction',rc,counts)
+          assert rc==1 and counts=={'tests':15,'failures':10,'errors':0,'skipped':0},counts
+          PY
+      - name: Apply V7 transform
+        run: |
+          python delivery/von-rag-r19/evidence/unified-integration/apply_v7.py             unified-evidence/candidate/delivery/von-rag-r19 | tee unified-evidence/V7_TRANSFORM.json
+          cp delivery/von-rag-r19/evidence/unified-integration/test_v7_log_tokenizer.py             unified-evidence/candidate/delivery/von-rag-r19/tests/test_v7_log_tokenizer.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file()}
+          assert len(manifest)==89
+          Path('unified-evidence/FINAL_SOURCE_MANIFEST_V7.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          PY
+      - name: Run full V7 suite
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          python -m pytest -q tests -p no:cacheprovider --junitxml="$GITHUB_WORKSPACE/unified-evidence/after.xml"             | tee "$GITHUB_WORKSPACE/unified-evidence/after.log"
+      - name: Enforce V7 counts and frozen hashes
+        run: |
+          python - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('unified-evidence/after.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert counts=={'tests':699,'failures':0,'errors':0,'skipped':0},counts
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST_V7.json').read_text())
+          for name,want in manifest.items(): assert hashlib.sha256((src/name).read_bytes()).hexdigest()==want,name
+          Path('unified-evidence/V7_TEST_RESULTS.json').write_text(json.dumps({'schema':'von-v7-full-suite-1','counts':counts,'source_unchanged_after_tests':True,'model_calls':0,'submission_changed':False},indent=2)+'\n')
+          PY
+      - name: Run 10000-case V7 metamorphic campaign
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          PYTHONPATH="$PWD" python "$GITHUB_WORKSPACE/delivery/von-rag-r19/evidence/unified-integration/v7_fuzz.py"             "$GITHUB_WORKSPACE/unified-evidence/V7_FUZZ_RESULT.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-v7-log-tokenizer-${{ matrix.python }}
+          path: |
+            unified-evidence/V7_TRANSFORM.json
+            unified-evidence/V7_TEST_RESULTS.json
+            unified-evidence/V7_FUZZ_RESULT.json
+            unified-evidence/FINAL_SOURCE_MANIFEST_V7.json
+            unified-evidence/before.log
+            unified-evidence/after.log
+          retention-days: 14
