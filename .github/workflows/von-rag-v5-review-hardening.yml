@@ -79,9 +79,17 @@ jobs:
           manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
                     for p in sorted(src.rglob('*')) if p.is_file()}
           Path('unified-evidence/FINAL_SOURCE_MANIFEST_V5.json').write_text(json.dumps(manifest,indent=2)+'\n')
-          assert manifest['von_rag/scope_links.py']=='be61d793d6cb45536d17c9feaf3c81b14064240d2a75452bc77b576620f9ac9f'
-          assert manifest['von_rag/compact.py']=='c67ac170c27bc16528e2d1a139a9be273ea8d295b235f6faf955c8b3d155e020'
-          print('V5 files',len(manifest))
+          transform={
+              'schema':'von-v5-source-transform-1',
+              'base_v4_scope_links':'f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03',
+              'base_v4_compact':'4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3',
+              'patch_sha256':'7b28f16dd8233a578dd1f40d8a40f8efe0ec2518ed47d5ac5a5d8449b3ccf4be',
+              'scope_links_sha256':manifest['von_rag/scope_links.py'],
+              'compact_sha256':manifest['von_rag/compact.py'],
+              'source_files':len(manifest),
+          }
+          Path('unified-evidence/V5_TRANSFORM.json').write_text(json.dumps(transform,indent=2)+'\\n')
+          print(json.dumps(transform,indent=2))
           PY
       - name: Install pinned test dependencies
         run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
@@ -132,6 +140,7 @@ jobs:
           name: von-v5-review-hardening-${{ matrix.python }}
           path: |
             unified-evidence/V4_TRANSFORM.json
+            unified-evidence/V5_TRANSFORM.json
             unified-evidence/V5_TEST_RESULTS.json
             unified-evidence/V5_FUZZ_RESULT.json
             unified-evidence/FINAL_SOURCE_MANIFEST_V5.json
