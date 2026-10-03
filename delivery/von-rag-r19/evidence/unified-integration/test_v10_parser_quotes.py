@@ -58,3 +58,18 @@ def test_single_quoted_value_with_spaces_is_one_field():
     assert fields["Note"]=="legacy Product=PX-999 text"
     assert fields["Asset"]=="BOARD-789"
     assert "Product" not in fields
+
+
+def test_malformed_tail_foreign_primary_stays_foreign(tmp_path):
+    root=parsed(tmp_path,"root.log",'Model=PX-237 Asset=BOARD-789 Ticket=CASE-5179 Event="voltage drift"')[0]
+    value=parsed(tmp_path,"value.log",'Fixed_in=4.3.2 Status=current Asset=BOARD-789 Ticket=CASE-5179')[0]
+    other=parsed(tmp_path,"foreign.log",'Status=current Note="unterminated Product=PX-999 Asset=BOARD-789 Ticket=CASE-5179 Fixed_in=4.3.3')[0]
+    out=select([root,value,other])
+    assert out["answer"]=="4.3.2"
+
+def test_malformed_tail_matching_primary_still_conflicts(tmp_path):
+    root=parsed(tmp_path,"root.log",'Model=PX-237 Asset=BOARD-789 Ticket=CASE-5179 Event="voltage drift"')[0]
+    value=parsed(tmp_path,"value.log",'Fixed_in=4.3.2 Status=current Asset=BOARD-789 Ticket=CASE-5179')[0]
+    other=parsed(tmp_path,"match.log",'Status=current Note="unterminated Product=PX-237 Asset=BOARD-789 Ticket=CASE-5179 Fixed_in=4.3.3')[0]
+    with pytest.raises(GroundingError):
+        select([root,value,other])
