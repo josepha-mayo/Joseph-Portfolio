@@ -1,4 +1,4 @@
-name: von-rag V9 prefix and malformed-tail hardening
+name: von-rag V10 quote-aware file parser hardening
 # trigger-v8
 on:
   push:
@@ -9,6 +9,9 @@ on:
       - delivery/von-rag-r19/evidence/unified-integration/test_v7_log_tokenizer.py
       - delivery/von-rag-r19/evidence/unified-integration/v7_fuzz.py
       - delivery/von-rag-r19/evidence/unified-integration/apply_v8.py
+      - delivery/von-rag-r19/evidence/unified-integration/apply_v10.py
+      - delivery/von-rag-r19/evidence/unified-integration/test_v10_parser_quotes.py
+      - delivery/von-rag-r19/evidence/unified-integration/v10_parser_fuzz.py
       - delivery/von-rag-r19/evidence/unified-integration/test_v8_unterminated_quotes.py
       - delivery/von-rag-r19/evidence/unified-integration/v8_fuzz.py
 permissions:
@@ -223,6 +226,56 @@ jobs:
         run: |
           cd unified-evidence/candidate/delivery/von-rag-r19
           PYTHONPATH="$PWD" python "$GITHUB_WORKSPACE/delivery/von-rag-r19/evidence/unified-integration/v9_fuzz.py"             "$GITHUB_WORKSPACE/unified-evidence/V9_FUZZ_RESULT.json"
+      - name: Reproduce V10 parser targets on frozen V9
+        run: |
+          set +e
+          PYTHONPATH="$PWD/unified-evidence/candidate/delivery/von-rag-r19" python -m pytest -q             delivery/von-rag-r19/evidence/unified-integration/test_v10_parser_quotes.py             -p no:cacheprovider --junitxml=unified-evidence/v10-before.xml > unified-evidence/v10-before.log 2>&1
+          rc=$?
+          set -e
+          python - "$rc" <<'PY'
+          import sys,xml.etree.ElementTree as ET
+          rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/v10-before.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          print('V9 V10-reproduction',rc,counts)
+          assert rc==1 and counts=={'tests':7,'failures':5,'errors':0,'skipped':0},counts
+          PY
+      - name: Apply V10 parser transform and freeze source
+        run: |
+          python delivery/von-rag-r19/evidence/unified-integration/apply_v10.py             unified-evidence/candidate/delivery/von-rag-r19 | tee unified-evidence/V10_TRANSFORM.json
+          cp delivery/von-rag-r19/evidence/unified-integration/test_v10_parser_quotes.py             unified-evidence/candidate/delivery/von-rag-r19/tests/test_v10_parser_quotes.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in sorted(src.rglob('*'))
+                    if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc'}
+          assert len(manifest)==92,len(manifest)
+          Path('unified-evidence/FINAL_SOURCE_MANIFEST_V10.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          PY
+      - name: Run full V10 suite
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          python -m pytest -q tests -p no:cacheprovider --junitxml="$GITHUB_WORKSPACE/unified-evidence/v10-after.xml"             | tee "$GITHUB_WORKSPACE/unified-evidence/v10-after.log"
+      - name: Enforce V10 counts and frozen hashes
+        run: |
+          python - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          suites=ET.parse('unified-evidence/v10-after.xml').getroot().findall('testsuite')
+          counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+          assert counts=={'tests':721,'failures':0,'errors':0,'skipped':0},counts
+          src=Path('unified-evidence/candidate/delivery/von-rag-r19')
+          manifest=json.loads(Path('unified-evidence/FINAL_SOURCE_MANIFEST_V10.json').read_text())
+          for name,want in manifest.items(): assert hashlib.sha256((src/name).read_bytes()).hexdigest()==want,name
+          Path('unified-evidence/V10_TEST_RESULTS.json').write_text(json.dumps({
+            'schema':'von-v10-full-suite-1','counts':counts,'source_unchanged_after_tests':True,
+            'model_calls':0,'submission_changed':False},indent=2)+'\n')
+          PY
+      - name: Run 3000-case V10 parse-file campaign
+        run: |
+          cd unified-evidence/candidate/delivery/von-rag-r19
+          PYTHONPATH="$PWD" python "$GITHUB_WORKSPACE/delivery/von-rag-r19/evidence/unified-integration/v10_parser_fuzz.py"             "$GITHUB_WORKSPACE/unified-evidence/V10_FUZZ_RESULT.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -246,6 +299,12 @@ jobs:
             unified-evidence/FINAL_SOURCE_MANIFEST_V9.json
             unified-evidence/v9-before.log
             unified-evidence/v9-after.log
+            unified-evidence/V10_TRANSFORM.json
+            unified-evidence/V10_TEST_RESULTS.json
+            unified-evidence/V10_FUZZ_RESULT.json
+            unified-evidence/FINAL_SOURCE_MANIFEST_V10.json
+            unified-evidence/v10-before.log
+            unified-evidence/v10-after.log
             unified-evidence/candidate/delivery/von-rag-r19/app.py
             unified-evidence/candidate/delivery/von-rag-r19/von_rag/*.py
           retention-days: 14
