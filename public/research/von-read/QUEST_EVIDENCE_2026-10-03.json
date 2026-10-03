@@ -1,6 +1,6 @@
 {
   "schema": "von-read-quest-evidence-2026-10-03-r1",
-  "updated_utc": "2026-10-03T22:27:33.747Z",
+  "updated_utc": "2026-10-03T22:29:23.539Z",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -66,8 +66,8 @@
       "Production R61 — digest-pinned OCI; fresh anonymous pull verified 28 layers / 40.302 GB."
     ],
     "submission_refresh": {
-      "updated_utc": "2026-10-03T21:58:49.967Z",
-      "submitted_utc": "2026-10-03T21:59:12.916Z",
+      "updated_utc": "2026-10-03T22:17:05.236Z",
+      "submitted_utc": "2026-10-03T22:17:05.236Z",
       "lablab_activity_types": [
         "SUBMISSION_UPDATED",
         "SUBMISSION_SUBMITTED"
@@ -75,7 +75,12 @@
       "submission_id": "yl8gqdx6phtn442tf8ds2kum",
       "event_id": "kfszsmh56xha2sjssxedgxze",
       "exact_mc2_digest_unchanged": "sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad",
-      "exact_mc3_digest_unchanged": "sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07"
+      "exact_mc3_digest_unchanged": "sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07",
+      "public_activity_ids": [
+        "cmusxp2em029ws601pkhwv5ne",
+        "cmusxpk4402ads601b0vlhmbt",
+        "cmusycjir03cjs601jq3kkpiu"
+      ]
     },
     "award_claimed": false,
     "visible_building_ceiling": 1455,
@@ -88,7 +93,13 @@
       "xp_awarded": false,
       "note": "Included only as stronger AMD-hackathon participation evidence. No Quest XP is claimed until the organizer confirms the qualifying threshold."
     },
-    "human_readable_ledger": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/QUEST_BUILDING_EVIDENCE_2026-10-03.md"
+    "human_readable_ledger": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/QUEST_BUILDING_EVIDENCE_2026-10-03.md",
+    "credit_process_question": {
+      "thread_title": "How are Building XP rows credited after a submission update?",
+      "thread_id": "cmusyj8wz008es6010pdfqbgx",
+      "created_utc": "2026-10-03T22:22:18.410Z",
+      "note": "Public Challenge discussion asking for the official post-submission Building-XP credit route. No XP award is claimed from creating the thread."
+    }
   },
   "referral": {
     "generated_via_official_authenticated_endpoint": true,
