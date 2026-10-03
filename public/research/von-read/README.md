@@ -21,7 +21,7 @@ Submission and deployment are not an official score. **Actual full-container AMD
 - [Original OCR implementation and reproducibility files](./source/) and [scoped MIT license](./source/LICENSE.txt)
 - [Exact published R61 RAG source and tests](https://github.com/josepha-mayo/Joseph-Portfolio/tree/73600eaa711cf6a78b2cd1de0db4da565a2b6eab/delivery/von-rag-r19)
 - [Decoder case study](./DECODER_CASE_STUDY.md)
-- [Current machine-readable Quest evidence](./QUEST_EVIDENCE_2026-10-03.json)\n- [One-page Quest Building evidence ledger](./QUEST_BUILDING_EVIDENCE_2026-10-03.md)
+- [Current machine-readable Quest evidence](./QUEST_EVIDENCE_2026-10-03.json)\n- [One-page Quest Building evidence ledger](./QUEST_BUILDING_EVIDENCE_2026-10-03.md)\n- [Community Contributor evidence packet](./COMMUNITY_CONTRIBUTOR_EVIDENCE_2026-10-03.md)
 
 **Want to join the AMD AI Academy Challenge?** [Use Joseph's official LabLab referral link](https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge?invite=inv_u3q67xxspf6hiwjrgb0yyy2r&utm_source=member_invite&utm_medium=referral&utm_campaign=amd-lablab-ai-academy-challenge). This is a referral link: if a new participant joins and completes LabLab's referral criteria, Joseph may receive event XP. No purchase is required by this project.
 
