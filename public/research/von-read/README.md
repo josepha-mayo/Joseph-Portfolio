@@ -54,7 +54,7 @@ The selected R16 candidate preserves the earlier model/runtime and changes only 
 | GitHub repository | This public project folder is the repository linked by the LabLab submission |
 | Project demo | The walkthrough presents the project, measured results, reproducible completion check, and limitations |
 | Open-source project | Public implementation, tests, receipts and scoped licenses; exact R61 source is linked above |
-| AMD hackathon participation | The existing solo entry in the AMD x lablab.ai AI Academy Challenge |
+| AMD hackathon participation | Existing solo Academy Challenge entry plus approved/enrolled AMD Developer Hackathon ACT III registration; ACT III starts October 12, so enrollment is evidence, not a claim that the +300 participation threshold has already been met |
 | Built using AMD technologies | Recorded native ROCm work on AMD MI300X VF |
 | Milestone 1 | Revision-locked native Qwen inference on AMD MI300X VF |
 | Milestone 2 | Matched model/robustness comparison covering 186 model-image evaluations |
