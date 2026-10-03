@@ -71,7 +71,7 @@ jobs:
           subprocess.run(['git','apply','--directory='+dest,str(patch.resolve())],check=True)
           shutil.copy2('/tmp/v5/test_v5_review_regressions.py',Path(dest)/'tests/test_v5_review_regressions.py')
           src=Path(dest)
-          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file()}
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc'}
           assert len(manifest)==88
           assert manifest['von_rag/scope_links.py']=='be61d793d6cb45536d17c9feaf3c81b14064240d2a75452bc77b576620f9ac9f'
           assert manifest['von_rag/compact.py']=='c67ac170c27bc16528e2d1a139a9be273ea8d295b235f6faf955c8b3d155e020'
@@ -102,7 +102,7 @@ jobs:
           import hashlib,json
           from pathlib import Path
           src=Path('unified-evidence/candidate/delivery/von-rag-r19')
-          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file()}
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc'}
           assert len(manifest)==89
           Path('unified-evidence/FINAL_SOURCE_MANIFEST_V7.json').write_text(json.dumps(manifest,indent=2)+'\n')
           PY
@@ -148,7 +148,7 @@ jobs:
           import hashlib,json
           from pathlib import Path
           src=Path('unified-evidence/candidate/delivery/von-rag-r19')
-          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file()}
+          manifest={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(src.rglob('*')) if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc'}
           assert len(manifest)==90
           Path('unified-evidence/FINAL_SOURCE_MANIFEST_V8.json').write_text(json.dumps(manifest,indent=2)+'\n')
           PY
