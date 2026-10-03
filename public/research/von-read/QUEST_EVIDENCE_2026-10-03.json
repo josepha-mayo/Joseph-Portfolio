@@ -1,6 +1,6 @@
 {
   "schema": "von-read-quest-evidence-2026-10-03-r1",
-  "updated_utc": "2026-10-03T22:15:00Z",
+  "updated_utc": "2026-10-03T22:24:14.652Z",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -58,7 +58,7 @@
     "demo": "Walkthrough URL is explicitly present in LabLab description/additional information.",
     "complete_project": "Non-draft submission with repo, walkthrough, MC2 and MC3 artifacts.",
     "open_source": "Public implementation/tests/receipts with scoped LICENSE.txt.",
-    "amd_hackathon_participation": "Existing solo entry in this AMD x LabLab AI Academy Challenge.",
+    "amd_hackathon_participation": "Existing solo entry in this AMD x LabLab AI Academy Challenge, plus approved/enrolled AMD Developer Hackathon ACT III registration after joining the Academy program. ACT III's build window starts October 12; enrollment is evidence of registration, not a claim that the +300 participation threshold has already been met.",
     "amd_technologies": "ROCm and recorded AMD Instinct MI300X VF execution.",
     "milestones": [
       "MC2 R16 — AMD-tested input decoder; 5/5 authored format rescues.",
@@ -79,7 +79,15 @@
     },
     "award_claimed": false,
     "visible_building_ceiling": 1455,
-    "note": "Eligibility evidence only. Individual rows may overlap already-credited XP or require manual review."
+    "note": "Eligibility evidence only. Individual rows may overlap already-credited XP or require manual review.",
+    "act_iii": {
+      "status": "approved_and_enrolled",
+      "event": "AMD Developer Hackathon ACT III",
+      "dashboard": "https://lablab.ai/ai-hackathons/amd-developer-hackathon-act-iii/dash",
+      "build_window_starts": "2026-10-12",
+      "xp_awarded": false,
+      "note": "Included only as stronger AMD-hackathon participation evidence. No Quest XP is claimed until the organizer confirms the qualifying threshold."
+    }
   },
   "referral": {
     "generated_via_official_authenticated_endpoint": true,
