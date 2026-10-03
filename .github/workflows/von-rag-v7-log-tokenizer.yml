@@ -91,6 +91,7 @@ jobs:
           PY
       - name: Apply V7 transform
         run: |
+          set -o pipefail
           python delivery/von-rag-r19/evidence/unified-integration/apply_v7.py             unified-evidence/candidate/delivery/von-rag-r19 | tee unified-evidence/V7_TRANSFORM.json
           cp delivery/von-rag-r19/evidence/unified-integration/test_v7_log_tokenizer.py             unified-evidence/candidate/delivery/von-rag-r19/tests/test_v7_log_tokenizer.py
           python - <<'PY'
@@ -133,4 +134,6 @@ jobs:
             unified-evidence/FINAL_SOURCE_MANIFEST_V7.json
             unified-evidence/before.log
             unified-evidence/after.log
+            unified-evidence/candidate/delivery/von-rag-r19/app.py
+            unified-evidence/candidate/delivery/von-rag-r19/von_rag/*.py
           retention-days: 14
