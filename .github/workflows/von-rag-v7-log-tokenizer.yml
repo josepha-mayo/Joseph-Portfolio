@@ -51,6 +51,7 @@ jobs:
           PY
           mkdir -p /tmp/v4 /tmp/v5
           git show 13d1d6424ff568128c4ec6ec2e137a19b6555d0f:delivery/von-rag-r19/evidence/unified-integration/apply_v4.py > /tmp/v4/apply_v4.py
+          git show 13d1d6424ff568128c4ec6ec2e137a19b6555d0f:delivery/von-rag-r19/evidence/unified-integration/test_v4_fuzz_regressions.py > /tmp/v4/test_v4_fuzz_regressions.py
           cp -a unified-evidence/candidate unified-evidence/candidate-v3
           python /tmp/v4/apply_v4.py unified-evidence/candidate/delivery/von-rag-r19 > unified-evidence/V4_TRANSFORM.json
           cp -a unified-evidence/candidate unified-evidence/candidate-v4
