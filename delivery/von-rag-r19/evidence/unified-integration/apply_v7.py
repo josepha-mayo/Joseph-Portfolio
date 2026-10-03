@@ -26,12 +26,12 @@ new_regex="""_LOG_KEY = re.compile(
 
 
 def _log_equals_pairs(text):
-    """Yield top-level key=value fields without rescanning quoted contents.
+    '''Yield top-level key=value fields without rescanning quoted contents.
 
     The scanner accepts unknown keys deliberately so an opaque field can safely
     contain scope-looking text. Backslash-escaped quotes remain inside the
     opaque value instead of reopening token search midway through it.
-    """
+    '''
     for line in text.splitlines():
         pos = 0
         size = len(line)
