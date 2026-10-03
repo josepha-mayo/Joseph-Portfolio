@@ -1,0 +1,66 @@
+--- a/von_rag/scope_links.py
++++ b/von_rag/scope_links.py
+@@
+-_LOG_EQUALS = re.compile(
+-    r'(?<!\w)('
+-    r'part[ \t]+(?:number|no)|serial[ \t]+number|'
+-    r'ticket[ \t]+id|issue[ \t]+id|bug[ \t]+id|case[ \t]+id|defect[ \t]+id|'
+-    r'fixed[ \t]+in|fixed[ \t]+version|firmware[ \t]+version|fix[ \t]+version|resolved[ \t]+in|'
+-    r'[A-Za-z][A-Za-z0-9_]*'
+-    r')[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))', re.I)
++_LOG_EQUALS = re.compile(
++    r'(?<!\w)('
++    r'part[ \t]+(?:number|no)|serial[ \t]+number|'
++    r'ticket[ \t]+id|issue[ \t]+id|bug[ \t]+id|case[ \t]+id|defect[ \t]+id|'
++    r'fixed[ \t]+in|fixed[ \t]+version|firmware[ \t]+version|fix[ \t]+version|resolved[ \t]+in|'
++    r'[A-Za-z][A-Za-z0-9_]*'
++    r')[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))', re.I)
++
++
++def _log_equals_pairs(text):
++    """Tokenize top-level key=value fields without rescanning quoted values.
++
++    A quoted unknown field such as Note="Product=PX-999 is deprecated" is one
++    token. Scope-looking text inside that quoted value must never become a
++    second top-level declaration.
++    """
++    for line in text.splitlines():
++        pos = 0
++        size = len(line)
++        while pos < size:
++            match = _LOG_EQUALS.search(line, pos)
++            if match is None:
++                break
++            name = match.group(1)
++            value = match.group(2) if match.group(2) is not None else match.group(3)
++            yield name, value
++            pos = match.end()
+@@
+-        pairs.extend((m[1], m[2] if m[2] is not None else m[3])
+-                     for m in _LOG_EQUALS.finditer(text))
++        pairs.extend(_log_equals_pairs(text))
+--- a/von_rag/compact.py
++++ b/von_rag/compact.py
+@@
+-        scope_log_equals=re.compile(
+-            r'(?<!\w)(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
+-            r'serial\s+number|item|assembly|module)\s*=\s*'
+-            r'(?:"([^"\r\n]*)"|([^\s]+))',re.I)
++        scope_log_equals=re.compile(
++            r'(?<!\w)([A-Za-z][A-Za-z0-9_]*(?:\s+[A-Za-z][A-Za-z0-9_]*)?)\s*=\s*'
++            r'(?:"([^"\r\n]*)"|([^\s]+))',re.I)
+@@
+-            if allow_log_equals:
+-                for lm in scope_log_equals.finditer(line):
+-                    if _key(lm.group(1)) not in aliases:
+-                        scopes.append(lm.group(2) if lm.group(2) is not None else lm.group(3))
++            if allow_log_equals:
++                pos=0
++                while True:
++                    lm=scope_log_equals.search(line,pos)
++                    if lm is None: break
++                    key=_key(lm.group(1))
++                    if key in {'product','model','device','partnumber','partno','pn','sku',
++                               'asset','component','serialnumber','item','assembly','module'} and key not in aliases:
++                        scopes.append(lm.group(2) if lm.group(2) is not None else lm.group(3))
++                    pos=lm.end()

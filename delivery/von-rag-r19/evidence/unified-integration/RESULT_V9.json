@@ -1,0 +1,74 @@
+{
+  "schema": "von-unified-candidate-v9-prefix-malformed-result-1",
+  "date_utc": "2026-10-03",
+  "tested_commit": "49af07b5485190540365117da1e53df5913cef90",
+  "workflow_run": 37144684721,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": [
+    "RESULT.json",
+    "RESULT_V2.json",
+    "RESULT_V3.json",
+    "RESULT_V4.json",
+    "RESULT_V5.json",
+    "RESULT_V7.json",
+    "RESULT_V8.json"
+  ],
+  "reproduction_on_v8": {
+    "tests": 9,
+    "failures": 6,
+    "errors": 0,
+    "skipped": 0
+  },
+  "matrix": {
+    "python_3_12_14": {
+      "full_suite": {
+        "tests": 714,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "metamorphic": {
+        "checks": 9000,
+        "passed": 9000,
+        "failures": 0
+      },
+      "artifact_id": 11281897378,
+      "artifact_sha256": "da6e4919776a183d45e82ac42cc4841629af8b9f9c3529eb22d1cbe34f592fb8"
+    },
+    "python_3_14_7": {
+      "full_suite": {
+        "tests": 714,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "metamorphic": {
+        "checks": 9000,
+        "passed": 9000,
+        "failures": 0
+      },
+      "artifact_id": 11281972284,
+      "artifact_sha256": "2c5e1c3a6c883ac74945059d5d0ed8a145579b318458071e21b0f071092fc86b"
+    }
+  },
+  "source": {
+    "source_files": 91,
+    "manifest_sha256": "372fd8c1c2b28ce9755878b4b05a6bcc734137bbd56e438f055acb3fa5d8e008",
+    "scope_links_py_sha256": "275b82b4942c87e333944db608d1020ae978034de8c32d821939a856680e21c1",
+    "compact_py_sha256": "51d7a8b8b1941060c2ff693c609e9296a53c5995794e069bf8d4abe264c0fa9a"
+  },
+  "changes": [
+    "Restricts multi-word key=value parsing to known structured labels so prefixes such as INFO Model=... cannot absorb the real Model key.",
+    "For unselected malformed siblings, recovers only known non-primary fields after an unterminated quote so visible firmware/status/ticket conflicts cannot disappear.",
+    "Never recovers Product/Model/Device from malformed tails, preventing note text from exonerating otherwise matching current conflicts.",
+    "Selected malformed evidence remains fail-closed."
+  ],
+  "scope": "software/parser/retrieval/scripted-selection validation only; no fresh neural inference or hidden-grader accuracy claim",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false,
+  "review_status": "requested_after_this_receipt"
+}

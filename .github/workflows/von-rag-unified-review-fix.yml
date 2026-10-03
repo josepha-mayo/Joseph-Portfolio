@@ -1,0 +1,124 @@
+name: von-rag unified reviewer fixes
+on:
+  push:
+    branches: [amd-unified-candidate-20261002]
+    paths:
+      - .github/workflows/von-rag-unified-review-fix.yml
+      - delivery/von-rag-r19/evidence/unified-integration/review_fixes.patch
+permissions:
+  contents: read
+jobs:
+  review-fixes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.14']
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Fetch exact reviewed revisions
+        run: |
+          git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
+          git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
+          git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
+      - name: Reuse the verified reconstruction and apply only the reviewed correction
+        run: |
+          python - <<'PY'
+          import hashlib,json,shutil,subprocess
+          from pathlib import Path
+          ref='f8738524f29433da0dc3697a863f5b735e315f95'
+          raw=subprocess.check_output(['git','show',ref+':.github/workflows/von-rag-unified-candidate.yml'])
+          assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()=='5f5778ffc9fa963b82712e7a2bd566855f63d1e2'
+          lines=raw.decode().splitlines()
+          marker='      - name: Reconstruct exact branches and resolve the reviewed integration'
+          start=lines.index(marker)+1
+          begin=next(i for i in range(start,len(lines)) if lines[i]=="          python - <<'PY'")+1
+          end=next(i for i in range(begin,len(lines)) if lines[i]=='          PY')
+          assert all(line.startswith('          ') or not line for line in lines[begin:end])
+          program='\n'.join(line[10:] for line in lines[begin:end])
+          # Execute only the committed, SHA-verified reconstruction block.
+          exec(compile(program,'verified-v1-reconstruction','exec'))
+          root=Path('unified-evidence');prefix='delivery/von-rag-r19/'
+          original=root/'candidate-v1';shutil.copytree(root/'candidate',original)
+          previous=json.loads((root/'FINAL_SOURCE_MANIFEST.json').read_text())
+          (root/'FINAL_SOURCE_MANIFEST_V1.json').write_text(json.dumps(previous,indent=2)+'\n')
+          patch=Path(prefix+'evidence/unified-integration/review_fixes.patch').read_bytes()
+          assert hashlib.sha256(patch).hexdigest()=='a3db4d0ddd4b812e76c9bdd60a6fa9019264a19b64b894f8c54b7c8eb3070a69'
+          patch_path=root/'patches/review_fixes.patch';patch_path.write_bytes(patch)
+          subprocess.run(['git','apply','--check','--directory='+str(root/'candidate'),str(patch_path.resolve())],check=True)
+          subprocess.run(['git','apply','--directory='+str(root/'candidate'),str(patch_path.resolve())],check=True)
+          source=root/'candidate'/prefix
+          now={p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(source.rglob('*')) if p.is_file()}
+          assert set(now)-set(previous)=={'tests/test_reviewed_scope_conflicts.py'}
+          assert not set(previous)-set(now)
+          assert [n for n in previous if now[n]!=previous[n]]==['von_rag/scope_links.py']
+          assert now['von_rag/scope_links.py']=='7146b3e217bf9f0474bec9610aaac163f42cb6fda72ebcb8791af824a044e5ce'
+          (root/'FINAL_SOURCE_MANIFEST.json').write_text(json.dumps(now,indent=2)+'\n')
+          shutil.copy2(source/'tests/test_reviewed_scope_conflicts.py',root/'test_review_reproduction.py')
+          PY
+      - name: Install pinned test dependencies
+        run: python -m pip install --disable-pip-version-check -r unified-evidence/candidate/delivery/von-rag-r19/requirements-test.txt
+      - name: Reproduce V1 failures and run all corrected-source tests
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess,sys,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path('unified-evidence').resolve();result={}
+          runs=[('review_before',root/'candidate-v1/delivery/von-rag-r19',[str(root/'test_review_reproduction.py')]),('candidate',root/'candidate/delivery/von-rag-r19',['tests'])]
+          for label,cwd,targets in runs:
+              xml=root/(label+'.xml');log=root/(label+'.log')
+              with log.open('w') as f:
+                  p=subprocess.run([sys.executable,'-m','pytest','-q',*targets,'-p','no:cacheprovider','--junitxml='+str(xml)],cwd=cwd,env=dict(os.environ,PYTHONPATH=str(cwd)),stdout=f,stderr=subprocess.STDOUT,timeout=300)
+              suites=ET.parse(xml).getroot().findall('testsuite')
+              counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+              result[label]={'exit_code':p.returncode,'counts':counts}
+              print(label,json.dumps(result[label]),flush=True);print(log.read_text()[-7000:],flush=True)
+          source=root/'candidate/delivery/von-rag-r19';manifest=json.loads((root/'FINAL_SOURCE_MANIFEST.json').read_text())
+          for name,want in manifest.items():assert hashlib.sha256((source/name).read_bytes()).hexdigest()==want,name
+          receipt={'schema':'von-unified-review-fix-1','python':sys.version,'results':result,'source_unchanged_after_tests':True,'files':len(manifest),'prior_full_matrix_run':37036764213,'fresh_model_calls':0,'submission_changed':False,'xp_award_claimed':False}
+          (root/'REVIEW_FIX_RESULTS.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          PY
+      - name: Preserve exact source and failures
+        if: always()
+        run: |
+          python - <<'PY'
+          import hashlib,zipfile
+          from pathlib import Path
+          root=Path('unified-evidence');out=Path('review-fix-export');out.mkdir()
+          with zipfile.ZipFile(out/'sources-and-results.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and '__pycache__' not in p.parts and p.suffix in {'.py','.txt','.log','.xml','.json','.patch','.conflict'}:
+                      assert p.stat().st_size<2000000,p
+                      z.write(p,p.relative_to(root))
+          for name in ['REVIEW_FIX_RESULTS.json','FINAL_SOURCE_MANIFEST.json']:
+              if (root/name).exists():(out/name).write_bytes((root/name).read_bytes())
+          (out/'ARCHIVE_SHA256.txt').write_text(hashlib.sha256((out/'sources-and-results.zip').read_bytes()).hexdigest()+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-unified-review-fix-${{ matrix.python }}
+          path: review-fix-export/
+          retention-days: 14
+      - name: Enforce the before and after comparison
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('unified-evidence/REVIEW_FIX_RESULTS.json').read_text())
+          assert r['source_unchanged_after_tests'] and r['files']==84
+          before=r['results']['review_before'];after=r['results']['candidate']
+          assert before['exit_code']==1 and before['counts']=={'tests':14,'failures':11,'errors':0,'skipped':0},before
+          assert after['exit_code']==0 and after['counts']=={'tests':620,'failures':0,'errors':0,'skipped':0},after
+          print('Reviewer failures reproduced; all 620 frozen-source software checks pass. No GPU or submission claim.')
+          PY

@@ -1,0 +1,71 @@
+{
+  "schema": "von-unified-candidate-v8-unterminated-quote-result-1",
+  "date_utc": "2026-10-03",
+  "tested_commit": "86c9f244c91bcfff4ffe03c9cf99b0e7ca4508ce",
+  "workflow_run": 37143746420,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": [
+    "RESULT.json",
+    "RESULT_V2.json",
+    "RESULT_V3.json",
+    "RESULT_V4.json",
+    "RESULT_V5.json",
+    "RESULT_V7.json"
+  ],
+  "reproduction_on_v7": {
+    "tests": 7,
+    "failures": 5,
+    "errors": 0,
+    "skipped": 0
+  },
+  "matrix": {
+    "python_3_12": {
+      "full_suite": {
+        "tests": 705,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "malformed_quote_fuzz": {
+        "checks": 5000,
+        "passed": 5000,
+        "failures": 0
+      },
+      "artifact_id": 11281446779,
+      "artifact_sha256": "1c2071ae86084a5b88287a5a849902b369c31ea8f255f58ed7a5f6ba366c2415"
+    },
+    "python_3_14": {
+      "full_suite": {
+        "tests": 705,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "malformed_quote_fuzz": {
+        "checks": 5000,
+        "passed": 5000,
+        "failures": 0
+      },
+      "artifact_id": 11280932883,
+      "artifact_sha256": "8b22c8d2e7d56b2e670df6f4b28bc838118234fb22439ac06605d375942cf365"
+    }
+  },
+  "source": {
+    "files": 90,
+    "scope_links_py_sha256": "8d3956fa1b4160b3923bc97ac7e66d013da72a90341be1a99f6bc856f598134a",
+    "compact_py_sha256": "51d7a8b8b1941060c2ff693c609e9296a53c5995794e069bf8d4abe264c0fa9a",
+    "test_v8_sha256": "33273888a2ed29e5aa7915bb474c759c5b68f34c941331056995db908574e739"
+  },
+  "changes": [
+    "Fails selected malformed quoted log records closed when a quote is unterminated.",
+    "Preserves fields already parsed before malformed tails on unselected siblings so visible current conflicts cannot disappear.",
+    "Retains V7 escaped-quote, underscore-key, uppercase .LOG, typed identity, ticket, current-authority and conflict semantics."
+  ],
+  "scope": "software/parser/retrieval/scripted-selection validation only; no fresh neural inference or hidden-grader accuracy claim",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}

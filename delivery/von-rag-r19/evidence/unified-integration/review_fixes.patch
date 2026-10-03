@@ -1,0 +1,84 @@
+--- a/delivery/von-rag-r19/von_rag/scope_links.py
++++ b/delivery/von-rag-r19/von_rag/scope_links.py
+@@ -16,7 +16,6 @@
+            'case', 'caseid', 'defect', 'defectid'}
+ _COLON = re.compile(r'^[ \t]*([A-Za-z][A-Za-z _]{0,50}):[ \t]*(.+?)[ \t]*$', re.M)
+ _EQUALS = re.compile(r'(?<!\w)([A-Za-z][A-Za-z0-9_]*)=(?:"([^"\r\n]*)"|([^\s]+))')
+-_RETIRED = {'withdrawn', 'superseded', 'obsolete', 'deprecated', 'archived'}
+ 
+ 
+ def _literal_fields(record):
+@@ -59,18 +58,28 @@
+     """A second visible current value for the same typed join cannot be ignored."""
+     _, aliases = _property(query)
+     values = {_scalar(v, 'firmware') for k, v in fields.items() if k in aliases}
++    wanted = identifiers(query)
++    secondary = _ids(_typed_ids(fields), _SCOPE - _PRIMARY)
+     if len(values) != 1:
+         return True
+     for other in records:
+         if other is value or other.get('retired'):
+             continue
+         other_fields = _literal_fields(other)
+-        if other_fields is None or other_fields.get('status', '').casefold() in _RETIRED:
++        if other_fields is None or not _active(other, other_fields):
+             continue
+         typed = _typed_ids(other_fields)
+         if typed is None:
+             continue
+-        if _ids(typed, _SCOPE) == scope_ids and _ids(typed, _TICKET) == ticket:
++        primary = _ids(typed, _PRIMARY)
++        other_secondary = _ids(typed, _SCOPE - _PRIMARY)
++        # Adding or omitting the same primary product does not create a new
++        # asset. Extra compatible secondary qualifiers cannot hide a conflict.
++        same_secondary = bool(secondary and other_secondary) and (
++            secondary <= other_secondary or other_secondary <= secondary)
++        if primary and primary != wanted:
++            continue
++        if same_secondary and _ids(typed, _TICKET) == ticket:
+             observed = {_scalar(v, 'firmware') for k, v in other_fields.items() if k in aliases}
+             if observed and observed != values:
+                 return True
+--- /dev/null
++++ b/delivery/von-rag-r19/tests/test_reviewed_scope_conflicts.py
+@@ -0,0 +1,40 @@
++"""Reviewer-discovered specificity/current-authority controls, scripted only."""
++import json
++import pytest
++from von_rag.parsers import Chunk
++from von_rag.compact import parse_selection
++from von_rag.proofs import GroundingError
++
++QUERY=('The PX-418 production log reports voltage drift. '
++       'Which firmware release addressed the underlying defect?')
++ROOT='product=PX-418 asset=BOARD-88 event="voltage drift" ticket=CASE-9999'
++VALUE='Asset: BOARD-88\nTicket: CASE-9999\nFixed in: 4.3.2\nStatus: current'
++
++def row(source,text):return Chunk(source,'record:1.0',text).dict()
++def result(value,other):
++    records=[row('events.log',ROOT),row('release.txt',value),row('other.txt',other)]
++    return parse_selection(json.dumps(['4.3.2',[0,1]]),records,QUERY)
++
++@pytest.mark.parametrize('primary',['Product','Model','Device'])
++@pytest.mark.parametrize('value_primary,other_primary',[(False,True),(True,False)])
++def test_matching_primary_specificity_cannot_hide_current_conflict(primary,value_primary,other_primary):
++    value=(f'{primary}: PX-418\n' if value_primary else '')+VALUE
++    other=(f'{primary}: PX-418\n' if other_primary else '')+VALUE.replace('4.3.2','4.3.3')
++    with pytest.raises(GroundingError):result(value,other)
++
++@pytest.mark.parametrize('primary',['Product','Model','Device'])
++def test_explicitly_other_primary_does_not_conflict(primary):
++    other=f'{primary}: OTHER-99\n'+VALUE.replace('4.3.2','4.3.3')
++    out,_=result(VALUE,other)
++    assert out['answer']=='4.3.2'
++    assert out['citations']==['events.log','release.txt']
++
++@pytest.mark.parametrize('status',['draft','proposed','pending','unknown'])
++def test_noncurrent_record_does_not_override_current_answer(status):
++    other=VALUE.replace('4.3.2','4.3.3').replace('current',status)
++    out,_=result(VALUE,other)
++    assert out['answer']=='4.3.2'
++
++def test_extra_secondary_qualifier_cannot_hide_matching_current_conflict():
++    other='Product: PX-418\nPart Number: PN-001\n'+VALUE.replace('4.3.2','4.3.3')
++    with pytest.raises(GroundingError):result(VALUE,other)
