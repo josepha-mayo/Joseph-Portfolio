@@ -1,0 +1,65 @@
+name: von-rag V3 preview registry gate
+on:
+  push:
+    branches: [amd-v3-preview-registry-20261003]
+    paths:
+      - src/app/v2/**
+      - src/generated/von-registry-v3.json
+      - public/registry-assets/v3/**
+      - tests/von-registry-v3.test.mjs
+      - netlify.toml
+      - .github/workflows/von-rag-v3-preview-gate.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-v3-preview-gate
+  cancel-in-progress: false
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Regenerate incumbent registry metadata
+        run: |
+          python scripts/prepare-von-registry.py
+          python scripts/prepare-von-registry-r35.py
+          python scripts/prepare-von-registry-r61.py
+
+      - name: Verify exact V3 static assets
+        run: |
+          set -euo pipefail
+          echo "2cd44cd0a63ecf1edd61a3aaf0329fd8df22f802eaaa3b5b090d3ff82dc5759d  public/registry-assets/v3/manifest.json" | sha256sum -c -
+          echo "180056296b31d73e2e725cb376bb5d9601561befd651e8d2a0c554c5d486f37b  public/registry-assets/v3/config.json" | sha256sum -c -
+          echo "455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef  public/registry-assets/v3/455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef.tar.gz" | sha256sum -c -
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('public/registry-assets/v3/BUILD_RECEIPT.json').read_text())
+          assert r['source_artifact_run']==37040477578
+          assert r['source_artifact_id']==11241826822
+          assert r['source_head_sha']=='2eecf0b809c75078af1fb935ecfe07e9d60116da'
+          assert r['parent_layers']==28 and r['candidate_layers']==29
+          assert not r['weights_changed'] and not r['submission_changed']
+          assert r['full_container_amd_qualified'] is False and r['promotion_allowed'] is False
+          print(json.dumps(r,indent=2))
+          PY
+
+      - name: Run all registry tests
+        run: node --experimental-strip-types --test tests/von-registry*.test.mjs
+
+      - name: Full Next build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build
