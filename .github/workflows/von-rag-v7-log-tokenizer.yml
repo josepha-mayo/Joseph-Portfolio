@@ -241,6 +241,7 @@ jobs:
           PY
       - name: Apply V10 parser transform and freeze source
         run: |
+          set -o pipefail
           python delivery/von-rag-r19/evidence/unified-integration/apply_v10.py             unified-evidence/candidate/delivery/von-rag-r19 | tee unified-evidence/V10_TRANSFORM.json
           cp delivery/von-rag-r19/evidence/unified-integration/test_v10_parser_quotes.py             unified-evidence/candidate/delivery/von-rag-r19/tests/test_v10_parser_quotes.py
           python - <<'PY'
