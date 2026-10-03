@@ -5,13 +5,6 @@
  }
  _COLON = re.compile(r'^[ \t]*([A-Za-z][A-Za-z _]{0,50}):[ \t]*(.+?)[ \t]*$', re.M)
 -_EQUALS = re.compile(r'(?<!\w)([A-Za-z][A-Za-z0-9_]*)=(?:"([^"\r\n]*)"|([^\s]+))')
--
--_SPACED_EQUALS = re.compile(
--    r'^[ \t]*([A-Za-z][A-Za-z0-9_]*[ \t]+[A-Za-z][A-Za-z0-9_ ]{0,48})'
--    r'[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))[ \t]*$', re.M)
--
--
--def _literal_fields(record):
 +_LOG_EQUALS = re.compile(
 +    r'(?<!\w)('
 +    r'part[ \t]+(?:number|no)|serial[ \t]+number|'
@@ -19,8 +12,13 @@
 +    r'fixed[ \t]+in|fixed[ \t]+version|firmware[ \t]+version|fix[ \t]+version|resolved[ \t]+in|'
 +    r'[A-Za-z][A-Za-z0-9_]*'
 +    r')[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))', re.I)
-+
-+
+ 
+-_SPACED_EQUALS = re.compile(
+-    r'^[ \t]*([A-Za-z][A-Za-z0-9_]*[ \t]+[A-Za-z][A-Za-z0-9_ ]{0,48})'
+-    r'[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))[ \t]*$', re.M)
+ 
+-
+-def _literal_fields(record):
 +def _literal_buckets(record):
 +    """Return all literal structured values without erasing duplicates.
 +
@@ -98,10 +96,30 @@
              continue
 -        other_fields = _literal_fields(other)
 -        if other_fields is None or not _active(other, other_fields):
--            continue
++        buckets = _literal_buckets(other)
++
++        # Missing status keeps the historical current default. If duplicate
++        # statuses include "current", treat the record conservatively as a
++        # potential current conflict rather than allowing an added duplicate
++        # to erase it. Purely non-current records do not veto current evidence.
++        statuses = {v.casefold() for v in buckets.get('status', ['current'])}
++        if 'current' not in statuses:
++            continue
++
++        primary = _bucket_ids(buckets, _PRIMARY)
++        if primary and primary.isdisjoint(wanted):
++            continue
++
++        other_secondary = _conflict_secondary(buckets)
++        common = secondary.keys() & other_secondary.keys()
++        if not common:
+             continue
 -        typed = _typed_ids(other_fields, tolerate_unparsed=True)
 -        if typed is None:
--            continue
++        # Every shared identifier type must remain compatible. Extra distinct
++        # types refine the entity; duplicate values of one type cannot hide it.
++        if any(secondary[kind].isdisjoint(other_secondary[kind]) for kind in common):
+             continue
 -        primary = _ids(typed, _PRIMARY)
 -        other_secondary = _secondary_ids(typed)
 -        if not other_secondary or (primary and primary != wanted):
@@ -111,22 +129,11 @@
 -            observed = {_scalar(v, 'firmware') for k, v in other_fields.items() if k in aliases}
 -            if observed and observed != values:
 -                return True
-+        buckets = _literal_buckets(other)
-+        statuses = {v.casefold() for v in buckets.get('status', ['current'])}
-+        if 'current' not in statuses:
-+            continue
-+        primary = _bucket_ids(buckets, _PRIMARY)
-+        if primary and primary.isdisjoint(wanted):
-+            continue
-+        other_secondary = _conflict_secondary(buckets)
-+        common = secondary.keys() & other_secondary.keys()
-+        if not common:
-+            continue
-+        if any(secondary[kind].isdisjoint(other_secondary[kind]) for kind in common):
-+            continue
++
 +        other_tickets = _bucket_ids(buckets, _TICKET)
 +        if not ticket <= other_tickets:
 +            continue
++
 +        observed = {
 +            _scalar(raw, 'firmware')
 +            for key, raw_values in buckets.items() if key in aliases
@@ -136,6 +143,8 @@
 +        if observed and observed != values:
 +            return True
      return False
+ 
+ 
 --- a/delivery/von-rag-r19/von_rag/compact.py
 +++ b/delivery/von-rag-r19/von_rag/compact.py
 @@ -89,14 +89,18 @@
@@ -160,3 +169,5 @@
 +                    if _key(lm.group(1)) not in aliases:
 +                        scopes.append(lm.group(2) if lm.group(2) is not None else lm.group(3))
          scope_ids=set().union(*(identifiers(s) for s in scopes)) if scopes else set()
+         if wanted and scope_ids and not scope_ids<=wanted:
+             from .scope_links import selected_firmware_scope_link
