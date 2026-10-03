@@ -1,0 +1,165 @@
+{
+  "schema": "von-read-quest-evidence-2026-10-03-r1",
+  "updated_utc": "2026-10-03T22:15:00Z",
+  "project": {
+    "name": "von-read",
+    "participation": "solo",
+    "lablab_username": "josepha_mayo456",
+    "public_submission": "https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/von-read/von-read-exact-ocr-on-amd",
+    "repository": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/master/public/research/von-read",
+    "demo": "https://josephmayo.site/research/von-read/walkthrough.html",
+    "scoped_license": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/source/LICENSE.txt"
+  },
+  "live_quest_state": {
+    "checked_utc": "2026-10-03T22:13:51.209422+00:00",
+    "xp": 530,
+    "rank": 474,
+    "mini_challenges_submitted": 2,
+    "rank20_xp": 1800,
+    "rank10_xp": 2250,
+    "leader_xp": 4350,
+    "immediate_top20_gap": 1270,
+    "note": "This is the public Quest leaderboard. No new XP is claimed by this evidence receipt."
+  },
+  "active_event_rates": {
+    "source": "current LabLab Challenge page, active non-commented XP rows",
+    "onboarding": {
+      "join_discord": 50,
+      "complete_amd_profile": 100
+    },
+    "learning": {
+      "academy_course_each": 150,
+      "five_course_bonus": 100,
+      "ten_course_bonus": 100,
+      "rocm_certification": 150
+    },
+    "building": {
+      "first_project": 50,
+      "connect_github": 5,
+      "project_demo": 150,
+      "complete_project": 200,
+      "open_source_project": 200,
+      "amd_hackathon_participation": 300,
+      "amd_technologies": 250,
+      "project_milestone_each": 100,
+      "project_milestone_cap": 3
+    },
+    "community": {
+      "answer_discord_question": 5,
+      "like_received": 2,
+      "accepted_solution": 50,
+      "community_contributor_badge": 250
+    },
+    "update_cadence": "Event page says points update every Friday covering activity through the preceding Wednesday."
+  },
+  "building_evidence": {
+    "first_project": "Existing public non-draft von-read submission.",
+    "github_repo": "Saved in LabLab submission and public.",
+    "demo": "Walkthrough URL is explicitly present in LabLab description/additional information.",
+    "complete_project": "Non-draft submission with repo, walkthrough, MC2 and MC3 artifacts.",
+    "open_source": "Public implementation/tests/receipts with scoped LICENSE.txt.",
+    "amd_hackathon_participation": "Existing solo entry in this AMD x LabLab AI Academy Challenge.",
+    "amd_technologies": "ROCm and recorded AMD Instinct MI300X VF execution.",
+    "milestones": [
+      "MC2 R16 — AMD-tested input decoder; 5/5 authored format rescues.",
+      "MC3 R61 — paired MI300X 34/58 → 58/58, zero regressions.",
+      "Production R61 — digest-pinned OCI; fresh anonymous pull verified 28 layers / 40.302 GB."
+    ],
+    "submission_refresh": {
+      "updated_utc": "2026-10-03T21:58:49.967Z",
+      "submitted_utc": "2026-10-03T21:59:12.916Z",
+      "lablab_activity_types": [
+        "SUBMISSION_UPDATED",
+        "SUBMISSION_SUBMITTED"
+      ],
+      "submission_id": "yl8gqdx6phtn442tf8ds2kum",
+      "event_id": "kfszsmh56xha2sjssxedgxze",
+      "exact_mc2_digest_unchanged": "sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad",
+      "exact_mc3_digest_unchanged": "sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07"
+    },
+    "award_claimed": false,
+    "visible_building_ceiling": 1455,
+    "note": "Eligibility evidence only. Individual rows may overlap already-credited XP or require manual review."
+  },
+  "referral": {
+    "generated_via_official_authenticated_endpoint": true,
+    "share_url": "https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge?invite=inv_u3q67xxspf6hiwjrgb0yyy2r&utm_source=member_invite&utm_medium=referral&utm_campaign=amd-lablab-ai-academy-challenge",
+    "backend_stats_checked_utc": "2026-10-03T22:13:00Z",
+    "referred_count": 0,
+    "completed_count": 0,
+    "points_earned": 0,
+    "points_per_completed_referral": 200,
+    "public_exposure": {
+      "github_readme": true,
+      "research_page_committed": true,
+      "walkthrough_page_committed": true,
+      "github_referral_commit": "4b490116a1d1ef7968f242ae004018abc01f2036",
+      "production_site_deploy_live": false,
+      "note": "GitHub README is live. Manual Netlify upload build failed before publish, leaving healthy production deploy unchanged."
+    },
+    "award_claimed": false
+  },
+  "community_activity": {
+    "new_replies": [
+      {
+        "thread": "I cant find my referral link anywhere.",
+        "thread_id": "cmtlqquac00yus601e2dlgzal",
+        "reply_id": "cmusxjl4t028os601zxynbn9k"
+      },
+      {
+        "thread": "How to invite teammates",
+        "thread_id": "cmtrgyfh100u5s6017s2hiow5",
+        "reply_id": "cmusxjoe6028ss601juxp0z3h"
+      },
+      {
+        "thread": "Discord connection issue",
+        "thread_id": "cmtlbk83x0jfis601z4hr87em",
+        "reply_id": "cmusxjr9r028us601gx0hkg2d"
+      }
+    ],
+    "new_thread": {
+      "title": "RAG tip: exact citations can be harder than the answer itself",
+      "thread_id": "cmusxrs2f014ts601m2hf8cpd"
+    },
+    "note": "Substantive LabLab forum contributions. The active XP table specifically names Discord answers, likes, accepted solutions and Contributor badge, so no Quest XP is claimed for forum posts themselves.",
+    "award_claimed": false
+  },
+  "course_route": {
+    "authenticated_academy_session_available": false,
+    "top20_math_under_active_lablab_rate": {
+      "courses": 8,
+      "course_xp": 1200,
+      "five_course_bonus": 100,
+      "total_new": 1300,
+      "projected_xp": 1830
+    },
+    "safer_ten_course_math": {
+      "courses": 10,
+      "course_xp": 1500,
+      "five_course_bonus": 100,
+      "ten_course_bonus": 100,
+      "total_new": 1700,
+      "projected_xp": 2230
+    },
+    "note": "Course completions/assessments must be genuine. No course XP is claimed."
+  },
+  "pending_reconciliation": {
+    "existing_assessment_request_totals": [
+      905,
+      550
+    ],
+    "latest_followup_date": "2026-10-03",
+    "organizer_reply_received": false,
+    "guaranteed_additional_xp": false,
+    "overlap_possible": true
+  },
+  "not_claimed": [
+    "new Quest XP from this receipt",
+    "course completion",
+    "ROCm certification completion",
+    "referral completion",
+    "community accepted-solution or badge award",
+    "hidden grader score",
+    "full-container AMD GPU qualification"
+  ]
+}
