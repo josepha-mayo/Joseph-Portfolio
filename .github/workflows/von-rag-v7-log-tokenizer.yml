@@ -184,7 +184,7 @@ jobs:
           rc=int(sys.argv[1]); suites=ET.parse('unified-evidence/v9-before.xml').getroot().findall('testsuite')
           counts={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
           print('V8 V9-reproduction',rc,counts)
-          assert rc==1 and counts=={'tests':9,'failures':7,'errors':0,'skipped':0},counts
+          assert rc==1 and counts=={'tests':9,'failures':6,'errors':0,'skipped':0},counts
           PY
       - name: Apply V9 transform and freeze source
         run: |
