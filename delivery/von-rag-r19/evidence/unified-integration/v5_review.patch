@@ -1,0 +1,162 @@
+--- a/delivery/von-rag-r19/von_rag/scope_links.py
++++ b/delivery/von-rag-r19/von_rag/scope_links.py
+@@ -21,30 +21,45 @@
+     'module': 'module',
+ }
+ _COLON = re.compile(r'^[ \t]*([A-Za-z][A-Za-z _]{0,50}):[ \t]*(.+?)[ \t]*$', re.M)
+-_EQUALS = re.compile(r'(?<!\w)([A-Za-z][A-Za-z0-9_]*)=(?:"([^"\r\n]*)"|([^\s]+))')
+-
+-_SPACED_EQUALS = re.compile(
+-    r'^[ \t]*([A-Za-z][A-Za-z0-9_]*[ \t]+[A-Za-z][A-Za-z0-9_ ]{0,48})'
+-    r'[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))[ \t]*$', re.M)
+-
+-
+-def _literal_fields(record):
++_LOG_EQUALS = re.compile(
++    r'(?<!\w)('
++    r'part[ \t]+(?:number|no)|serial[ \t]+number|'
++    r'ticket[ \t]+id|issue[ \t]+id|bug[ \t]+id|case[ \t]+id|defect[ \t]+id|'
++    r'fixed[ \t]+in|fixed[ \t]+version|firmware[ \t]+version|fix[ \t]+version|resolved[ \t]+in|'
++    r'[A-Za-z][A-Za-z0-9_]*'
++    r')[ \t]*=[ \t]*(?:"([^"\r\n]*)"|([^\s]+))', re.I)
++
++
++def _literal_buckets(record):
++    """Return all literal structured values without erasing duplicates.
++
++    Colon records remain line-oriented. Log records additionally support
++    multiple key=value tokens on one physical line, including the known
++    multi-word scope/ticket/firmware labels used by this proof.
++    """
+     text = record.get('text', '')
+     pairs = [(m[1], m[2]) for m in _COLON.finditer(text)]
+     if record.get('kind') == 'log' or record.get('source', '').endswith('.log'):
+         pairs.extend((m[1], m[2] if m[2] is not None else m[3])
+-                     for m in _EQUALS.finditer(text))
+-        # Structured log exports may use multi-word keys such as Fixed in=4.3.2.
+-        # Keep this line-anchored so ordinary prose is untouched.
+-        pairs.extend((m[1], m[2] if m[2] is not None else m[3])
+-                     for m in _SPACED_EQUALS.finditer(text))
+-    fields = {}
++                     for m in _LOG_EQUALS.finditer(text))
++    buckets = {}
+     for name, value in pairs:
+         key = re.sub(r'[^a-z]', '', name.casefold())
+-        if key in fields:
+-            return None  # Repeated literal keys do not establish one record.
+-        fields[key] = value.strip()
+-    return fields
++        buckets.setdefault(key, []).append(value.strip())
++    return buckets
++
++
++def _literal_fields(record):
++    """Strict single-record view used for selected evidence.
++
++    Repeated selected fields remain ambiguous even when text-identical. This
++    intentionally differs from conflict scanning, which preserves every value
++    so an unselected malformed record cannot hide a visible current conflict.
++    """
++    buckets = _literal_buckets(record)
++    if any(len(values) != 1 for values in buckets.values()):
++        return None
++    return {key: values[0] for key, values in buckets.items()}
+ 
+ 
+ def _typed_ids(fields, *, tolerate_unparsed=False):
+@@ -96,6 +111,27 @@
+     return not record.get('retired') and fields.get('status', 'current').casefold() == 'current'
+ 
+ 
++def _conflict_secondary(buckets):
++    """Typed secondary identifiers from all duplicate values in a sibling."""
++    out = {}
++    for key, values in buckets.items():
++        kind = _SECONDARY_TYPES.get(key)
++        if kind is None:
++            continue
++        ids = set().union(*(identifiers(value) for value in values))
++        if ids:
++            out.setdefault(kind, set()).update(ids)
++    return out
++
++
++def _bucket_ids(buckets, keys):
++    return set().union(*(
++        identifiers(value)
++        for key, values in buckets.items() if key in keys
++        for value in values
++    ))
++
++
+ def _has_conflicting_value(records, value, fields, scope_ids, ticket, query):
+     """A second visible current value for the same typed join cannot be ignored."""
+     _, aliases = _property(query)
+@@ -107,21 +143,41 @@
+     for other in records:
+         if other is value or other.get('retired'):
+             continue
+-        other_fields = _literal_fields(other)
+-        if other_fields is None or not _active(other, other_fields):
+-            continue
+-        typed = _typed_ids(other_fields, tolerate_unparsed=True)
+-        if typed is None:
+-            continue
+-        primary = _ids(typed, _PRIMARY)
+-        other_secondary = _secondary_ids(typed)
+-        if not other_secondary or (primary and primary != wanted):
+-            continue
+-        if (_compatible_identity(secondary, other_secondary)
+-                and _ids(typed, _TICKET) == ticket):
+-            observed = {_scalar(v, 'firmware') for k, v in other_fields.items() if k in aliases}
+-            if observed and observed != values:
+-                return True
++        buckets = _literal_buckets(other)
++        statuses = {v.casefold() for v in buckets.get('status', ['current'])}
++        if 'current' not in statuses:
++            continue
++        primary = _bucket_ids(buckets, _PRIMARY)
++        if primary and primary.isdisjoint(wanted):
++            continue
++        other_secondary = _conflict_secondary(buckets)
++        common = secondary.keys() & other_secondary.keys()
++        if not common:
++            continue
++        if any(secondary[kind].isdisjoint(other_secondary[kind]) for kind in common):
++            continue
++        other_tickets = _bucket_ids(buckets, _TICKET)
++        if not ticket <= other_tickets:
++            continue
++        observed = {
++            _scalar(raw, 'firmware')
++            for key, raw_values in buckets.items() if key in aliases
++            for raw in raw_values
++        }
++        observed.discard(None)
++        if observed and observed != values:
++            return True
+     return False
+--- a/delivery/von-rag-r19/von_rag/compact.py
++++ b/delivery/von-rag-r19/von_rag/compact.py
+@@ -89,14 +89,18 @@
+             r'\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
+             r'serial\s+number|item|assembly|module)\s*:\s*(.*)',re.I)
+         scope_log_equals=re.compile(
+-            r'\s*(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
+-            r'serial\s+number|item|assembly|module)\s*=\s*(.*)',re.I)
++            r'(?<!\w)(product|model|device|part\s+(?:number|no)|pn|sku|asset|component|'
++            r'serial\s+number|item|assembly|module)\s*=\s*'
++            r'(?:"([^"\r\n]*)"|([^\s]+))',re.I)
+         allow_log_equals=(c.get('kind')=='log' or c.get('source','').endswith('.log'))
+         for line in c['text'].splitlines():
+             m=scope_line.match(line)
+-            if m is None and allow_log_equals:
+-                m=scope_log_equals.match(line)
+-            if m and _key(m.group(1)) not in aliases: scopes.append(m.group(2))
++            if m and _key(m.group(1)) not in aliases:
++                scopes.append(m.group(2))
++            if allow_log_equals:
++                for lm in scope_log_equals.finditer(line):
++                    if _key(lm.group(1)) not in aliases:
++                        scopes.append(lm.group(2) if lm.group(2) is not None else lm.group(3))
+         scope_ids=set().union(*(identifiers(s) for s in scopes)) if scopes else set()
