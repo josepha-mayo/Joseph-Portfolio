@@ -1,6 +1,6 @@
 {
   "schema": "von-read-quest-evidence-2026-10-03-r1",
-  "updated_utc": "2026-10-03T22:29:23.539Z",
+  "updated_utc": "2026-10-03T22:44:40.003Z",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -196,5 +196,22 @@
     "community accepted-solution or badge award",
     "hidden grader score",
     "full-container AMD GPU qualification"
-  ]
+  ],
+  "onboarding_evidence": {
+    "verified_utc": "2026-10-03T22:43:00Z",
+    "lablab_profile_completeness_before": 95,
+    "lablab_profile_completeness_after": 100,
+    "missing_component_completed": "cover image",
+    "cover_source": "public/architecture.png from josepha-mayo/Joseph-Portfolio",
+    "discord_connected": true,
+    "discord_username": "josepha_mayo",
+    "github_connected": true,
+    "amd_sso_connected": true,
+    "magic_link_connected": true,
+    "public_evidence": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/QUEST_ONBOARDING_EVIDENCE_2026-10-03.md",
+    "quest_xp_after_change": 530,
+    "quest_rank_after_change": 474,
+    "immediate_quest_delta_observed": 0,
+    "note": "Evidence only. Do not claim +50 Discord or +100 profile as newly owed unless the organizer confirms they are not already included in the 530."
+  }
 }
