@@ -4,7 +4,7 @@ on:
     branches: [amd-unified-candidate-20261002]
     paths:
       - .github/workflows/von-rag-v5-review-hardening.yml
-      - delivery/von-rag-r19/evidence/unified-integration/v5_review.patch
+      - delivery/von-rag-r19/evidence/unified-integration/v5_review_fixes.patch
       - delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py
       - delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py
 permissions:
@@ -36,9 +36,6 @@ jobs:
           git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
           git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
           git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
-          git fetch --no-tags --depth=1 origin b416c16d38115f80c69360783a4b0786f4ad82ec
-          git fetch --no-tags --depth=1 origin f561326064edc71dc9409626ae964ee427bd5583
-          git fetch --no-tags --depth=1 origin 013bf6945512ff8952e49d2c126cf60027e7f941
       - name: Reconstruct exact successful V4
         run: |
           python - <<'PY'
@@ -69,16 +66,18 @@ jobs:
       - name: Apply exact V5 patch and freeze source
         run: |
           mkdir -p /tmp/v5
-          git show b416c16d38115f80c69360783a4b0786f4ad82ec:delivery/von-rag-r19/evidence/unified-integration/v5_review.patch > /tmp/v5/v5_review.patch
-          git show f561326064edc71dc9409626ae964ee427bd5583:delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py > /tmp/v5/test_v5_review_regressions.py
-          git show 013bf6945512ff8952e49d2c126cf60027e7f941:delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py > /tmp/v5/v5_fuzz.py
+          cp delivery/von-rag-r19/evidence/unified-integration/v5_review_fixes.patch /tmp/v5/v5_review.patch
+          cp delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py /tmp/v5/test_v5_review_regressions.py
+          cp delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py /tmp/v5/v5_fuzz.py
           python - <<'PY'
           import hashlib,subprocess,json,shutil
           from pathlib import Path
           patch=Path('/tmp/v5/v5_review.patch')
           patch_sha=hashlib.sha256(patch.read_bytes()).hexdigest()
-          subprocess.run(['git','apply','--check','--directory=unified-evidence/candidate',str(patch.resolve())],check=True)
-          subprocess.run(['git','apply','--directory=unified-evidence/candidate',str(patch.resolve())],check=True)
+          assert patch_sha=='b91823aa9d8abf615b5e69e9d8ec5694fbdb55cf539c6e02623cb8b65ed13426',patch_sha
+          dest='unified-evidence/candidate/delivery/von-rag-r19'
+          subprocess.run(['git','apply','--check','--directory='+dest,str(patch.resolve())],check=True)
+          subprocess.run(['git','apply','--directory='+dest,str(patch.resolve())],check=True)
           test=Path('/tmp/v5/test_v5_review_regressions.py')
           dst=Path('unified-evidence/candidate/delivery/von-rag-r19/tests/test_v5_review_regressions.py')
           shutil.copy2(test,dst)
@@ -90,9 +89,9 @@ jobs:
               'schema':'von-v5-source-transform-1',
               'base_v4_scope_links':'f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03',
               'base_v4_compact':'4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3',
-              'patch_commit':'b416c16d38115f80c69360783a4b0786f4ad82ec',
-              'test_commit':'f561326064edc71dc9409626ae964ee427bd5583',
-              'fuzz_commit':'013bf6945512ff8952e49d2c126cf60027e7f941',
+              'patch_source':'current branch v5_review_fixes.patch',
+              'test_source':'current branch test_v5_review_regressions.py',
+              'fuzz_source':'current branch v5_fuzz.py',
               'patch_sha256':patch_sha,
               'scope_links_sha256':manifest['von_rag/scope_links.py'],
               'compact_sha256':manifest['von_rag/compact.py'],
