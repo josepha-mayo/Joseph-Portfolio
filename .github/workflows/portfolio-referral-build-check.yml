@@ -1,0 +1,23 @@
+name: portfolio referral production build check
+on:
+  push:
+    branches: [portfolio-referral-live-check-20261003]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Verify referral CTA in generated source
+        run: |
+          grep -q 'inv_u3q67xxspf6hiwjrgb0yyy2r' src/app/page.tsx
+          grep -q 'join the AMD AI Academy Challenge' src/app/page.tsx
+          echo 'Referral CTA source verified.'
