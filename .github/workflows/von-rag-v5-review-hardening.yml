@@ -36,7 +36,7 @@ jobs:
           git fetch --no-tags --depth=1 origin f8738524f29433da0dc3697a863f5b735e315f95
           git fetch --no-tags --depth=1 origin 7c1dafd1d7faf71d38256b2ee8378c7fb1daf311
           git fetch --no-tags --depth=1 origin ff4cb536079868af4758c2422db18417460f63d9
-          git fetch --no-tags --depth=1 origin 0fa865484b39e5f50a2dd32891fed2e759916be0
+          git fetch --no-tags --depth=1 origin b416c16d38115f80c69360783a4b0786f4ad82ec
           git fetch --no-tags --depth=1 origin f561326064edc71dc9409626ae964ee427bd5583
           git fetch --no-tags --depth=1 origin 013bf6945512ff8952e49d2c126cf60027e7f941
       - name: Reconstruct exact successful V4
@@ -69,7 +69,7 @@ jobs:
       - name: Apply exact V5 patch and freeze source
         run: |
           mkdir -p /tmp/v5
-          git show 0fa865484b39e5f50a2dd32891fed2e759916be0:delivery/von-rag-r19/evidence/unified-integration/v5_review.patch > /tmp/v5/v5_review.patch
+          git show b416c16d38115f80c69360783a4b0786f4ad82ec:delivery/von-rag-r19/evidence/unified-integration/v5_review.patch > /tmp/v5/v5_review.patch
           git show f561326064edc71dc9409626ae964ee427bd5583:delivery/von-rag-r19/evidence/unified-integration/test_v5_review_regressions.py > /tmp/v5/test_v5_review_regressions.py
           git show 013bf6945512ff8952e49d2c126cf60027e7f941:delivery/von-rag-r19/evidence/unified-integration/v5_fuzz.py > /tmp/v5/v5_fuzz.py
           python - <<'PY'
@@ -90,7 +90,7 @@ jobs:
               'schema':'von-v5-source-transform-1',
               'base_v4_scope_links':'f82ffec38b20303fe40727c48a9714e31d81e6816af8b1c205b0a8782a66aa03',
               'base_v4_compact':'4060cb04ea6c24e805386e7a1d07d877c46c1c342745176b539cb9b0183aaad3',
-              'patch_commit':'0fa865484b39e5f50a2dd32891fed2e759916be0',
+              'patch_commit':'b416c16d38115f80c69360783a4b0786f4ad82ec',
               'test_commit':'f561326064edc71dc9409626ae964ee427bd5583',
               'fuzz_commit':'013bf6945512ff8952e49d2c126cf60027e7f941',
               'patch_sha256':patch_sha,
