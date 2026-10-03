@@ -61,4 +61,12 @@ jobs:
           grep -F 'sha256:2cd44cd0a63ecf1edd61a3aaf0329fd8df22f802eaaa3b5b090d3ff82dc5759d' netlify.toml
           grep -F 'sha256:180056296b31d73e2e725cb376bb5d9601561befd651e8d2a0c554c5d486f37b' netlify.toml
           grep -F 'sha256:455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef' netlify.toml
-          echo "V3 source/registry gate passed. Full Next build is delegated to the Netlify deploy preview because the legacy R24 prebuild currently receives an unrelated upstream HTTP 403 on GitHub runners."
+          echo "V3 source/registry gate passed."
+
+      - name: Full Next build with preview-safe incumbent metadata
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          VON_V3_PREVIEW: '1'
+        run: |
+          npm ci
+          npm run build
