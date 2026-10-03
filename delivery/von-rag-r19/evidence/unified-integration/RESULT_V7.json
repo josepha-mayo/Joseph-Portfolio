@@ -1,0 +1,77 @@
+{
+  "schema": "von-unified-candidate-v7-log-token-result-1",
+  "date_utc": "2026-10-03",
+  "tested_commit": "d9781dfb012dac819f5570b7d13cf66ad5cc8ca1",
+  "workflow_run": 37141496781,
+  "pull_request": 68,
+  "supersedes_for_candidate_selection": [
+    "RESULT.json",
+    "RESULT_V2.json",
+    "RESULT_V3.json",
+    "RESULT_V4.json",
+    "RESULT_V5.json"
+  ],
+  "source": {
+    "scope_links_py_sha256": "d668e5fb0e5bce78be262273000dade83766af1d6bfd5172aa630b343d5a2373",
+    "compact_py_sha256": "51d7a8b8b1941060c2ff693c609e9296a53c5995794e069bf8d4abe264c0fa9a",
+    "files": 89
+  },
+  "matrix": {
+    "python_3_12": {
+      "v5_reproduction": {
+        "tests": 14,
+        "failures": 8,
+        "errors": 0,
+        "skipped": 0
+      },
+      "full_suite": {
+        "tests": 698,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "metamorphic": {
+        "checks": 10000,
+        "passed": 10000,
+        "failures": 0
+      },
+      "artifact_id": 11280262913,
+      "artifact_sha256": "a749d32047a563f4aea34f9ba38724a3b01b8bcff85a4b02fe5ac6c2fcbb1bd6"
+    },
+    "python_3_14": {
+      "v5_reproduction": {
+        "tests": 14,
+        "failures": 8,
+        "errors": 0,
+        "skipped": 0
+      },
+      "full_suite": {
+        "tests": 698,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "metamorphic": {
+        "checks": 10000,
+        "passed": 10000,
+        "failures": 0
+      },
+      "artifact_id": 11280940067,
+      "artifact_sha256": "95dde2f051ab6a1e6c2bc75c04570f84fcf7cc6efa5e79711d1269706b2efdf6"
+    }
+  },
+  "changes": [
+    "Parses top-level key=value log tokens without rescanning quoted unknown-field contents.",
+    "Supports escaped quotes inside quoted values without reopening scope parsing.",
+    "Consumes underscore-prefixed unknown keys so nested scope-looking text cannot leak.",
+    "Normalizes .log suffix checks case-insensitively, including .LOG.",
+    "Preserves V5 typed identity, ticket linkage, current-authority and conflict rejection semantics."
+  ],
+  "scope": "Software/parser/retrieval/scripted-selection validation only. Not hidden-grader accuracy or fresh neural evaluation.",
+  "fresh_native_model_calls": 0,
+  "full_container_amd_gpu_qualified": false,
+  "submitted_candidate": "R61 unchanged",
+  "submission_changed": false,
+  "xp_award_claimed": false,
+  "promotion_allowed": false
+}
