@@ -63,6 +63,17 @@ with tempfile.TemporaryDirectory() as td:
             except GroundingError:return
             raise AssertionError("malformed current conflict accepted")
         cases.append(("malformed_conflict",malformed_conflict))
+        def malformed_foreign():
+            other=parse(root,"foreign"+ext,'Status=current Note="unterminated Product=PX-999 Asset=BOARD-789 Ticket=CASE-5179 Fixed_in=4.3.3')[0]
+            got=selection([r0,parse(root,"value3"+ext,'Fixed_in=4.3.2 Status=current Asset=BOARD-789 Ticket=CASE-5179')[0],other])
+            assert got["answer"]=="4.3.2"
+        cases.append(("malformed_foreign_primary",malformed_foreign))
+        def malformed_matching():
+            other=parse(root,"match"+ext,'Status=current Note="unterminated Product=PX-237 Asset=BOARD-789 Ticket=CASE-5179 Fixed_in=4.3.3')[0]
+            try: selection([r0,parse(root,"value4"+ext,'Fixed_in=4.3.2 Status=current Asset=BOARD-789 Ticket=CASE-5179')[0],other])
+            except GroundingError:return
+            raise AssertionError("matching malformed current conflict accepted")
+        cases.append(("malformed_matching_primary",malformed_matching))
         for name,fn in cases:
             result["checks"]+=1
             try: fn(); result["passed"]+=1
