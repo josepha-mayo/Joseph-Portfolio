@@ -1,6 +1,6 @@
 {
-  "schema": "von-read-quest-evidence-2026-10-03-r1",
-  "updated_utc": "2026-10-03T22:44:40.003Z",
+  "schema": "von-read-quest-evidence-2026-10-04-r2",
+  "updated_utc": "2026-10-04T00:42:39.625Z",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -8,7 +8,8 @@
     "public_submission": "https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/von-read/von-read-exact-ocr-on-amd",
     "repository": "https://github.com/josepha-mayo/Joseph-Portfolio/tree/master/public/research/von-read",
     "demo": "https://josephmayo.site/research/von-read/walkthrough.html",
-    "scoped_license": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/source/LICENSE.txt"
+    "scoped_license": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/source/LICENSE.txt",
+    "project_root_license": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/LICENSE.txt"
   },
   "live_quest_state": {
     "checked_utc": "2026-10-03T22:13:51.209422+00:00",
@@ -55,9 +56,9 @@
   "building_evidence": {
     "first_project": "Existing public non-draft von-read submission.",
     "github_repo": "Saved in LabLab submission and public.",
-    "demo": "Walkthrough URL is explicitly present in LabLab description/additional information.",
+    "demo": "Walkthrough URL is now stored in LabLab's structured submission demoUrl field as well as the description/additional information.",
     "complete_project": "Non-draft submission with repo, walkthrough, MC2 and MC3 artifacts.",
-    "open_source": "Public implementation/tests/receipts with scoped LICENSE.txt.",
+    "open_source": "Public implementation/tests/receipts with the existing scoped MIT license; a discoverability copy now exists at the von-read project root without relicensing the surrounding portfolio.",
     "amd_hackathon_participation": "Existing solo entry in this AMD x LabLab AI Academy Challenge, plus approved/enrolled AMD Developer Hackathon ACT III registration after joining the Academy program. ACT III's build window starts October 12; enrollment is evidence of registration, not a claim that the +300 participation threshold has already been met.",
     "amd_technologies": "ROCm and recorded AMD Instinct MI300X VF execution.",
     "milestones": [
@@ -99,6 +100,21 @@
       "thread_id": "cmusyj8wz008es6010pdfqbgx",
       "created_utc": "2026-10-03T22:22:18.410Z",
       "note": "Public Challenge discussion asking for the official post-submission Building-XP credit route. No XP award is claimed from creating the thread."
+    },
+    "demo_structural_field": {
+      "updated_utc": "2026-10-04T00:42:39.625Z",
+      "submission_id": "yl8gqdx6phtn442tf8ds2kum",
+      "demoUrl": "https://josephmayo.site/research/von-read/walkthrough.html",
+      "demoPlatform": "OTHER",
+      "server_update_status": 200,
+      "activity_type": "SUBMISSION_SUBMITTED",
+      "note": "The event-specific editor does not expose a demo input, so the existing truthful walkthrough was added to the submission's supported demoUrl/demoPlatform fields through the same authenticated submission update action. No XP award is claimed until the Quest ledger updates."
+    },
+    "open_source_discoverability": {
+      "project_root_license_path": "public/research/von-read/LICENSE.txt",
+      "commit": "fe03d1509dea4d906dfdb51f71c50e88cb2413c8",
+      "scope_unchanged": true,
+      "note": "Top-level copy points to the same project-scoped MIT terms and explicitly does not relicense the surrounding portfolio, upstream models, datasets, or third-party artifacts."
     }
   },
   "referral": {
