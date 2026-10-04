@@ -1,6 +1,6 @@
 {
   "schema": "von-read-quest-evidence-2026-10-04-r2",
-  "updated_utc": "2026-10-04T00:42:39.625Z",
+  "updated_utc": "2026-10-04T11:20:18.793Z",
   "project": {
     "name": "von-read",
     "participation": "solo",
@@ -12,7 +12,7 @@
     "project_root_license": "https://github.com/josepha-mayo/Joseph-Portfolio/blob/master/public/research/von-read/LICENSE.txt"
   },
   "live_quest_state": {
-    "checked_utc": "2026-10-03T22:13:51.209422+00:00",
+    "checked_utc": "2026-10-04T11:09:00Z",
     "xp": 530,
     "rank": 474,
     "mini_challenges_submitted": 2,
@@ -99,7 +99,10 @@
       "thread_title": "How are Building XP rows credited after a submission update?",
       "thread_id": "cmusyj8wz008es6010pdfqbgx",
       "created_utc": "2026-10-03T22:22:18.410Z",
-      "note": "Public Challenge discussion asking for the official post-submission Building-XP credit route. No XP award is claimed from creating the thread."
+      "note": "Public Challenge discussion asking for the official post-submission Building-XP credit route. No XP award is claimed from creating the thread.",
+      "reply_id": "cmutqbrzd009as601bwopueup",
+      "reply_created_utc": "2026-10-04T11:20:18.793Z",
+      "reply_note": "Existing thread updated after the structured demo repair; it also reports the event page's View My Dashboard route returning LabLab's 404 page. No XP award claimed."
     },
     "demo_structural_field": {
       "updated_utc": "2026-10-04T00:42:39.625Z",
@@ -229,5 +232,12 @@
     "quest_rank_after_change": 474,
     "immediate_quest_delta_observed": 0,
     "note": "Evidence only. Do not claim +50 Discord or +100 profile as newly owed unless the organizer confirms they are not already included in the 530."
+  },
+  "dashboard_link_check": {
+    "checked_utc": "2026-10-04T11:20:18.793Z",
+    "label": "View My Dashboard",
+    "url": "https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/live/xp-standings",
+    "result": "lablab_404_page",
+    "note": "Recorded as a support-path issue only; not treated as XP evidence or an award."
   }
 }
