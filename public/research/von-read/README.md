@@ -2,9 +2,9 @@
 
 **von-read** is Joseph Ayanda's solo AMD AI Academy Challenge project for exact OCR and evidence-grounded RAG on AMD ROCm.
 
-## Current submission, verified October 1, 2026
+## Current submission, verified October 4, 2026
 
-**Mini-Challenge 2 remains R16. Mini-Challenge 3 is now R61.** The LabLab submission update succeeded, and a fresh editor load retained the R61 digest with MC2 unchanged. The public project description also identifies R61.
+**Mini-Challenge 2 remains R16. Mini-Challenge 3 remains R61.** The LabLab submission update succeeded, and a fresh editor load retained the R61 digest with MC2 unchanged. On October 4, the existing walkthrough was also repaired into LabLab's supported structured `demoUrl` / `demoPlatform` fields without changing either challenge image, the repository, technologies, categories, or evidence text.
 
 ```text
 MC2: awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws/von-read@sha256:af3000d3d290c4168e5f3d1cfa2df9d95019e4fa680c497546fb62410de7eaad
@@ -18,10 +18,13 @@ Submission and deployment are not an official score. **Actual full-container AMD
 - [Public LabLab submission](https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/von-read/von-read-exact-ocr-on-amd)
 - [Playable walkthrough / demo](https://josephmayo.site/research/von-read/walkthrough.html)
 - [Original OCR research report](https://josephmayo.site/research/von-read/)
-- [Original OCR implementation and reproducibility files](./source/) and [scoped MIT license](./source/LICENSE.txt)
+- [Original OCR implementation and reproducibility files](./source/), [scoped MIT license](./source/LICENSE.txt), and [project-root license copy](./LICENSE.txt)
 - [Exact published R61 RAG source and tests](https://github.com/josepha-mayo/Joseph-Portfolio/tree/73600eaa711cf6a78b2cd1de0db4da565a2b6eab/delivery/von-rag-r19)
 - [Decoder case study](./DECODER_CASE_STUDY.md)
-- [Current machine-readable Quest evidence](./QUEST_EVIDENCE_2026-10-03.json)\n- [One-page Quest Building evidence ledger](./QUEST_BUILDING_EVIDENCE_2026-10-03.md)\n- [Community Contributor evidence packet](./COMMUNITY_CONTRIBUTOR_EVIDENCE_2026-10-03.md)\n- [Quest onboarding evidence: 100% profile + connected accounts](./QUEST_ONBOARDING_EVIDENCE_2026-10-03.md)
+- [Current machine-readable Quest evidence](./QUEST_EVIDENCE_2026-10-03.json)
+- [One-page Quest Building evidence ledger](./QUEST_BUILDING_EVIDENCE_2026-10-03.md)
+- [Community Contributor evidence packet](./COMMUNITY_CONTRIBUTOR_EVIDENCE_2026-10-03.md)
+- [Quest onboarding evidence: 100% profile + connected accounts](./QUEST_ONBOARDING_EVIDENCE_2026-10-03.md)
 
 **Want to join the AMD AI Academy Challenge?** [Use Joseph's official LabLab referral link](https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge?invite=inv_u3q67xxspf6hiwjrgb0yyy2r&utm_source=member_invite&utm_medium=referral&utm_campaign=amd-lablab-ai-academy-challenge). This is a referral link: if a new participant joins and completes LabLab's referral criteria, Joseph may receive event XP. No purchase is required by this project.
 
@@ -52,7 +55,7 @@ The selected R16 candidate preserves the earlier model/runtime and changes only 
 |---|---|
 | First / complete project | Public, non-draft LabLab submission with repository, walkthrough, and saved MC2 R16 + MC3 R61 artifacts |
 | GitHub repository | This public project folder is the repository linked by the LabLab submission |
-| Project demo | The walkthrough presents the project, measured results, reproducible completion check, and limitations |
+| Project demo | The walkthrough presents the project, measured results, reproducible completion check, and limitations; LabLab now stores it in the structured Demo field |
 | Open-source project | Public implementation, tests, receipts and scoped licenses; exact R61 source is linked above |
 | AMD hackathon participation | Existing solo Academy Challenge entry plus approved/enrolled AMD Developer Hackathon ACT III registration; ACT III starts October 12, so enrollment is evidence, not a claim that the +300 participation threshold has already been met |
 | Built using AMD technologies | Recorded native ROCm work on AMD MI300X VF |
@@ -62,7 +65,7 @@ The selected R16 candidate preserves the earlier model/runtime and changes only 
 
 These rows support **eligibility review**, not a claim that Quest XP has been awarded. R61 supplements the same project's evidence; it is not a fourth milestone or duplicate project claim.
 
-The last verified public Quest snapshot on October 1 is **530 XP, rank 470, two Mini-Challenges submitted**. This documentation update did not refresh the leaderboard. The existing 905-XP and 550-XP assessment requests can overlap already credited work and are not guaranteed additional points.
+The latest verified public Quest snapshot on October 4 is **530 XP, rank 474, two Mini-Challenges submitted**; rank #20 is **1,800 XP** and the leader is **4,350 XP**. The visible Building rows total 1,455 XP, or 1,155 XP when the uncertain +300 AMD-hackathon-participation row is excluded. From the current 530 XP, that conservative Building subtotal plus one genuinely completed Academy course (+150 XP under the event ledger) would project 1,835 XP. This is scenario arithmetic only: none of the pending Building rows or future course credit is represented as awarded until the Quest ledger or organizer confirms it.
 
 ## Reproducibility and disclosure
 
