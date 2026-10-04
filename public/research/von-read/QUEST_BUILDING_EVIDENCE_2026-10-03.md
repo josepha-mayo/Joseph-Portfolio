@@ -8,9 +8,9 @@ It is an **eligibility packet, not an XP-award claim**. The public Quest board r
 | --- | ---: | --- | --- |
 | Create your first project | 50 | [Public non-draft von-read submission](https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/von-read/von-read-exact-ocr-on-amd) | Project exists and is submitted. |
 | Connect your GitHub repo | 5 | [Public von-read repository/evidence folder](https://github.com/josepha-mayo/Joseph-Portfolio/tree/master/public/research/von-read) | Repository is public and linked in project evidence. |
-| Submit a project demo | 150 | [Recorded walkthrough/demo](https://josephmayo.site/research/von-read/walkthrough.html) | Demo is referenced by the LabLab submission. |
+| Submit a project demo | 150 | [Recorded walkthrough/demo](https://josephmayo.site/research/von-read/walkthrough.html) | On October 4 the same walkthrough was saved into LabLab's structured `demoUrl` field with `demoPlatform=OTHER`; MC2/MC3 digests were unchanged. |
 | Submit a complete project | 200 | [LabLab submission](https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge/von-read/von-read-exact-ocr-on-amd), [README](./README.md) | Non-draft project with MC2 and MC3 artifacts, source evidence and walkthrough. |
-| Submit an open-source project | 200 | [Public implementation/evidence](./source/), [scoped MIT license](./source/LICENSE.txt), [published R61 source/tests](https://github.com/josepha-mayo/Joseph-Portfolio/tree/73600eaa711cf6a78b2cd1de0db4da565a2b6eab/delivery/von-rag-r19) | Source and reproducibility material are public. |
+| Submit an open-source project | 200 | [Public implementation/evidence](./source/), [project-root MIT license copy](./LICENSE.txt), [scoped MIT license](./source/LICENSE.txt), [published R61 source/tests](https://github.com/josepha-mayo/Joseph-Portfolio/tree/73600eaa711cf6a78b2cd1de0db4da565a2b6eab/delivery/von-rag-r19) | Source and reproducibility material are public. |
 | Participate in an AMD hackathon | 300 | Current solo AMD x LabLab Academy Challenge entry; additionally approved/enrolled in **AMD Developer Hackathon ACT III** | **Uncertain row.** ACT III starts October 12. Enrollment is evidence of registration, not a claim that the organizer's participation threshold has already been met. |
 | Build using AMD technologies | 250 | [AMD MI300X native result receipt](https://github.com/josepha-mayo/Joseph-Portfolio/blob/62eb0f9d68ca5da69c83ca08faa441c5e3deaf60/delivery/von-rag-r19/evidence/r62/AMD_NATIVE_RESULT.json) | Native ROCm / AMD Instinct MI300X VF work is recorded. |
 | Reach project milestone #1 | 100 | [MC2 R16 evidence](./README.md#mini-challenge-2-exact-ocr) | AMD-tested input-decoder milestone. |
@@ -23,7 +23,7 @@ It is an **eligibility packet, not an XP-award claim**. The public Quest board r
 
 **Conservative subtotal excluding the uncertain +300 AMD-hackathon-participation row:** 1,155 XP.
 
-At the October 3 public Quest snapshot of **530 XP**, that conservative subtotal would imply **1,685 XP before overlap/reconciliation**. The October 3 rank-20 cutoff was **1,800 XP**, a difference of 115 XP. One accepted Academy-course completion is listed by LabLab at +150 XP.
+At the latest October 4 public Quest snapshot of **530 XP / rank 474**, that conservative subtotal would imply **1,685 XP before overlap/reconciliation**. Rank #20 remains **1,800 XP**, a difference of 115 XP. One genuinely completed Academy course is listed by LabLab at +150 XP, which would make the static projection **1,835 XP** if all conservative Building rows were credited without overlap.
 
 Those are scenario calculations only. **No extra XP is represented as awarded until it appears on the Quest leaderboard or is confirmed by the organizer.**
 
@@ -39,3 +39,12 @@ The refresh changed no claimed hidden score and did not replace either selected 
 ## Machine-readable companion
 
 See [QUEST_EVIDENCE_2026-10-03.json](./QUEST_EVIDENCE_2026-10-03.json) for timestamps, referral state, course-route math, submission refresh metadata and explicit non-claims.
+
+## October 4 structured-field repair
+
+The existing event submission previously carried the walkthrough in narrative evidence while the persisted structured Demo field was empty. The same truthful walkthrough is now stored in the supported structured fields:
+
+- `demoUrl=https://josephmayo.site/research/von-read/walkthrough.html`
+- `demoPlatform=OTHER`
+
+The authenticated update returned success. The selected MC2 R16 and MC3 R61 digests, GitHub repository, technologies, categories, and evidence text were preserved. This is a submission-data repair, not a claim that the +150 demo XP has already been awarded.
