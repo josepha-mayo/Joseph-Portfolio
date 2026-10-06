@@ -289,7 +289,7 @@ export default function Home() {
       <main id="main">
       {/* Hero Section */}
       <header
-        className="min-h-[100dvh] flex items-end pt-[100px] pb-36 relative overflow-hidden hero-grain"
+        className="min-h-[100dvh] flex items-end pt-[100px] pb-64 md:pb-44 relative overflow-hidden hero-grain"
         style={{
           background: 'linear-gradient(to bottom, rgba(10,10,10,0.78), rgba(10,10,10,0.95)), url(/image.jpg)',
           backgroundSize: 'cover',
@@ -319,22 +319,6 @@ export default function Home() {
                 </a>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-text-secondary animate-slide-up animate-slide-up-delay-3">
-                <span className="text-accent font-medium">current build</span>
-                <Link href="/research/von-read/" className="hover:text-text-primary transition-colors">
-                  von-read on AMD ROCm
-                </Link>
-                <span aria-hidden="true">·</span>
-                <a
-                  href="https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge?invite=inv_u3q67xxspf6hiwjrgb0yyy2r&utm_source=member_invite&utm_medium=referral&utm_campaign=amd-lablab-ai-academy-challenge"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-text-primary transition-colors"
-                >
-                  join the AMD AI Academy Challenge ↗
-                </a>
-                <span className="text-xs text-text-secondary/70">(referral; I may earn event XP)</span>
-              </div>
             </div>
 
             <div className="md:col-span-5 hidden md:block animate-slide-up animate-slide-up-delay-3">
