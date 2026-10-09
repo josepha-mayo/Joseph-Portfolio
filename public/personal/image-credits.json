@@ -1,0 +1,26 @@
+{
+  "practice_photos": [
+    {
+      "file": "japanese.jpg",
+      "photographer": "flyd",
+      "source": "https://unsplash.com/photos/text-8iltjzxR2ns",
+      "license": "https://unsplash.com/license"
+    },
+    {
+      "file": "guitar.jpg",
+      "photographer": "isa bauptista",
+      "source": "https://unsplash.com/photos/brown-acoustic-guitar-on-brown-wooden-floor-4cJTiLAL6M4",
+      "license": "https://unsplash.com/license"
+    },
+    {
+      "file": "chess.jpg",
+      "photographer": "felix mittermeier",
+      "source": "https://unsplash.com/photos/chess-pieces-on-board-nAjil1z3eLk",
+      "license": "https://unsplash.com/license"
+    }
+  ],
+  "uploaded_images": {
+    "joe.avif": "user-supplied joe yabuki illustration; artist not identified",
+    "river.avif": "user-supplied photograph, watermark credits kris luckenbach"
+  }
+}

@@ -1,0 +1,108 @@
+.page { width: 100%; overflow-x: clip; background: var(--color-background); }
+.container { width: min(1152px, calc(100% - 64px)); margin-inline: auto; }
+.page section[id] { scroll-margin-top: 110px; }
+.backLink { display: inline-flex; align-items: center; gap: 10px; color: var(--color-text-secondary); font-size: 14px; min-height: 44px; transition: color .2s; }
+.backLink:hover { color: var(--color-accent); }
+.hero { min-height: 720px; min-height: min(850px, 92svh); position: relative; isolation: isolate; display: flex; align-items: center; padding: 160px 0 125px; overflow: hidden; }
+.heroBackdrop, .heroShade { position: absolute; inset: 0; z-index: -2; }
+.heroBackdrop { overflow: hidden; }
+.riverImage { object-fit: cover; object-position: center 46%; filter: brightness(.64) saturate(.58) blur(2px); transform: scale(1.025); }
+.heroShade { z-index: -1; background: linear-gradient(90deg, rgba(10,10,10,.77), rgba(10,10,10,.3)), linear-gradient(0deg, #0a0a0a 0%, rgba(10,10,10,.08) 54%, rgba(10,10,10,.35)); }
+.heroContent { animation: arrive .7s ease both; }
+.eyebrow { display: flex; align-items: center; gap: 10px; color: var(--color-accent); font-family: var(--font-geist-mono), monospace; font-size: 11px; letter-spacing: .12em; line-height: 1.7; }
+.smallSquare { width: 6px; height: 6px; background: currentColor; flex-shrink: 0; }
+.hero h1 { font-family: var(--font-space-grotesk), sans-serif; font-size: clamp(66px, 9.5vw, 128px); font-weight: 600; line-height: .98; letter-spacing: -.065em; margin: 26px 0 28px; }
+.accent { color: var(--color-accent); }
+.heroIntro { color: #d0d0d3; font-size: clamp(16px, 1.65vw, 20px); line-height: 1.85; }
+.chapterNav { display: flex; flex-wrap: wrap; gap: 12px 30px; margin-top: 34px; }
+.chapterNav a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; color: #dedee1; font-size: 13px; transition: color .2s; }
+.chapterNav a:hover { color: var(--color-accent); }
+.chapterNav span { font-family: var(--font-geist-mono), monospace; font-size: 10px; color: var(--color-accent); }
+.heroFootnote { position: absolute; bottom: 38px; right: max(32px, calc((100vw - 1152px) / 2)); left: 32px; text-align: right; font-family: var(--font-geist-mono), monospace; font-size: 10px; color: #a1a1aa; letter-spacing: .04em; }
+.section { padding-block: 70px; }
+.sectionHeading { display: flex; align-items: flex-start; gap: 22px; margin-bottom: 34px; }
+.sectionNumber { font-family: var(--font-geist-mono), monospace; color: var(--color-accent); font-size: 11px; padding-top: 10px; }
+.sectionHeading h2 { font-family: var(--font-space-grotesk), sans-serif; font-size: clamp(27px, 3.4vw, 39px); font-weight: 600; letter-spacing: -.045em; line-height: 1.2; }
+.sectionHeading p { color: var(--color-text-secondary); margin-top: 12px; font-size: 14px; line-height: 1.85; max-width: 650px; }
+.bookGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--color-border-subtle); }
+.book { min-height: 122px; display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--color-border-subtle); padding: 24px 22px 24px 0; transition: background .2s; }
+.book:nth-child(even) { padding-left: 25px; border-left: 1px solid var(--color-border-subtle); }
+.book:hover { background: rgba(255,255,255,.018); }
+.bookNumber { color: #888890; font-family: var(--font-geist-mono), monospace; font-size: 10px; }
+.bookText { min-width: 0; }
+.book h3 { font-family: var(--font-space-grotesk), sans-serif; font-size: 17px; line-height: 1.4; font-weight: 500; }
+.bookText p { font-size: 12px; color: var(--color-text-secondary); margin-top: 6px; }
+.bookKind { margin-left: auto; color: #b3b3bb; font-family: var(--font-geist-mono), monospace; font-size: 9px; padding: 4px 8px; border: 1px solid var(--color-border-highlight); border-radius: 4px; max-width: 110px; text-align: center; flex-shrink: 0; }
+.shelfNote { margin-top: 22px; font-size: 12px; color: var(--color-text-secondary); }
+.practiceGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.practiceCard { border-radius: 16px; overflow: hidden; border: 1px solid var(--color-border-subtle); background: var(--color-card); transition: border-color .25s, transform .25s; }
+.practiceCard:hover { border-color: #414148; transform: translateY(-4px); }
+.practiceImage { position: relative; height: 220px; overflow: hidden; }
+.practiceImage img { object-fit: cover; filter: saturate(.5) brightness(.82); transition: filter .35s, transform .5s; }
+.practiceCard:hover .practiceImage img { filter: saturate(.85) brightness(.95); transform: scale(1.025); }
+.practiceStatus { position: absolute; bottom: 15px; left: 18px; padding: 5px 10px; background: rgba(10,10,10,.84); backdrop-filter: blur(8px); color: #fafafa; border: 1px solid rgba(255,255,255,.14); border-radius: 5px; font-size: 10px; font-family: var(--font-geist-mono), monospace; }
+.practiceCopy { padding: 25px; }
+.practiceCopy h3 { display: flex; align-items: center; gap: 11px; font-family: var(--font-space-grotesk), sans-serif; font-size: 22px; font-weight: 500; margin-bottom: 13px; }
+.practiceCopy i { color: var(--color-accent); font-size: 16px; }
+.practiceCopy p { font-size: 13px; line-height: 1.9; color: var(--color-text-secondary); }
+.philosophyPanel { padding: clamp(28px, 5vw, 62px); background: radial-gradient(ellipse at top right, rgba(251,191,36,.055), transparent 65%), var(--color-card); border: 1px solid var(--color-border-subtle); border-radius: 18px; }
+.philosophyNumber { display: block; font-family: var(--font-geist-mono), monospace; font-size: 10px; letter-spacing: .1em; color: var(--color-text-secondary); margin-bottom: 32px; }
+.joeFeature { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); background: var(--color-card); border: 1px solid var(--color-border-subtle); border-radius: 16px; overflow: hidden; margin-bottom: 22px; }
+.joeImage { position: relative; min-height: 380px; }
+.joeImage img { object-fit: cover; object-position: center 42%; }
+.joeCopy { padding: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.joeCopy h3 { font-family: var(--font-space-grotesk), sans-serif; font-size: clamp(29px, 4vw, 43px); letter-spacing: -.045em; margin: 14px 0 18px; font-weight: 600; }
+.joeCopy > p:not(.eyebrow) { font-size: 14px; line-height: 1.85; color: var(--color-text-secondary); margin-bottom: 14px; }
+.recommended { color: var(--color-accent); font-size: 11px; font-family: var(--font-geist-mono), monospace; margin-top: 12px; display: inline-flex; gap: 10px; align-items: center; }
+.storyGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.storyCard { padding: 30px; border: 1px solid var(--color-border-subtle); border-radius: 14px; background: var(--color-card); transition: border-color .25s; }
+.storyCard:hover { border-color: #414148; }
+.storyTop { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-geist-mono), monospace; font-size: 10px; color: var(--color-text-secondary); margin-bottom: 25px; }
+.storyTop span:first-child { color: var(--color-accent); }
+.storyCard h3 { font-family: var(--font-space-grotesk), sans-serif; font-size: 25px; font-weight: 500; letter-spacing: -.025em; }
+.storyCard p { font-size: 13px; color: var(--color-text-secondary); line-height: 1.9; }
+.storyCard .storyNote { color: #e0d5b4; font-size: 11px; margin: 7px 0 19px; }
+.footer { margin-top: 42px; border-top: 1px solid var(--color-border-subtle); background: var(--color-card); padding: 70px 0 30px; }
+.footer h2 { font-family: var(--font-space-grotesk), sans-serif; font-size: clamp(29px, 4.5vw, 48px); font-weight: 500; letter-spacing: -.04em; margin: 18px 0 26px; }
+.footerLinks { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; }
+.primaryLink { display: inline-flex; gap: 24px; align-items: center; background: var(--color-accent); color: #0a0a0a; border: 1px solid var(--color-accent); border-radius: 7px; padding: 12px 19px; min-height: 48px; font-size: 13px; font-weight: 600; transition: background .2s, transform .2s; }
+.primaryLink:hover { background: #fcd34d; transform: translateY(-2px); }
+.footerBottom { border-top: 1px solid var(--color-border-subtle); margin-top: 48px; padding-top: 24px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 20px; font-size: 11px; color: var(--color-text-secondary); }
+.credits { max-width: 380px; }
+.credits summary { cursor: pointer; min-height: 30px; }
+.credits div { padding-top: 8px; }
+.credits p { margin-bottom: 8px; line-height: 1.8; }
+.credits a { text-decoration: underline; text-underline-offset: 3px; }
+@keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) { .bookKind { display: none; } .practiceGrid { gap: 14px; } .practiceCopy { padding: 21px; } .practiceImage { height: 185px; } .joeImage { min-height: 360px; } }
+@media (max-width: 640px) {
+  .container { width: calc(100% - 40px); }
+  .hero { min-height: 690px; padding: 148px 0 115px; }
+  .hero h1 { font-size: clamp(66px, 15vw, 92px); }
+  .heroShade { background: linear-gradient(90deg, rgba(10,10,10,.72), rgba(10,10,10,.36)), linear-gradient(0deg, #0a0a0a, transparent 75%); }
+  .heroFootnote { right: 20px; left: 20px; text-align: left; bottom: 36px; font-size: 9px; }
+  .chapterNav { gap: 8px 21px; max-width: 340px; }
+  .chapterNav a { font-size: 12px; }
+  .section { padding-block: 44px; }
+  .sectionHeading { gap: 14px; margin-bottom: 28px; }
+  .sectionHeading p { font-size: 13px; }
+  .bookGrid { grid-template-columns: 1fr; }
+  .book { min-height: 96px; padding: 20px 0; }
+  .book:nth-child(even) { padding-left: 0; border-left: 0; }
+  .book h3 { font-size: 16px; }
+  .bookKind { display: block; font-size: 8px; max-width: 86px; }
+  .practiceGrid, .storyGrid, .joeFeature { grid-template-columns: 1fr; gap: 18px; }
+  .practiceImage { height: 230px; }
+  .practiceCopy { padding: 24px; }
+  .practiceCopy p, .storyCard p { font-size: 14px; }
+  .philosophyPanel { padding: 28px 22px; }
+  .joeFeature { gap: 0; }
+  .joeImage { aspect-ratio: 1; min-height: 0; }
+  .joeCopy { padding: 28px 25px 32px; }
+  .storyCard { padding: 26px; }
+  .footer { padding-top: 50px; margin-top: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page *, .page *::before, .page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .practiceCard:hover, .primaryLink:hover, .practiceCard:hover .practiceImage img { transform: none; }
+}

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Fireflies from '@/components/Fireflies';
+import LifePhilosophy from '@/components/LifePhilosophy';
 
 // Skill Tag component
 function SkillTag({ children }: { children: React.ReactNode }) {
@@ -351,7 +352,7 @@ export default function Home() {
             </div>
 
             <div className="mission-card rounded-2xl p-8 aspect-square border border-border-subtle relative overflow-hidden bg-card">
-              <div className="absolute inset-0 bg-cover bg-no-repeat bg-center mission-card-bg" style={{ backgroundImage: 'url(/arthur.jpg)', filter: 'brightness(0.9) contrast(1.1)', backgroundPosition: 'center 20%' }} />
+              <div className="absolute inset-0 bg-cover bg-no-repeat bg-center mission-card-bg" style={{ backgroundImage: 'url(/personal/joe.avif)', filter: 'brightness(0.9) contrast(1.1)', backgroundPosition: 'center 20%' }} />
               <div className="absolute inset-0 bg-black/50 mission-card-overlay" />
               <div className="relative z-10 mission-card-content">
                 <h3 className="mb-6 text-text-primary text-xl">
@@ -682,11 +683,23 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="philosophy" aria-label="my philosophy on life" className="py-24 md:py-32 border-t border-border-subtle">
+        <div className="container mx-auto px-6 md:px-8 max-w-6xl">
+          <LifePhilosophy compact />
+        </div>
+      </section>
       </main>
 
       {/* Footer */}
       <footer id="contact" className="bg-card border-t border-border-subtle py-16 text-center">
         <div className="container mx-auto px-8">
+          <div className="mb-14 mx-auto max-w-2xl rounded-2xl border border-border-subtle bg-background px-6 py-9 md:px-10">
+            <p className="font-display text-xl md:text-2xl tracking-tight text-text-primary">liked this corner of the internet?</p>
+            <p className="mt-3 mb-6 text-sm text-text-secondary leading-relaxed">there&apos;s a little more to me than the work. books, guitar, japanese, chess, and the stories that stayed.</p>
+            <Link href="/outside-the-lab" className="btn-ghost inline-flex min-h-12 items-center gap-5 rounded-lg border border-accent/40 px-6 py-3 text-sm font-medium text-accent hover:border-accent hover:bg-accent/5">
+              outside the lab <span aria-hidden="true">→</span>
+            </Link>
+          </div>
           <h2 className="mb-8 text-3xl">let&apos;s build something impactful & innovative</h2>
           <div className="flex justify-center gap-8 mb-8">
             <a href="https://github.com/josepha-mayo" target="_blank" className="text-text-secondary hover:text-text-primary text-2xl transition-all hover:-translate-y-1">
