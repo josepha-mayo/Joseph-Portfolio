@@ -95,7 +95,6 @@ export default function OutsideTheWork() {
               <article key={book.title} className={styles.book}>
                 <div className={styles.bookTop}><span className={styles.bookNumber}>{String(index + 1).padStart(2, '0')}</span><span className={styles.bookKind}>{book.kind}</span></div>
                 <div className={styles.bookText}><h3>{book.title}</h3><p className={styles.bookAuthor}>{book.author}</p><p className={styles.bookDescription}>{book.text}</p></div>
-                <RecommendedLink href={book.href} title={book.title} />
               </article>
             ))}
           </div>
@@ -134,7 +133,6 @@ export default function OutsideTheWork() {
               <article key={story.title} className={styles.storyCard}>
                 <div className={styles.storyTop}><span>{story.number}</span><span>{story.note}</span></div>
                 <h3>{story.title}</h3><p className={styles.storyDescription}>{story.text}</p>
-                <RecommendedLink href={story.href} title={story.title} />
               </article>
             ))}
           </div>
