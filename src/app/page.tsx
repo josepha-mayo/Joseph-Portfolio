@@ -693,11 +693,7 @@ export default function Home() {
       {/* Footer */}
       <footer id="contact" className="bg-card border-t border-border-subtle py-16 text-center">
         <div className="container mx-auto px-8">
-          <div className="mb-14 flex items-center justify-between gap-4 border-b border-border-subtle pb-7 text-left">
-            <div>
-              <p className="font-display text-lg md:text-xl tracking-tight text-text-primary">liked this corner of the internet?</p>
-              <p className="mt-1 text-sm text-text-secondary leading-relaxed">books, guitar, japanese, chess, and the way i see life.</p>
-            </div>
+          <div className="mb-14 flex items-center justify-end border-b border-border-subtle pb-7">
             <Link
               href="/outside-the-work"
               className="btn-ghost inline-flex shrink-0 items-center gap-2 rounded-md border border-zinc-700/70 bg-zinc-900 px-3.5 py-2 text-xs font-medium text-zinc-200 hover:border-zinc-500 hover:bg-zinc-800 hover:text-white"
