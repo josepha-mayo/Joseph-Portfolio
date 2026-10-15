@@ -352,8 +352,8 @@ export default function Home() {
             </div>
 
             <div className="mission-card rounded-2xl p-8 aspect-square border border-border-subtle relative overflow-hidden bg-card">
-              <div className="absolute inset-0 bg-cover bg-no-repeat bg-center mission-card-bg" style={{ backgroundImage: 'url(/personal/joe-sharp.webp)', filter: 'brightness(0.9) contrast(1.1)', backgroundPosition: '59% center' }} />
-              <div className="absolute inset-0 bg-black/50 mission-card-overlay" />
+              <div className="absolute inset-0 bg-cover bg-no-repeat bg-center mission-card-bg" style={{ backgroundImage: 'url(/personal/joe-portrait-2026.jpg)', filter: 'brightness(0.98) contrast(1.02)', backgroundPosition: 'center 10%' }} />
+              <div className="absolute inset-0 bg-black/35 mission-card-overlay" />
               <div className="relative z-10 mission-card-content">
                 <h3 className="mb-6 text-text-primary text-xl">
                   <i className="fa-solid fa-bullseye text-accent mr-2"></i> core mission
@@ -693,11 +693,16 @@ export default function Home() {
       {/* Footer */}
       <footer id="contact" className="bg-card border-t border-border-subtle py-16 text-center">
         <div className="container mx-auto px-8">
-          <div className="mb-14 mx-auto max-w-2xl rounded-2xl border border-border-subtle bg-background px-6 py-9 md:px-10">
-            <p className="font-display text-xl md:text-2xl tracking-tight text-text-primary">liked this corner of the internet?</p>
-            <p className="mt-3 mb-6 text-sm text-text-secondary leading-relaxed">books, guitar, japanese, chess, and the way i see life.</p>
-            <Link href="/outside-the-work" className="btn-ghost inline-flex min-h-12 items-center gap-5 rounded-lg border border-accent/40 px-6 py-3 text-sm font-medium text-accent hover:border-accent hover:bg-accent/5">
-              outside the work <span aria-hidden="true">→</span>
+          <div className="mb-14 flex items-center justify-between gap-4 border-b border-border-subtle pb-7 text-left">
+            <div>
+              <p className="font-display text-lg md:text-xl tracking-tight text-text-primary">liked this corner of the internet?</p>
+              <p className="mt-1 text-sm text-text-secondary leading-relaxed">books, guitar, japanese, chess, and the way i see life.</p>
+            </div>
+            <Link
+              href="/outside-the-work"
+              className="btn-ghost inline-flex shrink-0 items-center gap-2 rounded-md border border-zinc-700/70 bg-zinc-900 px-3.5 py-2 text-xs font-medium text-zinc-200 hover:border-zinc-500 hover:bg-zinc-800 hover:text-white"
+            >
+              outside the lab <span aria-hidden="true">↗</span>
             </Link>
           </div>
           <h2 className="mb-8 text-3xl">let&apos;s build something impactful & innovative</h2>
