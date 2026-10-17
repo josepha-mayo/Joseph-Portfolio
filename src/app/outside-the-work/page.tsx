@@ -37,9 +37,10 @@ const practices = [
 
 const stories = [
   { title: 'hajime no ippo', note: 'discipline', number: '02', text: 'the repetition, the training, the patience. doing the same thing until you get better at it. ippo made me appreciate that part of the work.', href: 'https://www.crunchyroll.com/series/GW4HM7N7X/hajime-no-ippo-the-fighting' },
-  { title: 'dr. stone', note: 'senku / curiosity', number: '03', text: 'senku makes me want to learn. asking how something works, trying it, getting it wrong, trying again. i love seeing knowledge turn into something useful.', href: 'https://www.crunchyroll.com/series/GYEXQKJG6/dr-stone' },
-  { title: 'kaiji', note: 'psychology under pressure', number: '04', text: 'the mind games and the pressure. how differently people behave when they have something to lose, and how much it matters to understand the rules you are playing by.', href: 'https://www.crunchyroll.com/series/G6GGV5WW6/kaiji' },
-  { title: 'major', note: 'a life spent chasing something', number: '05', text: 'goro growing up with the same ambition. the setbacks, starting again, carrying that desire through years of his life. i love following a story for that long.', href: 'https://www.crunchyroll.com/search?q=major' },
+  { title: 'code geass', note: 'lelouch / strategy', number: '03', text: 'lelouch thinks several moves ahead, but it is not just the strategy. the ambition, the resolve, and the cost of his choices are what make this story stay with me.', href: 'https://www.crunchyroll.com/search?q=code%20geass' },
+  { title: 'dr. stone', note: 'senku / curiosity', number: '04', text: 'senku makes me want to learn. asking how something works, trying it, getting it wrong, trying again. i love seeing knowledge turn into something useful.', href: 'https://www.crunchyroll.com/series/GYEXQKJG6/dr-stone' },
+  { title: 'kaiji', note: 'psychology under pressure', number: '05', text: 'the mind games and the pressure. how differently people behave when they have something to lose, and how much it matters to understand the rules you are playing by.', href: 'https://www.crunchyroll.com/series/G6GGV5WW6/kaiji' },
+  { title: 'major', note: 'a life spent chasing something', number: '06', text: 'goro growing up with the same ambition. the setbacks, starting again, carrying that desire through years of his life. i love following a story for that long.', href: 'https://www.crunchyroll.com/search?q=major' },
 ];
 
 function SectionHeading({ number, title, children }: { number: string; title: string; children?: ReactNode }) {
