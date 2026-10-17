@@ -58,3 +58,26 @@
   [headers.values]
     Content-Type = "text/plain; charset=utf-8"
     Cache-Control = "no-store"
+
+[[headers]]
+  for = "/registry-assets/v3/manifest.json"
+  [headers.values]
+    Content-Type = "application/vnd.oci.image.manifest.v1+json"
+    Docker-Content-Digest = "sha256:2cd44cd0a63ecf1edd61a3aaf0329fd8df22f802eaaa3b5b090d3ff82dc5759d"
+    Docker-Distribution-Api-Version = "registry/2.0"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/registry-assets/v3/config.json"
+  [headers.values]
+    Content-Type = "application/vnd.oci.image.config.v1+json"
+    Docker-Content-Digest = "sha256:180056296b31d73e2e725cb376bb5d9601561befd651e8d2a0c554c5d486f37b"
+    Docker-Distribution-Api-Version = "registry/2.0"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/registry-assets/v3/455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef.tar.gz"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Docker-Content-Digest = "sha256:455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef"
+    Cache-Control = "public, max-age=31536000, immutable"
