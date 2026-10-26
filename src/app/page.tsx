@@ -252,7 +252,7 @@ export default function Home() {
       ]
     },
     {
-      image: "/projects/pex-cover.webp",
+      image: "/projects/pex-screenshot.webp",
       title: "PEX",
       icon: "fa-solid fa-check-double",
       description: "A Python/TypeScript supervisor for coding agents. Persistent goals, a replayable claim ledger, and independent test verification keep agent completion claims accountable. A documented live OpenCode run caught a false test-pass claim and recovered to passing tests.",
@@ -263,7 +263,7 @@ export default function Home() {
       ]
     },
     {
-      image: "/projects/socbench-cover.webp",
+      image: "/projects/socbench-screenshot.webp",
       title: "Socbench",
       icon: "fa-solid fa-database",
       description: "Dataset intelligence for model builders, from a Next.js interface to FastAPI and a seven-stage audit pipeline. 55 catalogued datasets, 53 complete automated assessments, and 16 validated proxy-training outcomes, including six divergent runs kept as evidence.",
