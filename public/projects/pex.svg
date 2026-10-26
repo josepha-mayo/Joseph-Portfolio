@@ -2,7 +2,7 @@
  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#151515"/><stop offset="1" stop-color="#0c0c0d"/></linearGradient><linearGradient id="line"><stop stop-color="#fbbf24" stop-opacity=".8"/><stop offset="1" stop-color="#fbbf24" stop-opacity=".05"/></linearGradient></defs>
  <rect width="1200" height="540" fill="url(#bg)"/><path d="M0 1H1200" stroke="#2e2c26"/><circle cx="1110" cy="70" r="150" fill="#fbbf24" opacity=".025"/>
  <g font-family="Arial,Helvetica,sans-serif"><text x="60" y="58" fill="#fbbf24" font-size="13" font-weight="700" letter-spacing="3">AGENT SYSTEMS / EXECUTABLE VERIFICATION</text><text x="56" y="136" fill="#fafafa" font-size="64" font-weight="700" letter-spacing="-3">PEX</text><text x="60" y="178" fill="#a1a1aa" font-size="24">Supervision for the coding agents you already use.</text>
- <path d="M376 333H430M762 333H816" stroke="#665024" stroke-width="2"/><path d="m419 326 8 7-8 7m386-7 8 7-8 7" fill="none" stroke="#fbbf24" stroke-width="2"/>
+ <path d="M376 333H430M762 333H816" stroke="#665024" stroke-width="2"/><path d="M422 326l8 7-8 7M808 326l8 7-8 7" fill="none" stroke="#fbbf24" stroke-width="2"/>
  <rect x="60" y="236" width="316" height="177" rx="18" fill="#171719" stroke="#333338"/>
  <rect x="442" y="236" width="316" height="177" rx="18" fill="#171719" stroke="#333338"/>
  <rect x="824" y="236" width="316" height="177" rx="18" fill="#1c1a13" stroke="#7c6024"/>

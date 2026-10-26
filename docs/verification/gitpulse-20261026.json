@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-26T22:45:17.985Z",
+  "browser": "Brave",
+  "checks": [
+    "public homepage: 200 and real feed shell",
+    "guest following: explicit sign-in prompt",
+    "releases filter switches correctly",
+    "guest GitHub tab: explicit sign-in prompt",
+    "desktop: no horizontal overflow",
+    "public search returns post results",
+    "guest post creation remains unauthorized",
+    "signup email/password form renders",
+    "signup stays on signup, not redirected to login",
+    "login password form renders",
+    "login page: 200",
+    "mobile 390px: no horizontal overflow"
+  ],
+  "errors": [],
+  "failures": [],
+  "feedUnavailable": false
+}

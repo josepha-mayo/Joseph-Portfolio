@@ -1,0 +1,21 @@
+{
+  "url": "http://localhost:3007",
+  "checkedAt": "2026-10-26T22:45:26.088Z",
+  "browser": "Brave",
+  "projects": 10,
+  "newProjects": [
+    "PEX",
+    "Socbench",
+    "gitPulse"
+  ],
+  "wonBadge": true,
+  "allProjectImagesLoaded": true,
+  "pdfSha256": "8e5111acf97f0580e3a86966726758fd51f2a1e94bf4458b1a2ba5757f15968e",
+  "pdfMatches": true,
+  "overflow": {
+    "width": 390,
+    "scroll": 375,
+    "offenders": []
+  },
+  "errors": []
+}
