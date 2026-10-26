@@ -45,7 +45,8 @@ function ProjectCard({
   icon,
   description,
   tags,
-  links
+  links,
+  award
 }: {
   image: string;
   title: string;
@@ -53,6 +54,7 @@ function ProjectCard({
   description: string;
   tags: string[];
   links: { href: string; label: string; icon: string }[];
+  award?: string;
 }) {
   return (
     <article className="card-hover bg-card border border-border-subtle rounded-2xl overflow-hidden flex flex-col">
@@ -64,6 +66,7 @@ function ProjectCard({
           sizes="(min-width: 768px) 50vw, 100vw"
           className="img-zoom w-full h-full object-contain object-center bg-card brightness-95"
         />
+        {award && <span className="absolute top-4 right-4 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-background/95 px-3 py-1.5 text-xs font-bold text-accent shadow-lg" aria-label={`${title}: ${award}`}><i className="fa-solid fa-trophy" aria-hidden="true"></i>{award}</span>}
       </div>
       <div className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-center mb-2">
@@ -174,6 +177,38 @@ function ModelCard({
 export default function Home() {
   const projects = [
     {
+      image: "/projects/pex.png",
+      title: "PEX",
+      icon: "fa-solid fa-check-double",
+      description: "A Python/TypeScript supervisor for coding agents. Persistent goals, a replayable claim ledger, and independent test verification keep agent completion claims accountable. A documented live OpenCode run caught a false test-pass claim and recovered to passing tests.",
+      tags: ["python", "typeScript", "agent systems", "verification"],
+      links: [
+        { href: "https://pex-supervisor.netlify.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://github.com/josepha-mayo/pex", label: "source", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
+      image: "/projects/socbench.png",
+      title: "Socbench",
+      icon: "fa-solid fa-database",
+      description: "Dataset intelligence for model builders, from a Next.js interface to FastAPI and a seven-stage audit pipeline. 55 catalogued datasets, 53 complete automated assessments, and 16 validated proxy-training outcomes, including six divergent runs kept as evidence.",
+      tags: ["next.js", "fastAPI", "data quality", "evaluation"],
+      links: [
+        { href: "https://github.com/josepha-mayo/socbench", label: "source & evidence", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
+      image: "/projects/gitpulse.png",
+      title: "gitPulse",
+      icon: "fa-solid fa-comments",
+      description: "A social feed for developers, not another activity dashboard. Share updates, ship releases, follow builders, and explore projects. Built end-to-end with Next.js, TypeScript, PostgreSQL, GitHub OAuth, public feed access, and live updates.",
+      tags: ["next.js", "typeScript", "postgreSQL", "full-stack"],
+      links: [
+        { href: "https://hubfeed.netlify.app", label: "live app", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://github.com/josepha-mayo/git-pulse", label: "source", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
       image: "/doomfly/setup-photo-1.jpg",
       title: "DOOMFLY",
       icon: "fa-solid fa-gamepad",
@@ -208,6 +243,7 @@ export default function Home() {
     {
       image: "/swarms.png",
       title: "SWARMs Debate Primitive",
+      award: "Won",
       icon: "fa-solid fa-network-wired",
       description: "Multi-agent debate and vote coordination system on Solana blockchain. Agents assume distinct personas to debate complex questions, with full session transcripts hashed and recorded on-chain for verifiable AI consensus.",
       tags: ["Python", "Solana", "multi-agent", "blockchain"],
@@ -263,7 +299,7 @@ export default function Home() {
             <li><a href="#skills" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">tech stack</a></li>
             <li><a href="#work" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">work</a></li>
             <li><a href="#contact" className="text-text-secondary hover:text-text-primary text-[15px] font-medium transition-colors">contact</a></li>
-            <li><a href="/Joseph_Ayanda_CV.pdf" download="Joseph_Ayanda_CV.pdf" aria-label="Download CV (PDF, 3 pages)" className="text-accent hover:text-text-primary text-[15px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">cv <i className="fa-solid fa-arrow-down text-xs" aria-hidden="true"></i></a></li>
+            <li><a href="/Joseph_Ayanda_CV.pdf" download="Joseph_Ayanda_CV.pdf" aria-label="Download CV (PDF)" className="text-accent hover:text-text-primary text-[15px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">cv <i className="fa-solid fa-arrow-down text-xs" aria-hidden="true"></i></a></li>
             <div className="flex gap-4 ml-4 pl-4 border-l border-border-subtle">
               <a href="https://github.com/josepha-mayo" target="_blank" className="text-text-secondary hover:text-text-primary text-lg transition-colors">
                 <i className="fa-brands fa-github"></i>
