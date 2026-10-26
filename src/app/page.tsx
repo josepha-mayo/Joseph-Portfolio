@@ -177,38 +177,6 @@ function ModelCard({
 export default function Home() {
   const projects = [
     {
-      image: "/projects/pex.png",
-      title: "PEX",
-      icon: "fa-solid fa-check-double",
-      description: "A Python/TypeScript supervisor for coding agents. Persistent goals, a replayable claim ledger, and independent test verification keep agent completion claims accountable. A documented live OpenCode run caught a false test-pass claim and recovered to passing tests.",
-      tags: ["python", "typeScript", "agent systems", "verification"],
-      links: [
-        { href: "https://pex-supervisor.netlify.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
-        { href: "https://github.com/josepha-mayo/pex", label: "source", icon: "fa-brands fa-github" }
-      ]
-    },
-    {
-      image: "/projects/socbench.png",
-      title: "Socbench",
-      icon: "fa-solid fa-database",
-      description: "Dataset intelligence for model builders, from a Next.js interface to FastAPI and a seven-stage audit pipeline. 55 catalogued datasets, 53 complete automated assessments, and 16 validated proxy-training outcomes, including six divergent runs kept as evidence.",
-      tags: ["next.js", "fastAPI", "data quality", "evaluation"],
-      links: [
-        { href: "https://github.com/josepha-mayo/socbench", label: "source & evidence", icon: "fa-brands fa-github" }
-      ]
-    },
-    {
-      image: "/projects/gitpulse.png",
-      title: "gitPulse",
-      icon: "fa-solid fa-comments",
-      description: "A social feed for developers, not another activity dashboard. Share updates, ship releases, follow builders, and explore projects. Built end-to-end with Next.js, TypeScript, PostgreSQL, GitHub OAuth, public feed access, and live updates.",
-      tags: ["next.js", "typeScript", "postgreSQL", "full-stack"],
-      links: [
-        { href: "https://hubfeed.netlify.app", label: "live app", icon: "fa-solid fa-arrow-up-right-from-square" },
-        { href: "https://github.com/josepha-mayo/git-pulse", label: "source", icon: "fa-brands fa-github" }
-      ]
-    },
-    {
       image: "/doomfly/setup-photo-1.jpg",
       title: "DOOMFLY",
       icon: "fa-solid fa-gamepad",
@@ -248,7 +216,7 @@ export default function Home() {
       description: "Multi-agent debate and vote coordination system on Solana blockchain. Agents assume distinct personas to debate complex questions, with full session transcripts hashed and recorded on-chain for verifiable AI consensus.",
       tags: ["Python", "Solana", "multi-agent", "blockchain"],
       links: [
-        { href: "https://github.com/josepha-mayo/Swarms", label: "source", icon: "fa-brands fa-github" }
+        { href: "https://github.com/josepha-mayo/SWARMs-Debate-Primitive", label: "source", icon: "fa-brands fa-github" }
       ]
     },
     {
@@ -281,6 +249,38 @@ export default function Home() {
       tags: ["python", "agentic AI", "GitHub"],
       links: [
         { href: "https://github.com/josepha-mayo/mayo", label: "source", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
+      image: "/projects/pex-cover.webp",
+      title: "PEX",
+      icon: "fa-solid fa-check-double",
+      description: "A Python/TypeScript supervisor for coding agents. Persistent goals, a replayable claim ledger, and independent test verification keep agent completion claims accountable. A documented live OpenCode run caught a false test-pass claim and recovered to passing tests.",
+      tags: ["python", "typeScript", "agent systems", "verification"],
+      links: [
+        { href: "https://pex-supervisor.netlify.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://github.com/josepha-mayo/pex", label: "source", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
+      image: "/projects/socbench-cover.webp",
+      title: "Socbench",
+      icon: "fa-solid fa-database",
+      description: "Dataset intelligence for model builders, from a Next.js interface to FastAPI and a seven-stage audit pipeline. 55 catalogued datasets, 53 complete automated assessments, and 16 validated proxy-training outcomes, including six divergent runs kept as evidence.",
+      tags: ["next.js", "fastAPI", "data quality", "evaluation"],
+      links: [
+        { href: "https://github.com/josepha-mayo/socbench", label: "source & evidence", icon: "fa-brands fa-github" }
+      ]
+    },
+    {
+      image: "/projects/gitpulse.png",
+      title: "gitPulse",
+      icon: "fa-solid fa-comments",
+      description: "A social feed for developers, not another activity dashboard. Share updates, ship releases, follow builders, and explore projects. Built end-to-end with Next.js, TypeScript, PostgreSQL, GitHub OAuth, public feed access, and live updates.",
+      tags: ["next.js", "typeScript", "postgreSQL", "full-stack"],
+      links: [
+        { href: "https://hubfeed.netlify.app", label: "live app", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://github.com/josepha-mayo/git-pulse", label: "source", icon: "fa-brands fa-github" }
       ]
     }
   ];
