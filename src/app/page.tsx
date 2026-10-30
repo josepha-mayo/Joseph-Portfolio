@@ -387,8 +387,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mission-card rounded-2xl p-8 aspect-square border border-border-subtle relative overflow-hidden bg-card">
-              <div className="absolute inset-0 bg-cover bg-no-repeat bg-center mission-card-bg" style={{ backgroundImage: 'url(/personal/joe-about.jpg)', filter: 'brightness(0.60) contrast(1.02)', backgroundPosition: 'center' }} />
+            <div className="mission-card rounded-2xl px-8 pt-8 pb-4 border border-border-subtle relative overflow-hidden bg-card">
+              <div className="absolute inset-0 bg-cover bg-no-repeat bg-center mission-card-bg" style={{ backgroundImage: 'url(/personal/joe-about.jpg)', filter: 'brightness(0.45) contrast(1.02)', backgroundPosition: 'center top' }} />
               <div className="absolute inset-0 bg-black/35 mission-card-overlay" />
               <div className="relative z-10 mission-card-content">
                 <h3 className="mb-6 text-text-primary text-xl">
