@@ -1,0 +1,157 @@
+{
+  "format": "sunqueue-replay-project",
+  "version": 1,
+  "payload": {
+    "plan": {
+      "format": "sunqueue-frozen-plan",
+      "version": 1,
+      "scenario": {
+        "version": "0.1.0",
+        "label": "Synthetic workshop day, not a measurement of Joseph's equipment",
+        "slots": [
+          {
+            "label": "06:00",
+            "solarWh": 0,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "07:00",
+            "solarWh": 100,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "08:00",
+            "solarWh": 300,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "09:00",
+            "solarWh": 700,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "10:00",
+            "solarWh": 1200,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "11:00",
+            "solarWh": 1600,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "12:00",
+            "solarWh": 1800,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "13:00",
+            "solarWh": 1700,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "14:00",
+            "solarWh": 1300,
+            "baseWh": 120,
+            "gridLimitWh": 0
+          },
+          {
+            "label": "15:00",
+            "solarWh": 900,
+            "baseWh": 120,
+            "gridLimitWh": 0
+          },
+          {
+            "label": "16:00",
+            "solarWh": 500,
+            "baseWh": 120,
+            "gridLimitWh": 0
+          },
+          {
+            "label": "17:00",
+            "solarWh": 200,
+            "baseWh": 120,
+            "gridLimitWh": 0
+          },
+          {
+            "label": "18:00",
+            "solarWh": 0,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "19:00",
+            "solarWh": 0,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "20:00",
+            "solarWh": 0,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          },
+          {
+            "label": "21:00",
+            "solarWh": 0,
+            "baseWh": 120,
+            "gridLimitWh": 1600
+          }
+        ],
+        "battery": {
+          "capacityWh": 2400,
+          "initialWh": 1800,
+          "reserveWh": 600,
+          "endMinWh": 1800,
+          "chargeLimitW": 1200,
+          "dischargeLimitW": 1000,
+          "chargeEfficiency": 0.95,
+          "dischargeEfficiency": 0.95
+        },
+        "inverterW": 2000,
+        "stressFactor": 0.65,
+        "jobs": [
+          {
+            "id": "Model evaluation",
+            "duration": 2,
+            "release": 0,
+            "deadline": 10,
+            "powerW": 650
+          },
+          {
+            "id": "Training experiment",
+            "duration": 3,
+            "release": 0,
+            "deadline": 12,
+            "powerW": 850
+          },
+          {
+            "id": "Dataset processing",
+            "duration": 1,
+            "release": 0,
+            "deadline": 14,
+            "powerW": 400
+          }
+        ]
+      },
+      "starts": {
+        "Model evaluation": 4,
+        "Training experiment": 6,
+        "Dataset processing": 9
+      },
+      "inputSha256": "d1939e976730ff20268c1d88aa7a8a6d6b83ee94fca4006ae35d16d31f9e9937",
+      "planSha256": "921f6abe28a4ce294e7e9450256633b8e29bf29539772912f7b19d4e5472ae8b"
+    },
+    "csv": "slot,solarWh,baseWh,gridLimitWh\n0,0,120,1600\n1,100,120,1600\n2,300,120,1600\n3,700,120,1600\n4,1200,120,1600\n5,1600,120,1600\n6,1800,120,1600\n7,1700,120,1600\n8,1300,120,0\n9,900,120,0\n10,500,120,0\n11,200,120,0\n12,0,120,1600\n13,0,120,1600\n14,0,120,1600\n15,0,120,1600\n",
+    "label": "Original forecast copied for replay; not measured data"
+  },
+  "payloadSha256": "4849546100ede6bb55e0bda57b7ded44b95ee28ad8209b5041a8c58c5341b337"
+}

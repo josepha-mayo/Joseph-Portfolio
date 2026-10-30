@@ -1,0 +1,58 @@
+name: SunQueue release
+on:
+  push:
+    branches: [sunqueue-entry-preview-20260907]
+    paths: [public/sunqueue/BUILD_READY]
+permissions:
+  contents: write
+concurrency:
+  group: sunqueue-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/sunqueue-entry-preview-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: sunqueue-entry-preview-20260907
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify published runtime bytes before installing build tools
+        working-directory: public/sunqueue
+        run: python3 build.py
+      - name: Install CPU-only test and narration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+          python3 -m venv /tmp/sunqueue-build
+          /tmp/sunqueue-build/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/sunqueue-build/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1 playwright==1.55.0
+          /tmp/sunqueue-build/bin/python -m playwright install chromium
+      - name: Test, record real application actions and package release
+        working-directory: public/sunqueue
+        run: /tmp/sunqueue-build/bin/python release.py
+      - name: Preserve generated release and actual verification evidence
+        if: always()
+        run: |
+          git config user.name 'SunQueue Build'
+          git config user.email 'sunqueue-build@users.noreply.github.com'
+          git add public/sunqueue
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve SunQueue release assets and executed verification'
+          git pull --rebase origin sunqueue-entry-preview-20260907
+          git push origin HEAD:sunqueue-entry-preview-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sunqueue-release
+          path: |
+            public/sunqueue/
+            !public/sunqueue/demo-build/**
+            !public/sunqueue/**/__pycache__/**
+          retention-days: 14

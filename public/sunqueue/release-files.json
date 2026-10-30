@@ -1,0 +1,14 @@
+{
+  "index.html": {
+    "bytes": 35465,
+    "sha256": "704964bd73a9277be13e11ed1ddd9b4f358e9347e26cf1595e9be5ad59c59837"
+  },
+  "demo.mp4": {
+    "bytes": 9986961,
+    "sha256": "bc5a6acf2ad092743aeed455be74f06b9cb753922f78b02546239e844ba9ba01"
+  },
+  "source.zip": {
+    "bytes": 790744,
+    "sha256": "bdfc3ecf2dd012235a5e3a0aa973b3ac95cacf88897e0ba596fdeaee0ee6d0db"
+  }
+}
