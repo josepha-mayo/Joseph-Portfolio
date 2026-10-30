@@ -1,0 +1,170 @@
+name: von-rag V3 OCI overlay build
+on:
+  push:
+    branches: [amd-v3-preview-registry-20261003]
+    paths:
+      - .github/workflows/von-rag-v3-overlay-build.yml
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: von-rag-v3-overlay-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Download exact verified V3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: von-unified-typed-identity-3.12
+          path: v3-artifact
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 37040477578
+          github-token: ${{ github.token }}
+
+      - name: Verify V3 artifact and runtime source
+        run: |
+          set -euo pipefail
+          mkdir -p work/source out
+          echo "43ed99599aff51c1e04a1c7ce2011dec3e9903d7f290af13e72853f11419d4e7  v3-artifact/sources-and-results.zip" | sha256sum -c -
+          unzip -q v3-artifact/sources-and-results.zip -d work/source
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('work/source/candidate/delivery/von-rag-r19')
+          manifest=json.loads(Path('work/source/FINAL_SOURCE_MANIFEST.json').read_text())
+          expected={
+            'app.py':'32ec6ac66b5c1f5abed3ff8819ee2651f0bb0efa122ca2f8f760e111c3357054',
+            'von_rag/__init__.py':'6ccfe2f5d8df626043e2bf41e0d425cb50c25417b057f6fd03c159874737a79c',
+            'von_rag/compact.py':'931c5dcf5cd2015173416248d32aba7eac8cb350378b10dc7097445eff8093de',
+            'von_rag/conflicts.py':'386b6661a6ecd78e69a4e4384c40ae7a54db51bb821dcda0d88c0170c398e179',
+            'von_rag/engine.py':'08d0a430ce1954c65cb9ea6bcc8b36445cdca560baabbb60afe0717d48aee619',
+            'von_rag/native.py':'bc17e89fdfcedf5299626e34ae4d64101ba083edef29e6996a2ef4bed3a7c539',
+            'von_rag/parsers.py':'f6d15c325f2e63edaeb6fb4d4b3a824987b5ad24046df45c31b04a4842344f95',
+            'von_rag/proofs.py':'dae359f5be88c018383863cd9e5812d1ffc0d270c728d4b664654bc604c316bf',
+            'von_rag/retrieval.py':'4fa43d3a7c7ed32c80f62e2109580a103b04404b5bfcc88b1a23617a418ffda6',
+            'von_rag/runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59',
+            'von_rag/scalar_guard.py':'ba54b42303b034ff3144e7b19e8c91bdff807d7c5cf9ac1db8f0f636312539d7',
+            'von_rag/scope_links.py':'09fd7934030b29399001567fd5c3cc41a23818a38b5fe8800afaf1f8c544c35b',
+            'von_rag/selection_repair.py':'9a4c85662c56cca132342cc7adbe9b894285865384b74d393fd0196c77a0e979',
+            'von_rag/value_pointer.py':'e459c5620ee3d77d4df12cc43bfdfa1f55c66c7a9d6fbb060c1d0dbb94561894',
+          }
+          assert len(manifest)==86, len(manifest)
+          for name,want in expected.items():
+              assert manifest[name]==want,(name,manifest[name],want)
+              got=hashlib.sha256((root/name).read_bytes()).hexdigest()
+              assert got==want,(name,got,want)
+          print(json.dumps({'runtime_files':len(expected),'full_manifest_files':len(manifest),'status':'passed'},indent=2))
+          PY
+
+      - name: Fetch and verify exact submitted R61 parent metadata
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --max-time 30 \
+            -H 'Accept-Encoding: identity' \
+            https://josephm.netlify.app/registry-assets/r61/manifest.json -o work/r61-manifest.json
+          curl --fail --silent --show-error --location --max-time 30 \
+            -H 'Accept-Encoding: identity' \
+            https://josephm.netlify.app/registry-assets/r61/config.json -o work/r61-config.json
+          echo "0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07  work/r61-manifest.json" | sha256sum -c -
+          echo "3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c  work/r61-config.json" | sha256sum -c -
+
+      - name: Build deterministic V3 source overlay
+        run: |
+          python - <<'PY'
+          import gzip,hashlib,io,json,tarfile
+          from pathlib import Path
+          root=Path('work/source/candidate/delivery/von-rag-r19')
+          out=Path('out')
+          def dg(b): return 'sha256:'+hashlib.sha256(b).hexdigest()
+          def packed(x): return json.dumps(x,separators=(',',':'),ensure_ascii=False).encode()
+          manifest=json.loads(Path('work/r61-manifest.json').read_text())
+          config=json.loads(Path('work/r61-config.json').read_text())
+          assert len(manifest['layers'])==28
+          assert len(config['rootfs']['diff_ids'])==28
+          assert config['config']['Entrypoint']==['python3','-m','von_rag.runtime','serve']
+
+          files={'app/app.py':(root/'app.py').read_bytes()}
+          for p in sorted((root/'von_rag').glob('*.py')):
+              files['app/von_rag/'+p.name]=p.read_bytes()
+
+          buf=io.BytesIO()
+          with tarfile.open(fileobj=buf,mode='w',format=tarfile.USTAR_FORMAT) as tf:
+              for name,data in sorted(files.items()):
+                  info=tarfile.TarInfo(name)
+                  info.size=len(data); info.mode=0o644
+                  info.uid=info.gid=0; info.uname=info.gname=''; info.mtime=0
+                  tf.addfile(info,io.BytesIO(data))
+          raw=buf.getvalue()
+          gzbuf=io.BytesIO()
+          with gzip.GzipFile(fileobj=gzbuf,mode='wb',filename='',mtime=0,compresslevel=9) as gz:
+              gz.write(raw)
+          layer=gzbuf.getvalue()
+          layer_dg=dg(layer); diffid=dg(raw)
+          desc={'mediaType':'application/vnd.oci.image.layer.v1.tar+gzip','digest':layer_dg,'size':len(layer)}
+          manifest['layers'].append(desc)
+          config['rootfs']['diff_ids'].append(diffid)
+          config.setdefault('history',[]).append({
+              'created':'2026-10-03T12:00:00Z',
+              'created_by':'von-rag unified V3 exact source overlay; unpromoted candidate',
+          })
+          cb=packed(config)
+          manifest['config']={**manifest['config'],'digest':dg(cb),'size':len(cb)}
+          mb=packed(manifest)
+
+          (out/'manifest.json').write_bytes(mb)
+          (out/'config.json').write_bytes(cb)
+          (out/(layer_dg[7:]+'.tar.gz')).write_bytes(layer)
+          meta={
+            'schema':'von-rag-v3-oci-overlay-1',
+            'status':'built_not_promoted',
+            'source_artifact_run':37040477578,
+            'source_artifact_id':11241826822,
+            'source_head_sha':'2eecf0b809c75078af1fb935ecfe07e9d60116da',
+            'parent_manifest':'sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07',
+            'parent_config':'sha256:3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c',
+            'candidate_manifest':dg(mb),'candidate_config':dg(cb),
+            'overlay_digest':layer_dg,'overlay_diffid':diffid,'overlay_bytes':len(layer),
+            'parent_layers':28,'candidate_layers':29,'weights_changed':False,
+            'software_matrix':'668/668 on Python 3.12.14 and 3.14.7',
+            'fresh_model_calls':0,'submission_changed':False,
+            'full_container_amd_qualified':False,'promotion_allowed':False,
+          }
+          (out/'V3_OCI_RECEIPT.json').write_text(json.dumps(meta,indent=2)+'\n')
+          print(json.dumps(meta,indent=2))
+          PY
+
+      - name: Verify overlay archive contents and metadata
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import gzip,hashlib,json,tarfile
+          from pathlib import Path
+          r=json.loads(Path('out/V3_OCI_RECEIPT.json').read_text())
+          layer=Path('out/'+r['overlay_digest'][7:]+'.tar.gz')
+          assert hashlib.sha256(layer.read_bytes()).hexdigest()==r['overlay_digest'][7:]
+          with tarfile.open(layer,'r:gz') as tf:
+              names=sorted(tf.getnames())
+          expected=['app/app.py']+[f'app/von_rag/{p.name}' for p in sorted(Path('work/source/candidate/delivery/von-rag-r19/von_rag').glob('*.py'))]
+          assert names==sorted(expected),(names,expected)
+          assert len(names)==14,len(names)
+          m=json.loads(Path('out/manifest.json').read_text())
+          c=json.loads(Path('out/config.json').read_text())
+          assert len(m['layers'])==29 and len(c['rootfs']['diff_ids'])==29
+          assert m['layers'][-1]['digest']==r['overlay_digest']
+          assert m['config']['digest']==r['candidate_config']
+          assert 'scope_links.py' in [n.rsplit('/',1)[-1] for n in names]
+          print('V3 OCI overlay verified:',r['candidate_manifest'])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: von-rag-v3-oci-overlay
+          path: out/
+          retention-days: 14

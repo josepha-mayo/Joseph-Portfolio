@@ -1,0 +1,22 @@
+{
+  "schema": "von-rag-v3-oci-overlay-1",
+  "status": "built_not_promoted",
+  "source_artifact_run": 37040477578,
+  "source_artifact_id": 11241826822,
+  "source_head_sha": "2eecf0b809c75078af1fb935ecfe07e9d60116da",
+  "parent_manifest": "sha256:0205651ae7d2806d3286a22270b5d7e23f1ec3f8ac47ed7352a719feca2e6b07",
+  "parent_config": "sha256:3649af2042930c40db6ed42f9d4711f96e3ec73be5157d8846416ed5ab18a90c",
+  "candidate_manifest": "sha256:2cd44cd0a63ecf1edd61a3aaf0329fd8df22f802eaaa3b5b090d3ff82dc5759d",
+  "candidate_config": "sha256:180056296b31d73e2e725cb376bb5d9601561befd651e8d2a0c554c5d486f37b",
+  "overlay_digest": "sha256:455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef",
+  "overlay_diffid": "sha256:a8f6036d2b4ee17693b1844a8f12dcfc7957db0780af686a0c3fd937bcfdc23b",
+  "overlay_bytes": 36759,
+  "parent_layers": 28,
+  "candidate_layers": 29,
+  "weights_changed": false,
+  "software_matrix": "668/668 on Python 3.12.14 and 3.14.7",
+  "fresh_model_calls": 0,
+  "submission_changed": false,
+  "full_container_amd_qualified": false,
+  "promotion_allowed": false
+}
