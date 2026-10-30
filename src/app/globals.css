@@ -132,24 +132,26 @@ p {
   transition: transform 0.6s ease, opacity 0.5s ease;
 }
 
-.mission-card:hover .mission-card-bg {
-  transform: scale(1.05);
-}
-
 .mission-card-overlay {
   transition: background 0.5s ease;
-}
-
-.mission-card:hover .mission-card-overlay {
-  background: rgba(5, 5, 5, 0.2) !important;
 }
 
 .mission-card-content {
   transition: opacity 0.4s ease;
 }
 
-.mission-card:hover .mission-card-content {
-  opacity: 0;
+@media (hover: hover) and (pointer: fine) {
+  .mission-card:hover .mission-card-bg {
+    transform: scale(1.05);
+  }
+
+  .mission-card:hover .mission-card-overlay {
+    background: rgba(5, 5, 5, 0.2) !important;
+  }
+
+  .mission-card:hover .mission-card-content {
+    opacity: 0;
+  }
 }
 
 .nav-glass {

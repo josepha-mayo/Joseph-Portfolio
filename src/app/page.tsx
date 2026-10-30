@@ -387,27 +387,46 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mission-card rounded-2xl px-8 pt-8 pb-12 min-h-[25rem] border border-border-subtle relative overflow-hidden bg-card">
+            <div className="mission-card rounded-2xl px-5 pt-8 pb-10 sm:px-6 md:px-8 md:pb-12 min-h-[25rem] border border-border-subtle relative overflow-hidden bg-card">
               <svg
                 className="absolute inset-0 w-full h-full mission-card-bg"
                 viewBox="0 49 399 305"
                 preserveAspectRatio="xMidYMin slice"
                 aria-hidden="true"
-                style={{ filter: 'brightness(0.32) contrast(1.02)' }}
+                style={{ filter: 'brightness(0.20) contrast(1.02)' }}
               >
                 <image href="/personal/joe-about.jpg" width="399" height="399" />
               </svg>
               <div className="absolute inset-0 bg-black/35 mission-card-overlay" />
               <div className="relative z-10 mission-card-content">
-                <h3 className="mb-6 text-text-primary text-xl">
+                <h3 className="mb-6 text-white text-xl">
                   <i className="fa-solid fa-bullseye text-accent mr-2"></i> core mission
                 </h3>
-                <ul className="list-none flex flex-col gap-4 text-text-secondary">
-                  <li><i className="fa-solid fa-check text-accent mr-2"></i> ML engineering & research</li>
-                  <li><i className="fa-solid fa-check text-accent mr-2"></i> red teaming & adversarial testing</li>
-                  <li><i className="fa-solid fa-check text-accent mr-2"></i> agentic systems</li>
-                  <li><i className="fa-solid fa-check text-accent mr-2"></i> dataset curation & synthetic data</li>
-                  <li><i className="fa-solid fa-check text-accent mr-2"></i> local AI</li>
+                <ul className="list-none flex flex-col gap-4 text-zinc-100">
+                  <li className="flex items-start gap-2">
+                    <i className="fa-solid fa-check text-accent mt-1 w-4 shrink-0" aria-hidden="true"></i>
+                    <span className="min-w-0">ML engineering & research</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <i className="fa-solid fa-check text-accent mt-1 w-4 shrink-0" aria-hidden="true"></i>
+                    <span className="min-w-0">adversarial testing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <i className="fa-solid fa-check text-accent mt-1 w-4 shrink-0" aria-hidden="true"></i>
+                    <span className="min-w-0">evaluation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <i className="fa-solid fa-check text-accent mt-1 w-4 shrink-0" aria-hidden="true"></i>
+                    <span className="min-w-0">agentic systems</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <i className="fa-solid fa-check text-accent mt-1 w-4 shrink-0" aria-hidden="true"></i>
+                    <span className="min-w-0">dataset curation & synthetic data</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <i className="fa-solid fa-check text-accent mt-1 w-4 shrink-0" aria-hidden="true"></i>
+                    <span className="min-w-0">local AI</span>
+                  </li>
                 </ul>
               </div>
             </div>
