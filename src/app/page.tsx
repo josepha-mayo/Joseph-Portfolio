@@ -387,13 +387,13 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mission-card rounded-2xl px-8 pt-8 pb-12 aspect-[399/317] min-h-min border border-border-subtle relative overflow-hidden bg-card">
+            <div className="mission-card rounded-2xl px-8 pt-8 pb-12 aspect-[399/305] min-h-min border border-border-subtle relative overflow-hidden bg-card">
               <svg
                 className="absolute inset-0 w-full h-full mission-card-bg"
-                viewBox="0 49 399 317"
+                viewBox="0 49 399 305"
                 preserveAspectRatio="xMidYMin slice"
                 aria-hidden="true"
-                style={{ filter: 'brightness(0.45) contrast(1.02)' }}
+                style={{ filter: 'brightness(0.32) contrast(1.02)' }}
               >
                 <image href="/personal/joe-about.jpg" width="399" height="399" />
               </svg>
