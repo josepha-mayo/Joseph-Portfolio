@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Fireflies from '@/components/Fireflies';
-import LifePhilosophy from '@/components/LifePhilosophy';
 
 // Skill Tag component
 function SkillTag({ children }: { children: React.ReactNode }) {
@@ -746,9 +745,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="philosophy" aria-label="my philosophy on life" className="py-24 md:py-32 border-t border-border-subtle">
+      <section id="drive" aria-labelledby="drive-heading" className="py-10 md:py-12 border-t border-border-subtle">
         <div className="container mx-auto px-6 md:px-8 max-w-6xl">
-          <LifePhilosophy compact />
+          <div className="max-w-4xl mx-auto">
+            <h2 id="drive-heading" className="text-mono text-xs text-accent mb-4">drive</h2>
+            <figure>
+              <blockquote className="font-display text-base md:text-lg leading-relaxed text-text-primary max-w-3xl">
+                <p>&ldquo;let it offend you that someone else can be handed your days and turn them into something greater&rdquo;</p>
+              </blockquote>
+              <figcaption className="mt-3 text-xs text-text-secondary">seneca</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
       </main>
