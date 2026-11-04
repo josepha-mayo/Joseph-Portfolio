@@ -382,7 +382,7 @@ export default function Home() {
                 day to day: fine-tuning and quantizing language models, running red teaming and refusal-direction work, and building tools around them. local-first models when they make sense, hosted apis when they don&apos;t.
               </p>
               <p className="text-text-primary text-lg max-w-[58ch] border-l-2 border-accent pl-4">
-                research that ships. evaluations that don&apos;t lie. tools other engineers actually use.
+                i care about testing ideas properly, understanding what the results actually show, and building things people can use.
               </p>
             </div>
 
