@@ -1,0 +1,70 @@
+{
+  "app": "CutProof 1.1.0",
+  "browser": "152.0.7977.64",
+  "loading_mode": "Playwright set_content; no navigation policy modified",
+  "passed": 12,
+  "checks": [
+    {
+      "name": "Boundary Lab exposes an omitted fictional setup and qualification",
+      "status": "passed",
+      "seconds": 0.328
+    },
+    {
+      "name": "Applying wider boundaries keeps exact source words and pending review",
+      "status": "passed",
+      "seconds": 0.213
+    },
+    {
+      "name": "Portable project download saves exact ranges without video data",
+      "status": "passed",
+      "seconds": 0.115
+    },
+    {
+      "name": "Restoring clears approvals and requires original media attachment",
+      "status": "passed",
+      "seconds": 0.172
+    },
+    {
+      "name": "Reviewed-only export rejects a project with no reviewed cuts",
+      "status": "passed",
+      "seconds": 0.117
+    },
+    {
+      "name": "Replacing the video invalidates approvals and previous render state",
+      "status": "passed",
+      "seconds": 0.601
+    },
+    {
+      "name": "Tampered project is rejected without replacing the working project",
+      "status": "passed",
+      "seconds": 0.019
+    },
+    {
+      "name": "Reviewed-only ZIP contains one real selection and complete editor handoff",
+      "status": "passed",
+      "seconds": 0.381
+    },
+    {
+      "name": "Exported context review page renders without scripts",
+      "status": "passed",
+      "seconds": 0.248
+    },
+    {
+      "name": "Manual boundary edits invalidate review and refresh the summary",
+      "status": "passed",
+      "seconds": 0.118
+    },
+    {
+      "name": "Boundary comparison remains usable at a 390-pixel viewport",
+      "status": "passed",
+      "seconds": 0.569
+    },
+    {
+      "name": "No uncaught browser errors or external HTTP requests",
+      "status": "passed",
+      "seconds": 0.0
+    }
+  ],
+  "uncaught_errors": [],
+  "external_http_requests": []
+}

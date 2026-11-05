@@ -1,0 +1,29 @@
+{
+  "purpose": "Authored diagnostic examples, not an independent benchmark or held-out corpus. Labels were written for boundary-risk detection, not truth verification. Frozen before this diagnostic run; do not tune the ranker against this file and call it general accuracy.",
+  "cases": [
+    {"id":"hypothetical","risk":true,"lines":["Imagine a fictional shop.","The shop doubled its sales.","The story is an illustration."],"first":1,"last":1},
+    {"id":"immediate-qualification","risk":true,"lines":["The export was faster.","But checking every caption still took time."],"first":0,"last":0},
+    {"id":"partial-sentence","risk":true,"lines":["The key condition is", "that the source captions match the recording."],"first":0,"last":0},
+    {"id":"dependent-opening","risk":true,"lines":["The original file has not been checked.","Therefore, keep the review pending."],"first":1,"last":1},
+    {"id":"question-no","risk":true,"lines":["Did the service guarantee a return?","No, the contract promised nothing."],"first":1,"last":1},
+    {"id":"question-yes","risk":true,"lines":["Is this a fabricated example?","Yes, the numbers are entirely invented."],"first":1,"last":1},
+    {"id":"attribution","risk":true,"lines":["The advertiser claimed:","Every upload becomes popular.","No supporting data was provided."],"first":1,"last":1},
+    {"id":"delayed-caveat","risk":true,"lines":["The workflow saved time.","The team liked the prototype.","However, the comparison excluded manual review."],"first":0,"last":0},
+    {"id":"correction","risk":true,"lines":["The launch is tomorrow.","Correction, it was postponed until next week."],"first":0,"last":0},
+    {"id":"rejection","risk":true,"lines":["I recommend deleting the source files.","I was wrong to say that; keep the originals."],"first":0,"last":0},
+    {"id":"sarcasm-miss","risk":true,"lines":["Here is my sarcastic impression of an overconfident marketer.","Every upload becomes popular.","The audience laughed at the joke."],"first":1,"last":1},
+    {"id":"remote-framing-miss","risk":true,"lines":["The following speech is deliberately fictional.","Listen to the next claim.","Ready?","The method always works."],"first":3,"last":3},
+    {"id":"remote-caveat-miss","risk":true,"lines":["The method always works.","We prepared the demo carefully.","The recording starts with an introduction.","However, the claim only applies to the invented demonstration."],"first":0,"last":0},
+    {"id":"nonlexical-retraction-miss","risk":true,"lines":["The product is reliable.","Everything I just said was a lie."],"first":0,"last":0},
+    {"id":"unmatched-quotation-miss","risk":true,"lines":["Here is the complaint we received.","The installer destroyed my files.","Those were the customer's words, not my account of what happened."],"first":1,"last":1},
+    {"id":"safe-direct","risk":false,"lines":["Record a source video.","Save the matching captions.","Keep a backup."],"first":1,"last":1},
+    {"id":"safe-full-qualified","risk":false,"lines":["The edit was faster.","But review time was not measured."],"first":0,"last":1},
+    {"id":"safe-full-question","risk":false,"lines":["Can I upload captions?","Yes, the app reads timestamped captions."],"first":0,"last":1},
+    {"id":"safe-whole-fiction","risk":false,"lines":["Imagine a fictional shop.","The shop doubled sales."],"first":0,"last":1},
+    {"id":"safe-instructions","risk":false,"lines":["Open your editor.","Select a source file.","Export the result."],"first":0,"last":2},
+    {"id":"false-positive-setup","risk":false,"lines":["We finished the fictional example.","Save the finished file."],"first":1,"last":1},
+    {"id":"false-positive-disjoint-but","risk":false,"lines":["The first section explains file formats.","Now consider an unrelated topic.","But lunch is not provided."],"first":0,"last":0},
+    {"id":"safe-single","risk":false,"lines":["The source remains on this computer."],"first":0,"last":0},
+    {"id":"safe-caption-range","risk":false,"lines":["Local files are never uploaded.","Exported captions start at the selected clip's origin.","The source transcript stays available."],"first":1,"last":2}
+  ]
+}

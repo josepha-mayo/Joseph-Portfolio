@@ -1,0 +1,4 @@
+CutProof 1.1 publication build, attempt 2
+The first remote run passed all 92 JavaScript and 35 renderer checks, then exposed a test race: File.text() had not completed when the rejection assertion ran.
+Browser tests now await the actual import outcome and verify the sanitized text.
+Run every check again. Do not merge into production.

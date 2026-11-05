@@ -1,0 +1,18 @@
+{
+  "index.html": {
+    "bytes": 2602491,
+    "sha256": "5427776affcc40b5185f6381312c878274e75bff99e8f5881c5740dbcb0632ae"
+  },
+  "demo.mp4": {
+    "bytes": 2936636,
+    "sha256": "d08061d89a48228b75a70b4d37b443984daa7b2668f2ad46401b2739eae3e6c9"
+  },
+  "source.zip": {
+    "bytes": 16210964,
+    "sha256": "01f40317e30b078687f25823b89f3d31b2133ac56629ce35cef89f0e36d3fc7c"
+  },
+  "voice-preview.mp3": {
+    "bytes": 322605,
+    "sha256": "1d073f40863de2f36d1386614ebc8b7ac7c3d97e6af2dd166a8724bdae077831"
+  }
+}

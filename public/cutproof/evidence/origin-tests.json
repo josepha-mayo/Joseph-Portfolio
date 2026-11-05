@@ -1,0 +1,15 @@
+{
+  "scope": "Loopback HTTP, not the final public host",
+  "browser": "152.0.7977.64",
+  "passed": 7,
+  "checks": [
+    "Built app served successfully from an HTTP origin",
+    "Source media decodes and Boundary Lab exposes omitted words",
+    "Applying wider range leaves approval pending",
+    "Actual ranker creates three source-linked candidates",
+    "HTTP-origin download contains a valid editing ZIP",
+    "HTTP-origin narrow layout does not overflow",
+    "No uncaught JavaScript errors"
+  ],
+  "errors": []
+}

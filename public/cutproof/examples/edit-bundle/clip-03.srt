@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:00:06,320
+A transcript fingerprint lets another editor check whether the supplied transcript has changed.
+
+2
+00:00:06,320 --> 00:00:13,242
+However, a matching fingerprint does not prove the transcript matches the audio or that its claims are true.
+
+3
+00:00:13,242 --> 00:00:21,905
+No lexical rule can guarantee that a cut preserves every nuance. Context checks are reminders, not a substitute for judgment.
+
+4
+00:00:21,905 --> 00:00:30,484
+A useful workflow ends with real files: a playable clip, synchronized captions, and an edit record another person can inspect.

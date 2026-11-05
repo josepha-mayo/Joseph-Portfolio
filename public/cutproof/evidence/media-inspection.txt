@@ -1,0 +1,65 @@
+{
+  "checks": [
+    {
+      "file": "evidence/browser-render.webm",
+      "sha256": "92adef3f64fe5381f6218942f2a94b391498e64fa79babcb597fb2afd0773994",
+      "video_codec": "vp8",
+      "width": 720,
+      "height": 1280,
+      "audio_track_present": true,
+      "decoded_audio_samples": 83520,
+      "decoded_audio_duration_seconds": 5.22,
+      "audio_rms": 0.088791,
+      "audio_non_silent": true,
+      "duration_method": "last packet timestamp plus packet duration",
+      "observed_seconds": 5.252
+    },
+    {
+      "file": "examples/rendered/clip-01.mp4",
+      "sha256": "b3617ce847ac2ab7dd45c79bc20bca8c49dcaec1201d09148aebea16ce50cfd9",
+      "video_codec": "h264",
+      "width": 720,
+      "height": 1280,
+      "audio_track_present": true,
+      "decoded_audio_samples": 534988,
+      "decoded_audio_duration_seconds": 33.43675,
+      "audio_rms": 0.082451,
+      "audio_non_silent": true,
+      "duration_method": "container duration",
+      "observed_seconds": 33.4
+    },
+    {
+      "file": "examples/rendered/clip-02.mp4",
+      "sha256": "71897d7281ca771dad6428b4828f5fcd5ae18aaa413439ea089838ce65401729",
+      "video_codec": "h264",
+      "width": 720,
+      "height": 1280,
+      "audio_track_present": true,
+      "decoded_audio_samples": 526072,
+      "decoded_audio_duration_seconds": 32.8795,
+      "audio_rms": 0.086088,
+      "audio_non_silent": true,
+      "duration_method": "container duration",
+      "observed_seconds": 32.9
+    },
+    {
+      "file": "examples/rendered/clip-03.mp4",
+      "sha256": "b35634b47824b25c081d44b236c696dbc69df49561aad8350509c1fad556fecf",
+      "video_codec": "h264",
+      "width": 720,
+      "height": 1280,
+      "audio_track_present": true,
+      "decoded_audio_samples": 488177,
+      "decoded_audio_duration_seconds": 30.511063,
+      "audio_rms": 0.081452,
+      "audio_non_silent": true,
+      "duration_method": "container duration",
+      "observed_seconds": 30.5
+    }
+  ],
+  "all_media_checks_passed": true,
+  "limitations": [
+    "Non-silent audio is checked by decoded RMS, not word-for-word speech recognition.",
+    "No independent human quality assessment or transcript semantic verification was performed."
+  ]
+}

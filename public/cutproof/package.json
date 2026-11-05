@@ -1,0 +1,14 @@
+{
+  "name": "cutproof-studio",
+  "version": "1.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Local-first source-linked clip selection, context review and real media export",
+  "license": "MIT",
+  "engines": {"node": ">=20"},
+  "scripts": {
+    "test": "node --test tests/core.test.js tests/workflow.test.js",
+    "build": "python3 scripts/build.py",
+    "verify": "python3 ci_build.py"
+  }
+}

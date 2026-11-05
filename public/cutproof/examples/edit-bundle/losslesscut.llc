@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "mediaFileName": "source.mp4",
+  "cutSegments": [
+    {
+      "start": 47.476,
+      "end": 80.868,
+      "name": "A better editing workflow starts with the source, rather than a pile of generated claims.",
+      "selected": true,
+      "tags": {
+        "cutproof_id": "clip-01",
+        "review": "pending",
+        "transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f"
+      }
+    },
+    {
+      "start": 0,
+      "end": 32.879,
+      "name": "A short video can repeat every word correctly and still tell the wrong story.",
+      "selected": true,
+      "tags": {
+        "cutproof_id": "clip-02",
+        "review": "pending",
+        "transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f"
+      }
+    },
+    {
+      "start": 88.713,
+      "end": 119.197,
+      "name": "A transcript fingerprint lets another editor check whether the supplied transcript has changed.",
+      "selected": true,
+      "tags": {
+        "cutproof_id": "clip-03",
+        "review": "pending",
+        "transcript_sha256": "07fd3b2e25aed1d41dedf6d610a4a2bceb3823bed339f87b7eabb078a34beb0f"
+      }
+    }
+  ]
+}

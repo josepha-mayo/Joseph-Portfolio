@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/ci_build.py", line 91, in <module>
+    run('browser-workflows',[sys.executable,'tests/browser_test.py'])
+  File "/home/runner/work/Joseph-Portfolio/Joseph-Portfolio/public/cutproof/ci_build.py", line 27, in run
+    if result.returncode:raise RuntimeError(f'{name} failed; see evidence/{name}.txt')
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: browser-workflows failed; see evidence/browser-workflows.txt

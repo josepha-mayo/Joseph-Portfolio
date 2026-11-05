@@ -1,0 +1,4 @@
+CutProof v1.2 candidate, attempt 3.
+Use upstream dist/transformers.min.js, which includes ONNX Runtime, instead of the web entry's unresolved bare imports.
+Repeat 33 new JS tests, 92 base JS tests, 35 native checks, actual browser Whisper inference and slower neural narration.
+The submitted immutable v1.1 remains unchanged until public verification passes.
