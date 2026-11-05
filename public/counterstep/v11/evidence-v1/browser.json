@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "base_url": "isolated set_content; no HTTP navigation",
+  "authentication": "none",
+  "browser": "152.0.7977.0",
+  "count": 16,
+  "checks": [
+    "No session export before a current audit",
+    "Exact checker catches first wrong step and actual learned ranker suggests distribution",
+    "Opt-in exact counterexample distinguishes previous and next equation",
+    "Two cancelling errors remain an invalid derivation despite the correct final answer",
+    "User repairs the steps; stale audit clears and exact recheck succeeds",
+    "Nonlinear input abstains rather than issuing an incorrect verdict",
+    "Input markup is inert and unsupported",
+    "Learned suggestion selects the actual targeted practice family",
+    "Fresh practice is scored by the exact checker, not the classifier, with one recorded answer",
+    "Fresh-number transfer and smoothed-history next-focus work",
+    "Current session downloads with input fingerprint and actual attempted practice",
+    "Readable self-contained review downloads",
+    "Reopen ignores tampered saved outputs and recomputes the real chain",
+    "Changed inputs with old fingerprint reject without overwriting the working session",
+    "390-pixel layout remains within viewport",
+    "No page errors, external model requests or input uploads"
+  ],
+  "requests": []
+}

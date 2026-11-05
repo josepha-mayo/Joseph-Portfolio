@@ -1,0 +1,69 @@
+{
+  "project": "Counterstep",
+  "status": "passed",
+  "started_at": "2026-09-07T16:43:41.561453+00:00",
+  "source_commit": "f5f93e781b9257cbcdee23aab172f13aec04e5a1",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 0.025
+    },
+    {
+      "name": "unit-tests",
+      "exit_code": 0,
+      "seconds": 0.272
+    },
+    {
+      "name": "oracle",
+      "exit_code": 0,
+      "seconds": 0.102
+    },
+    {
+      "name": "fresh-evaluation",
+      "exit_code": 0,
+      "seconds": 0.181
+    },
+    {
+      "name": "browser",
+      "exit_code": 0,
+      "seconds": 26.655
+    },
+    {
+      "name": "demo-encode",
+      "exit_code": 0,
+      "seconds": 10.424
+    },
+    {
+      "name": "demo-decode",
+      "exit_code": 0,
+      "seconds": 2.404
+    }
+  ],
+  "scope": "Internal tests and synthetic arithmetic data; no learner study or earned prize.",
+  "unit_tests": 55,
+  "oracle_cases": 250,
+  "browser_workflows": 16,
+  "neural_evaluation": {
+    "status": "completed",
+    "seed": 941307,
+    "n": 600,
+    "model_sha256": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381",
+    "top_class_correct": 487,
+    "top_class_accuracy": 0.8116666666666666,
+    "suggestions_issued": 475,
+    "suggestions_correct": 475,
+    "coverage": 0.7916666666666666,
+    "scope": "Fresh coefficient range 31..53, same five injected-edit families, half side-swapped. No hyperparameter selection or retraining in this script. Synthetic numeric generalization, not novel-template or learner evaluation."
+  },
+  "demo_seconds": 118.0,
+  "audio_rms": 0.13894022210440002,
+  "narration": {
+    "model": "hexgrad/Kokoro-82M",
+    "voice": "af_heart",
+    "synthetic": true,
+    "speed": 0.9,
+    "spoken_words_per_minute": 130.41713641488164
+  },
+  "finished_at": "2026-09-07T16:47:27.271529+00:00"
+}

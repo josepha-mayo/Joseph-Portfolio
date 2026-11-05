@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "demo_seconds": 118.0,
+  "audio_rms": 0.12114298261865963,
+  "words_per_minute": 135.1523947750363,
+  "voice": "stock Kokoro af_heart, synthetic, not cloned",
+  "scene_records": [
+    {
+      "scene": 1,
+      "seconds": 14.259375,
+      "action_seconds": 0.11399632199999132,
+      "narration": "The final answer is right, but the working is wrong. Counterstep helps a learner repair that gap, then write a fresh step without multiple-choice answers."
+    },
+    {
+      "scene": 2,
+      "seconds": 15.084375,
+      "action_seconds": 0.2630353659999969,
+      "narration": "The exact checker finds the first broken transition. A small trained model suggests what to practise, but it never decides whether the mathematics is correct."
+    },
+    {
+      "scene": 3,
+      "seconds": 15.334375,
+      "action_seconds": 0.18868494700001293,
+      "narration": "The starting problem stays fixed. Here, the learner replaces the incorrect expansion and completes the repaired chain. Now the task moves to new numbers."
+    },
+    {
+      "scene": 4,
+      "seconds": 14.834375,
+      "action_seconds": 0.16089164599998185,
+      "narration": "Giving the correct value of x is not enough when the question asks for expansion. The checker distinguishes a valid solution from the operation requested."
+    },
+    {
+      "scene": 5,
+      "seconds": 14.134375,
+      "action_seconds": 1.9174945890000004,
+      "narration": "A worked step is available, but asking for it is recorded. Copying that step completes this card with help, not as an independent first response."
+    },
+    {
+      "scene": 6,
+      "seconds": 14.134375,
+      "action_seconds": 0.33815801800000145,
+      "narration": "Next comes a changed structure. Save halfway through, reopen the file, and the same question, unfinished draft, and earlier help history return."
+    },
+    {
+      "scene": 7,
+      "seconds": 14.009375,
+      "action_seconds": 0.29823159400001487,
+      "narration": "Write the new step without help. The tutor note keeps the question, every response, revisions, and assistance, rather than showing only a score."
+    },
+    {
+      "scene": 8,
+      "seconds": 16.209375,
+      "action_seconds": 0.7143441079999775,
+      "narration": "The workflow runs locally, without sign-in or cloud inference. This is recorded software with synthetic examples, not a learner trial or evidence of improved learning."
+    }
+  ],
+  "scope": "Recorded actual application actions with synthetic equations; not a real learner or outcome study."
+}

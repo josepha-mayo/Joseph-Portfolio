@@ -1,0 +1,32 @@
+name: Counterstep exact HTML rewrite diagnosis
+on:
+  push:
+    branches: [counterstep-transfer-final-20260908]
+    paths: [.github/workflows/counterstep-html-audit.yml]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    if: github.ref == 'refs/heads/counterstep-transfer-final-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read exact anonymous HTML and show only differences
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.request import urlopen
+          import re,json,difflib,hashlib
+          root=Path('public/counterstep/v11')
+          base=(root/'PATH_PUBLIC_URL').read_text().strip().rsplit('/',1)[0]+'/'
+          for name in ['path.html','judge.html']:
+            original=(root/name).read_text()
+            with urlopen(base+name,timeout=25) as r:
+              assert r.status==200
+              served=r.read().decode()
+            print(json.dumps({'file':name,'original_anchors':re.findall(r'<a\b[^>]*>',original),'served_anchors':re.findall(r'<a\b[^>]*>',served)},indent=2))
+            matcher=difflib.SequenceMatcher(None,original,served,autojunk=False)
+            changes=[{'tag':tag,'old':original[i:j],'new':served[k:l],'before':original[max(0,i-100):i],'after':original[j:j+100]} for tag,i,j,k,l in matcher.get_opcodes() if tag!='equal']
+            print(json.dumps({'file':name,'changes':changes},indent=2))
+          PY

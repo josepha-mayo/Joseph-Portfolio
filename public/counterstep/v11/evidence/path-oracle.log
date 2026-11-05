@@ -1,0 +1,1 @@
+{"status": "passed", "generated_tasks": 150, "response_checks": 750, "independent_parser": "Python AST plus Fraction affine algebra; no eval and no JavaScript parser reuse", "scope": "Synthetic authored task families, not learner results, new-model evaluation or formal proof"}
