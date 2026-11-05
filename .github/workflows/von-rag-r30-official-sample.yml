@@ -1,0 +1,85 @@
+name: von-rag R30 official sample diagnosis
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - .github/workflows/von-rag-r30-official-sample.yml
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r30-official-sample
+  cancel-in-progress: false
+jobs:
+  official-corpus-preflight:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-test.txt
+      - name: Freeze official sample and exact published application sources
+        run: |
+          set -euo pipefail
+          python diagnostics/official_sample_probe.py prepare --work evidence/r30
+          python diagnostics/official_sample_probe.py preflight --work evidence/r30 --name r24-preflight
+          python diagnostics/official_sample_probe.py preflight --work evidence/r30 --source . --name r27-preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r30-official-preflight
+          path: |
+            delivery/von-rag-r19/evidence/r30/official-kit.zip
+            delivery/von-rag-r19/evidence/r30/PREPARATION.json
+            delivery/von-rag-r19/evidence/r30/r24-preflight/*.json
+            delivery/von-rag-r19/evidence/r30/r27-preflight/*.json
+          retention-days: 14
+  official-sample-real-model:
+    needs: official-corpus-preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    env:
+      OMP_NUM_THREADS: '4'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HUB_DISABLE_IMPLICIT_TOKEN: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pinned CPU diagnostic dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install torch==2.10.0 torchvision==0.25.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install transformers==5.3.0 accelerate==1.13.0 Pillow==12.3.0 PyMuPDF==1.26.7
+      - name: Freeze kit and selected-image source
+        run: python diagnostics/official_sample_probe.py prepare --work evidence/r30
+      - name: Actual image transcription plus ten official sample questions
+        timeout-minutes: 35
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r30/r24
+          timeout --kill-after=10s 2040s python -u diagnostics/official_sample_probe.py model --work evidence/r30 --name r24 2>&1 | tee evidence/r30/r24/run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r30-official-model-results
+          path: |
+            delivery/von-rag-r19/evidence/r30/r24/*.json
+            delivery/von-rag-r19/evidence/r30/r24/*.log
+          retention-days: 14

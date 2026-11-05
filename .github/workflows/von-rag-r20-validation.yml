@@ -1,0 +1,136 @@
+name: von-rag R20 model and contract validation
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - .github/workflows/von-rag-r20-validation.yml
+      - delivery/von-rag-r19/diagnostics/model_probe.py
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r20-model-validation
+  cancel-in-progress: false
+jobs:
+  contract-tests:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.13', '3.14']
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install pinned CPU test dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Run actual contract tests and authored ablation
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r20-contract
+          python -m pytest -q --junitxml=evidence/r20-contract/tests.xml | tee evidence/r20-contract/tests.log
+          python benchmark.py --out evidence/r20-contract/benchmark --seed 781493 --products 32
+          python -m pip freeze > evidence/r20-contract/requirements-observed.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r20-contract-python-${{ matrix.python }}
+          path: delivery/von-rag-r19/evidence/r20-contract/
+          retention-days: 7
+  real-model-cpu:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    env:
+      TOKENIZERS_PARALLELISM: 'false'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HUB_DISABLE_IMPLICIT_TOKEN: '1'
+      OMP_NUM_THREADS: '4'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install CPU-only torch and the production Transformers version
+        run: |
+          set -euo pipefail
+          python -m pip install torch==2.10.0 torchvision==0.25.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install transformers==5.3.0 accelerate==1.13.0 Pillow==12.3.0
+      - name: Evaluate three authored questions with the exact public 4B model
+        timeout-minutes: 16
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r20-model
+          python -m pip freeze > evidence/r20-model/environment.txt
+          timeout --kill-after=10s 900s python -u diagnostics/model_probe.py 2>&1 | tee evidence/r20-model/run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r20-real-pretrained-cpu
+          path: |
+            delivery/von-rag-r19/evidence/r20-model/*.json
+            delivery/von-rag-r19/evidence/r20-model/*.txt
+            delivery/von-rag-r19/evidence/r20-model/*.log
+          retention-days: 7
+  public-contract-snapshot:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read only public challenge rules and public leaderboard
+        run: |
+          mkdir -p receipts
+          python3 - <<'PY'
+          import json, re, html, hashlib, urllib.request
+          from pathlib import Path
+          from datetime import datetime, timezone
+          root=Path('receipts')
+          urls={
+            'event':'https://lablab.ai/ai-hackathons/amd-lablab-ai-academy-challenge',
+            'board':'https://lablab.ai/api/v4/amd-lablab-ai-academy-challenge/quest-leaderboard'}
+          for name,url in urls.items():
+              try:
+                  req=urllib.request.Request(url,headers={'User-Agent':'von-read-public-contract-check/1.0'})
+                  with urllib.request.urlopen(req,timeout=30) as response:
+                      raw=response.read(4000000)
+                      code=response.status
+                  text=raw.decode('utf-8')
+                  if name=='board':
+                      data=json.loads(text)
+                      selected=[r for r in data.get('entries',[]) if r.get('username')=='josepha_mayo456']
+                      result={k:data.get(k) for k in ['available','fetchedAt','miniChallengeCount','truncated']}
+                      result.update(our_entry=selected,leaders=data.get('entries',[])[:3])
+                      (root/'leaderboard.json').write_text(json.dumps(result,indent=2))
+                  else:
+                      (root/'official-event.html').write_text(text)
+                      decoded=html.unescape(text.replace('\\u003c','<').replace('\\u003e','>').replace('\\"','"'))
+                      windows=[]
+                      for match in list(re.finditer(r'Mini.{0,3}challenge.{0,4}3|Retrieval.{0,8}Augmented',decoded,re.I))[:12]:
+                          windows.append(decoded[max(0,match.start()-100):match.start()+42000])
+                      (root/'mc3-source-sections.txt').write_text('\n\n'.join(windows))
+                      links=sorted(set(re.findall(r'href=["\']([^"\']+)',decoded)))
+                      (root/'public-links.json').write_text(json.dumps([u for u in links if any(t in u.lower() for t in ['rag','corpus','starter','challenge','zip'])],indent=2))
+                  (root/(name+'-fetch.json')).write_text(json.dumps({'url':url,'http':code,'sha256':hashlib.sha256(raw).hexdigest(),'observed_utc':datetime.now(timezone.utc).isoformat()},indent=2))
+              except Exception as e:
+                  (root/(name+'-error.json')).write_text(json.dumps({'url':url,'error':type(e).__name__+': '+str(e)}))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r20-official-public-snapshot
+          path: receipts/
+          retention-days: 7

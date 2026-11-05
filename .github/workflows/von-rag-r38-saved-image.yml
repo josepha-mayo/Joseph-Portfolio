@@ -1,0 +1,196 @@
+name: von-rag R38 saved-image verification
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths: [.github/workflows/von-rag-r38-saved-image.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: von-rag-r38-saved-image
+  cancel-in-progress: false
+jobs:
+  verify-saved-image:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19/diagnostics
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36620643002
+          name: von-rag-r35-production-pull
+          path: retained
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36614477757
+          name: von-rag-r33-original-weight-cpu
+          path: replay/r33
+      - name: Freeze the existing image identity and official replay inputs
+        run: |
+          set -euo pipefail
+          mkdir -p evidence replay/official
+          python3 - <<'PY'
+          import hashlib,json,os,urllib.request,zipfile,io
+          from pathlib import Path
+          old=json.loads(Path('retained/inspect.json').read_text())[0]
+          expected='sha256:87b90df3c6d7d8a8161ea5d718e97608566bc3e0818fb6e80769a937c68b62fb'
+          config='sha256:34a134780c4539ec52e5bf5873b4899e30b798d7ff81f8dd6e87ae9068082b72'
+          assert old['Id']==config and len(old['RootFS']['Layers'])==27
+          refs=[r for r in old['RepoDigests'] if r.endswith('@'+expected)]
+          assert len(refs)==1
+          ref=refs[0]
+          assert ref.split('/')[0].endswith('.netlify.app') and not ref.startswith('127.')
+          print('::add-mask::'+ref)
+          Path('saved-image.txt').write_text(ref+'\n')
+          with open(os.environ['GITHUB_ENV'],'a') as f:f.write('IMAGE='+ref+'\n')
+          config_bytes=Path('retained/config.json').read_bytes()
+          assert 'sha256:'+hashlib.sha256(config_bytes).hexdigest()==config
+          request=urllib.request.Request('https://storage.googleapis.com/lablab-static-eu/share/mc3-starter-kit.zip',headers={'User-Agent':'von-saved-image-check/1.0'})
+          with urllib.request.urlopen(request,timeout=30) as r:raw=r.read(200001)
+          assert len(raw)<=200000 and hashlib.sha256(raw).hexdigest()=='1173aef83fa06828b1acba231bc033f52658d4f9714d6a61a17873e4607f0829'
+          with zipfile.ZipFile(io.BytesIO(raw)) as z:
+              for item in z.infolist():
+                  assert not item.filename.startswith('/') and '..' not in Path(item.filename).parts
+              z.extractall('replay/official')
+          Path('replay/official/mc3-starter-kit/mc3-corpus/vendor/internal_audit.txt').chmod(0)
+          record={'saved_manifest':expected,'saved_config':config,'new_image_created':False,'new_model_weights':False,
+                  'official_kit_hash_verified':True,'r33_recorded_artifact_run':36614477757,'submission_modified':False}
+          Path('evidence/INPUT_IDENTITY.json').write_text(json.dumps(record,indent=2)+'\n')
+          PY
+      - name: Verify Docker stdin handling before the large transfer
+        run: |
+          set -euo pipefail
+          docker run --rm -i python:3.14-slim python - <<'PY' > evidence/stdin-control.json
+          import json
+          print(json.dumps({'stdin_script_executed':True}))
+          PY
+          python3 -c 'import json; assert json.load(open("evidence/stdin-control.json"))["stdin_script_executed"]'
+      - name: Prepare only this disposable runner
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test -z "${AWS_ACCESS_KEY_ID:-}"
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > evidence/disk-before.txt
+      - name: Pull the exact already-saved image anonymously
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/r38-empty-docker"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          date -u +%s > evidence/pull-start.txt
+          timeout --kill-after=15s 1500s docker pull "$IMAGE" > pull-private.log 2>&1
+          date -u +%s > evidence/pull-end.txt
+          docker image inspect "$IMAGE" > inspect-private.json
+      - name: Execute and verify source inspection inside the actual image
+        run: |
+          set -euo pipefail
+          docker run --rm -i --network none --entrypoint python3 "$IMAGE" - <<'PY' > evidence/source.json
+          import hashlib,json,pathlib
+          from von_rag import runtime,compact
+          assert runtime.answer_model is compact.answer_compact
+          files={name:hashlib.sha256((pathlib.Path('/app/von_rag')/name).read_bytes()).hexdigest()
+                 for name in ('compact.py','retrieval.py','selection_repair.py','runtime.py')}
+          print(json.dumps({'compact_default':True,'files':files}))
+          PY
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          old=json.loads(Path('retained/inspect.json').read_text())[0]
+          actual=json.loads(Path('inspect-private.json').read_text())[0]
+          assert actual['Id']==old['Id'] and actual['RootFS']['Layers']==old['RootFS']['Layers']
+          source=json.loads(Path('evidence/source.json').read_text())
+          expected={'compact.py':'f412af4d28e92a013d66e62285f9a16911496e3a2cc1d1de8b869e33ee214d70',
+                    'retrieval.py':'9da73502fe0f03c24fccd3821d4ce00b9013ef118f380b5302b2e7fdd17ecac5',
+                    'selection_repair.py':'44c8d60911230feccf1ffdd590bb9eb9477ddffcb7a6a5c97ab736fc0539d003',
+                    'runtime.py':'b4e47f02f3946a1741212fed9c8d4ef67c9a60670bfe9752c4c4f6dbdac76a59'}
+          assert source['files']==expected and source['compact_default']
+          Path('evidence/IMAGE_IDENTITY.json').write_text(json.dumps({'id':actual['Id'],'size':actual['Size'],'filesystem_layers':actual['RootFS']['Layers'],'entrypoint':actual['Config']['Entrypoint']},indent=2)+'\n')
+          PY
+      - name: Replay frozen model outputs and failure controls inside the image
+        run: |
+          set -euo pipefail
+          docker run --rm -i --network none --entrypoint python3 \
+            -v "$PWD/replay:/replay:ro" -v "$PWD/evidence:/evidence" "$IMAGE" \
+            - --input /replay --output /evidence/recorded-replay \
+            < delivery/von-rag-r19/diagnostics/r38_container_replay.py \
+            > evidence/replay.log 2>&1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/recorded-replay/REPLAY.json').read_text())
+          assert r['correct']==10 and r['total']==10 and r['previously_correct_unchanged']==8
+          assert r['new_model_calls']==0 and r['new_vision_calls']==0 and r['scripted_control_cases']==5
+          PY
+      - name: Exercise fresh CLI processes in explicitly labeled diagnostic mode
+        run: |
+          set -euo pipefail
+          mkdir -p corpus
+          printf 'Product: ZX-517\nMaximum junction temperature: 84\nStatus: current\n' > corpus/spec.txt
+          printf 'event="cooling oscillation" ticket=CASE-5724\n' > corpus/event.log
+          printf 'Ticket,Fixed in\nCASE-5724,3.4.8\n' > corpus/fixes.csv
+          docker run -d --name r38-check --network none --entrypoint python3 \
+            -v "$PWD/corpus:/app/corpus:ro" "$IMAGE" -m von_rag.runtime serve --diagnostic
+          trap 'docker logs r38-check > evidence/worker.log 2>&1; docker rm -f r38-check >/dev/null 2>&1 || true' EXIT
+          for i in $(seq 1 50); do docker exec r38-check python3 -m von_rag.runtime health >/dev/null 2>&1 && break; sleep .2; done
+          docker exec r38-check python3 /app/app.py --index /app/corpus > evidence/index.json
+          docker exec r38-check python3 /app/app.py --corpus /app/corpus --query-id direct --query 'What is the maximum junction temperature of ZX-517?'
+          docker exec r38-check python3 /app/app.py --corpus /app/corpus --query-id chain --query 'The production log shows cooling oscillation. Which firmware fixed the underlying defect?'
+          docker exec r38-check python3 /app/app.py --corpus /app/corpus --query-id missing --query 'What is the unit price of ZX-517 at 25000 unit volume?'
+          docker cp r38-check:/app/output evidence/output
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for q,expected in {'direct':('84',['spec.txt']),'chain':('3.4.8',['event.log','fixes.csv']),'missing':('',[])}.items():
+              r=json.loads(Path('evidence/output',q+'_output.json').read_text())
+              assert (r['answer'],sorted(r['citations']))==expected
+          PY
+      - name: Ensure default native runtime does not silently fall back to CPU
+        run: |
+          set +e
+          timeout --kill-after=5s 150s docker run --rm --network none "$IMAGE" > evidence/native-no-gpu.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          test "$rc" -ne 124
+          grep -q 'Allocated AMD ROCm hardware required' evidence/native-no-gpu.log
+      - name: Record completed checks without claiming native qualification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          i=json.loads(Path('evidence/IMAGE_IDENTITY.json').read_text())
+          seconds=int(Path('evidence/pull-end.txt').read_text())-int(Path('evidence/pull-start.txt').read_text())
+          report={'schema':'von-rag-r38-saved-image-verified-1','status':'passed','image_config':i['id'],
+            'uncompressed_bytes':i['size'],'layers':len(i['filesystem_layers']),'full_pull_seconds':seconds,
+            'stdin_execution_checked':True,'source_hashes_verified':True,'inside_container_replay_correct':10,
+            'inside_container_replay_total':10,'scripted_failure_controls':5,'diagnostic_cli_queries':3,
+            'native_no_cpu_fallback':True,'new_neural_inference':False,'native_amd_qualification':False,
+            'official_selfcheck_run':False,'submission_changed':False,'new_leaderboard_points_claimed':False}
+          Path('evidence/ACCEPTANCE.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Retain diagnostics without advertising the grader image reference
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          if Path('pull-private.log').exists() and Path('saved-image.txt').exists():
+              image=Path('saved-image.txt').read_text().strip()
+              text=Path('pull-private.log').read_text().replace(image,'[saved image reference]')
+              Path('evidence/pull.log').write_text(text)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r38-saved-image-verification
+          path: evidence/
+          retention-days: 14

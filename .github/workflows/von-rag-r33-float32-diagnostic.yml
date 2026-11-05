@@ -1,0 +1,56 @@
+name: von-rag R33 original-weight CPU diagnosis
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths: [.github/workflows/von-rag-r33-float32-diagnostic.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-rag-r33-original-weight-diagnosis
+  cancel-in-progress: false
+jobs:
+  official-sample:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 38
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HUB_DISABLE_IMPLICIT_TOKEN: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+      OMP_NUM_THREADS: '4'
+      OPENBLAS_NUM_THREADS: '4'
+      MALLOC_ARENA_MAX: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Pinned CPU-only dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install torch==2.10.0 torchvision==0.25.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install transformers==5.3.0 accelerate==1.13.0 Pillow==12.3.0 PyMuPDF==1.26.7
+      - name: Numeric equivalence checks before any large model download
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r33/cpu-float32-r24
+          python -u diagnostics/official_cpu_float32.py --work evidence/r33 --checks-only | tee evidence/r33/cpu-float32-r24/checks.log
+      - name: Real image reading and ten official public-sample questions
+        timeout-minutes: 34
+        run: |
+          set -euo pipefail
+          timeout --kill-after=10s 1980s python -u diagnostics/official_cpu_float32.py --work evidence/r33 2>&1 | tee evidence/r33/cpu-float32-r24/run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r33-original-weight-cpu
+          path: |
+            delivery/von-rag-r19/evidence/r33/cpu-float32-r24/*.json
+            delivery/von-rag-r19/evidence/r33/cpu-float32-r24/*.log
+          retention-days: 14

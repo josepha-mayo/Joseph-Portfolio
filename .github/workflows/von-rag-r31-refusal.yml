@@ -1,0 +1,43 @@
+name: von-rag R31 empty evidence regression
+on:
+  push:
+    branches: [amd-r19-citation-rag-20260928]
+    paths:
+      - .github/workflows/von-rag-r31-refusal.yml
+      - delivery/von-rag-r19/tests/test_empty_retrieval.py
+permissions:
+  contents: read
+jobs:
+  tests:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: delivery/von-rag-r19
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: delivery/von-rag-r19
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-test.txt
+      - name: Complete regression suite
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/r31-refusal
+          python -m pytest -q tests --junitxml=evidence/r31-refusal/tests.xml | tee evidence/r31-refusal/tests.log
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          r={'source_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(Path('von_rag').glob('*.py'))},'native_gpu_execution':False,'submitted_image_changed':False,'test_scope':'Software contracts with scripted model outputs; not model accuracy'}
+          Path('evidence/r31-refusal/SOURCE.json').write_text(json.dumps(r,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-rag-r31-refusal-tests
+          path: delivery/von-rag-r19/evidence/r31-refusal/
+          retention-days: 14
