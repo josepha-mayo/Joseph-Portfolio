@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-08T20:23:19.421598+00:00",
+  "commands": [
+    {
+      "name": "path-build",
+      "exit_code": 0
+    },
+    {
+      "name": "path-all-node",
+      "exit_code": 0
+    },
+    {
+      "name": "path-inherited-oracle",
+      "exit_code": 0
+    },
+    {
+      "name": "path-new-oracle",
+      "exit_code": 0
+    },
+    {
+      "name": "path-frozen-model",
+      "exit_code": 0
+    },
+    {
+      "name": "path-inherited-browser",
+      "exit_code": 0
+    },
+    {
+      "name": "path-new-browser",
+      "exit_code": 0
+    },
+    {
+      "name": "path-demo",
+      "exit_code": 0
+    }
+  ],
+  "node_tests": 84,
+  "classic_browser_workflows": 16,
+  "path_browser_workflows": 31,
+  "old_reference_cases": 250,
+  "new_reference": {
+    "status": "passed",
+    "generated_tasks": 150,
+    "response_checks": 750,
+    "independent_parser": "Python AST plus Fraction affine algebra; no eval and no JavaScript parser reuse",
+    "scope": "Synthetic authored task families, not learner results, new-model evaluation or a formal proof"
+  },
+  "demo_seconds": 117.0,
+  "narration": {
+    "stock_voice": "Kokoro af_heart",
+    "synthetic": true,
+    "speed": 0.88,
+    "spoken_wpm": 133.17249698431843
+  },
+  "frozen_model": {
+    "matches": 487,
+    "cases": 600,
+    "note": "Identical prior numeric evaluation rerun, not new held-out data"
+  },
+  "scope": "Internal synthetic task and browser checks. No learner study or measured educational benefit.",
+  "finished_at": "2026-09-08T20:26:32.993329+00:00"
+}

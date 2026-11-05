@@ -1,0 +1,4814 @@
+{
+  "status": "completed",
+  "seed": 941307,
+  "n": 600,
+  "model_sha256": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381",
+  "top_class_correct": 487,
+  "top_class_accuracy": 0.8116666666666666,
+  "suggestions_issued": 475,
+  "suggestions_correct": 475,
+  "coverage": 0.7916666666666666,
+  "scope": "Fresh coefficient range 31..53, same five injected-edit families, half side-swapped. No hyperparameter selection or retraining in this script. Synthetic numeric generalization, not novel-template or learner evaluation.",
+  "predictions": [
+    {
+      "before": "33(x+(-47))=1067",
+      "after": "33x+(-47)=1067",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9792105093453195,
+      "suggested": "spread"
+    },
+    {
+      "before": "775=47(x+(-31))",
+      "after": "775=47x+(-31)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9880991965405524,
+      "suggested": "spread"
+    },
+    {
+      "before": "39(x+(-51))=1902",
+      "after": "39x+(-51)=1902",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9769571707443582,
+      "suggested": "spread"
+    },
+    {
+      "before": "913=42(x+(-36))",
+      "after": "913=42x+(-36)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9857369128780871,
+      "suggested": "spread"
+    },
+    {
+      "before": "39(x+(34))=141",
+      "after": "39x+(34)=141",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9897399408730974,
+      "suggested": "spread"
+    },
+    {
+      "before": "475=50(x+(-49))",
+      "after": "475=50x+(-49)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9970758955109837,
+      "suggested": "spread"
+    },
+    {
+      "before": "42(x+(37))=1107",
+      "after": "42x+(37)=1107",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9907930766631871,
+      "suggested": "spread"
+    },
+    {
+      "before": "1285=43(x+(47))",
+      "after": "1285=43x+(47)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9904057924356989,
+      "suggested": "spread"
+    },
+    {
+      "before": "34(x+(37))=494",
+      "after": "34x+(37)=494",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9905576093279571,
+      "suggested": "spread"
+    },
+    {
+      "before": "961=48(x+(-50))",
+      "after": "961=48x+(-50)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9908962400596144,
+      "suggested": "spread"
+    },
+    {
+      "before": "43(x+(48))=2415",
+      "after": "43x+(48)=2415",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9902916305769939,
+      "suggested": "spread"
+    },
+    {
+      "before": "2125=45(x+(33))",
+      "after": "2125=45x+(33)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.991105210164662,
+      "suggested": "spread"
+    },
+    {
+      "before": "35(x+(-37))=959",
+      "after": "35x+(-37)=959",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9814585837116075,
+      "suggested": "spread"
+    },
+    {
+      "before": "199=33(x+(41))",
+      "after": "199=33x+(41)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9904302484117731,
+      "suggested": "spread"
+    },
+    {
+      "before": "43(x+(38))=299",
+      "after": "43x+(38)=299",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9918779698864743,
+      "suggested": "spread"
+    },
+    {
+      "before": "1911=45(x+(-45))",
+      "after": "1911=45x+(-45)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9795807676119422,
+      "suggested": "spread"
+    },
+    {
+      "before": "45(x+(-49))=2468",
+      "after": "45x+(-49)=2468",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9775634930192286,
+      "suggested": "spread"
+    },
+    {
+      "before": "1237=46(x+(49))",
+      "after": "1237=46x+(49)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.990845770007832,
+      "suggested": "spread"
+    },
+    {
+      "before": "41(x+(-35))=1705",
+      "after": "41x+(-35)=1705",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9758632867252129,
+      "suggested": "spread"
+    },
+    {
+      "before": "1914=32(x+(34))",
+      "after": "1914=32x+(34)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.989356312452724,
+      "suggested": "spread"
+    },
+    {
+      "before": "49(x+(40))=2057",
+      "after": "49x+(40)=2057",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.991252591673079,
+      "suggested": "spread"
+    },
+    {
+      "before": "919=43(x+(51))",
+      "after": "919=43x+(51)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9906894674834396,
+      "suggested": "spread"
+    },
+    {
+      "before": "52(x+(49))=1911",
+      "after": "52x+(49)=1911",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9911106668521171,
+      "suggested": "spread"
+    },
+    {
+      "before": "2562=33(x+(-40))",
+      "after": "2562=33x+(-40)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9643775782771552,
+      "suggested": "spread"
+    },
+    {
+      "before": "45(x+(-35))=2015",
+      "after": "45x+(-35)=2015",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9765389726681835,
+      "suggested": "spread"
+    },
+    {
+      "before": "2067=34(x+(-32))",
+      "after": "2067=34x+(-32)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9662212344587802,
+      "suggested": "spread"
+    },
+    {
+      "before": "44(x+(34))=2674",
+      "after": "44x+(34)=2674",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9907365663269304,
+      "suggested": "spread"
+    },
+    {
+      "before": "2021=50(x+(35))",
+      "after": "2021=50x+(35)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9915384289850567,
+      "suggested": "spread"
+    },
+    {
+      "before": "36(x+(42))=327",
+      "after": "36x+(42)=327",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9912602801686062,
+      "suggested": "spread"
+    },
+    {
+      "before": "1404=37(x+(40))",
+      "after": "1404=37x+(40)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9901292129770908,
+      "suggested": "spread"
+    },
+    {
+      "before": "52(x+(-32))=252",
+      "after": "52x+(-32)=252",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9982215408787636,
+      "suggested": "spread"
+    },
+    {
+      "before": "679=32(x+(-46))",
+      "after": "679=32x+(-46)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9864782452934407,
+      "suggested": "spread"
+    },
+    {
+      "before": "44(x+(-52))=2680",
+      "after": "44x+(-52)=2680",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9766467748043605,
+      "suggested": "spread"
+    },
+    {
+      "before": "161=42(x+(-47))",
+      "after": "161=42x+(-47)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.998982843166895,
+      "suggested": "spread"
+    },
+    {
+      "before": "38(x+(38))=1688",
+      "after": "38x+(38)=1688",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9902684538080642,
+      "suggested": "spread"
+    },
+    {
+      "before": "1284=36(x+(-41))",
+      "after": "1284=36x+(-41)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.977428494382507,
+      "suggested": "spread"
+    },
+    {
+      "before": "34(x+(53))=754",
+      "after": "34x+(53)=754",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9898045995791698,
+      "suggested": "spread"
+    },
+    {
+      "before": "2043=45(x+(-46))",
+      "after": "2043=45x+(-46)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9789991909746412,
+      "suggested": "spread"
+    },
+    {
+      "before": "37(x+(36))=1369",
+      "after": "37x+(36)=1369",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.990334667947826,
+      "suggested": "spread"
+    },
+    {
+      "before": "2276=41(x+(44))",
+      "after": "2276=41x+(44)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9902243250931979,
+      "suggested": "spread"
+    },
+    {
+      "before": "34(x+(50))=2331",
+      "after": "34x+(50)=2331",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9889834164180177,
+      "suggested": "spread"
+    },
+    {
+      "before": "1487=52(x+(39))",
+      "after": "1487=52x+(39)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9915362044113669,
+      "suggested": "spread"
+    },
+    {
+      "before": "47(x+(-32))=2438",
+      "after": "47x+(-32)=2438",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9748746939555891,
+      "suggested": "spread"
+    },
+    {
+      "before": "1774=47(x+(-52))",
+      "after": "1774=47x+(-52)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9830450884789079,
+      "suggested": "spread"
+    },
+    {
+      "before": "39(x+(41))=1333",
+      "after": "39x+(41)=1333",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9903129104347598,
+      "suggested": "spread"
+    },
+    {
+      "before": "1379=43(x+(-53))",
+      "after": "1379=43x+(-53)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9842740116650295,
+      "suggested": "spread"
+    },
+    {
+      "before": "32(x+(46))=914",
+      "after": "32x+(46)=914",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9887514645930494,
+      "suggested": "spread"
+    },
+    {
+      "before": "283=44(x+(50))",
+      "after": "283=44x+(50)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9901975139687728,
+      "suggested": "spread"
+    },
+    {
+      "before": "34(x+(46))=1066",
+      "after": "34x+(46)=1066",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9894867446395486,
+      "suggested": "spread"
+    },
+    {
+      "before": "565=34(x+(36))",
+      "after": "565=34x+(36)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9901726824180601,
+      "suggested": "spread"
+    },
+    {
+      "before": "41(x+(-36))=2191",
+      "after": "41x+(-36)=2191",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9730968518384433,
+      "suggested": "spread"
+    },
+    {
+      "before": "690=48(x+(-48))",
+      "after": "690=48x+(-48)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9936773847851034,
+      "suggested": "spread"
+    },
+    {
+      "before": "36(x+(-39))=1253",
+      "after": "36x+(-39)=1253",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9771799845899466,
+      "suggested": "spread"
+    },
+    {
+      "before": "319=47(x+(-38))",
+      "after": "319=47x+(-38)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.997499832358833,
+      "suggested": "spread"
+    },
+    {
+      "before": "44(x+(37))=873",
+      "after": "44x+(37)=873",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9905730088872522,
+      "suggested": "spread"
+    },
+    {
+      "before": "2421=42(x+(-39))",
+      "after": "2421=42x+(-39)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.97340130349744,
+      "suggested": "spread"
+    },
+    {
+      "before": "52(x+(-51))=472",
+      "after": "52x+(-51)=472",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9976559136799072,
+      "suggested": "spread"
+    },
+    {
+      "before": "981=33(x+(-36))",
+      "after": "981=33x+(-36)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.979377781117358,
+      "suggested": "spread"
+    },
+    {
+      "before": "53(x+(41))=2359",
+      "after": "53x+(41)=2359",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9914903665617931,
+      "suggested": "spread"
+    },
+    {
+      "before": "69=31(x+(-46))",
+      "after": "69=31x+(-46)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9981751213237986,
+      "suggested": "spread"
+    },
+    {
+      "before": "50(x+(41))=2005",
+      "after": "50x+(41)=2005",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9913051452044368,
+      "suggested": "spread"
+    },
+    {
+      "before": "954=43(x+(-45))",
+      "after": "954=43x+(-45)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9880674457321844,
+      "suggested": "spread"
+    },
+    {
+      "before": "40(x+(39))=1820",
+      "after": "40x+(39)=1820",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.990432599046435,
+      "suggested": "spread"
+    },
+    {
+      "before": "696=38(x+(49))",
+      "after": "696=38x+(49)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9906403518288911,
+      "suggested": "spread"
+    },
+    {
+      "before": "49(x+(-37))=1151",
+      "after": "49x+(-37)=1151",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9855353655297284,
+      "suggested": "spread"
+    },
+    {
+      "before": "499=31(x+(35))",
+      "after": "499=31x+(35)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9899092609438146,
+      "suggested": "spread"
+    },
+    {
+      "before": "34(x+(36))=2353",
+      "after": "34x+(36)=2353",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9893844207669453,
+      "suggested": "spread"
+    },
+    {
+      "before": "635=42(x+(46))",
+      "after": "635=42x+(46)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9913381300811507,
+      "suggested": "spread"
+    },
+    {
+      "before": "50(x+(-43))=2239",
+      "after": "50x+(-43)=2239",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9800612997942056,
+      "suggested": "spread"
+    },
+    {
+      "before": "2329=51(x+(51))",
+      "after": "2329=51x+(51)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.990971528758636,
+      "suggested": "spread"
+    },
+    {
+      "before": "53(x+(-50))=2765",
+      "after": "53x+(-50)=2765",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9807990481197804,
+      "suggested": "spread"
+    },
+    {
+      "before": "1069=36(x+(-37))",
+      "after": "1069=36x+(-37)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9787859672848974,
+      "suggested": "spread"
+    },
+    {
+      "before": "34(x+(-52))=1677",
+      "after": "34x+(-52)=1677",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9745869497207021,
+      "suggested": "spread"
+    },
+    {
+      "before": "996=44(x+(-48))",
+      "after": "996=44x+(-48)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9886874766629765,
+      "suggested": "spread"
+    },
+    {
+      "before": "31(x+(31))=2038",
+      "after": "31x+(31)=2038",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9891660707824499,
+      "suggested": "spread"
+    },
+    {
+      "before": "122=38(x+(-41))",
+      "after": "122=38x+(-41)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9988627042633168,
+      "suggested": "spread"
+    },
+    {
+      "before": "44(x+(-32))=914",
+      "after": "44x+(-32)=914",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9854526291804127,
+      "suggested": "spread"
+    },
+    {
+      "before": "1821=31(x+(-33))",
+      "after": "1821=31x+(-33)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9646109168307112,
+      "suggested": "spread"
+    },
+    {
+      "before": "53(x+(-48))=427",
+      "after": "53x+(-48)=427",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9979390958542933,
+      "suggested": "spread"
+    },
+    {
+      "before": "1541=51(x+(38))",
+      "after": "1541=51x+(38)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9915324717814004,
+      "suggested": "spread"
+    },
+    {
+      "before": "51(x+(42))=1808",
+      "after": "51x+(42)=1808",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9913515808280084,
+      "suggested": "spread"
+    },
+    {
+      "before": "2646=33(x+(42))",
+      "after": "2646=33x+(42)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.988865982166171,
+      "suggested": "spread"
+    },
+    {
+      "before": "44(x+(44))=1889",
+      "after": "44x+(44)=1889",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9906557167197917,
+      "suggested": "spread"
+    },
+    {
+      "before": "848=43(x+(31))",
+      "after": "848=43x+(31)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9903291489802334,
+      "suggested": "spread"
+    },
+    {
+      "before": "31(x+(49))=382",
+      "after": "31x+(49)=382",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9903620768376207,
+      "suggested": "spread"
+    },
+    {
+      "before": "1758=48(x+(-39))",
+      "after": "1758=48x+(-39)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9807755813803876,
+      "suggested": "spread"
+    },
+    {
+      "before": "33(x+(32))=2747",
+      "after": "33x+(32)=2747",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9890543637390419,
+      "suggested": "spread"
+    },
+    {
+      "before": "1705=33(x+(37))",
+      "after": "1705=33x+(37)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9895596347498459,
+      "suggested": "spread"
+    },
+    {
+      "before": "32(x+(-38))=1968",
+      "after": "32x+(-38)=1968",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9663124312607771,
+      "suggested": "spread"
+    },
+    {
+      "before": "2161=33(x+(34))",
+      "after": "2161=33x+(34)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9893791385574481,
+      "suggested": "spread"
+    },
+    {
+      "before": "37(x+(41))=2791",
+      "after": "37x+(41)=2791",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.989528694587398,
+      "suggested": "spread"
+    },
+    {
+      "before": "2048=43(x+(47))",
+      "after": "2048=43x+(47)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9904080368394854,
+      "suggested": "spread"
+    },
+    {
+      "before": "39(x+(37))=1621",
+      "after": "39x+(37)=1621",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9904591469253688,
+      "suggested": "spread"
+    },
+    {
+      "before": "328=53(x+(44))",
+      "after": "328=53x+(44)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9916578047367276,
+      "suggested": "spread"
+    },
+    {
+      "before": "41(x+(34))=2715",
+      "after": "41x+(34)=2715",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9903384956010638,
+      "suggested": "spread"
+    },
+    {
+      "before": "1015=38(x+(-42))",
+      "after": "1015=38x+(-42)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9825366492970603,
+      "suggested": "spread"
+    },
+    {
+      "before": "51(x+(51))=2434",
+      "after": "51x+(51)=2434",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9909651963643803,
+      "suggested": "spread"
+    },
+    {
+      "before": "933=44(x+(-38))",
+      "after": "933=44x+(-38)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9869653276690562,
+      "suggested": "spread"
+    },
+    {
+      "before": "32(x+(33))=1329",
+      "after": "32x+(33)=1329",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9897751534471797,
+      "suggested": "spread"
+    },
+    {
+      "before": "2556=51(x+(-47))",
+      "after": "2556=51x+(-47)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9800700563459928,
+      "suggested": "spread"
+    },
+    {
+      "before": "48(x+(-39))=2579",
+      "after": "48x+(-39)=2579",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9766725667850022,
+      "suggested": "spread"
+    },
+    {
+      "before": "2004=31(x+(53))",
+      "after": "2004=31x+(53)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9884741635966398,
+      "suggested": "spread"
+    },
+    {
+      "before": "39(x+(41))=1679",
+      "after": "39x+(41)=1679",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9902708579667753,
+      "suggested": "spread"
+    },
+    {
+      "before": "1140=49(x+(-50))",
+      "after": "1140=49x+(-50)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9887032435160706,
+      "suggested": "spread"
+    },
+    {
+      "before": "52(x+(31))=2420",
+      "after": "52x+(31)=2420",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9917268735448554,
+      "suggested": "spread"
+    },
+    {
+      "before": "1142=36(x+(44))",
+      "after": "1142=36x+(44)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9897626485649998,
+      "suggested": "spread"
+    },
+    {
+      "before": "33(x+(52))=1025",
+      "after": "33x+(52)=1025",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.989304482964273,
+      "suggested": "spread"
+    },
+    {
+      "before": "341=41(x+(45))",
+      "after": "341=41x+(45)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9912804510755474,
+      "suggested": "spread"
+    },
+    {
+      "before": "50(x+(-33))=1316",
+      "after": "50x+(-33)=1316",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9833598568864402,
+      "suggested": "spread"
+    },
+    {
+      "before": "1883=35(x+(43))",
+      "after": "1883=35x+(43)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.989573136948565,
+      "suggested": "spread"
+    },
+    {
+      "before": "40(x+(-53))=2274",
+      "after": "40x+(-53)=2274",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9758642010316416,
+      "suggested": "spread"
+    },
+    {
+      "before": "1995=32(x+(-37))",
+      "after": "1995=32x+(-37)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9658275054463145,
+      "suggested": "spread"
+    },
+    {
+      "before": "36(x+(38))=2207",
+      "after": "36x+(38)=2207",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9897442284064127,
+      "suggested": "spread"
+    },
+    {
+      "before": "2143=43(x+(-52))",
+      "after": "2143=43x+(-52)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9785067983609781,
+      "suggested": "spread"
+    },
+    {
+      "before": "47(x+(48))=2048",
+      "after": "47x+(48)=2048",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9907619913359317,
+      "suggested": "spread"
+    },
+    {
+      "before": "2189=46(x+(48))",
+      "after": "2189=46x+(48)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9906542477185284,
+      "suggested": "spread"
+    },
+    {
+      "before": "49(x+(36))=1075",
+      "after": "49x+(36)=1075",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9916649949035721,
+      "suggested": "spread"
+    },
+    {
+      "before": "1773=51(x+(42))",
+      "after": "1773=51x+(42)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.991350489159621,
+      "suggested": "spread"
+    },
+    {
+      "before": "40(x+(42))=1420",
+      "after": "40x+(42)=1420",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9903704274472591,
+      "suggested": "spread"
+    },
+    {
+      "before": "1338=31(x+(32))",
+      "after": "1338=31x+(32)",
+      "label": "spread",
+      "prediction": "spread",
+      "score": 0.9896446965624776,
+      "suggested": "spread"
+    },
+    {
+      "before": "42x+(-45)=1885",
+      "after": "42x=1840",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8164791701508674,
+      "suggested": "balance"
+    },
+    {
+      "before": "1668=35x+(-31)",
+      "after": "1637=35x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7976385924945109,
+      "suggested": "balance"
+    },
+    {
+      "before": "45x+(32)=1374",
+      "after": "45x=1406",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7973645705581753,
+      "suggested": "balance"
+    },
+    {
+      "before": "2409=42x+(43)",
+      "after": "2452=42x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7940606817210185,
+      "suggested": "balance"
+    },
+    {
+      "before": "53x+(32)=252",
+      "after": "53x=284",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7355904492363039,
+      "suggested": "balance"
+    },
+    {
+      "before": "2363=41x+(-33)",
+      "after": "2330=41x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8165103606736371,
+      "suggested": "balance"
+    },
+    {
+      "before": "35x+(-33)=2250",
+      "after": "35x=2217",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8071174503291388,
+      "suggested": "balance"
+    },
+    {
+      "before": "960=37x+(-33)",
+      "after": "927=37x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8315266315524239,
+      "suggested": "balance"
+    },
+    {
+      "before": "31x+(-32)=596",
+      "after": "31x=564",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.823222951975968,
+      "suggested": "balance"
+    },
+    {
+      "before": "792=44x+(-35)",
+      "after": "757=44x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8376773729088323,
+      "suggested": "balance"
+    },
+    {
+      "before": "43x+(41)=502",
+      "after": "43x=543",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7357014045937653,
+      "suggested": "balance"
+    },
+    {
+      "before": "1227=38x+(-43)",
+      "after": "1184=38x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8031130036405587,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(43)=1340",
+      "after": "39x=1383",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.779274248264502,
+      "suggested": "balance"
+    },
+    {
+      "before": "1449=48x+(31)",
+      "after": "1480=48x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8040247783186659,
+      "suggested": "balance"
+    },
+    {
+      "before": "42x+(38)=2325",
+      "after": "42x=2363",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.795832763375437,
+      "suggested": "balance"
+    },
+    {
+      "before": "2095=42x+(-49)",
+      "after": "2046=42x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8209553635662671,
+      "suggested": "balance"
+    },
+    {
+      "before": "41x+(-49)=171",
+      "after": "41x=122",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8412580732260538,
+      "suggested": "balance"
+    },
+    {
+      "before": "1999=40x+(-45)",
+      "after": "1954=40x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8156234959765838,
+      "suggested": "balance"
+    },
+    {
+      "before": "43x+(-44)=1079",
+      "after": "43x=1035",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8083268436475831,
+      "suggested": "balance"
+    },
+    {
+      "before": "2255=53x+(36)",
+      "after": "2291=53x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8154886954327707,
+      "suggested": "balance"
+    },
+    {
+      "before": "42x+(45)=1520",
+      "after": "42x=1565",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7868535381495877,
+      "suggested": "balance"
+    },
+    {
+      "before": "1232=33x+(-51)",
+      "after": "1181=33x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.801266965904762,
+      "suggested": "balance"
+    },
+    {
+      "before": "33x+(-37)=107",
+      "after": "33x=70",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8212050552097422,
+      "suggested": "balance"
+    },
+    {
+      "before": "1815=46x+(-49)",
+      "after": "1766=46x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.821497583077686,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(49)=1350",
+      "after": "39x=1399",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7769590373184079,
+      "suggested": "balance"
+    },
+    {
+      "before": "878=36x+(-34)",
+      "after": "844=36x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.830192960773464,
+      "suggested": "balance"
+    },
+    {
+      "before": "38x+(-32)=1946",
+      "after": "38x=1914",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8061517240362428,
+      "suggested": "balance"
+    },
+    {
+      "before": "382=38x+(37)",
+      "after": "419=38x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7216999836666886,
+      "suggested": "balance"
+    },
+    {
+      "before": "33x+(42)=1754",
+      "after": "33x=1796",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7680769065355475,
+      "suggested": "balance"
+    },
+    {
+      "before": "184=52x+(-35)",
+      "after": "149=52x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8414864810839713,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(-32)=1635",
+      "after": "39x=1603",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8030434538620296,
+      "suggested": "balance"
+    },
+    {
+      "before": "2007=34x+(-47)",
+      "after": "1960=34x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8103774726844422,
+      "suggested": "balance"
+    },
+    {
+      "before": "38x+(-53)=1987",
+      "after": "38x=1934",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8159674480891745,
+      "suggested": "balance"
+    },
+    {
+      "before": "1376=34x+(-35)",
+      "after": "1341=34x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7949139361175113,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(-43)=1639",
+      "after": "39x=1596",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8092332289657155,
+      "suggested": "balance"
+    },
+    {
+      "before": "657=45x+(43)",
+      "after": "700=45x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7483260790439593,
+      "suggested": "balance"
+    },
+    {
+      "before": "50x+(-51)=2119",
+      "after": "50x=2068",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8306304344113665,
+      "suggested": "balance"
+    },
+    {
+      "before": "1133=43x+(51)",
+      "after": "1184=43x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7791780316011059,
+      "suggested": "balance"
+    },
+    {
+      "before": "45x+(48)=2305",
+      "after": "45x=2353",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7974987938724816,
+      "suggested": "balance"
+    },
+    {
+      "before": "519=48x+(-53)",
+      "after": "466=48x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8497798649599749,
+      "suggested": "balance"
+    },
+    {
+      "before": "32x+(-36)=1138",
+      "after": "32x=1102",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7898095964892827,
+      "suggested": "balance"
+    },
+    {
+      "before": "1100=47x+(51)",
+      "after": "1151=47x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7847746913537793,
+      "suggested": "balance"
+    },
+    {
+      "before": "43x+(-37)=475",
+      "after": "43x=438",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8369401405141099,
+      "suggested": "balance"
+    },
+    {
+      "before": "2719=42x+(48)",
+      "after": "2767=42x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7934951302511777,
+      "suggested": "balance"
+    },
+    {
+      "before": "43x+(-42)=1121",
+      "after": "43x=1079",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8074829109412374,
+      "suggested": "balance"
+    },
+    {
+      "before": "1463=53x+(-35)",
+      "after": "1428=53x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.817367587718234,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(-41)=842",
+      "after": "39x=801",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8354592535532981,
+      "suggested": "balance"
+    },
+    {
+      "before": "1565=51x+(-44)",
+      "after": "1521=51x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8205551033576061,
+      "suggested": "balance"
+    },
+    {
+      "before": "38x+(41)=1826",
+      "after": "38x=1867",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7823536350304672,
+      "suggested": "balance"
+    },
+    {
+      "before": "1620=51x+(-45)",
+      "after": "1575=51x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8219423206311433,
+      "suggested": "balance"
+    },
+    {
+      "before": "38x+(49)=2404",
+      "after": "38x=2453",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7826152381530282,
+      "suggested": "balance"
+    },
+    {
+      "before": "1120=35x+(-40)",
+      "after": "1080=35x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7964574836839435,
+      "suggested": "balance"
+    },
+    {
+      "before": "36x+(49)=292",
+      "after": "36x=341",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.6964686621658854,
+      "suggested": null
+    },
+    {
+      "before": "1166=38x+(-43)",
+      "after": "1123=38x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8024776123138946,
+      "suggested": "balance"
+    },
+    {
+      "before": "35x+(42)=2510",
+      "after": "35x=2552",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7784791111634113,
+      "suggested": "balance"
+    },
+    {
+      "before": "1874=34x+(41)",
+      "after": "1915=34x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7723721463351791,
+      "suggested": "balance"
+    },
+    {
+      "before": "52x+(45)=2142",
+      "after": "52x=2187",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8096872858766834,
+      "suggested": "balance"
+    },
+    {
+      "before": "1048=50x+(40)",
+      "after": "1088=50x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7928932900040981,
+      "suggested": "balance"
+    },
+    {
+      "before": "32x+(-33)=448",
+      "after": "32x=415",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8244903268790829,
+      "suggested": "balance"
+    },
+    {
+      "before": "2120=50x+(-33)",
+      "after": "2087=50x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.823593692045853,
+      "suggested": "balance"
+    },
+    {
+      "before": "53x+(-35)=1154",
+      "after": "53x=1119",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8153117321930315,
+      "suggested": "balance"
+    },
+    {
+      "before": "374=39x+(-47)",
+      "after": "327=39x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8370762691588999,
+      "suggested": "balance"
+    },
+    {
+      "before": "37x+(35)=1778",
+      "after": "37x=1813",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.782512729297095,
+      "suggested": "balance"
+    },
+    {
+      "before": "2468=41x+(33)",
+      "after": "2501=41x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7969467938067102,
+      "suggested": "balance"
+    },
+    {
+      "before": "42x+(49)=2130",
+      "after": "42x=2179",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7900928660374693,
+      "suggested": "balance"
+    },
+    {
+      "before": "2773=53x+(-47)",
+      "after": "2726=53x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8393445325690173,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(-40)=213",
+      "after": "39x=173",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.831082896715185,
+      "suggested": "balance"
+    },
+    {
+      "before": "292=51x+(43)",
+      "after": "335=51x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7272244591885743,
+      "suggested": "balance"
+    },
+    {
+      "before": "34x+(48)=1586",
+      "after": "34x=1634",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7667062807925247,
+      "suggested": "balance"
+    },
+    {
+      "before": "1453=33x+(-44)",
+      "after": "1409=33x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8002469554583165,
+      "suggested": "balance"
+    },
+    {
+      "before": "45x+(-49)=635",
+      "after": "45x=586",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8457355014384178,
+      "suggested": "balance"
+    },
+    {
+      "before": "1592=51x+(34)",
+      "after": "1626=51x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.808753577412099,
+      "suggested": "balance"
+    },
+    {
+      "before": "47x+(-45)=1040",
+      "after": "47x=995",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8306469686875545,
+      "suggested": "balance"
+    },
+    {
+      "before": "325=31x+(-46)",
+      "after": "279=31x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8292939765890527,
+      "suggested": "balance"
+    },
+    {
+      "before": "37x+(48)=2385",
+      "after": "37x=2433",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7804498581222904,
+      "suggested": "balance"
+    },
+    {
+      "before": "1161=43x+(46)",
+      "after": "1207=43x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7823109497273117,
+      "suggested": "balance"
+    },
+    {
+      "before": "32x+(49)=883",
+      "after": "32x=932",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7352216646727725,
+      "suggested": "balance"
+    },
+    {
+      "before": "2498=49x+(-34)",
+      "after": "2464=49x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8276907297856104,
+      "suggested": "balance"
+    },
+    {
+      "before": "39x+(51)=152",
+      "after": "39x=203",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.6680805580150818,
+      "suggested": null
+    },
+    {
+      "before": "1738=38x+(50)",
+      "after": "1788=38x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.777792114557445,
+      "suggested": "balance"
+    },
+    {
+      "before": "43x+(50)=1938",
+      "after": "43x=1988",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7905099798123106,
+      "suggested": "balance"
+    },
+    {
+      "before": "2771=39x+(32)",
+      "after": "2803=39x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7944769724460312,
+      "suggested": "balance"
+    },
+    {
+      "before": "53x+(-41)=2249",
+      "after": "53x=2208",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8315948467081173,
+      "suggested": "balance"
+    },
+    {
+      "before": "2544=40x+(-42)",
+      "after": "2502=40x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8213368056622844,
+      "suggested": "balance"
+    },
+    {
+      "before": "42x+(41)=1279",
+      "after": "42x=1320",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7861181909491363,
+      "suggested": "balance"
+    },
+    {
+      "before": "1745=45x+(42)",
+      "after": "1787=45x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7961550444060166,
+      "suggested": "balance"
+    },
+    {
+      "before": "34x+(45)=420",
+      "after": "34x=465",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7096487580628,
+      "suggested": null
+    },
+    {
+      "before": "1631=51x+(31)",
+      "after": "1662=51x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.810588538496639,
+      "suggested": "balance"
+    },
+    {
+      "before": "38x+(-43)=2067",
+      "after": "38x=2024",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8130826615799767,
+      "suggested": "balance"
+    },
+    {
+      "before": "144=34x+(-37)",
+      "after": "107=34x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8238441879984172,
+      "suggested": "balance"
+    },
+    {
+      "before": "47x+(32)=2061",
+      "after": "47x=2093",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8066800941850422,
+      "suggested": "balance"
+    },
+    {
+      "before": "459=39x+(40)",
+      "after": "499=39x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7268287473976077,
+      "suggested": "balance"
+    },
+    {
+      "before": "53x+(-38)=2293",
+      "after": "53x=2255",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8309243936050226,
+      "suggested": "balance"
+    },
+    {
+      "before": "464=51x+(53)",
+      "after": "517=51x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7362380054110292,
+      "suggested": "balance"
+    },
+    {
+      "before": "36x+(50)=466",
+      "after": "36x=516",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7135747568429173,
+      "suggested": null
+    },
+    {
+      "before": "1530=52x+(-46)",
+      "after": "1484=52x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8217472864402717,
+      "suggested": "balance"
+    },
+    {
+      "before": "44x+(32)=2787",
+      "after": "44x=2819",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8048695886497287,
+      "suggested": "balance"
+    },
+    {
+      "before": "1524=32x+(-41)",
+      "after": "1483=32x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7989639996388989,
+      "suggested": "balance"
+    },
+    {
+      "before": "33x+(43)=236",
+      "after": "33x=279",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.6864512952589121,
+      "suggested": null
+    },
+    {
+      "before": "1702=36x+(44)",
+      "after": "1746=36x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7749759187876362,
+      "suggested": "balance"
+    },
+    {
+      "before": "32x+(-40)=2481",
+      "after": "32x=2441",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8114493323225582,
+      "suggested": "balance"
+    },
+    {
+      "before": "789=34x+(48)",
+      "after": "837=34x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7333439326564994,
+      "suggested": "balance"
+    },
+    {
+      "before": "49x+(48)=1584",
+      "after": "49x=1632",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7996153640088819,
+      "suggested": "balance"
+    },
+    {
+      "before": "290=48x+(37)",
+      "after": "327=48x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7285804195634936,
+      "suggested": "balance"
+    },
+    {
+      "before": "33x+(40)=688",
+      "after": "33x=728",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7293723896805375,
+      "suggested": "balance"
+    },
+    {
+      "before": "969=35x+(46)",
+      "after": "1015=35x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7812604511735837,
+      "suggested": "balance"
+    },
+    {
+      "before": "50x+(32)=280",
+      "after": "50x=312",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7354252526680803,
+      "suggested": "balance"
+    },
+    {
+      "before": "1124=33x+(32)",
+      "after": "1156=33x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7664986922278146,
+      "suggested": "balance"
+    },
+    {
+      "before": "33x+(-36)=1400",
+      "after": "33x=1364",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7944282559315919,
+      "suggested": "balance"
+    },
+    {
+      "before": "1975=35x+(34)",
+      "after": "2009=35x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7794180940026522,
+      "suggested": "balance"
+    },
+    {
+      "before": "37x+(50)=799",
+      "after": "37x=849",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.739266493760655,
+      "suggested": "balance"
+    },
+    {
+      "before": "1394=42x+(36)",
+      "after": "1430=42x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7896285491021299,
+      "suggested": "balance"
+    },
+    {
+      "before": "46x+(38)=709",
+      "after": "46x=747",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7560820848413041,
+      "suggested": "balance"
+    },
+    {
+      "before": "2446=53x+(-44)",
+      "after": "2402=53x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8349933201270531,
+      "suggested": "balance"
+    },
+    {
+      "before": "47x+(52)=831",
+      "after": "47x=883",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7576343103458594,
+      "suggested": "balance"
+    },
+    {
+      "before": "1728=32x+(-46)",
+      "after": "1682=32x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8048598315678002,
+      "suggested": "balance"
+    },
+    {
+      "before": "31x+(-44)=1756",
+      "after": "31x=1712",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8034078820966918,
+      "suggested": "balance"
+    },
+    {
+      "before": "2485=41x+(52)",
+      "after": "2537=41x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7887907648706411,
+      "suggested": "balance"
+    },
+    {
+      "before": "37x+(51)=2137",
+      "after": "37x=2188",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.7778366885969491,
+      "suggested": "balance"
+    },
+    {
+      "before": "336=45x+(-42)",
+      "after": "294=45x",
+      "label": "balance",
+      "prediction": "balance",
+      "score": 0.8393712788084962,
+      "suggested": "balance"
+    },
+    {
+      "before": "41x=763",
+      "after": "x=31283",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9901312109019156,
+      "suggested": "divide"
+    },
+    {
+      "before": "792=50x",
+      "after": "39600=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9909027759069635,
+      "suggested": "divide"
+    },
+    {
+      "before": "37x=1400",
+      "after": "x=51800",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9883142169939254,
+      "suggested": "divide"
+    },
+    {
+      "before": "1196=33x",
+      "after": "39468=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9878706598971044,
+      "suggested": "divide"
+    },
+    {
+      "before": "38x=1132",
+      "after": "x=43016",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9886573040102733,
+      "suggested": "divide"
+    },
+    {
+      "before": "2044=42x",
+      "after": "85848=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9885416021075605,
+      "suggested": "divide"
+    },
+    {
+      "before": "49x=1034",
+      "after": "x=50666",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9899042607477836,
+      "suggested": "divide"
+    },
+    {
+      "before": "2341=39x",
+      "after": "91299=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9880267180420244,
+      "suggested": "divide"
+    },
+    {
+      "before": "33x=2296",
+      "after": "x=75768",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9871653577503193,
+      "suggested": "divide"
+    },
+    {
+      "before": "2412=34x",
+      "after": "82008=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9872707815585304,
+      "suggested": "divide"
+    },
+    {
+      "before": "48x=610",
+      "after": "x=29280",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9909452127049171,
+      "suggested": "divide"
+    },
+    {
+      "before": "1954=40x",
+      "after": "78160=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9883506889113587,
+      "suggested": "divide"
+    },
+    {
+      "before": "39x=750",
+      "after": "x=29250",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9899314071233167,
+      "suggested": "divide"
+    },
+    {
+      "before": "2431=35x",
+      "after": "85085=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9874184195954581,
+      "suggested": "divide"
+    },
+    {
+      "before": "31x=835",
+      "after": "x=25885",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9887780388320672,
+      "suggested": "divide"
+    },
+    {
+      "before": "178=39x",
+      "after": "6942=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9923353099069927,
+      "suggested": "divide"
+    },
+    {
+      "before": "31x=1217",
+      "after": "x=37727",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9875075121766831,
+      "suggested": "divide"
+    },
+    {
+      "before": "132=44x",
+      "after": "5808=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.99279405848556,
+      "suggested": "divide"
+    },
+    {
+      "before": "43x=252",
+      "after": "x=10836",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9910082778540916,
+      "suggested": "divide"
+    },
+    {
+      "before": "862=44x",
+      "after": "37928=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9903248964702374,
+      "suggested": "divide"
+    },
+    {
+      "before": "35x=1468",
+      "after": "x=51380",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9879817646319592,
+      "suggested": "divide"
+    },
+    {
+      "before": "475=49x",
+      "after": "23275=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9912056513660464,
+      "suggested": "divide"
+    },
+    {
+      "before": "38x=1396",
+      "after": "x=53048",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9884497616735914,
+      "suggested": "divide"
+    },
+    {
+      "before": "742=34x",
+      "after": "25228=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9893255015784637,
+      "suggested": "divide"
+    },
+    {
+      "before": "51x=879",
+      "after": "x=44829",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9908970603426567,
+      "suggested": "divide"
+    },
+    {
+      "before": "909=46x",
+      "after": "41814=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9904625868765728,
+      "suggested": "divide"
+    },
+    {
+      "before": "38x=736",
+      "after": "x=27968",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9898340922414255,
+      "suggested": "divide"
+    },
+    {
+      "before": "619=49x",
+      "after": "30331=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9910135073333783,
+      "suggested": "divide"
+    },
+    {
+      "before": "39x=1831",
+      "after": "x=71409",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9882945225045171,
+      "suggested": "divide"
+    },
+    {
+      "before": "2605=52x",
+      "after": "135460=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9863177858878306,
+      "suggested": "divide"
+    },
+    {
+      "before": "49x=2731",
+      "after": "x=133819",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9859104366161937,
+      "suggested": "divide"
+    },
+    {
+      "before": "647=37x",
+      "after": "23939=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9898248951861799,
+      "suggested": "divide"
+    },
+    {
+      "before": "35x=1374",
+      "after": "x=48090",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9880520069195767,
+      "suggested": "divide"
+    },
+    {
+      "before": "2596=42x",
+      "after": "109032=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.98497296607004,
+      "suggested": "divide"
+    },
+    {
+      "before": "33x=2685",
+      "after": "x=88605",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9869781645948768,
+      "suggested": "divide"
+    },
+    {
+      "before": "410=39x",
+      "after": "15990=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9904067980121021,
+      "suggested": "divide"
+    },
+    {
+      "before": "45x=162",
+      "after": "x=7290",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9928438512022798,
+      "suggested": "divide"
+    },
+    {
+      "before": "1680=39x",
+      "after": "65520=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9883856956595309,
+      "suggested": "divide"
+    },
+    {
+      "before": "34x=1964",
+      "after": "x=66776",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9875084698900822,
+      "suggested": "divide"
+    },
+    {
+      "before": "2221=52x",
+      "after": "115492=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9864685416892796,
+      "suggested": "divide"
+    },
+    {
+      "before": "46x=1381",
+      "after": "x=63526",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9893609524963211,
+      "suggested": "divide"
+    },
+    {
+      "before": "1459=32x",
+      "after": "46688=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9875151979323623,
+      "suggested": "divide"
+    },
+    {
+      "before": "52x=2172",
+      "after": "x=112944",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9864893750243066,
+      "suggested": "divide"
+    },
+    {
+      "before": "1560=33x",
+      "after": "51480=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9876066776171006,
+      "suggested": "divide"
+    },
+    {
+      "before": "38x=1564",
+      "after": "x=59432",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9883318664685173,
+      "suggested": "divide"
+    },
+    {
+      "before": "1846=45x",
+      "after": "83070=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9889746304723152,
+      "suggested": "divide"
+    },
+    {
+      "before": "44x=1537",
+      "after": "x=67628",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9890539227698861,
+      "suggested": "divide"
+    },
+    {
+      "before": "2432=32x",
+      "after": "77824=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.986925510183537,
+      "suggested": "divide"
+    },
+    {
+      "before": "41x=2010",
+      "after": "x=82410",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9884420287433467,
+      "suggested": "divide"
+    },
+    {
+      "before": "226=35x",
+      "after": "7910=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9918942595512865,
+      "suggested": "divide"
+    },
+    {
+      "before": "51x=1993",
+      "after": "x=101643",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9864542179534013,
+      "suggested": "divide"
+    },
+    {
+      "before": "1400=34x",
+      "after": "47600=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9878819444197612,
+      "suggested": "divide"
+    },
+    {
+      "before": "33x=2364",
+      "after": "x=78012",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9871308202632345,
+      "suggested": "divide"
+    },
+    {
+      "before": "986=48x",
+      "after": "47328=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.990566513639895,
+      "suggested": "divide"
+    },
+    {
+      "before": "38x=1326",
+      "after": "x=50388",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9885023400272147,
+      "suggested": "divide"
+    },
+    {
+      "before": "1550=35x",
+      "after": "54250=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.987923432790187,
+      "suggested": "divide"
+    },
+    {
+      "before": "31x=1320",
+      "after": "x=40920",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9874476383418284,
+      "suggested": "divide"
+    },
+    {
+      "before": "2294=50x",
+      "after": "114700=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9862030231478734,
+      "suggested": "divide"
+    },
+    {
+      "before": "51x=2290",
+      "after": "x=116790",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9863239959538892,
+      "suggested": "divide"
+    },
+    {
+      "before": "559=39x",
+      "after": "21801=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9901710395421618,
+      "suggested": "divide"
+    },
+    {
+      "before": "53x=2541",
+      "after": "x=134673",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9864548509110824,
+      "suggested": "divide"
+    },
+    {
+      "before": "1552=50x",
+      "after": "77600=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9896191213072787,
+      "suggested": "divide"
+    },
+    {
+      "before": "33x=1749",
+      "after": "x=57717",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9874791972265576,
+      "suggested": "divide"
+    },
+    {
+      "before": "891=32x",
+      "after": "28512=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.988872084085183,
+      "suggested": "divide"
+    },
+    {
+      "before": "43x=2404",
+      "after": "x=103372",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9852073217946173,
+      "suggested": "divide"
+    },
+    {
+      "before": "67=38x",
+      "after": "2546=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9928396184947169,
+      "suggested": "divide"
+    },
+    {
+      "before": "32x=444",
+      "after": "x=14208",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9894754303860428,
+      "suggested": "divide"
+    },
+    {
+      "before": "2333=44x",
+      "after": "102652=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9853871196498315,
+      "suggested": "divide"
+    },
+    {
+      "before": "48x=821",
+      "after": "x=39408",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9907153076112537,
+      "suggested": "divide"
+    },
+    {
+      "before": "712=33x",
+      "after": "23496=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9892225262945096,
+      "suggested": "divide"
+    },
+    {
+      "before": "43x=1242",
+      "after": "x=53406",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9891556612967144,
+      "suggested": "divide"
+    },
+    {
+      "before": "600=42x",
+      "after": "25200=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9904254769844414,
+      "suggested": "divide"
+    },
+    {
+      "before": "40x=944",
+      "after": "x=37760",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.989843857296646,
+      "suggested": "divide"
+    },
+    {
+      "before": "1381=31x",
+      "after": "42811=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9874033217223854,
+      "suggested": "divide"
+    },
+    {
+      "before": "47x=2348",
+      "after": "x=110356",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.98579983027288,
+      "suggested": "divide"
+    },
+    {
+      "before": "2060=47x",
+      "after": "96820=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9890642683368742,
+      "suggested": "divide"
+    },
+    {
+      "before": "31x=278",
+      "after": "x=8618",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9913743437872851,
+      "suggested": "divide"
+    },
+    {
+      "before": "2727=36x",
+      "after": "98172=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9874349271255812,
+      "suggested": "divide"
+    },
+    {
+      "before": "51x=1151",
+      "after": "x=58701",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.989978793866806,
+      "suggested": "divide"
+    },
+    {
+      "before": "1487=31x",
+      "after": "46097=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.987321120108267,
+      "suggested": "divide"
+    },
+    {
+      "before": "33x=1253",
+      "after": "x=41349",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9878373516260861,
+      "suggested": "divide"
+    },
+    {
+      "before": "644=35x",
+      "after": "22540=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.989580562135888,
+      "suggested": "divide"
+    },
+    {
+      "before": "52x=2709",
+      "after": "x=140868",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9862802909506201,
+      "suggested": "divide"
+    },
+    {
+      "before": "720=42x",
+      "after": "30240=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.990280065037678,
+      "suggested": "divide"
+    },
+    {
+      "before": "51x=2697",
+      "after": "x=137547",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9861674825049388,
+      "suggested": "divide"
+    },
+    {
+      "before": "2219=47x",
+      "after": "104293=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9858550331877322,
+      "suggested": "divide"
+    },
+    {
+      "before": "44x=1212",
+      "after": "x=53328",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.989284262438219,
+      "suggested": "divide"
+    },
+    {
+      "before": "1864=46x",
+      "after": "85744=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9890665165850265,
+      "suggested": "divide"
+    },
+    {
+      "before": "39x=1855",
+      "after": "x=72345",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.988280608758915,
+      "suggested": "divide"
+    },
+    {
+      "before": "2614=34x",
+      "after": "88876=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9871754860772454,
+      "suggested": "divide"
+    },
+    {
+      "before": "35x=811",
+      "after": "x=28385",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9893807220596912,
+      "suggested": "divide"
+    },
+    {
+      "before": "407=46x",
+      "after": "18722=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9910733391995367,
+      "suggested": "divide"
+    },
+    {
+      "before": "32x=83",
+      "after": "x=2656",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9921796411651562,
+      "suggested": "divide"
+    },
+    {
+      "before": "1158=44x",
+      "after": "50952=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9893273274550071,
+      "suggested": "divide"
+    },
+    {
+      "before": "39x=292",
+      "after": "x=11388",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9905611617218903,
+      "suggested": "divide"
+    },
+    {
+      "before": "2498=51x",
+      "after": "127398=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9862412401522751,
+      "suggested": "divide"
+    },
+    {
+      "before": "50x=1859",
+      "after": "x=92950",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9894455496753806,
+      "suggested": "divide"
+    },
+    {
+      "before": "732=46x",
+      "after": "33672=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9906377194119201,
+      "suggested": "divide"
+    },
+    {
+      "before": "37x=2407",
+      "after": "x=89059",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9877242531367502,
+      "suggested": "divide"
+    },
+    {
+      "before": "2699=38x",
+      "after": "102562=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9842477283886131,
+      "suggested": "divide"
+    },
+    {
+      "before": "53x=1253",
+      "after": "x=66409",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9900644938183631,
+      "suggested": "divide"
+    },
+    {
+      "before": "1028=45x",
+      "after": "46260=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9895385591451307,
+      "suggested": "divide"
+    },
+    {
+      "before": "45x=731",
+      "after": "x=32895",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9905506450629318,
+      "suggested": "divide"
+    },
+    {
+      "before": "1126=48x",
+      "after": "54048=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9897390935326866,
+      "suggested": "divide"
+    },
+    {
+      "before": "34x=357",
+      "after": "x=12138",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9898901366641935,
+      "suggested": "divide"
+    },
+    {
+      "before": "362=44x",
+      "after": "15928=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9909817332010816,
+      "suggested": "divide"
+    },
+    {
+      "before": "46x=1187",
+      "after": "x=54602",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9895037287819696,
+      "suggested": "divide"
+    },
+    {
+      "before": "2739=37x",
+      "after": "101343=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9840431450616987,
+      "suggested": "divide"
+    },
+    {
+      "before": "51x=281",
+      "after": "x=14331",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9916756186476412,
+      "suggested": "divide"
+    },
+    {
+      "before": "1450=31x",
+      "after": "44950=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9873492543798527,
+      "suggested": "divide"
+    },
+    {
+      "before": "34x=1631",
+      "after": "x=55454",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.98771624216138,
+      "suggested": "divide"
+    },
+    {
+      "before": "102=52x",
+      "after": "5304=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9933581778958712,
+      "suggested": "divide"
+    },
+    {
+      "before": "52x=1231",
+      "after": "x=64012",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9900005521976385,
+      "suggested": "divide"
+    },
+    {
+      "before": "2141=38x",
+      "after": "81358=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9879935297144474,
+      "suggested": "divide"
+    },
+    {
+      "before": "44x=1920",
+      "after": "x=84480",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9888292677348305,
+      "suggested": "divide"
+    },
+    {
+      "before": "1240=35x",
+      "after": "43400=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9881592432840745,
+      "suggested": "divide"
+    },
+    {
+      "before": "42x=1980",
+      "after": "x=83160",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9885751711474831,
+      "suggested": "divide"
+    },
+    {
+      "before": "2273=41x",
+      "after": "93193=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9883097655332126,
+      "suggested": "divide"
+    },
+    {
+      "before": "35x=397",
+      "after": "x=13895",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.9899668823300855,
+      "suggested": "divide"
+    },
+    {
+      "before": "908=35x",
+      "after": "31780=x",
+      "label": "divide",
+      "prediction": "divide",
+      "score": 0.989279158716074,
+      "suggested": "divide"
+    },
+    {
+      "before": "-(x+(-47))=1055",
+      "after": "-x+(-47)=1055",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946652677693144,
+      "suggested": "negative"
+    },
+    {
+      "before": "2474=-(x+(35))",
+      "after": "2474=-x+(35)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949059711832541,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(33))=1999",
+      "after": "-x+(33)=1999",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948122146032058,
+      "suggested": "negative"
+    },
+    {
+      "before": "2297=-(x+(43))",
+      "after": "2297=-x+(43)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947858488206706,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(50))=207",
+      "after": "-x+(50)=207",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9882877898396564,
+      "suggested": "negative"
+    },
+    {
+      "before": "2070=-(x+(-37))",
+      "after": "2070=-x+(-37)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951404615724813,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-50))=1489",
+      "after": "-x+(-50)=1489",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949327924430664,
+      "suggested": "negative"
+    },
+    {
+      "before": "2408=-(x+(-40))",
+      "after": "2408=-x+(-40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9952557440922857,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-36))=2161",
+      "after": "-x+(-36)=2161",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951686391234943,
+      "suggested": "negative"
+    },
+    {
+      "before": "2073=-(x+(36))",
+      "after": "2073=-x+(36)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948145542605145,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(36))=1370",
+      "after": "-x+(36)=1370",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945267758378359,
+      "suggested": "negative"
+    },
+    {
+      "before": "601=-(x+(43))",
+      "after": "601=-x+(43)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9903099668233027,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-48))=1221",
+      "after": "-x+(-48)=1221",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947797420748078,
+      "suggested": "negative"
+    },
+    {
+      "before": "363=-(x+(-41))",
+      "after": "363=-x+(-41)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9910796342318232,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-48))=1278",
+      "after": "-x+(-48)=1278",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948141653447786,
+      "suggested": "negative"
+    },
+    {
+      "before": "1946=-(x+(-40))",
+      "after": "1946=-x+(-40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.995103922184057,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(53))=1749",
+      "after": "-x+(53)=1749",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945092653741072,
+      "suggested": "negative"
+    },
+    {
+      "before": "2740=-(x+(51))",
+      "after": "2740=-x+(51)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947882177204783,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-37))=969",
+      "after": "-x+(-37)=969",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9917864478356505,
+      "suggested": "negative"
+    },
+    {
+      "before": "1207=-(x+(36))",
+      "after": "1207=-x+(36)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9944328904458373,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(41))=2105",
+      "after": "-x+(41)=2105",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947598702727998,
+      "suggested": "negative"
+    },
+    {
+      "before": "153=-(x+(53))",
+      "after": "153=-x+(53)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9872506467729886,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-40))=2094",
+      "after": "-x+(-40)=2094",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951567124627589,
+      "suggested": "negative"
+    },
+    {
+      "before": "1944=-(x+(-51))",
+      "after": "1944=-x+(-51)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.995127454235932,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-51))=1080",
+      "after": "-x+(-51)=1080",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946948260276376,
+      "suggested": "negative"
+    },
+    {
+      "before": "1690=-(x+(42))",
+      "after": "1690=-x+(42)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946086700879467,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-43))=2155",
+      "after": "-x+(-43)=2155",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951842567727612,
+      "suggested": "negative"
+    },
+    {
+      "before": "581=-(x+(50))",
+      "after": "581=-x+(50)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9902117273023857,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-51))=2276",
+      "after": "-x+(-51)=2276",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9952379813842112,
+      "suggested": "negative"
+    },
+    {
+      "before": "2333=-(x+(33))",
+      "after": "2333=-x+(33)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948938670106476,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-40))=768",
+      "after": "-x+(-40)=768",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9916263562773524,
+      "suggested": "negative"
+    },
+    {
+      "before": "2162=-(x+(39))",
+      "after": "2162=-x+(39)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.994801140327075,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-53))=1446",
+      "after": "-x+(-53)=1446",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949179097907245,
+      "suggested": "negative"
+    },
+    {
+      "before": "1706=-(x+(50))",
+      "after": "1706=-x+(50)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945238603658334,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(48))=97",
+      "after": "-x+(48)=97",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9799723873439162,
+      "suggested": "negative"
+    },
+    {
+      "before": "1669=-(x+(51))",
+      "after": "1669=-x+(51)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9944989466388529,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-33))=594",
+      "after": "-x+(-33)=594",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9913944307142956,
+      "suggested": "negative"
+    },
+    {
+      "before": "1885=-(x+(50))",
+      "after": "1885=-x+(50)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945887155748367,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(44))=1135",
+      "after": "-x+(44)=1135",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9943178182806746,
+      "suggested": "negative"
+    },
+    {
+      "before": "1921=-(x+(42))",
+      "after": "1921=-x+(42)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946904999956053,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(51))=2624",
+      "after": "-x+(51)=2624",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947693612168509,
+      "suggested": "negative"
+    },
+    {
+      "before": "2551=-(x+(36))",
+      "after": "2551=-x+(36)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949071969748057,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(36))=2171",
+      "after": "-x+(36)=2171",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.994837620325278,
+      "suggested": "negative"
+    },
+    {
+      "before": "1833=-(x+(-51))",
+      "after": "1833=-x+(-51)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9950856123732144,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(36))=582",
+      "after": "-x+(36)=582",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9903327556201361,
+      "suggested": "negative"
+    },
+    {
+      "before": "1208=-(x+(-34))",
+      "after": "1208=-x+(-34)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.994723966189147,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-42))=1524",
+      "after": "-x+(-42)=1524",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949296541673284,
+      "suggested": "negative"
+    },
+    {
+      "before": "2300=-(x+(49))",
+      "after": "2300=-x+(49)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947251476071409,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(46))=563",
+      "after": "-x+(46)=563",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9902015114171,
+      "suggested": "negative"
+    },
+    {
+      "before": "1497=-(x+(40))",
+      "after": "1497=-x+(40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945549150326987,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(32))=1668",
+      "after": "-x+(32)=1668",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946928037391565,
+      "suggested": "negative"
+    },
+    {
+      "before": "409=-(x+(-48))",
+      "after": "409=-x+(-48)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9912104097694314,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-32))=1427",
+      "after": "-x+(-32)=1427",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.994845361185659,
+      "suggested": "negative"
+    },
+    {
+      "before": "102=-(x+(35))",
+      "after": "102=-x+(35)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9865457150654819,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(35))=184",
+      "after": "-x+(35)=184",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9884195803558262,
+      "suggested": "negative"
+    },
+    {
+      "before": "1621=-(x+(-51))",
+      "after": "1621=-x+(-51)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949970653400865,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-51))=1845",
+      "after": "-x+(-51)=1845",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9950902728423155,
+      "suggested": "negative"
+    },
+    {
+      "before": "1489=-(x+(35))",
+      "after": "1489=-x+(35)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945933464331892,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-45))=1924",
+      "after": "-x+(-45)=1924",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951078289537877,
+      "suggested": "negative"
+    },
+    {
+      "before": "1684=-(x+(-34))",
+      "after": "1684=-x+(-34)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949790866457655,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(46))=2111",
+      "after": "-x+(46)=2111",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947037152786774,
+      "suggested": "negative"
+    },
+    {
+      "before": "425=-(x+(-39))",
+      "after": "425=-x+(-39)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9911793405479739,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(33))=2086",
+      "after": "-x+(33)=2086",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948376075390781,
+      "suggested": "negative"
+    },
+    {
+      "before": "741=-(x+(52))",
+      "after": "741=-x+(52)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9904643492156296,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-53))=2077",
+      "after": "-x+(-53)=2077",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951776020938139,
+      "suggested": "negative"
+    },
+    {
+      "before": "133=-(x+(42))",
+      "after": "133=-x+(42)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9871629182816304,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-52))=2653",
+      "after": "-x+(-52)=2653",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.995344502450139,
+      "suggested": "negative"
+    },
+    {
+      "before": "1172=-(x+(41))",
+      "after": "1172=-x+(41)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9943779094586904,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(32))=1783",
+      "after": "-x+(32)=1783",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947394863332684,
+      "suggested": "negative"
+    },
+    {
+      "before": "2225=-(x+(-35))",
+      "after": "2225=-x+(-35)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951867266147462,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-47))=374",
+      "after": "-x+(-47)=374",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9911433492356393,
+      "suggested": "negative"
+    },
+    {
+      "before": "2335=-(x+(49))",
+      "after": "2335=-x+(49)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947345291947439,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(36))=1475",
+      "after": "-x+(36)=1475",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945805781896225,
+      "suggested": "negative"
+    },
+    {
+      "before": "2727=-(x+(-34))",
+      "after": "2727=-x+(-34)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9953252731902351,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(43))=1925",
+      "after": "-x+(43)=1925",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946798793386799,
+      "suggested": "negative"
+    },
+    {
+      "before": "2266=-(x+(40))",
+      "after": "2266=-x+(40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948112841805987,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-41))=1703",
+      "after": "-x+(-41)=1703",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9950091882888458,
+      "suggested": "negative"
+    },
+    {
+      "before": "1951=-(x+(-42))",
+      "after": "1951=-x+(-42)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951108352238269,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(37))=127",
+      "after": "-x+(37)=127",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9872122359656526,
+      "suggested": "negative"
+    },
+    {
+      "before": "2182=-(x+(-40))",
+      "after": "2182=-x+(-40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951861081152454,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(36))=2642",
+      "after": "-x+(36)=2642",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949219317317669,
+      "suggested": "negative"
+    },
+    {
+      "before": "1441=-(x+(49))",
+      "after": "1441=-x+(49)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9944225549521433,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(37))=2180",
+      "after": "-x+(37)=2180",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948277439003868,
+      "suggested": "negative"
+    },
+    {
+      "before": "215=-(x+(-35))",
+      "after": "215=-x+(-35)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9906562857242218,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-47))=977",
+      "after": "-x+(-47)=977",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9918237320153563,
+      "suggested": "negative"
+    },
+    {
+      "before": "685=-(x+(41))",
+      "after": "685=-x+(41)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9904929067466791,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-42))=802",
+      "after": "-x+(-42)=802",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9916662323733543,
+      "suggested": "negative"
+    },
+    {
+      "before": "1518=-(x+(39))",
+      "after": "1518=-x+(39)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945770903489589,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-33))=2043",
+      "after": "-x+(-33)=2043",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.995118741496315,
+      "suggested": "negative"
+    },
+    {
+      "before": "1917=-(x+(-41))",
+      "after": "1917=-x+(-41)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9950956356738414,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-50))=2247",
+      "after": "-x+(-50)=2247",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.995227374684232,
+      "suggested": "negative"
+    },
+    {
+      "before": "1859=-(x+(-31))",
+      "after": "1859=-x+(-31)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9950420561776687,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(49))=1854",
+      "after": "-x+(49)=1854",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945885752192692,
+      "suggested": "negative"
+    },
+    {
+      "before": "445=-(x+(-39))",
+      "after": "445=-x+(-39)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9912135790563259,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(51))=2537",
+      "after": "-x+(51)=2537",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947545197369241,
+      "suggested": "negative"
+    },
+    {
+      "before": "2214=-(x+(44))",
+      "after": "2214=-x+(44)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.994755854594455,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-32))=2014",
+      "after": "-x+(-32)=2014",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9951048890645795,
+      "suggested": "negative"
+    },
+    {
+      "before": "101=-(x+(-34))",
+      "after": "101=-x+(-34)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9901918660607121,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-35))=1600",
+      "after": "-x+(-35)=1600",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9949441252109162,
+      "suggested": "negative"
+    },
+    {
+      "before": "1702=-(x+(37))",
+      "after": "1702=-x+(37)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946772610892949,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-34))=1461",
+      "after": "-x+(-34)=1461",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948714386727883,
+      "suggested": "negative"
+    },
+    {
+      "before": "1431=-(x+(-35))",
+      "after": "1431=-x+(-35)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948593211490608,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-53))=592",
+      "after": "-x+(-53)=592",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9914897989250335,
+      "suggested": "negative"
+    },
+    {
+      "before": "1094=-(x+(-45))",
+      "after": "1094=-x+(-45)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9946869913999782,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(45))=176",
+      "after": "-x+(45)=176",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9879530937231251,
+      "suggested": "negative"
+    },
+    {
+      "before": "1171=-(x+(39))",
+      "after": "1171=-x+(39)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9943924902833031,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(44))=372",
+      "after": "-x+(44)=372",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9896678101142986,
+      "suggested": "negative"
+    },
+    {
+      "before": "1389=-(x+(-36))",
+      "after": "1389=-x+(-36)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948401817401502,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(45))=2513",
+      "after": "-x+(45)=2513",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9948055319744769,
+      "suggested": "negative"
+    },
+    {
+      "before": "101=-(x+(-40))",
+      "after": "101=-x+(-40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9903176140307994,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-40))=2625",
+      "after": "-x+(-40)=2625",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.995315849294381,
+      "suggested": "negative"
+    },
+    {
+      "before": "1371=-(x+(36))",
+      "after": "1371=-x+(36)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9945273107870725,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-45))=2482",
+      "after": "-x+(-45)=2482",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9952872853677096,
+      "suggested": "negative"
+    },
+    {
+      "before": "2727=-(x+(-41))",
+      "after": "2727=-x+(-41)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9953442409470479,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(53))=2699",
+      "after": "-x+(53)=2699",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947645984401329,
+      "suggested": "negative"
+    },
+    {
+      "before": "1228=-(x+(-44))",
+      "after": "1228=-x+(-44)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9947725369925343,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(-49))=641",
+      "after": "-x+(-49)=641",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9915316999321985,
+      "suggested": "negative"
+    },
+    {
+      "before": "1141=-(x+(34))",
+      "after": "1141=-x+(34)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9944030953817535,
+      "suggested": "negative"
+    },
+    {
+      "before": "-(x+(44))=941",
+      "after": "-x+(44)=941",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9908577146028532,
+      "suggested": "negative"
+    },
+    {
+      "before": "2519=-(x+(-40))",
+      "after": "2519=-x+(-40)",
+      "label": "negative",
+      "prediction": "negative",
+      "score": 0.9952872369462661,
+      "suggested": "negative"
+    },
+    {
+      "before": "50x+(49)=659",
+      "after": "50x=611",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4894763581737396,
+      "suggested": null
+    },
+    {
+      "before": "638=46x+(-49)",
+      "after": "688=46x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5865172662188003,
+      "suggested": null
+    },
+    {
+      "before": "42x+(38)=1397",
+      "after": "42x=1360",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.49880333350975514,
+      "suggested": null
+    },
+    {
+      "before": "511=37x+(42)",
+      "after": "467=37x",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.46466371580030774,
+      "suggested": null
+    },
+    {
+      "before": "44x+(41)=404",
+      "after": "44x=362",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.4746196591155284,
+      "suggested": null
+    },
+    {
+      "before": "838=43x+(36)",
+      "after": "804=43x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5014311090949526,
+      "suggested": null
+    },
+    {
+      "before": "51x+(43)=2140",
+      "after": "51x=2095",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5236637640196636,
+      "suggested": null
+    },
+    {
+      "before": "1572=38x+(-53)",
+      "after": "1623=38x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5748913098909155,
+      "suggested": null
+    },
+    {
+      "before": "52x+(-40)=1614",
+      "after": "52x=1655",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6058830601685135,
+      "suggested": null
+    },
+    {
+      "before": "1972=52x+(34)",
+      "after": "1939=52x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5427505375356683,
+      "suggested": null
+    },
+    {
+      "before": "40x+(43)=63",
+      "after": "40x=22",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.6554132565318738,
+      "suggested": null
+    },
+    {
+      "before": "2510=38x+(46)",
+      "after": "2465=38x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5024961423427866,
+      "suggested": null
+    },
+    {
+      "before": "50x+(32)=684",
+      "after": "50x=654",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5079740659226514,
+      "suggested": null
+    },
+    {
+      "before": "2348=41x+(-41)",
+      "after": "2388=41x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5882645655404113,
+      "suggested": null
+    },
+    {
+      "before": "48x+(40)=879",
+      "after": "48x=841",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.513739402648073,
+      "suggested": null
+    },
+    {
+      "before": "940=36x+(-53)",
+      "after": "992=36x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5688216193274308,
+      "suggested": null
+    },
+    {
+      "before": "43x+(-38)=677",
+      "after": "43x=714",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5809255120828608,
+      "suggested": null
+    },
+    {
+      "before": "359=41x+(45)",
+      "after": "316=41x",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.4799157667821417,
+      "suggested": null
+    },
+    {
+      "before": "49x+(-34)=458",
+      "after": "49x=493",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5811471235245768,
+      "suggested": null
+    },
+    {
+      "before": "497=43x+(31)",
+      "after": "464=43x",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.4598707135120655,
+      "suggested": null
+    },
+    {
+      "before": "44x+(32)=462",
+      "after": "44x=432",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4671687443551742,
+      "suggested": null
+    },
+    {
+      "before": "2494=41x+(-51)",
+      "after": "2547=41x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5841601886771792,
+      "suggested": null
+    },
+    {
+      "before": "50x+(-40)=2093",
+      "after": "50x=2135",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6027802796895712,
+      "suggested": null
+    },
+    {
+      "before": "2512=46x+(33)",
+      "after": "2480=46x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5300492649713097,
+      "suggested": null
+    },
+    {
+      "before": "33x+(-31)=2731",
+      "after": "33x=2760",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5615830146815622,
+      "suggested": null
+    },
+    {
+      "before": "2300=32x+(-42)",
+      "after": "2341=32x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5528866179414949,
+      "suggested": null
+    },
+    {
+      "before": "37x+(50)=1287",
+      "after": "37x=1235",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.46511393913018356,
+      "suggested": null
+    },
+    {
+      "before": "1455=43x+(33)",
+      "after": "1423=43x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5073167105709709,
+      "suggested": null
+    },
+    {
+      "before": "48x+(31)=1328",
+      "after": "48x=1296",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5125701742838156,
+      "suggested": null
+    },
+    {
+      "before": "2721=38x+(38)",
+      "after": "2684=38x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5075894561271348,
+      "suggested": null
+    },
+    {
+      "before": "50x+(-47)=1415",
+      "after": "50x=1464",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5976673804927387,
+      "suggested": null
+    },
+    {
+      "before": "1272=47x+(31)",
+      "after": "1242=47x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5190387484817931,
+      "suggested": null
+    },
+    {
+      "before": "51x+(40)=1549",
+      "after": "51x=1507",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5170495436482387,
+      "suggested": null
+    },
+    {
+      "before": "643=38x+(50)",
+      "after": "594=38x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4637630623104987,
+      "suggested": null
+    },
+    {
+      "before": "41x+(43)=1250",
+      "after": "41x=1206",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.48097398765371696,
+      "suggested": null
+    },
+    {
+      "before": "1367=46x+(53)",
+      "after": "1315=46x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5028751058867685,
+      "suggested": null
+    },
+    {
+      "before": "37x+(-45)=2379",
+      "after": "37x=2426",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5657202410673974,
+      "suggested": null
+    },
+    {
+      "before": "2661=32x+(31)",
+      "after": "2628=32x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4825282471623275,
+      "suggested": null
+    },
+    {
+      "before": "43x+(-50)=2224",
+      "after": "43x=2272",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5991820366365963,
+      "suggested": null
+    },
+    {
+      "before": "1064=51x+(32)",
+      "after": "1034=51x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5306312115884824,
+      "suggested": null
+    },
+    {
+      "before": "36x+(-44)=722",
+      "after": "36x=767",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5524162899826915,
+      "suggested": null
+    },
+    {
+      "before": "698=34x+(38)",
+      "after": "662=34x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4716767127205335,
+      "suggested": null
+    },
+    {
+      "before": "37x+(-31)=2483",
+      "after": "37x=2516",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5573967300214905,
+      "suggested": null
+    },
+    {
+      "before": "1465=35x+(52)",
+      "after": "1415=35x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.47510353732066274,
+      "suggested": null
+    },
+    {
+      "before": "35x+(47)=2504",
+      "after": "35x=2455",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.48730450687709825,
+      "suggested": null
+    },
+    {
+      "before": "2648=40x+(-31)",
+      "after": "2680=40x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5745626143765149,
+      "suggested": null
+    },
+    {
+      "before": "51x+(-38)=314",
+      "after": "51x=353",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5905711306296718,
+      "suggested": null
+    },
+    {
+      "before": "737=39x+(47)",
+      "after": "689=39x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.472678679700544,
+      "suggested": null
+    },
+    {
+      "before": "51x+(-43)=2592",
+      "after": "51x=2633",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6242874967260749,
+      "suggested": null
+    },
+    {
+      "before": "651=41x+(48)",
+      "after": "601=41x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4623598825672033,
+      "suggested": null
+    },
+    {
+      "before": "47x+(-48)=2455",
+      "after": "47x=2504",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6045346624469753,
+      "suggested": null
+    },
+    {
+      "before": "1878=40x+(-44)",
+      "after": "1924=40x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.571266211790609,
+      "suggested": null
+    },
+    {
+      "before": "52x+(-46)=1840",
+      "after": "52x=1887",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6114621475396325,
+      "suggested": null
+    },
+    {
+      "before": "1677=40x+(33)",
+      "after": "1646=40x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.504779122180101,
+      "suggested": null
+    },
+    {
+      "before": "39x+(34)=345",
+      "after": "39x=309",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.49347399187019847,
+      "suggested": null
+    },
+    {
+      "before": "663=46x+(41)",
+      "after": "621=46x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4780210703088727,
+      "suggested": null
+    },
+    {
+      "before": "49x+(-39)=1324",
+      "after": "49x=1365",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5891242338051187,
+      "suggested": null
+    },
+    {
+      "before": "629=51x+(-31)",
+      "after": "658=51x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6060726576891732,
+      "suggested": null
+    },
+    {
+      "before": "39x+(-39)=1916",
+      "after": "39x=1953",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5798018221001128,
+      "suggested": null
+    },
+    {
+      "before": "405=53x+(-31)",
+      "after": "438=53x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5850495970382735,
+      "suggested": null
+    },
+    {
+      "before": "43x+(-39)=1642",
+      "after": "43x=1679",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5900143360409619,
+      "suggested": null
+    },
+    {
+      "before": "797=44x+(-51)",
+      "after": "847=44x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.592120715799684,
+      "suggested": null
+    },
+    {
+      "before": "47x+(-39)=778",
+      "after": "47x=816",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5978282847756506,
+      "suggested": null
+    },
+    {
+      "before": "1665=32x+(-33)",
+      "after": "1697=32x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5427533502879393,
+      "suggested": null
+    },
+    {
+      "before": "43x+(31)=2015",
+      "after": "43x=1982",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5003415829021641,
+      "suggested": null
+    },
+    {
+      "before": "1724=45x+(53)",
+      "after": "1670=45x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.49899832522724363,
+      "suggested": null
+    },
+    {
+      "before": "53x+(-48)=1254",
+      "after": "53x=1303",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.606153022773235,
+      "suggested": null
+    },
+    {
+      "before": "1014=40x+(-42)",
+      "after": "1057=40x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5593620555864166,
+      "suggested": null
+    },
+    {
+      "before": "36x+(32)=2364",
+      "after": "36x=2334",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.50345610779437,
+      "suggested": null
+    },
+    {
+      "before": "2795=37x+(-40)",
+      "after": "2833=37x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5805894651119969,
+      "suggested": null
+    },
+    {
+      "before": "32x+(48)=1468",
+      "after": "32x=1418",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4587544600947913,
+      "suggested": null
+    },
+    {
+      "before": "811=49x+(42)",
+      "after": "771=49x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5087955842652427,
+      "suggested": null
+    },
+    {
+      "before": "48x+(-33)=1577",
+      "after": "48x=1609",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5988214256753792,
+      "suggested": null
+    },
+    {
+      "before": "2281=37x+(-40)",
+      "after": "2322=37x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5656589722531018,
+      "suggested": null
+    },
+    {
+      "before": "48x+(36)=1646",
+      "after": "48x=1608",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5107614777153039,
+      "suggested": null
+    },
+    {
+      "before": "1952=42x+(51)",
+      "after": "1899=42x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4930688990378726,
+      "suggested": null
+    },
+    {
+      "before": "51x+(-48)=2255",
+      "after": "51x=2304",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.614006202190993,
+      "suggested": null
+    },
+    {
+      "before": "1558=46x+(-42)",
+      "after": "1599=46x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5955945564926453,
+      "suggested": null
+    },
+    {
+      "before": "36x+(-53)=2283",
+      "after": "36x=2334",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5754800999548929,
+      "suggested": null
+    },
+    {
+      "before": "498=52x+(-48)",
+      "after": "544=52x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6080093857246105,
+      "suggested": null
+    },
+    {
+      "before": "36x+(-43)=2002",
+      "after": "36x=2044",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5670818995316684,
+      "suggested": null
+    },
+    {
+      "before": "2593=44x+(-33)",
+      "after": "2627=44x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5889956935584851,
+      "suggested": null
+    },
+    {
+      "before": "52x+(46)=1860",
+      "after": "52x=1812",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5223736247318876,
+      "suggested": null
+    },
+    {
+      "before": "419=42x+(-52)",
+      "after": "470=42x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5771057468513757,
+      "suggested": null
+    },
+    {
+      "before": "36x+(33)=1569",
+      "after": "36x=1534",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4722558970015621,
+      "suggested": null
+    },
+    {
+      "before": "1412=44x+(-45)",
+      "after": "1455=44x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5911119675910059,
+      "suggested": null
+    },
+    {
+      "before": "39x+(-38)=845",
+      "after": "39x=885",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5621967863099516,
+      "suggested": null
+    },
+    {
+      "before": "490=48x+(36)",
+      "after": "452=48x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.46074527276058175,
+      "suggested": null
+    },
+    {
+      "before": "49x+(36)=2444",
+      "after": "49x=2406",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5228562860632936,
+      "suggested": null
+    },
+    {
+      "before": "1204=34x+(-32)",
+      "after": "1234=34x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5480338404315783,
+      "suggested": null
+    },
+    {
+      "before": "31x+(-32)=1439",
+      "after": "31x=1470",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5345069480185717,
+      "suggested": null
+    },
+    {
+      "before": "714=48x+(49)",
+      "after": "666=48x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.49023030033121756,
+      "suggested": null
+    },
+    {
+      "before": "50x+(51)=1339",
+      "after": "50x=1286",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5062642108854497,
+      "suggested": null
+    },
+    {
+      "before": "2463=35x+(-39)",
+      "after": "2504=35x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5550275657838621,
+      "suggested": null
+    },
+    {
+      "before": "44x+(34)=2324",
+      "after": "44x=2288",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5058261882674828,
+      "suggested": null
+    },
+    {
+      "before": "2314=44x+(49)",
+      "after": "2264=44x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5063507950479426,
+      "suggested": null
+    },
+    {
+      "before": "31x+(35)=1948",
+      "after": "31x=1911",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.46820055456236886,
+      "suggested": null
+    },
+    {
+      "before": "566=39x+(49)",
+      "after": "519=39x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.45642376366576654,
+      "suggested": null
+    },
+    {
+      "before": "36x+(32)=1789",
+      "after": "36x=1756",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.4813178103834401,
+      "suggested": null
+    },
+    {
+      "before": "1807=50x+(-39)",
+      "after": "1848=50x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5990000750061241,
+      "suggested": null
+    },
+    {
+      "before": "44x+(-50)=1583",
+      "after": "44x=1635",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5837979371938216,
+      "suggested": null
+    },
+    {
+      "before": "546=35x+(51)",
+      "after": "497=35x",
+      "label": "arithmetic",
+      "prediction": "arithmetic",
+      "score": 0.45210209390562245,
+      "suggested": null
+    },
+    {
+      "before": "49x+(-38)=1938",
+      "after": "49x=1978",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.597125131359413,
+      "suggested": null
+    },
+    {
+      "before": "851=45x+(-35)",
+      "after": "887=45x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5852901180224857,
+      "suggested": null
+    },
+    {
+      "before": "52x+(46)=2590",
+      "after": "52x=2545",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5406650326359725,
+      "suggested": null
+    },
+    {
+      "before": "2717=50x+(-45)",
+      "after": "2764=50x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6108795919221581,
+      "suggested": null
+    },
+    {
+      "before": "37x+(-36)=238",
+      "after": "37x=272",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5564274153814106,
+      "suggested": null
+    },
+    {
+      "before": "1281=32x+(-52)",
+      "after": "1335=32x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5346397742819522,
+      "suggested": null
+    },
+    {
+      "before": "37x+(33)=924",
+      "after": "37x=892",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.49883284458198385,
+      "suggested": null
+    },
+    {
+      "before": "1077=46x+(41)",
+      "after": "1034=46x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.49123317784537374,
+      "suggested": null
+    },
+    {
+      "before": "47x+(-51)=70",
+      "after": "47x=119",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5959833278641161,
+      "suggested": null
+    },
+    {
+      "before": "1463=50x+(-52)",
+      "after": "1514=50x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6084297306534636,
+      "suggested": null
+    },
+    {
+      "before": "33x+(-46)=1826",
+      "after": "33x=1870",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5566888934403976,
+      "suggested": null
+    },
+    {
+      "before": "1099=33x+(-48)",
+      "after": "1146=33x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5425682344551609,
+      "suggested": null
+    },
+    {
+      "before": "37x+(50)=1850",
+      "after": "37x=1799",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.48265031015284315,
+      "suggested": null
+    },
+    {
+      "before": "887=31x+(-48)",
+      "after": "937=31x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5352915747731627,
+      "suggested": null
+    },
+    {
+      "before": "45x+(47)=1332",
+      "after": "45x=1286",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5021940656467183,
+      "suggested": null
+    },
+    {
+      "before": "1673=38x+(42)",
+      "after": "1632=38x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.48769345131205843,
+      "suggested": null
+    },
+    {
+      "before": "43x+(45)=932",
+      "after": "43x=888",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.5024531357943097,
+      "suggested": null
+    },
+    {
+      "before": "2260=53x+(-45)",
+      "after": "2306=53x",
+      "label": "arithmetic",
+      "prediction": "balance",
+      "score": 0.6180997655894505,
+      "suggested": null
+    }
+  ]
+}
