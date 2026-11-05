@@ -1,0 +1,46 @@
+name: GeoDrift public verification and entry
+on:
+  push:
+    branches: [geodrift-entry-preview-20260907]
+    paths: [.github/workflows/geodrift-public.yml]
+permissions:
+  contents: write
+concurrency:
+  group: geodrift-public-entry
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/geodrift-entry-preview-20260907'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    env:
+      GEODRIFT_BASE_URL: https://6a9ed46e39eefc00089c7124--josephm.netlify.app/geodrift
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: geodrift-entry-preview-20260907
+      - name: Install browser verification tools
+        run: |
+          python3 -m venv /tmp/geodrift-public
+          /tmp/geodrift-public/bin/pip -q install playwright==1.55.0
+          /tmp/geodrift-public/bin/python -m playwright install --with-deps chromium
+      - name: Verify anonymous files and real public browser behavior
+        run: /tmp/geodrift-public/bin/python public/geodrift/tools/public_check.py
+      - name: One normal form attempt; stop for any human verification
+        run: /tmp/geodrift-public/bin/python .github/scripts/geodrift-submit.py
+      - name: Preserve actual results only
+        if: always()
+        run: |
+          git config user.name 'GeoDrift Verification'
+          git config user.email 'geodrift-build@users.noreply.github.com'
+          git add public/geodrift/evidence
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve actual GeoDrift public checks and contest-form outcome'
+          git pull --rebase origin geodrift-entry-preview-20260907
+          git push origin HEAD:geodrift-entry-preview-20260907
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: geodrift-public-evidence
+          path: public/geodrift/evidence/
+          retention-days: 14
