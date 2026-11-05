@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="368" viewBox="0 0 1200 368" role="img" aria-labelledby="title desc">
+  <title id="title">Mayo code review pipeline</title>
+  <desc id="desc">Scanner, executor, and reviewer agents inspect and edit code. Approved changes become a pull request; feedback returns to the executor.</desc>
+  <style>@media(max-width:450px){.detail{display:none}.step{font-size:42px}}</style>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 8 5 1 9" fill="none" stroke="#86868e" stroke-width="1.5"/></marker></defs>
+  <path fill="#0d0d0d" d="M0 0h1200v368H0z"/>
+  <g fill="none" stroke="#55555d" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M284 164h60"/><path d="M564 164h60"/><path d="M844 164h60"/>
+    <path d="M734 216v72H454v-72"/>
+  </g>
+  <g fill="#151515" stroke="#333338" stroke-width="2">
+    <rect x="64" y="112" width="220" height="104" rx="8"/>
+    <rect x="344" y="112" width="220" height="104" rx="8"/>
+    <rect x="624" y="112" width="220" height="104" rx="8"/>
+    <rect x="904" y="112" width="220" height="104" rx="8" stroke="#8f6c23"/>
+  </g>
+  <g class="step" font-family="Arial, sans-serif" font-size="30" fill="#ededed" text-anchor="middle">
+    <text x="174" y="174">scan</text><text x="454" y="174">edit</text><text x="734" y="174">review</text><text x="1014" y="174" fill="#fbbf24">open PR</text>
+  </g>
+  <g class="detail" font-family="monospace" font-size="22" fill="#97979f" text-anchor="middle">
+    <text x="174" y="84">scanner</text><text x="454" y="84">executor</text><text x="734" y="84">reviewer</text><text x="1014" y="84">approved changes</text>
+  </g>
+  <rect x="506" y="268" width="176" height="40" fill="#0d0d0d"/>
+  <text class="detail" x="594" y="296" font-family="Arial, sans-serif" font-size="24" fill="#a1a1aa" text-anchor="middle">retry with feedback</text>
+</svg>
