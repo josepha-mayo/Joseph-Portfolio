@@ -1,0 +1,49 @@
+name: von notebook execution transport
+on:
+  push:
+    branches: [von-execution-20260927]
+    paths: [delivery/von-notebook-execution/**, .github/workflows/von-notebook-execution.yml]
+permissions:
+  contents: read
+concurrency:
+  group: von-notebook-execution-20260927
+  cancel-in-progress: false
+jobs:
+  native-transport:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated test dependencies
+        run: |
+          python -m pip install jupyterlab==4.4.9 jupyter-server==2.17.0 ipykernel==6.30.1 pytest==8.4.2 playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Real Jupyter execution and allocation-state fixture tests
+        working-directory: delivery/von-notebook-execution
+        run: |
+          python -m pytest -q test_bridge.py test_amd_cycle.py --junitxml=TEST_RESULTS.xml --tb=short
+          python -m py_compile make_acceptance_cell.py
+      - name: Preserve structured test results and source identity
+        if: always()
+        working-directory: delivery/von-notebook-execution
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          files=['browser_runner.py','jupyter_cell.js','test_bridge.py','amd_cycle.py','test_amd_cycle.py','make_acceptance_cell.py']
+          r={'scope':'Native local Jupyter Server and Chromium integration plus allocation-state fixtures; no AMD GPU, course completion, or XP award',
+             'source_sha256':{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in files}}
+          Path('SOURCE.json').write_text(json.dumps(r,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: von-notebook-native-transport
+          path: |
+            delivery/von-notebook-execution/TEST_RESULTS.xml
+            delivery/von-notebook-execution/SOURCE.json
+          retention-days: 7
