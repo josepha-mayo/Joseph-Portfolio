@@ -64,7 +64,7 @@ export default function OutsideTheWork() {
   return (
     <div className={styles.page}>
       <nav className="fixed top-0 w-full h-[70px] nav-glass border-b border-border-subtle z-50 flex items-center" aria-label="personal page">
-        <div className="container mx-auto px-6 md:px-8 flex justify-between items-center">
+        <div className={`${styles.container} flex justify-between items-center`}>
           <Link href="/" className="font-display text-2xl font-bold text-text-primary" aria-label="ayanda joseph, home">aj<span className="text-accent">.</span></Link>
           <Link href="/" className={styles.backLink}><span aria-hidden="true">←</span> back to the work</Link>
         </div>
