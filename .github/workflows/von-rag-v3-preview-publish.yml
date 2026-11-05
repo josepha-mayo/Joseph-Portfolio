@@ -1,0 +1,99 @@
+name: von-rag V3 preview asset publisher
+on:
+  push:
+    branches: [amd-v3-preview-registry-20261003]
+    paths:
+      - .github/workflows/von-rag-v3-preview-publish.yml
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish-assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: amd-v3-preview-registry-20261003
+          fetch-depth: 1
+
+      - name: Download exact built V3 OCI overlay
+        uses: actions/download-artifact@v4
+        with:
+          name: von-rag-v3-oci-overlay
+          path: overlay
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 37124460965
+          github-token: ${{ github.token }}
+
+      - name: Verify frozen OCI identities and generate preview metadata
+        run: |
+          set -euo pipefail
+          echo "2cd44cd0a63ecf1edd61a3aaf0329fd8df22f802eaaa3b5b090d3ff82dc5759d  overlay/manifest.json" | sha256sum -c -
+          echo "180056296b31d73e2e725cb376bb5d9601561befd651e8d2a0c554c5d486f37b  overlay/config.json" | sha256sum -c -
+          echo "455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef  overlay/455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef.tar.gz" | sha256sum -c -
+          python - <<'PY'
+          import hashlib,json,shutil
+          from pathlib import Path
+          src=Path('overlay')
+          manifest_b=(src/'manifest.json').read_bytes()
+          config_b=(src/'config.json').read_bytes()
+          receipt=json.loads((src/'V3_OCI_RECEIPT.json').read_text())
+          manifest=json.loads(manifest_b)
+          assert receipt['candidate_manifest']=='sha256:'+hashlib.sha256(manifest_b).hexdigest()
+          assert receipt['candidate_config']=='sha256:'+hashlib.sha256(config_b).hexdigest()
+          assert len(manifest['layers'])==29
+          assert receipt['parent_layers']==28 and receipt['candidate_layers']==29
+          out=Path('public/registry-assets/v3');out.mkdir(parents=True,exist_ok=True)
+          shutil.copy2(src/'manifest.json',out/'manifest.json')
+          shutil.copy2(src/'config.json',out/'config.json')
+          shutil.copy2(src/'455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef.tar.gz',
+                       out/'455615bc3a018340753f08051ed82fc1b943a62529adb44b9bf2161fc0c503ef.tar.gz')
+          (out/'BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+
+          routes={}
+          for layer in manifest['layers'][:-1]:
+              dg=layer['digest']
+              routes[dg]={
+                  'size':layer['size'],
+                  'location':'https://josephm.netlify.app/v2/von-rag-r61/blobs/'+dg,
+              }
+          overlay=manifest['layers'][-1]
+          routes[overlay['digest']]={
+              'size':overlay['size'],
+              'location':'/registry-assets/v3/'+overlay['digest'][7:]+'.tar.gz',
+          }
+          meta={
+              'manifestDigest':receipt['candidate_manifest'],
+              'configDigest':receipt['candidate_config'],
+              'manifest':manifest_b.decode(),
+              'imageConfig':config_b.decode(),
+              'manifestType':manifest['mediaType'],
+              'configType':manifest['config']['mediaType'],
+              'repository':'von-rag-v3',
+              'tag':'v3-candidate',
+              'routes':routes,
+          }
+          generated=Path('src/generated');generated.mkdir(parents=True,exist_ok=True)
+          (generated/'von-registry-v3.json').write_text(json.dumps(meta,separators=(',',':'))+'\n')
+          print(json.dumps({
+              'manifest':receipt['candidate_manifest'],
+              'config':receipt['candidate_config'],
+              'overlay':receipt['overlay_digest'],
+              'routes':len(routes),
+              'promotion_allowed':False,
+          },indent=2))
+          PY
+
+      - name: Commit preview-only immutable assets
+        run: |
+          set -euo pipefail
+          git config user.name "von-read CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/registry-assets/v3 src/generated/von-registry-v3.json
+          if git diff --cached --quiet; then
+            echo "Exact V3 preview assets already present."
+          else
+            git commit -m "Add exact unpromoted V3 preview registry assets"
+            git push origin HEAD:amd-v3-preview-registry-20261003
+          fi

@@ -1,6 +1,7 @@
 import r24 from '@/generated/von-registry-r24.json';
 import r35 from '@/generated/von-registry-r35.json';
 import r61 from '@/generated/von-registry-r61.json';
+import v3 from '@/generated/von-registry-v3.json';
 import { registryResponse } from '@/lib/von-registry';
 import { resolveParentRedirect, staticMetadataRedirect } from '@/lib/von-registry-parent';
 
@@ -9,6 +10,7 @@ export const dynamic = 'force-dynamic';
 
 function selected(request: Request) {
   const path = new URL(request.url).pathname;
+  if (path.startsWith('/v2/von-rag-v3/')) return { data: v3, assets: 'v3' };
   if (path.startsWith('/v2/von-rag-r61/')) return { data: r61, assets: 'r61' };
   if (path.startsWith('/v2/von-rag-r35/')) return { data: r35, assets: 'r35' };
   return { data: r24, assets: 'r24' };
