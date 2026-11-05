@@ -1,0 +1,18 @@
+{
+  "index.html": {
+    "bytes": 70234,
+    "sha256": "db1f21d63dbf2a5af51463bf9699b2a28252e63cc86972a07c974115547f090a"
+  },
+  "src/model.json": {
+    "bytes": 35679,
+    "sha256": "83d562317236464ea09c357522184efe83704746362a6434337b6f570fd64381"
+  },
+  "source.zip": {
+    "bytes": 665862,
+    "sha256": "37571cdfc4461dd87918eeabe4c36387ec6c0bd7c50f678a78c0e407374cfa99"
+  },
+  "demo.mp4": {
+    "bytes": 3875024,
+    "sha256": "2f9983188c0bd2cbc4f1e677c95bbb5b84ae5d008d47bf575b778d4fcead7a40"
+  }
+}
