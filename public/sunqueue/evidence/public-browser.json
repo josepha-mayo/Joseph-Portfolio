@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "origin": "https://6a9eb254f079d4000804136d--josephm.netlify.app/sunqueue",
+  "authentication": "none",
+  "checks": [
+    "initial state cannot export nonexistent results",
+    "worker runs real scheduling and renders the synthetic comparison",
+    "export contains actual scenario hash and modeled flows",
+    "CSV includes every requested job and exact chosen slots",
+    "editing input invalidates exports and removes the old schedule",
+    "invalid battery energy is rejected rather than clamped",
+    "tampered saved scenario is rejected without destroying current inputs",
+    "import verifies inputs but does not trust a saved optimization result",
+    "infeasible model yields no executable plan",
+    "untrusted job names remain literal text",
+    "narrow layout stays within viewport with scrollable tables",
+    "no page errors or unexpected app network requests"
+  ],
+  "browser": "152.0.7977.0",
+  "errors": [],
+  "requests": [
+    "https://6a9eb254f079d4000804136d--josephm.netlify.app/sunqueue/index.html",
+    "blob:https://6a9eb254f079d4000804136d--josephm.netlify.app/c2b9ba39-c62b-4962-be19-ca307ee21225",
+    "blob:https://6a9eb254f079d4000804136d--josephm.netlify.app/b5fff73a-ab01-4967-8f18-d1f6f1271e76",
+    "blob:https://6a9eb254f079d4000804136d--josephm.netlify.app/14b985c5-4376-4c9b-a459-ab72337e596f",
+    "blob:https://6a9eb254f079d4000804136d--josephm.netlify.app/35eb373e-b580-439a-b1ae-890db0ca8763"
+  ],
+  "count": 12,
+  "limitations": [
+    "Chromium only; no hardware or independent field validation."
+  ]
+}

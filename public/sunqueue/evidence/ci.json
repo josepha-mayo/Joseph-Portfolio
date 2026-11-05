@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "source_commit": "97071dec7122188565e47edef9de51becec48ed5",
+  "started_at": "2026-09-07T12:37:54.470024+00:00",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 0.027
+    },
+    {
+      "name": "core-tests",
+      "exit_code": 0,
+      "seconds": 0.249
+    },
+    {
+      "name": "oracle",
+      "exit_code": 0,
+      "seconds": 0.132
+    },
+    {
+      "name": "browser-tests",
+      "exit_code": 0,
+      "seconds": 17.754
+    },
+    {
+      "name": "mux-demo",
+      "exit_code": 0,
+      "seconds": 30.486
+    },
+    {
+      "name": "decode-demo",
+      "exit_code": 0,
+      "seconds": 4.732
+    },
+    {
+      "name": "probe-demo",
+      "exit_code": 0,
+      "seconds": 0.055
+    }
+  ],
+  "scope": "Internal software checks and original synthetic example. No hardware measurement or independent user study.",
+  "node_tests": 100,
+  "oracle_cases": 41,
+  "browser_checks": 12,
+  "demo_seconds": 209.275,
+  "narration": {
+    "model": "hexgrad/Kokoro-82M",
+    "voice": "af_heart",
+    "speed": 0.86,
+    "synthetic": true,
+    "words_per_minute": 136.5
+  },
+  "finished_at": "2026-09-07T12:44:21.758921+00:00"
+}

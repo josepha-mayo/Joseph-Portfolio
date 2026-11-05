@@ -1,0 +1,181 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; worker-src blob:; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>SunQueue | Work with the daylight.</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1118;--panel:#141d28;--line:#2b3947;--text:#edf2f7;--muted:#98a8b8;--lime:#c2ef89;--amber:#f1c374;--blue:#91c7eb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{border:1px solid var(--line);border-radius:8px;color:var(--text);background:var(--panel);padding:10px 14px;cursor:pointer}button:hover{border-color:var(--muted)}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:var(--lime);color:#16250c;font-weight:700;border-color:var(--lime)}a{color:var(--lime)}:focus-visible{outline:2px solid var(--lime);outline-offset:3px}header{height:74px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:0 30px}.brand{font-size:22px;letter-spacing:-.7px;font-weight:750}.brand b{color:var(--lime);margin-right:8px}.tag{display:inline-block;border:1px solid var(--line);border-radius:18px;padding:4px 10px;font:10px/1.5 monospace;color:var(--muted)}main{max-width:1510px;margin:auto;padding:30px}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:23px}.eyebrow{color:var(--lime);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}h1{font-size:39px;line-height:1.17;letter-spacing:-1.2px;margin:10px 0}h1 span{color:var(--lime)}.hero p{color:var(--muted);margin:0;max-width:670px}.heroaside{color:var(--muted);font-size:12px;text-align:right;max-width:235px}.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px;align-items:start}.panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}.pad{padding:18px}.heading{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;align-items:center}.heading h2{font-size:14px;margin:0}.muted{color:var(--muted)}.fine{font-size:11px;color:var(--muted)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fields label{display:block;color:var(--muted);font-size:11px}.fields input{width:100%;margin-top:5px;padding:9px 7px;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--text)}.range{width:100%;accent-color:var(--lime)}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.actions button{flex:1;font-size:12px}.full{width:100%}.divider{height:1px;background:var(--line);margin:18px 0}.warn{background:#30271b;border:1px solid #6e5831;color:var(--amber);padding:12px 15px;border-radius:9px;font-size:12px;margin-bottom:18px}.hidden{display:none!important}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.metric{padding:17px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.metric b{font-size:25px;display:block;letter-spacing:-.6px}.metric span{font-size:11px;color:var(--muted)}.metric small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.green{color:var(--lime)}.amber{color:var(--amber)}.legend{display:flex;flex-wrap:wrap;gap:17px;color:var(--muted);font-size:11px;padding:14px 18px 0}.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:2px}.chart{width:100%;display:block;min-height:200px}.scroll{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:600px;font-size:12px}.table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}.table th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}.table input{background:var(--bg);border:1px solid var(--line);border-radius:5px;color:var(--text);padding:7px;width:75px}.table input.jobname{width:190px}.table tr:last-child td{border-bottom:0}.stack{display:grid;gap:18px}.outage{background:#2a251d}.meta{padding:13px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--line)}#status{font-size:12px;line-height:1.65;margin-top:12px;overflow-wrap:anywhere}details summary{cursor:pointer;color:var(--muted);font-size:12px}details p{font-size:12px;color:var(--muted)}details{margin-top:16px}footer{margin-top:25px;border-top:1px solid var(--line);padding-top:15px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:15px}.controls{display:flex;gap:8px;align-items:center}.controls label{font-size:11px;color:var(--muted)}select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px}.empty{padding:35px;text-align:center;color:var(--muted)}.headline{font-size:17px;margin:0 0 8px}.note{line-height:1.7;font-size:12px;color:var(--muted)}#progress{margin:14px 0 0;color:var(--lime);font-size:12px}.demo-label{font-size:10px;border-left:2px solid var(--amber);padding-left:10px;color:var(--amber)}.check{display:flex;align-items:start;gap:8px;font-size:11px;color:var(--muted)}.check input{accent-color:var(--lime);margin-top:4px}button.small{font-size:11px;padding:7px 10px}
+@media(max-width:1000px){.layout{grid-template-columns:250px minmax(0,1fr)}.metrics{grid-template-columns:1fr 1fr}.heroaside{display:none}}@media(max-width:720px){header{padding:0 16px;height:66px}header .tag{display:none}main{padding:23px 14px}.layout{grid-template-columns:1fr}.hero h1{font-size:32px}.hero p{font-size:12px}.metrics{gap:9px}.heading{flex-wrap:wrap}.chart{min-height:160px}footer{flex-direction:column}.hero{margin-bottom:18px}.metric b{font-size:23px}}
+</style></head><body>
+<header><div class="brand"><b>◒</b>SunQueue</div><div class="controls"><span class="tag">LOCAL PLANNING / NO CLOUD</span><button id="export" disabled>Export plan ↓</button></div></header>
+<main><div class="hero"><div><div class="eyebrow">Solar-aware workload planning</div><h1>Work with the daylight.<br><span>Keep the reserve.</span></h1><p>Schedule flexible jobs around solar supply, outages and deadlines. Compare the same work against an early-start baseline, then stress-test the plan.</p></div><div class="heroaside">No API keys. No cloud bill.<br>No connected switches or GPU control.<br>Explicit assumptions, inspectable results.</div></div>
+<div id="notice" class="warn hidden" role="status" aria-live="polite"></div>
+<div class="layout"><aside class="panel"><div class="heading"><h2>01 / Supply & reserve</h2><span class="tag">1-HOUR SLOTS</span></div><div class="pad"><p class="demo-label">SYNTHETIC SCENARIO<br>These are not measurements of your equipment.</p><div class="fields" id="batteryFields"></div><div class="divider"></div><label for="stress" class="fine">Adverse solar scenario: <b id="stressValue">65%</b> of forecast</label><input id="stress" class="range" type="range" min="0" max="100" value="65"><p class="fine">The chosen schedule must satisfy both the forecast and this reduced-solar scenario. This is not a probability or a weather guarantee.</p><button class="primary full" id="solve">Find a feasible schedule →</button><button id="cancel" class="full hidden" style="margin-top:8px">Stop search</button><div id="progress" class="hidden" role="status">Enumerating valid start times…</div><div id="status">Edit the inputs, then run the search.</div><div class="actions"><button id="demo">Reset example</button><button id="outage">No grid</button></div><div class="actions"><button id="import">Import JSON</button><button id="inputExport">Save inputs</button></div><input class="hidden" type="file" id="file" accept=".json,application/json"><details><summary>Read the dispatch assumptions</summary><p>One shared machine, up to four non-overlapping jobs and 24 hourly slots. Every job must finish by its deadline. Power values are slot averages; surge current is not modeled.</p><p>Solar supplies load first. Excess solar charges the battery. Above-reserve battery energy covers deficits before the grid. The model does not charge from the grid or save battery strategically for a later outage.</p><p>Inverter/AC load limit is checked against total demand even when grid is available. Charge and discharge rate limits and conversion losses are included.</p><p>The search is exhaustive within this fixed-dispatch model unless it hits its time or evaluation limit. It is not globally optimal energy management or electrical-design advice.</p></details></div></aside>
+<section class="stack"><div class="metrics"><div class="metric"><span>Adverse-case grid energy</span><b id="grid">—</b><small>proposed schedule</small></div><div class="metric"><span>Early-start baseline</span><b id="baseline">—</b><small id="baselineNote">same jobs and equipment</small></div><div class="metric"><span>Lowest stored energy</span><b id="minimum">—</b><small id="reserveNote">reserve checked each hour</small></div><div class="metric"><span>End-of-day energy</span><b id="end">—</b><small id="endNote">terminal minimum enforced</small></div></div>
+<div class="panel"><div class="heading"><h2>02 / Energy timeline</h2><div class="controls"><label for="view">Show</label><select id="view"><option value="adverse">Adverse solar</option><option value="nominal">Forecast solar</option></select></div></div><div class="legend"><span><i style="background:#c2ef89"></i>Solar</span><span><i style="background:#91c7eb"></i>Total load</span><span><i style="background:#f1c374"></i>Grid</span><span>Amber background = grid unavailable</span></div><div id="chartBox"><div class="empty">No plan yet. Nothing is scheduled or controlled.</div></div><div id="chartMeta" class="meta">All energy figures describe the supplied model, not measured savings.</div></div>
+<div class="panel"><div class="heading"><h2>03 / Flexible jobs</h2><button id="csv" class="small" disabled>Schedule CSV ↓</button></div><div class="scroll"><table class="table"><thead><tr><th>Job</th><th>Hours</th><th>Earliest slot</th><th>Finish by slot</th><th>Watts</th><th>Chosen range</th></tr></thead><tbody id="jobs"></tbody></table></div><div class="meta">Slot 0 starts at the first label below. The deadline is exclusive: a two-hour job starting at slot 3 ends at slot 5.</div></div>
+<div class="panel"><div class="heading"><h2>04 / Hourly source inputs</h2><span class="tag">AC-BUS ENERGY</span></div><div class="scroll"><table class="table"><thead><tr><th>Slot / label</th><th>Solar Wh</th><th>Base load Wh</th><th>Grid limit Wh</th><th>Planned battery Wh</th></tr></thead><tbody id="slots"></tbody></table></div></div>
+<div class="panel pad"><h2 class="headline">A missing result is better than a fictional safe plan.</h2><p class="note">When the supplied model has no feasible schedule, SunQueue reports that instead of dropping jobs or borrowing battery energy below your reserve. Time-limited searches are labeled separately. Exported plans include the input fingerprint, modeled flows, both scenarios and the baseline so the comparison can be reproduced.</p><p class="fine">Built for flexible workshops, render queues and small compute labs. No measured deployment, carbon-emissions reduction, hardware certification or guaranteed uptime is claimed.</p></div>
+</section></div><footer><span>SunQueue 0.1.0 / Original AI-assisted prototype / MIT</span><span>No network calls, purchases, device operations or background schedules.</span></footer></main>
+<script id="coreScript">/* SunQueue 0.1.0. MIT. Discrete scheduling with an explicit fixed dispatch model. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.SunQueue=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+'use strict';
+const VERSION='0.1.0',EPS=1e-7;
+const assert=(ok,message)=>{if(!ok)throw new Error(message);};
+function number(x,name,min,max){assert(typeof x==='number'&&Number.isFinite(x)&&x>=min&&x<=max,`${name} must be a finite number from ${min} to ${max}.`);return x;}
+function integer(x,name,min,max){number(x,name,min,max);assert(Number.isInteger(x),`${name} must be a whole number.`);return x;}
+function validate(raw){
+ assert(raw&&typeof raw==='object'&&!Array.isArray(raw),'A scenario object is required.');
+ assert(Array.isArray(raw.slots)&&raw.slots.length>=2&&raw.slots.length<=24,'Provide 2 to 24 hourly slots.');
+ const n=raw.slots.length;
+ const slots=raw.slots.map((s,i)=>{assert(s&&typeof s==='object',`Slot ${i} is missing.`);return {label:typeof s.label==='string'?s.label.slice(0,60):`Hour ${i}`,solarWh:number(s.solarWh,`Slot ${i}: solar Wh`,0,100000),baseWh:number(s.baseWh,`Slot ${i}: base Wh`,0,100000),gridLimitWh:number(s.gridLimitWh,`Slot ${i}: grid limit Wh`,0,100000)};});
+ const b=raw.battery;assert(b&&typeof b==='object','Battery configuration is missing.');
+ const battery={capacityWh:number(b.capacityWh,'Capacity Wh',0,200000),initialWh:number(b.initialWh,'Initial Wh',0,200000),reserveWh:number(b.reserveWh,'Reserve Wh',0,200000),endMinWh:number(b.endMinWh,'End minimum Wh',0,200000),chargeLimitW:number(b.chargeLimitW,'Charge limit W',0,100000),dischargeLimitW:number(b.dischargeLimitW,'Discharge limit W',0,100000),chargeEfficiency:number(b.chargeEfficiency,'Charge efficiency',0.1,1),dischargeEfficiency:number(b.dischargeEfficiency,'Discharge efficiency',0.1,1)};
+ assert(battery.initialWh<=battery.capacityWh&&battery.initialWh>=battery.reserveWh,'Initial energy must be between reserve and capacity.');
+ assert(battery.endMinWh<=battery.capacityWh&&battery.endMinWh>=battery.reserveWh,'End minimum must be between reserve and capacity.');
+ const inverterW=number(raw.inverterW,'AC load limit W',1,100000),stressFactor=number(raw.stressFactor,'Adverse solar factor',0,1);
+ assert(Array.isArray(raw.jobs)&&raw.jobs.length<=4,'At most four jobs are supported.');
+ const ids=new Set();const jobs=raw.jobs.map((j,i)=>{assert(j&&typeof j.id==='string'&&j.id.trim()&&j.id.length<=60,`Job ${i}: provide an ID under 61 characters.`);assert(!ids.has(j.id),'Job IDs must be unique.');ids.add(j.id);
+ const duration=integer(j.duration,`Job ${j.id}: duration`,1,n),release=integer(j.release,`Job ${j.id}: earliest slot`,0,n-1),deadline=integer(j.deadline,`Job ${j.id}: deadline`,1,n);
+ assert(release+duration<=deadline,`Job ${j.id} has no valid time window.`);
+ return {id:j.id,duration,release,deadline,powerW:number(j.powerW,`Job ${j.id}: power W`,1,100000)};});
+ return {version:VERSION,label:typeof raw.label==='string'?raw.label.slice(0,120):'Untitled scenario',slots,battery,inverterW,stressFactor,jobs};
+}
+function checkSchedule(s,starts){assert(starts&&typeof starts==='object'&&!Array.isArray(starts),'A start-slot map is required.');const occupied=new Set();
+ assert(Object.keys(starts).length===s.jobs.length,'Schedule must contain exactly the requested jobs.');
+ for(const j of s.jobs){assert(Object.hasOwn(starts,j.id),`Missing job ${j.id}.`);const start=integer(starts[j.id],`Job ${j.id}: start`,j.release,j.deadline-j.duration);for(let h=start;h<start+j.duration;h++){assert(!occupied.has(h),'Jobs overlap on the single shared machine.');occupied.add(h);}}
+}
+function simulateModel(s,starts,factor){
+ const {battery:b}=s;let stored=b.initialWh,gridWh=0,unservedWh=0,dischargedWh=0,solarWh=0,curtailedWh=0,conversionLossWh=0;
+ const rows=[],violations=[];const load=s.slots.map(x=>x.baseWh),names=s.slots.map(()=>null);
+ for(const j of s.jobs){for(let h=starts[j.id];h<starts[j.id]+j.duration;h++){load[h]+=j.powerW;names[h]=j.id;}}
+ for(let h=0;h<s.slots.length;h++){
+  const slot=s.slots[h],pv=slot.solarWh*factor,demand=load[h],before=stored,solarToLoad=Math.min(pv,demand);
+  let chargeInputWh=0,batteryOutputWh=0,grid=0,unserved=0;
+  if(pv>=demand){chargeInputWh=Math.max(0,Math.min(pv-demand,b.chargeLimitW,(b.capacityWh-stored)/b.chargeEfficiency));stored+=chargeInputWh*b.chargeEfficiency;}
+  else {const deficit=demand-pv;batteryOutputWh=Math.max(0,Math.min(deficit,b.dischargeLimitW,(stored-b.reserveWh)*b.dischargeEfficiency));stored-=batteryOutputWh/b.dischargeEfficiency;grid=Math.min(Math.max(0,deficit-batteryOutputWh),slot.gridLimitWh);unserved=Math.max(0,deficit-batteryOutputWh-grid);}
+  const curtailed=Math.max(0,pv-solarToLoad-chargeInputWh),loss=chargeInputWh*(1-b.chargeEfficiency)+batteryOutputWh*(1/b.dischargeEfficiency-1);
+  if(demand>s.inverterW+EPS)violations.push({slot:h,kind:'load_limit',excessW:demand-s.inverterW});
+  if(unserved>EPS)violations.push({slot:h,kind:'unserved_load',Wh:unserved});
+  const residualWh=pv+grid+(before-stored)-((demand-unserved)+curtailed+loss);
+  rows.push({slot:h,label:slot.label,job:names[h],solarWh:pv,baseWh:slot.baseWh,demandWh:demand,solarToLoadWh:solarToLoad,chargeInputWh,batteryOutputWh,gridWh:grid,unservedWh:unserved,storedWh:stored,curtailedWh:curtailed,conversionLossWh:loss,residualWh});
+  gridWh+=grid;unservedWh+=unserved;dischargedWh+=batteryOutputWh;solarWh+=pv;curtailedWh+=curtailed;conversionLossWh+=loss;
+ }
+ if(stored+EPS<b.endMinWh)violations.push({slot:s.slots.length,kind:'end_minimum',shortfallWh:b.endMinWh-stored});
+ return {feasible:!violations.length,gridWh,unservedWh,dischargedWh,solarWh,curtailedWh,conversionLossWh,endWh:stored,violations,rows};
+}
+function simulate(scenario,starts,factor=1){const s=validate(scenario);checkSchedule(s,starts);number(factor,'Solar factor',0,1);return simulateModel(s,starts,factor);}
+function canonical(scenario){const s=validate(scenario);return JSON.stringify(s);}
+function earliest(scenario){const s=validate(scenario),starts=Object.create(null),busy=new Set();for(const j of [...s.jobs].sort((a,b)=>a.deadline-b.deadline||a.release-b.release||a.id.localeCompare(b.id))){let placed=false;for(let h=j.release;h<=j.deadline-j.duration;h++){let free=true;for(let k=h;k<h+j.duration;k++)if(busy.has(k))free=false;if(free){starts[j.id]=h;for(let k=h;k<h+j.duration;k++)busy.add(k);placed=true;break;}}if(!placed)return null;}return starts;}
+function score(s,starts,adverse,nominal){return [adverse.gridWh,nominal.gridWh,adverse.dischargedWh,s.jobs.reduce((total,j)=>total+starts[j.id]+j.duration,0)];}
+function better(a,b){if(!b)return true;for(let i=0;i<a.length;i++){if(a[i]<b[i]-EPS)return true;if(a[i]>b[i]+EPS)return false;}return false;}
+function solve(scenario,options={}){
+ const s=validate(scenario),maxEvaluations=integer(options.maxEvaluations??250000,'Evaluation limit',1,250000),maxMs=number(options.maxMs??8000,'Time limit ms',1,30000),begin=Date.now();
+ let evaluated=0,valid=0,stopped=false,best=null,bestScore=null;const starts=Object.create(null),occupied=new Uint8Array(s.slots.length);
+ const baselineStarts=earliest(s),baseline=baselineStarts?{starts:baselineStarts,nominal:simulateModel(s,baselineStarts,1),adverse:simulateModel(s,baselineStarts,s.stressFactor)}:null;
+ const order=[...s.jobs].sort((a,b)=>(a.deadline-a.release-a.duration)-(b.deadline-b.release-b.duration)||b.duration-a.duration||a.id.localeCompare(b.id));
+ function visit(i){
+  if(stopped)return;if(evaluated>=maxEvaluations||Date.now()-begin>=maxMs){stopped=true;return;}
+  if(i===order.length){evaluated++;const adverse=simulateModel(s,starts,s.stressFactor);if(!adverse.feasible)return;const nominal=simulateModel(s,starts,1);if(!nominal.feasible)return;valid++;const value=score(s,starts,adverse,nominal);if(better(value,bestScore)){bestScore=value;best={starts:{...starts},nominal,adverse};}return;}
+  const j=order[i];for(let h=j.release;h<=j.deadline-j.duration;h++){
+   let free=true;for(let k=h;k<h+j.duration;k++)if(occupied[k]||s.slots[k].baseWh+j.powerW>s.inverterW+EPS)free=false;
+   if(!free)continue;starts[j.id]=h;for(let k=h;k<h+j.duration;k++)occupied[k]=1;visit(i+1);for(let k=h;k<h+j.duration;k++)occupied[k]=0;delete starts[j.id];if(stopped)return;
+  }
+ }
+ visit(0);
+ const status=best?(stopped?'feasible_search_limited':'optimal_in_model'):(stopped?'unknown_search_limited':'infeasible_in_model');
+ return {version:VERSION,status,complete:!stopped,evaluated,feasibleSchedules:valid,elapsedMs:Date.now()-begin,scenario:s,best,baseline,
+  objective:'Adverse grid Wh, then nominal grid Wh, then adverse battery-output Wh, then sum of finish slots.',
+  dispatch:'Fixed dispatch: solar supplies load first, excess charges the battery; battery covers deficits above reserve before grid. No grid charging, grid export or strategic battery withholding.',
+  scope:'One machine; whole-hour, non-preemptive jobs; hourly average AC-bus input; fixed dispatch. Optimality, when reported, is only within this finite model. Not a power controller or an electrical design.'};
+}
+function scheduleCsv(result){assert(result.best,'No feasible plan to export.');const header='job,start_slot,end_slot,power_W';const esc=x=>'"'+String(x).replace(/"/g,'""')+'"';return header+'\n'+result.scenario.jobs.map(j=>{const name=/^[=+\-@\t\r]/.test(j.id)?"'"+j.id:j.id;return `${esc(name)},${result.best.starts[j.id]},${result.best.starts[j.id]+j.duration},${j.powerW}`;}).join('\n')+'\n';}
+
+// SHA-256 fallback for portable exports in contexts without Web Crypto.
+// This is an unkeyed integrity fingerprint, not authentication or a signature.
+function sha256Text(text){
+ assert(typeof text==='string','Hash input must be text.');
+ const data=new TextEncoder().encode(text),length=data.length;
+ assert(length<=1000000,'Fingerprint input exceeds 1 MB.');
+ const bytes=new Uint8Array(Math.ceil((length+9)/64)*64);bytes.set(data);bytes[length]=128;
+ const view=new DataView(bytes.buffer);view.setUint32(bytes.length-8,Math.floor(length/0x20000000));view.setUint32(bytes.length-4,(length*8)>>>0);
+ const k=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+ const h=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]),w=new Uint32Array(64),rotr=(v,n)=>(v>>>n)|(v<<(32-n));
+ for(let offset=0;offset<bytes.length;offset+=64){
+  for(let t=0;t<16;t++)w[t]=view.getUint32(offset+t*4);
+  for(let t=16;t<64;t++){const x=w[t-15],y=w[t-2],s0=rotr(x,7)^rotr(x,18)^(x>>>3),s1=rotr(y,17)^rotr(y,19)^(y>>>10);w[t]=(w[t-16]+s0+w[t-7]+s1)>>>0;}
+  let [a,b,c,d,e,f,g,z]=h;
+  for(let t=0;t<64;t++){const s1=rotr(e,6)^rotr(e,11)^rotr(e,25),ch=(e&f)^(~e&g),t1=(z+s1+ch+k[t]+w[t])>>>0,s0=rotr(a,2)^rotr(a,13)^rotr(a,22),maj=(a&b)^(a&c)^(b&c),t2=(s0+maj)>>>0;z=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;}
+  [a,b,c,d,e,f,g,z].forEach((v,i)=>h[i]=(h[i]+v)>>>0);
+ }
+ return Array.from(h,v=>v.toString(16).padStart(8,'0')).join('');
+}
+
+return {VERSION,validate,simulate,canonical,earliest,solve,scheduleCsv,sha256Text};
+});
+</script><script id="example" type="application/json">{
+  "label":"Synthetic workshop day, not a measurement of Joseph's equipment",
+  "inverterW":2000,"stressFactor":0.65,
+  "battery":{"capacityWh":2400,"initialWh":1800,"reserveWh":600,"endMinWh":1800,"chargeLimitW":1200,"dischargeLimitW":1000,"chargeEfficiency":0.95,"dischargeEfficiency":0.95},
+  "slots":[
+    {"label":"06:00","solarWh":0,"baseWh":120,"gridLimitWh":1600},
+    {"label":"07:00","solarWh":100,"baseWh":120,"gridLimitWh":1600},
+    {"label":"08:00","solarWh":300,"baseWh":120,"gridLimitWh":1600},
+    {"label":"09:00","solarWh":700,"baseWh":120,"gridLimitWh":1600},
+    {"label":"10:00","solarWh":1200,"baseWh":120,"gridLimitWh":1600},
+    {"label":"11:00","solarWh":1600,"baseWh":120,"gridLimitWh":1600},
+    {"label":"12:00","solarWh":1800,"baseWh":120,"gridLimitWh":1600},
+    {"label":"13:00","solarWh":1700,"baseWh":120,"gridLimitWh":1600},
+    {"label":"14:00","solarWh":1300,"baseWh":120,"gridLimitWh":0},
+    {"label":"15:00","solarWh":900,"baseWh":120,"gridLimitWh":0},
+    {"label":"16:00","solarWh":500,"baseWh":120,"gridLimitWh":0},
+    {"label":"17:00","solarWh":200,"baseWh":120,"gridLimitWh":0},
+    {"label":"18:00","solarWh":0,"baseWh":120,"gridLimitWh":1600},
+    {"label":"19:00","solarWh":0,"baseWh":120,"gridLimitWh":1600},
+    {"label":"20:00","solarWh":0,"baseWh":120,"gridLimitWh":1600},
+    {"label":"21:00","solarWh":0,"baseWh":120,"gridLimitWh":1600}
+  ],
+  "jobs":[
+    {"id":"Model evaluation","duration":2,"release":0,"deadline":10,"powerW":650},
+    {"id":"Training experiment","duration":3,"release":0,"deadline":12,"powerW":850},
+    {"id":"Dataset processing","duration":1,"release":0,"deadline":14,"powerW":400}
+  ]
+}
+</script><script>(()=>{'use strict';const $=id=>document.getElementById(id),SQ=window.SunQueue;let scenario=SQ.validate(JSON.parse($('example').textContent)),result=null,worker=null,workerUrl=null,revision=0;
+const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
+const spec=[['capacityWh','Capacity Wh'],['initialWh','Initial energy Wh'],['reserveWh','Reserve Wh'],['endMinWh','End minimum Wh'],['chargeLimitW','Charge limit W'],['dischargeLimitW','Discharge limit W'],['chargeEfficiency','Charge efficiency'],['dischargeEfficiency','Discharge efficiency'],['inverterW','AC load limit W']];
+function say(text){$('notice').textContent=text;$('notice').classList.toggle('hidden',!text);}
+function stop(){if(worker)worker.terminate();worker=null;if(workerUrl)URL.revokeObjectURL(workerUrl);workerUrl=null;$('solve').disabled=false;$('cancel').classList.add('hidden');$('progress').classList.add('hidden');}
+function dirty(){revision++;stop();result=null;$('export').disabled=true;$('csv').disabled=true;for(const id of ['grid','baseline','minimum','end'])$(id).textContent='—';$('status').textContent='Inputs changed. Run the search before using a plan.';$('chartBox').replaceChildren(node('div','empty','Inputs changed. The old plan is no longer valid.'));$('chartMeta').textContent='No current results.';document.querySelectorAll('.chosen,.stored').forEach(e=>e.textContent='—');}
+function numeric(value,label,onchange){const e=node('input');e.type='number';e.step=label.includes('Efficiency')?'0.01':'1';e.value=value;e.setAttribute('aria-label',label);e.addEventListener('input',()=>{onchange(e.value===''?NaN:Number(e.value));dirty();});return e;}
+function renderInputs(){
+ $('batteryFields').replaceChildren();for(const [key,title]of spec){const label=node('label',null,title),value=key==='inverterW'?scenario[key]:scenario.battery[key];const input=numeric(value,key,v=>{if(key==='inverterW')scenario[key]=v;else scenario.battery[key]=v;});input.id=key;label.append(input);$('batteryFields').append(label);}
+ $('stress').value=String(scenario.stressFactor*100);$('stressValue').textContent=`${Math.round(scenario.stressFactor*100)}%`;
+ $('jobs').replaceChildren();scenario.jobs.forEach((j,i)=>{const tr=node('tr');const name=node('input','jobname');name.value=j.id;name.setAttribute('aria-label',`Job ${i+1} name`);name.oninput=()=>{j.id=name.value;dirty();};const nameCell=node('td');nameCell.append(name);tr.append(nameCell);for(const key of ['duration','release','deadline','powerW']){const td=node('td');td.append(numeric(j[key],`Job ${i+1} ${key}`,v=>j[key]=v));tr.append(td);}tr.append(node('td','chosen','—'));$('jobs').append(tr);});
+ $('slots').replaceChildren();scenario.slots.forEach((s,i)=>{const tr=node('tr',s.gridLimitWh===0?'outage':'');tr.append(node('td',null,`${i} / ${s.label}`));for(const key of ['solarWh','baseWh','gridLimitWh']){const td=node('td');td.append(numeric(s[key],`Slot ${i} ${key}`,v=>{s[key]=v;tr.classList.toggle('outage',s.gridLimitWh===0);}));tr.append(td);}tr.append(node('td','stored','—'));$('slots').append(tr);});
+}
+const kwh=x=>(x/1000).toFixed(2)+' kWh';
+function svg(tag,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,String(v));return e;}
+function chart(){if(!result?.best)return;const r=result.best[$('view').value],width=960,height=255,left=52,bottom=224,top=20,gap=(width-left-18)/r.rows.length,max=Math.max(1,...r.rows.flatMap(x=>[x.solarWh,x.demandWh,x.gridWh]));const canvas=svg('svg',{viewBox:`0 0 ${width} ${height}`,class:'chart',role:'img','aria-label':'Hourly solar, load and grid energy under the selected solar scenario'});
+ for(let i=0;i<4;i++){const y=bottom-i*(bottom-top)/3;canvas.append(svg('line',{x1:left,x2:width-15,y1:y,y2:y,stroke:'#2b3947'}));const t=svg('text',{x:44,y:y+4,'text-anchor':'end',fill:'#98a8b8','font-size':10});t.textContent=String(Math.round(max*i/3));canvas.append(t);}
+ r.rows.forEach((row,i)=>{const x=left+i*gap;if(result.scenario.slots[i].gridLimitWh===0)canvas.append(svg('rect',{x,y:top,width:gap,height:bottom-top,fill:'#f1c374','fill-opacity':.07}));[['solarWh','#c2ef89'],['demandWh','#91c7eb'],['gridWh','#f1c374']].forEach(([key,color],b)=>{const h=row[key]/max*(bottom-top);canvas.append(svg('rect',{x:x+gap*.12+b*gap*.25,y:bottom-h,width:gap*.2,height:h,rx:2,fill:color}));});if(i%2===0){const text=svg('text',{x:x+gap*.5,y:243,'text-anchor':'middle',fill:'#98a8b8','font-size':10});text.textContent=row.label;canvas.append(text);}});
+ $('chartBox').replaceChildren(canvas);$('chartMeta').textContent=`${$('view').value==='adverse'?'Adverse':'Forecast'} scenario / Solar supplied ${kwh(r.solarWh)} / Curtailed ${kwh(r.curtailedWh)} / Conversion losses ${kwh(r.conversionLossWh)}.`;
+ document.querySelectorAll('.stored').forEach((e,i)=>e.textContent=Math.round(r.rows[i].storedWh).toLocaleString());
+}
+function show(r){result=r;$('export').disabled=!r.best;$('csv').disabled=!r.best;const notes={optimal_in_model:'Exhaustive search complete. Best schedule in the fixed-dispatch model.',feasible_search_limited:'Search limit reached. Feasible schedule found, but optimality is unknown.',infeasible_in_model:'No feasible schedule exists within the supplied fixed-dispatch model.',unknown_search_limited:'Search limit reached without finding a feasible schedule. Infeasibility is NOT established.'};$('status').textContent=`${notes[r.status]} ${r.evaluated.toLocaleString()} complete schedules evaluated in ${r.elapsedMs} ms.`;
+ $('baseline').textContent=r.baseline?kwh(r.baseline.adverse.gridWh):'No plan';$('baselineNote').textContent=!r.baseline?'Greedy baseline could not place every job.':r.baseline.adverse.feasible?'baseline passes modeled constraints':'BASELINE FAILS constraints; not equivalent service';
+ if(!r.best){say('No executable recommendation is produced. Review loads, job windows, storage and the grid inputs.');$('chartBox').replaceChildren(node('div','empty',notes[r.status]));return;}
+ say('');$('grid').textContent=kwh(r.best.adverse.gridWh);$('grid').className='green';$('minimum').textContent=kwh(Math.min(scenario.battery.initialWh,...r.best.adverse.rows.map(x=>x.storedWh)));$('reserveNote').textContent=`Reserve ${kwh(r.scenario.battery.reserveWh)}`;$('end').textContent=kwh(r.best.adverse.endWh);$('endNote').textContent=`Required ${kwh(r.scenario.battery.endMinWh)}`;
+ document.querySelectorAll('.chosen').forEach((e,i)=>{const j=r.scenario.jobs[i],start=r.best.starts[j.id];e.textContent=`${start} → ${start+j.duration}`;});chart();
+}
+async function hash(s){const data=new TextEncoder().encode(s);if(!globalThis.crypto?.subtle)return SQ.sha256Text(s);const a=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(a)].map(v=>v.toString(16).padStart(2,'0')).join('');}
+function download(name,text,mime='application/json'){const blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=node('a');a.download=name;a.href=url;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}
+function safe(fn){return async()=>{try{await fn();}catch(e){say(e.message||String(e));}};}
+$('solve').onclick=safe(()=>{stop();const input=SQ.validate(scenario);dirty();const token=revision;$('status').textContent='Searching feasible start times…';$('solve').disabled=true;$('cancel').classList.remove('hidden');$('progress').classList.remove('hidden');say('');workerUrl=URL.createObjectURL(new Blob([$('coreScript').textContent+'\nonmessage=e=>{try{postMessage({ok:true,result:SunQueue.solve(e.data)});}catch(error){postMessage({ok:false,error:error.message});}};'],{type:'text/javascript'}));worker=new Worker(workerUrl);worker.onmessage=e=>{if(token!==revision)return;stop();if(e.data.ok)show(e.data.result);else say(e.data.error);};worker.onerror=e=>{stop();say('The planning worker failed. No plan was applied. '+(e.message||''));};worker.postMessage(input);});
+$('cancel').onclick=()=>{dirty();$('status').textContent='Search canceled. No partial plan was applied.';};
+$('demo').onclick=()=>{dirty();scenario=SQ.validate(JSON.parse($('example').textContent));renderInputs();say('Original synthetic scenario restored. No equipment measurements are included.');};
+$('outage').onclick=()=>{dirty();scenario.slots.forEach(s=>s.gridLimitWh=0);renderInputs();say('All grid limits are now zero. Run the search to check this outage scenario.');};
+$('stress').oninput=()=>{scenario.stressFactor=Number($('stress').value)/100;$('stressValue').textContent=`${$('stress').value}%`;dirty();};$('view').onchange=chart;
+$('export').onclick=safe(async()=>{const current=result,token=revision;if(!current?.best)throw new Error('Run a feasible plan first.');const fingerprint=await hash(SQ.canonical(current.scenario));if(token!==revision||current!==result)throw new Error('Inputs changed during export. Run the search again.');download('sunqueue-plan.json',JSON.stringify({format:'sunqueue-plan',version:1,inputSha256:fingerprint,createdAt:new Date().toISOString(),result:current},null,2));});
+$('csv').onclick=safe(()=>download('sunqueue-schedule.csv',SQ.scheduleCsv(result),'text/csv'));
+$('inputExport').onclick=safe(()=>download('sunqueue-inputs.json',JSON.stringify(SQ.validate(scenario),null,2)));
+$('import').onclick=()=>$('file').click();$('file').onchange=async()=>{const startedRevision=revision;try{const f=$('file').files[0];if(!f)return;if(f.size>1000000)throw new Error('Input JSON must be under 1 MB.');const data=JSON.parse(await f.text()),saved=data.format==='sunqueue-plan',candidate=SQ.validate(saved?data.result?.scenario:data);if(saved&&await hash(SQ.canonical(candidate))!==data.inputSha256)throw new Error('Saved input fingerprint mismatch. The current scenario is unchanged.');if(revision!==startedRevision)throw new Error('The scenario changed during import. Retry the import to replace it.');dirty();scenario=candidate;renderInputs();say(saved?'Inputs verified. Saved output was ignored; rerun the search.':'Scenario imported. No saved results or approvals were accepted.');}catch(e){say(e.message);}finally{$('file').value='';}};
+window.SunQueueUI={snapshot:()=>JSON.parse(JSON.stringify({scenario,result,revision,running:!!worker}))};renderInputs();
+})();
+</script></body></html>

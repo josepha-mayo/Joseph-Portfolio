@@ -1,0 +1,358 @@
+{
+  "status": "passed",
+  "started_at": "2026-09-08T19:29:52.581166+00:00",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0
+    },
+    {
+      "name": "node",
+      "exit_code": 0
+    },
+    {
+      "name": "oracle",
+      "exit_code": 0
+    },
+    {
+      "name": "inherited-browser",
+      "exit_code": 0
+    },
+    {
+      "name": "shift-browser",
+      "exit_code": 0
+    },
+    {
+      "name": "calendar",
+      "exit_code": 0
+    },
+    {
+      "name": "demo",
+      "exit_code": 0
+    }
+  ],
+  "node_tests": 187,
+  "browser_workflows": 59,
+  "browser_breakdown": {
+    "inherited": 28,
+    "shift": 31
+  },
+  "calendar_events": 54,
+  "oracle": {
+    "status": "passed",
+    "cases": 41,
+    "checks": [
+      {
+        "case": 0,
+        "label": "Oracle case 0",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 1,
+        "label": "Oracle case 1",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 2,
+        "label": "Oracle case 2",
+        "status": "optimal_in_model",
+        "feasible_schedules": 3,
+        "objective": [
+          0.0,
+          0.0,
+          0.0,
+          2
+        ]
+      },
+      {
+        "case": 3,
+        "label": "Oracle case 3",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 4,
+        "label": "Oracle case 4",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 5,
+        "label": "Oracle case 5",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 6,
+        "label": "Oracle case 6",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 7,
+        "label": "Oracle case 7",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 8,
+        "label": "Oracle case 8",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 9,
+        "label": "Oracle case 9",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 10,
+        "label": "Oracle case 10",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 11,
+        "label": "Oracle case 11",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 12,
+        "label": "Oracle case 12",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 13,
+        "label": "Oracle case 13",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 14,
+        "label": "Oracle case 14",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 15,
+        "label": "Oracle case 15",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 16,
+        "label": "Oracle case 16",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 17,
+        "label": "Oracle case 17",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 18,
+        "label": "Oracle case 18",
+        "status": "optimal_in_model",
+        "feasible_schedules": 1,
+        "objective": [
+          0.0,
+          0.0,
+          200.0,
+          5
+        ]
+      },
+      {
+        "case": 19,
+        "label": "Oracle case 19",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 20,
+        "label": "Oracle case 20",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 21,
+        "label": "Oracle case 21",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 22,
+        "label": "Oracle case 22",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 23,
+        "label": "Oracle case 23",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 24,
+        "label": "Oracle case 24",
+        "status": "optimal_in_model",
+        "feasible_schedules": 3,
+        "objective": [
+          100.0,
+          100.0,
+          0.0,
+          4
+        ]
+      },
+      {
+        "case": 25,
+        "label": "Oracle case 25",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 26,
+        "label": "Oracle case 26",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 27,
+        "label": "Oracle case 27",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 28,
+        "label": "Oracle case 28",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 29,
+        "label": "Oracle case 29",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 30,
+        "label": "Oracle case 30",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 31,
+        "label": "Oracle case 31",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 32,
+        "label": "Oracle case 32",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 33,
+        "label": "Oracle case 33",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 34,
+        "label": "Oracle case 34",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 35,
+        "label": "Oracle case 35",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 36,
+        "label": "Oracle case 36",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 37,
+        "label": "Oracle case 37",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 38,
+        "label": "Oracle case 38",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 39,
+        "label": "Oracle case 39",
+        "status": "infeasible_in_model",
+        "feasible_schedules": 0,
+        "objective": null
+      },
+      {
+        "case": 40,
+        "label": "Synthetic workshop day, not a measurement of Joseph's equipment",
+        "status": "optimal_in_model",
+        "feasible_schedules": 180,
+        "objective": [
+          0.0,
+          0.0,
+          780.0,
+          25
+        ]
+      }
+    ],
+    "scope": "Separate Python exhaustive implementation versus JavaScript. Same declared finite model; not measured equipment, weather, or a creator/user trial."
+  },
+  "demo_seconds": 250.35,
+  "scope": "Internal synthetic-data software execution. No actual workshop jobs, field savings, meter verification or external calendar-client import. The original scheduler and energy simulator are unchanged.",
+  "finished_at": "2026-09-08T19:36:52.922542+00:00"
+}

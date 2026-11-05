@@ -1,0 +1,80 @@
+name: SunQueue Shift Sheet verified release
+on:
+  push:
+    branches: [sunqueue-shift-20260908]
+    paths: [.github/workflows/sunqueue-shift-release.yml, SHIFT_REBUILD]
+permissions:
+  contents: write
+concurrency:
+  group: sunqueue-shift-release
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref == 'refs/heads/sunqueue-shift-20260908'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      DO_NOT_TRACK: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - name: Expand hash-verified Shift Sheet source on the isolated branch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,lzma,json
+          if Path('sunqueue-shift-payload/part0.bin').exists():
+            data=b''.join(Path(f'sunqueue-shift-payload/part{i}.bin').read_bytes() for i in range(3))
+            assert hashlib.sha256(data).hexdigest()=='d311e1a81192ba0c7e6e0333f3fc6761024c336724084ab3af90ce3fda76c32b'
+            files=json.loads(lzma.decompress(data));assert len(files)==15
+            for name,text in files.items():
+              p=Path(name);assert name.startswith('public/sunqueue/upgrade03/') and not p.is_absolute() and '..' not in p.parts and isinstance(text,str)
+              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
+          assert hashlib.sha256(Path('public/sunqueue/src/core.js').read_bytes()).hexdigest()=='d716789fed25a7eedb67407ecd81256e0cf0e6131e18b69d0f0fb0af62dd365e'
+          Path('public/sunqueue/v03/evidence').mkdir(parents=True,exist_ok=True)
+          PY
+      - name: Install browser and fail fast on functional checks
+        run: |
+          python3 -m venv /tmp/sunqueue-shift
+          /tmp/sunqueue-shift/bin/pip -q install playwright==1.55.0
+          /tmp/sunqueue-shift/bin/python -m playwright install --with-deps chromium
+          cd public/sunqueue
+          /tmp/sunqueue-shift/bin/python upgrade03/build.py
+          node --test tests/core.test.cjs upgrade02/replay.test.cjs upgrade03/shift.test.cjs
+          /tmp/sunqueue-shift/bin/python tests/oracle.py
+          /tmp/sunqueue-shift/bin/python upgrade03/inherited_browser.py
+          /tmp/sunqueue-shift/bin/python upgrade03/browser.py
+          /tmp/sunqueue-shift/bin/python upgrade03/calendar_check.py
+      - name: Install stock synthetic narration dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng
+          /tmp/sunqueue-shift/bin/pip -q install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/sunqueue-shift/bin/pip -q install kokoro==0.9.4 soundfile==0.13.1
+      - name: Execute release gates and record the actual application
+        run: /tmp/sunqueue-shift/bin/python public/sunqueue/upgrade03/release.py
+      - name: Preserve implementation and actual results only on this branch
+        if: always()
+        run: |
+          git config user.name 'SunQueue Shift Verification'
+          git config user.email 'sunqueue-build@users.noreply.github.com'
+          rm -rf sunqueue-shift-payload
+          rm -rf public/sunqueue/upgrade03/__pycache__ public/sunqueue/v03/evidence/recordings
+          rm -f public/sunqueue/v03/evidence/narration.wav
+          git add public/sunqueue/upgrade03 public/sunqueue/v03 sunqueue-shift-payload
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Preserve Shift Sheet implementation, working demo and executed release evidence'
+          git push origin HEAD:sunqueue-shift-20260908
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sunqueue-shift-release
+          path: |
+            public/sunqueue/v03/
+            public/sunqueue/upgrade03/
+          retention-days: 14

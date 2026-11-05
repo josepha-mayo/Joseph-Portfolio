@@ -1,0 +1,12 @@
+PASS initial state cannot export nonexistent results
+PASS worker runs real scheduling and renders the synthetic comparison
+PASS export contains actual scenario hash and modeled flows
+PASS CSV includes every requested job and exact chosen slots
+PASS editing input invalidates exports and removes the old schedule
+PASS invalid battery energy is rejected rather than clamped
+PASS tampered saved scenario is rejected without destroying current inputs
+PASS import verifies inputs but does not trust a saved optimization result
+PASS infeasible model yields no executable plan
+PASS untrusted job names remain literal text
+PASS narrow layout stays within viewport with scrollable tables
+PASS no page errors or unexpected app network requests
