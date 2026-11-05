@@ -1,0 +1,130 @@
+name: von-read R12 public anonymous full pull
+
+on:
+  push:
+    branches: [von-registry-r11-20260927]
+    paths:
+      - .github/workflows/von-read-r12-public-full-pull.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: von-read-r12-public-full-pull
+  cancel-in-progress: true
+
+jobs:
+  verify-public-pull:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      IMAGE: awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws/von-read@sha256:3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940
+    steps:
+      - name: Check out frozen R4 checks
+        uses: actions/checkout@v4
+        with:
+          ref: 3186e0ef79c27a298ed7505ed834b6a2be929c05
+          path: frozen
+          sparse-checkout: delivery/von-read-r4
+          persist-credentials: false
+
+      - name: Download immutable R11 config evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: von-registry-r11-overlay-and-gateway-data
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36341679718
+          github-token: ${{ github.token }}
+          path: upstream
+
+      - name: Prepare anonymous disposable runner
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTIONS" = true
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p receipts
+          df -B1 / > receipts/DISK_BEFORE.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/DISK_AFTER.txt
+          python3 - <<'PY'
+          import hashlib, pathlib, shutil
+          config=pathlib.Path('upstream/data/final-config.json').read_bytes()
+          assert hashlib.sha256(config).hexdigest() == '5b4a6e46274300876943e1693ee0c6d053b8d9697987c2c3048cbe5fb6679ad8'
+          assert shutil.disk_usage('/').free > 75 * 2**30
+          PY
+          export DOCKER_CONFIG="$RUNNER_TEMP/von-r12-empty-docker"
+          mkdir -p "$DOCKER_CONFIG"
+          printf '{}\n' > "$DOCKER_CONFIG/config.json"
+          test "$(find "$DOCKER_CONFIG" -type f | wc -l)" = 1
+          env | sort | grep -Ev '(TOKEN|SECRET|KEY|PASSWORD|CREDENTIAL)' > receipts/ENVIRONMENT_SANITIZED.txt
+
+      - name: Pull complete immutable image through public Function URL
+        timeout-minutes: 25
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/von-r12-empty-docker"
+          unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN || true
+          date -u +%s > receipts/PULL_STARTED.txt
+          timeout --kill-after=20s 1350s docker pull "$IMAGE" > receipts/DOCKER_PULL.log 2>&1
+          date -u +%s > receipts/PULL_ENDED.txt
+          docker image inspect "$IMAGE" > receipts/IMAGE_INSPECT.json
+
+      - name: Verify filesystem identity and frozen CLI behavior
+        run: |
+          set -euo pipefail
+          export DOCKER_CONFIG="$RUNNER_TEMP/von-r12-empty-docker"
+          timeout --kill-after=5s 120s docker run --rm --network none --entrypoint python3 \
+            -v "$PWD/frozen/delivery/von-read-r4/packaging/container_checks.py:/checks.py:ro" \
+            -v "$PWD/receipts:/reports" "$IMAGE" /checks.py --out /reports/CLI.json > receipts/CLI.log 2>&1
+          set +e
+          timeout --kill-after=5s 60s docker run --rm --network none "$IMAGE" > receipts/NO_GPU.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          test "$rc" -ne 124
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          source=Path('upstream/data/final-config.json').read_bytes()
+          config=json.loads(source)
+          image=json.loads(Path('receipts/IMAGE_INSPECT.json').read_text())[0]
+          assert image['Id']=='sha256:'+hashlib.sha256(source).hexdigest()
+          assert image['RootFS']['Layers']==config['rootfs']['diff_ids']
+          assert len(image['RootFS']['Layers'])==19
+          cli=json.loads(Path('receipts/CLI.json').read_text())
+          assert cli['status']=='passed' and len(cli['calls'])==10 and all(cli['checks'].values())
+          assert not cli.get('gpu_inference',False)
+          assert 'Allocated AMD ROCm hardware required' in Path('receipts/NO_GPU.log').read_text()
+          seconds=int(Path('receipts/PULL_ENDED.txt').read_text())-int(Path('receipts/PULL_STARTED.txt').read_text())
+          receipt={
+            'schema':'von-r12-public-full-pull-1',
+            'status':'passed',
+            'image_reference':'awditngm5lljr3aovgqv4xlt240kruwv.lambda-url.us-east-1.on.aws/von-read@sha256:3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940',
+            'manifest_digest':'sha256:3ad17157c0361adfa2a692925fec6d17fb53882f07b7ebcb5648a67c53a82940',
+            'config_digest':image['Id'],
+            'rootfs_layers':19,
+            'mandatory_base_layers':11,
+            'overlay_layers':8,
+            'filesystem_identity_matches_r11':True,
+            'docker_auth_store':'empty',
+            'aws_credentials_present':False,
+            'public_function_url_ingress':True,
+            'complete_image_pull':True,
+            'pull_seconds':seconds,
+            'fixture_cli_calls':10,
+            'gpu_inference':False,
+            'submitted':False
+          }
+          Path('receipts/FINAL_ANONYMOUS_PULL.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+
+      - name: Preserve public full-pull evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-r12-public-full-pull-evidence
+          path: receipts/
+          retention-days: 14
+          if-no-files-found: error

@@ -1,0 +1,188 @@
+name: von-read R12 Lambda registry deploy
+
+on:
+  push:
+    branches: [von-registry-r11-20260927]
+    paths:
+      - .github/workflows/von-read-lambda-r12.yml
+      - delivery/registry-r12/**
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: von-read-lambda-r12
+  cancel-in-progress: true
+
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Check out audited gateway source
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            delivery/registry-r12
+          persist-credentials: false
+
+      - name: Download exact successful R11 publication metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: von-registry-r11-overlay-and-gateway-data
+          repository: josepha-mayo/Joseph-Portfolio
+          run-id: 36341679718
+          github-token: ${{ github.token }}
+          path: upstream
+
+      - name: Assume short-lived branch-scoped AWS publisher role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::046675437218:role/von-registry-r12-ecr-public-20260927
+          aws-region: us-east-1
+          role-session-name: von-read-lambda-r12
+
+      - name: Read the actual ECR Public carrier manifest
+        run: |
+          set -euo pipefail
+          mkdir -p receipts deployment/data
+          ok=0
+          for i in $(seq 1 80); do
+            if aws ecr-public describe-images \
+              --region us-east-1 \
+              --repository-name von-read-r4-overlay-r12 \
+              --image-ids imageTag=carrier-r12 \
+              > receipts/ECR_PUBLIC_IMAGE.json 2> receipts/ECR_PUBLIC_LAST_ERROR.txt; then
+              ok=1
+              break
+            fi
+            sleep 15
+          done
+          test "$ok" = 1
+          aws ecr-public get-login-password --region us-east-1 \
+            | docker login --username AWS --password-stdin public.ecr.aws
+          docker manifest inspect public.ecr.aws/c4j1y1e7/von-read-r4-overlay-r12:carrier-r12 \
+            > receipts/ECR_PUBLIC_MANIFEST.json
+          docker logout public.ecr.aws || true
+
+      - name: Compose the runnable R12 manifest without changing filesystem diffIDs
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import copy, hashlib, json, shutil
+          from pathlib import Path
+
+          src = Path("upstream/data")
+          dst = Path("deployment/data")
+          original_manifest_bytes = (src / "final-manifest.json").read_bytes()
+          final_config_bytes = (src / "final-config.json").read_bytes()
+          carrier_config_bytes = Path("upstream/carrier-config.json").read_bytes()
+          original = json.loads(original_manifest_bytes)
+          final_config = json.loads(final_config_bytes)
+          carrier_config = json.loads(carrier_config_bytes)
+          ecr = json.loads(Path("receipts/ECR_PUBLIC_MANIFEST.json").read_text())
+
+          assert hashlib.sha256(original_manifest_bytes).hexdigest() == "f21ff0b9eff830f687aa9b2caee531cf2b878baf8643a1c780ef22103453e08f"
+          assert hashlib.sha256(final_config_bytes).hexdigest() == "5b4a6e46274300876943e1693ee0c6d053b8d9697987c2c3048cbe5fb6679ad8"
+          carrier_digest = "sha256:" + hashlib.sha256(carrier_config_bytes).hexdigest()
+          assert ecr["config"]["digest"] == carrier_digest
+          assert len(original["layers"]) == 19
+          assert len(ecr["layers"]) == 8
+          assert len(carrier_config["rootfs"]["diff_ids"]) == 8
+          assert carrier_config["rootfs"]["diff_ids"] == final_config["rootfs"]["diff_ids"][11:]
+          assert all(0 < row["size"] < 10_000_000_000 for row in ecr["layers"])
+
+          composed = copy.deepcopy(original)
+          composed["layers"] = copy.deepcopy(original["layers"][:11]) + copy.deepcopy(ecr["layers"])
+          composed_bytes = json.dumps(composed, separators=(",", ":"), ensure_ascii=True).encode()
+          composed_digest = "sha256:" + hashlib.sha256(composed_bytes).hexdigest()
+
+          routes = {}
+          for row in composed["layers"][:11]:
+              routes[row["digest"]] = {"source": "dockerhub", "size": row["size"]}
+          for row in composed["layers"][11:]:
+              assert row["digest"] not in routes
+              routes[row["digest"]] = {"source": "ecrpublic", "size": row["size"]}
+          routing = {
+              "schema": "von-registry-gateway-1",
+              "repository": "von-read",
+              "tags": ["r12"],
+              "manifestDigest": composed_digest,
+              "dockerHubRepository": "rocm/pytorch",
+              "ecrPublicRepository": "c4j1y1e7/von-read-r4-overlay-r12",
+              "blobs": routes,
+          }
+
+          (dst / "final-manifest.json").write_bytes(composed_bytes)
+          (dst / "final-config.json").write_bytes(final_config_bytes)
+          (dst / "routing-map.json").write_text(json.dumps(routing, separators=(",", ":"), sort_keys=True))
+          shutil.copy2("delivery/registry-r12/lambda_function.py", "deployment/lambda_function.py")
+
+          receipt = {
+              "schema": "von-read-r12-manifest-compose-1",
+              "sourceR11ManifestDigest": "sha256:" + hashlib.sha256(original_manifest_bytes).hexdigest(),
+              "r12ManifestDigest": composed_digest,
+              "fullConfigDigest": "sha256:" + hashlib.sha256(final_config_bytes).hexdigest(),
+              "carrierConfigDigest": carrier_digest,
+              "layers": len(composed["layers"]),
+              "baseLayersPreserved": 11,
+              "ecrOverlayLayers": 8,
+              "overlayDiffIdsEqualOriginalTail": True,
+              "ecrPublicRepository": routing["ecrPublicRepository"],
+          }
+          Path("receipts/MANIFEST_COMPOSITION.json").write_text(json.dumps(receipt, indent=2) + "\n")
+          print(json.dumps(receipt))
+          PY
+
+      - name: Run focused gateway tests against exact R12 metadata
+        env:
+          VON_REGISTRY_DATA_DIR: ${{ github.workspace }}/deployment/data
+        run: |
+          set -euo pipefail
+          python3 -m unittest -v delivery/registry-r12/test_lambda_gateway.py 2>&1 | tee receipts/GATEWAY_TESTS.log
+          python3 -m py_compile delivery/registry-r12/lambda_function.py
+
+      - name: Package the exact Lambda artifact
+        run: |
+          set -euo pipefail
+          (cd deployment && python3 -m zipfile -c ../lambda.zip lambda_function.py data)
+          python3 -m zipfile -l lambda.zip > receipts/LAMBDA_ZIP_LIST.txt
+          sha256sum lambda.zip > receipts/LAMBDA_ZIP_SHA256.txt
+
+      - name: Create or update the private gateway function
+        run: |
+          set -euo pipefail
+          FUNCTION=von-read-registry-r12
+          EXEC_ROLE=arn:aws:iam::046675437218:role/von-read-registry-r12-lambda-exec
+          if aws lambda get-function --function-name "$FUNCTION" >/dev/null 2>&1; then
+            aws lambda update-function-code \
+              --function-name "$FUNCTION" \
+              --zip-file fileb://lambda.zip \
+              > receipts/LAMBDA_UPDATE.json
+            aws lambda wait function-updated-v2 --function-name "$FUNCTION"
+          else
+            aws lambda create-function \
+              --function-name "$FUNCTION" \
+              --runtime python3.13 \
+              --role "$EXEC_ROLE" \
+              --handler lambda_function.handler \
+              --zip-file fileb://lambda.zip \
+              --timeout 30 \
+              --memory-size 256 \
+              --architectures x86_64 \
+              --description "Read-only Docker Registry v2 gateway for von-read R12" \
+              > receipts/LAMBDA_CREATE.json
+            aws lambda wait function-active-v2 --function-name "$FUNCTION"
+          fi
+          aws lambda get-function-configuration --function-name "$FUNCTION" > receipts/LAMBDA_CONFIGURATION.json
+
+      - name: Preserve deployment receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-read-lambda-r12-receipts
+          path: receipts/
+          retention-days: 14
+          if-no-files-found: warn

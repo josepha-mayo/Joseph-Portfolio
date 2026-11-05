@@ -1,0 +1,129 @@
+name: von-read R12 public carrier mirror
+on:
+  push:
+    branches: [von-registry-r11-20260927]
+    paths:
+      - .github/workflows/von-read-ecr-public-r12.yml
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
+concurrency:
+  group: von-read-ecr-public-r12
+  cancel-in-progress: true
+
+jobs:
+  mirror-and-verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      SRC: ghcr.io/josepha-mayo/von-read-r4-overlay-r11-20260927:carrier-r11
+      DST: public.ecr.aws/c4j1y1e7/von-read-r4-overlay-r12:carrier-r12
+      EXPECTED_SOURCE_COMMIT: 3186e0ef79c27a298ed7505ed834b6a2be929c05
+    steps:
+      - name: Prepare receipt directory and disk
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          df -B1 / > receipts/disk-before.txt
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet
+          df -B1 / > receipts/disk-after.txt
+
+      - name: Authenticate only to the private GHCR carrier
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+      - name: Pull and record the already-published eight-layer carrier
+        run: |
+          set -euo pipefail
+          timeout --kill-after=20s 900s docker pull "$SRC"
+          docker image inspect "$SRC" > receipts/source-inspect.json
+          docker manifest inspect "$SRC" > receipts/source-manifest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          i=json.loads(Path('receipts/source-inspect.json').read_text())[0]
+          m=json.loads(Path('receipts/source-manifest.json').read_text())
+          layers=m.get('layers',[])
+          assert len(layers)==8, len(layers)
+          assert len(i['RootFS']['Layers'])==8
+          assert all(x.get('digest','').startswith('sha256:') for x in layers)
+          PY
+
+      - name: Assume the short-lived AWS public-registry publisher role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::046675437218:role/von-registry-r12-ecr-public-20260927
+          aws-region: us-east-1
+          role-session-name: von-read-r12
+
+      - name: Push the carrier to ECR Public
+        run: |
+          set -euo pipefail
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+          docker tag "$SRC" "$DST"
+          timeout --kill-after=20s 1200s docker push "$DST"
+          docker manifest inspect "$DST" > receipts/destination-manifest-authenticated.json
+          aws ecr-public describe-images --repository-name von-read-r4-overlay-r12 --image-ids imageTag=carrier-r12 > receipts/ecr-public-describe.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path('receipts/source-manifest.json').read_text())
+          b=json.loads(Path('receipts/destination-manifest-authenticated.json').read_text())
+          assert a['config']['digest']==b['config']['digest']
+          assert [x['digest'] for x in a['layers']]==[x['digest'] for x in b['layers']]
+          assert [x['size'] for x in a['layers']]==[x['size'] for x in b['layers']]
+          PY
+
+      - name: Prove a fresh anonymous ECR Public pull
+        run: |
+          set -euo pipefail
+          docker logout ghcr.io || true
+          docker logout public.ecr.aws || true
+          docker image rm "$SRC" "$DST" || true
+          docker image prune -af
+          export DOCKER_CONFIG="$RUNNER_TEMP/anonymous-docker-config"
+          mkdir -p "$DOCKER_CONFIG"
+          timeout --kill-after=20s 1200s docker pull "$DST"
+          docker image inspect "$DST" > receipts/anonymous-inspect.json
+          docker manifest inspect "$DST" > receipts/destination-manifest-anonymous.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          src=json.loads(Path('receipts/source-inspect.json').read_text())[0]
+          anon=json.loads(Path('receipts/anonymous-inspect.json').read_text())[0]
+          sm=json.loads(Path('receipts/source-manifest.json').read_text())
+          am=json.loads(Path('receipts/destination-manifest-anonymous.json').read_text())
+          assert src['RootFS']['Layers']==anon['RootFS']['Layers']
+          assert sm['config']['digest']==am['config']['digest']
+          assert [x['digest'] for x in sm['layers']]==[x['digest'] for x in am['layers']]
+          receipt={
+            'schema':'von-read-ecr-public-r12-1',
+            'status':'passed',
+            'source_commit':'3186e0ef79c27a298ed7505ed834b6a2be929c05',
+            'source_carrier':'ghcr.io/josepha-mayo/von-read-r4-overlay-r11-20260927:carrier-r11',
+            'public_carrier':'public.ecr.aws/c4j1y1e7/von-read-r4-overlay-r12:carrier-r12',
+            'overlay_layers':8,
+            'anonymous_complete_pull':True,
+            'rootfs_diffids_match':True,
+            'compressed_layer_digests_match':True,
+            'gpu_inference':False,
+            'final_runnable_image':False,
+          }
+          Path('receipts/ECR_PUBLIC_MIRROR.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt))
+          PY
+
+      - name: Preserve mirror evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: von-read-ecr-public-r12-receipts
+          path: receipts/
+          retention-days: 14
+          if-no-files-found: error
