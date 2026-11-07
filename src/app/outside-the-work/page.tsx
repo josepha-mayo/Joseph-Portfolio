@@ -7,7 +7,7 @@ import styles from './personal.module.css';
 
 export const metadata: Metadata = {
   title: 'outside the work | ayanda joseph',
-  description: 'my favourite books and anime, japanese, guitar, chess, and my philosophy on passion, purpose, truth, and solitude.',
+  description: 'my favourite books and anime, guitar, chess, and my philosophy on passion, purpose, truth, and solitude.',
   alternates: { canonical: 'https://josephmayo.site/outside-the-work' },
   openGraph: {
     title: 'outside the work | ayanda joseph',
@@ -30,7 +30,6 @@ const books = [
 ];
 
 const practices = [
-  { title: 'japanese', status: 'learning', image: '/personal/japanese.jpg', alt: 'japanese writing', icon: 'fa-language', text: 'learning to understand and speak japanese. still a long way to go.' },
   { title: 'guitar', status: 'learning', image: '/personal/guitar.jpg', alt: 'an acoustic guitar', icon: 'fa-guitar', text: 'working on chord changes and rhythm. i like having something to practise away from a screen.' },
   { title: 'chess', status: 'i play', image: '/personal/chess.jpg', alt: 'chess pieces on a board', icon: 'fa-chess-knight', text: 'i play well. i enjoy a game that gives me something difficult to calculate.' },
 ];
@@ -106,7 +105,7 @@ export default function OutsideTheWork() {
           <div className={styles.practiceGrid}>
             {practices.map((practice) => (
               <article key={practice.title} className={styles.practiceCard}>
-                <div className={styles.practiceImage}><Image src={practice.image} alt={practice.alt} fill sizes="(min-width: 900px) 33vw, (min-width: 640px) 50vw, 100vw" /><span className={styles.practiceStatus}>{practice.status}</span></div>
+                <div className={styles.practiceImage}><Image src={practice.image} alt={practice.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1216px) 50vw, 564px" /><span className={styles.practiceStatus}>{practice.status}</span></div>
                 <div className={styles.practiceCopy}><h3><i className={`fa-solid ${practice.icon}`} aria-hidden="true" />{practice.title}</h3><p>{practice.text}</p></div>
               </article>
             ))}

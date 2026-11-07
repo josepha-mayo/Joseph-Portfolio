@@ -32,7 +32,7 @@
 .bookAuthor { font-size: 13px; color: #d5c5a0; margin-top: 8px; }
 .bookDescription { font-size: 15px; line-height: 1.75; color: var(--color-text-secondary); margin: 16px 0 0; max-width: 52ch; }
 .bookKind { color: var(--color-text-secondary); font-family: var(--font-geist-mono), monospace; font-size: 12px; text-align: right; }
-.practiceGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.practiceGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .practiceCard { border-radius: 12px; overflow: hidden; border: 1px solid var(--color-border-subtle); background: var(--color-card); }
 .practiceImage { position: relative; height: 200px; overflow: hidden; }
 .practiceImage img { object-fit: cover; filter: saturate(.5) brightness(.82); transition: filter .35s, transform .5s; }
