@@ -14,14 +14,14 @@ function SkillGroup({ title, skills }: { title: string; skills: string[] }) {
   </div>;
 }
 
-function ProjectCard({ image, title, description, tags, links, award, index }: {
+function ProjectCard({ image, title, description, tags, links, award, index, eagerImage }: {
   image: string; title: string; description: string; tags: string[];
-  links: { href: string; label: string; icon: string }[]; award?: string; index: number;
+  links: { href: string; label: string; icon: string }[]; award?: string; index: number; eagerImage?: boolean;
 }) {
   return (
     <article className={styles.project}>
       <div className={styles.projectMedia}>
-        <Image src={image} alt={title} fill sizes="(min-width: 1280px) 600px, (min-width: 640px) 50vw, 100vw" className={styles.projectImage} />
+        <Image src={image} alt={title} fill unoptimized loading={eagerImage ? "eager" : "lazy"} sizes="(min-width: 1280px) 600px, (min-width: 640px) 50vw, 100vw" className={styles.projectImage} />
         {award && <span className={styles.award} aria-label={`${title}: ${award}`}><i className="fa-solid fa-trophy" aria-hidden="true" />{award}</span>}
       </div>
       <div className={styles.projectBody}>
@@ -141,7 +141,8 @@ export default function Home() {
       ]
     },
     {
-      image: "/projects/mayo-pipeline.svg",
+      image: "/projects/mayo-card.svg",
+      eagerImage: true,
       title: "Mayo",
       description: "Three agents scan code, make edits, and review the changes before opening a PR. Cross-repository memory carries findings between runs.",
       tags: ["python", "agentic AI", "GitHub"],
@@ -150,7 +151,8 @@ export default function Home() {
       ]
     },
     {
-      image: "/projects/pex-screenshot.webp",
+      image: "/projects/pex-card.webp",
+      eagerImage: true,
       title: "PEX",
       description: "An inference-backed agent that keeps coding agents working toward persistent goals. Model reviews, a claim ledger, and independent tests check whether the work is actually done.",
       tags: ["agentic AI", "model inference", "verification"],
@@ -174,7 +176,7 @@ export default function Home() {
       description: "A social feed for developers to share updates, publish releases, and follow builders. GitHub sign-in, public feeds, and live updates.",
       tags: ["next.js", "typeScript", "postgreSQL", "full-stack"],
       links: [
-        { href: "https://hubfeed.netlify.app", label: "live app", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://gitpulse-app.netlify.app", label: "public feed", icon: "fa-solid fa-arrow-up-right-from-square" },
         { href: "https://github.com/josepha-mayo/git-pulse", label: "source", icon: "fa-brands fa-github" }
       ]
     }
