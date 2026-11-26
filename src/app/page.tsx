@@ -155,7 +155,7 @@ export default function Home() {
       description: "An inference-backed agent that keeps coding agents working toward persistent goals. Model reviews, a claim ledger, and independent tests check whether the work is actually done.",
       tags: ["agentic AI", "model inference", "verification"],
       links: [
-        { href: "https://pex-supervisor.netlify.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://pex-demo.netlify.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
         { href: "https://github.com/josepha-mayo/pex", label: "source", icon: "fa-brands fa-github" }
       ]
     },
