@@ -24,7 +24,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function ModelAblationPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="fixed top-0 w-full h-[70px] nav-glass border-b border-border-subtle z-50 flex items-center">
         <div className="container mx-auto px-8 flex justify-between items-center">
@@ -37,7 +37,7 @@ export default function ModelAblationPage() {
         </div>
       </nav>
 
-      <article className="pt-[100px] pb-32">
+      <main id="main" tabIndex={-1} className="pt-[100px] pb-32">
         <div className="container mx-auto px-8 max-w-3xl">
           {/* Header */}
           <header className="mb-16">
@@ -320,7 +320,7 @@ for param in model.parameters():
           </Section>
 
         </div>
-      </article>
-    </main>
+      </main>
+    </div>
   );
 }
