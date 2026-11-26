@@ -126,7 +126,7 @@ export default function Home() {
       description: "A multi-model council and proxy for frontier models, alongside deepfake detection and adversarial defense tools.",
       tags: ["fastAPI", "next.js", "security"],
       links: [
-        { href: "https://intellect-safe.vercel.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "https://intellectsafe.vercel.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
         { href: "https://github.com/josepha-mayo/IntellectSafe", label: "source", icon: "fa-brands fa-github" }
       ]
     },
