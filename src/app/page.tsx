@@ -136,7 +136,7 @@ export default function Home() {
       description: "Graph-based LLM red teaming with multi-turn attacks, a state-machine evaluator, and a dashboard for inspecting results.",
       tags: ["python", "next.js", "red teaming"],
       links: [
-        { href: "https://model-fang.vercel.app", label: "live demo", icon: "fa-solid fa-arrow-up-right-from-square" },
+        { href: "/modelfang/", label: "showcase", icon: "fa-solid fa-arrow-up-right-from-square" },
         { href: "https://github.com/josepha-mayo/ModelFang", label: "source", icon: "fa-brands fa-github" }
       ]
     },
