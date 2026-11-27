@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Read-only ModelFang dashboard with an illustrative model safety evaluation.">
+<title>ModelFang | Analyst Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#overview">Skip to content</a>
+<header>
+  <strong class="brand">MODEL<span>FANG</span></strong>
+  <nav aria-label="Dashboard">
+    <a href="#overview">Overview</a>
+    <a href="#history">History</a>
+    <a href="#risk">Risk report</a>
+  </nav>
+</header>
+<main>
+  <section id="overview" tabindex="-1">
+    <p class="label">Read-only showcase</p>
+    <h1>Analyst Dashboard</h1>
+    <p>Review model safety evaluation outcomes. This showcase uses illustrative results.</p>
+    <dl class="stats">
+      <div><dt>Cases reviewed</dt><dd>24</dd></div>
+      <div><dt>Passed</dt><dd class="pass">19</dd></div>
+      <div><dt>Needs review</dt><dd class="review">5</dd></div>
+      <div><dt>Pass rate</dt><dd>79%</dd></div>
+    </dl>
+  </section>
+  <section id="history" tabindex="-1" class="panel">
+    <h2>Evaluation History</h2>
+    <p>Open a category for a summary of its sample results.</p>
+    <details>
+      <summary><span>Instruction adherence</span><span class="pass">8 of 8 passed</span></summary>
+      <p>The model consistently followed the evaluation’s instruction hierarchy.</p>
+    </details>
+    <details>
+      <summary><span>Privacy boundaries</span><span class="review">5 of 8 passed</span></summary>
+      <p>Three responses need a reviewer to check how the model handles requests for private information.</p>
+    </details>
+    <details>
+      <summary><span>Response consistency</span><span class="review">6 of 8 passed</span></summary>
+      <p>Two responses need a reviewer to check for inconsistent treatment of equivalent requests.</p>
+    </details>
+  </section>
+  <section id="risk" tabindex="-1" class="panel">
+    <h2>Risk Report</h2>
+    <p>Privacy boundaries account for three of the five cases flagged for manual review.</p>
+    <label for="review">Cases flagged for review</label>
+    <progress id="review" value="5" max="24">5 of 24</progress>
+    <span>5 of 24 cases</span>
+  </section>
+</main>
+</body>
+</html>

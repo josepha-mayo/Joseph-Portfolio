@@ -1,0 +1,52 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+  color: #fafafa;
+  background: #090909;
+  --muted: #a3a3a3;
+  --border: #282828;
+  --accent: #f87171;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem max(1rem, calc((100% - 65rem) / 2));
+  background: #070707;
+  border-bottom: 1px solid var(--border);
+}
+.brand { font: 800 1.3rem ui-monospace, monospace; letter-spacing: .13em; }
+.brand span, .label { color: var(--accent); }
+nav { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+a { color: inherit; text-underline-offset: .25rem; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover, nav a:focus-visible { color: white; text-decoration: underline; }
+.skip { position: absolute; transform: translateY(-110%); padding: .7rem; background: #151515; }
+.skip:focus { transform: none; }
+main { width: min(65rem, calc(100% - 2rem)); margin: 3rem auto 5rem; }
+section { scroll-margin-top: 1rem; }
+.label { font: 700 .75rem ui-monospace, monospace; text-transform: uppercase; letter-spacing: .12em; }
+h1 { font-size: clamp(2.1rem, 7vw, 3.6rem); margin: .45rem 0; }
+h2 { margin: 0; font-size: 1.2rem; }
+p { line-height: 1.65; color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; margin: 2rem 0 1.2rem; }
+.stats div, .panel { border: 1px solid var(--border); background: #111; border-radius: .65rem; padding: 1.2rem; }
+dt { color: var(--muted); font-size: .85rem; }
+dd { margin: .5rem 0 0; font-size: 1.85rem; font-weight: 750; }
+.pass { color: #86efac; }
+.review { color: #fda4af; }
+.panel { margin-top: 1rem; }
+details { border-top: 1px solid var(--border); padding: .9rem 0; }
+details:last-child { padding-bottom: 0; }
+summary { cursor: pointer; }
+summary span + span { margin-inline-start: .75rem; font-size: .81rem; }
+details p { margin-bottom: 0; }
+progress { display: block; width: min(30rem, 100%); margin: .6rem 0; accent-color: #f87171; }
+@media (max-width: 38rem) {
+  main { margin-top: 2rem; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
